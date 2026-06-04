@@ -1,0 +1,19 @@
+package: larena/ui
+title: Larena UI
+status: repository_prepared
+cluster: frontend-composition
+batch: batch-0-clean-pre-codegen-baseline
+features:
+  - ui.backend_first_rendering
+  - ui.component_playground_coverage
+  - ui.component_registry_atlas
+  - ui.design_pack
+  - ui.hydration_contract
+  - ui.resource_pack_integration
+  - ui.smart_component_manifest
+  - ui.ui_asset_graph
+runtime:
+  php: "^8.3"
+  laravel: "^13.0"
+evidence:
+  path: docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/
