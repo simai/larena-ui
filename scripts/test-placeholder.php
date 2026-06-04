@@ -2,4 +2,9 @@
 
 declare(strict_types=1);
 
-echo "Larena UI clean pre-codegen baseline test command passed; no package implementation code has started.\n";
+require __DIR__ . '/../vendor/autoload.php';
+
+require __DIR__ . '/../tests/Unit/UiContractTest.php';
+require __DIR__ . '/../tests/Unit/UiFailsClosedTest.php';
+
+echo "Larena UI contract skeleton tests passed.\n";
