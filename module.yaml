@@ -8,6 +8,7 @@ features:
   - ui.component_playground_coverage
   - ui.component_registry_atlas
   - ui.design_pack
+  - ui.admin_smart_carrier_fallback_resources
   - ui.hydration_contract
   - ui.resource_pack_integration
   - ui.smart_component_manifest
@@ -16,4 +17,4 @@ runtime:
   php: "^8.3"
   laravel: "^13.0"
 evidence:
-  path: docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/
+  path: docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/

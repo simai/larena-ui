@@ -1,0 +1,14 @@
+{
+    "schema": "larena.evidence_file_map.v1",
+    "files": {
+        ".larena/launch-context.json": "Allows the explicit admin smart carrier fallback resource batch.",
+        "module.yaml": "Records the admin smart carrier fallback resource feature.",
+        "src/Contracts/UiResourcePackManifest.php": "Exposes package-owned carrier descriptors and custom elements.",
+        "resources/simai/smart/admin-menu/admin-menu.js": "Registers sf-admin-menu.",
+        "resources/simai/smart/admin-menu-item/admin-menu-item.js": "Registers sf-admin-menu-item.",
+        "resources/simai/smart/breadcrumbs/breadcrumbs.js": "Registers sf-breadcrumbs.",
+        "resources/simai/smart/table/table.js": "Registers sf-table.",
+        "resources/simai/smart/tree-item/tree-item.js": "Registers sf-tree-item.",
+        "tests/Unit/UiContractTest.php": "Covers package-owned carrier descriptors and readiness composition."
+    }
+}

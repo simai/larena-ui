@@ -13,7 +13,8 @@
     "ui.design_pack",
     "ui.component_registry_atlas",
     "ui.component_playground_coverage",
-    "ui.resource_pack_integration"
+    "ui.resource_pack_integration",
+    "ui.admin_smart_carrier_fallback_resources"
   ],
   "allowed_files": [
     ".env.example",
@@ -35,6 +36,15 @@
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/independent-review.md",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/smoke.md",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/tests.md",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/README.md",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/code-review-feedback.md",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/deviations.json",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/file-map.json",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/graph-sync-proposal.json",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/implementation-summary.md",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/independent-review.md",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/smoke.md",
+    "docs/project-management/evidence/frontend-composition/batch-1/ui-current/tests.md",
     "module.yaml",
     "phpstan.neon.dist",
     "scripts/lint.php",
@@ -54,8 +64,21 @@
     "src/Enums/HydrationStrategy.php",
     "src/Enums/RenderStrategy.php",
     "src/Enums/UiAssetKind.php",
+    "resources/simai/smart/admin-menu/admin-menu.js",
+    "resources/simai/smart/admin-menu-item/admin-menu-item.js",
+    "resources/simai/smart/breadcrumbs/breadcrumbs.js",
+    "resources/simai/smart/table/table.js",
+    "resources/simai/smart/tree-item/tree-item.js",
     "tests/Unit/UiContractTest.php",
-    "tests/Unit/UiFailsClosedTest.php"
+    "tests/Unit/UiFailsClosedTest.php",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/README.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/implementation-summary.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/independent-review.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/tests.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/smoke.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/file-map.json",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/deviations.json",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/graph-sync-proposal.json"
   ],
   "forbidden_files": [
     "config/*",
@@ -73,7 +96,6 @@
   ],
   "forbidden_behavior": [
     "frontend_build_pipeline",
-    "css_or_javascript_asset_implementation",
     "blade_vue_react_runtime",
     "component_playground_page_runtime",
     "component_registry_generator_runtime",
@@ -83,8 +105,8 @@
     "direct_larena_specs_update_by_package_agent",
     "migration_or_route_change"
   ],
-  "evidence_path": "docs/project-management/evidence/frontend-composition/batch-1/ui-current/",
-  "graph_sync_proposal_path": "docs/project-management/evidence/frontend-composition/batch-1/ui-current/graph-sync-proposal.json",
+  "evidence_path": "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/",
+  "graph_sync_proposal_path": "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/graph-sync-proposal.json",
   "status": "contract_skeleton_review_passed",
   "coding_started": true,
   "repository_enforcement_installed": true,

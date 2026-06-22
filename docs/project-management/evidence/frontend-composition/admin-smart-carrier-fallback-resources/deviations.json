@@ -1,0 +1,17 @@
+{
+    "schema": "larena.deviations.v1",
+    "deviations": [
+        {
+            "id": "production_behavior_deferred",
+            "status": "accepted_for_current_batch",
+            "reason": "The fallback modules are smoke carriers for custom element registration and read-only DOM semantics, not the final production admin component behavior.",
+            "trigger": "Replace or extend after the real admin frontend artifact and smart component implementation contract are ready."
+        },
+        {
+            "id": "browser_smoke_deferred_to_root_runtime",
+            "status": "accepted_for_current_batch",
+            "reason": "Package-owned carrier files must still be activated by core.assets and bound to Larena admin shell/API payload before browser smoke is meaningful.",
+            "trigger": "Next root batch binds package resources through core.assets and runs browser/network/write-rejection smoke."
+        }
+    ]
+}

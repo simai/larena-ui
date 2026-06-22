@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 use Larena\Ui\Contracts\BackendRenderResult;
 use Larena\Ui\Contracts\ComponentAtlasEntry;
 use Larena\Ui\Contracts\DesignPackDescriptor;
@@ -61,7 +63,8 @@ assert($adminReferenceReadiness['carrier_source_status']['data.table']['source_b
 assert($adminReferenceReadiness['carrier_source_status']['admin.menu']['source_backed_status'] === 'artifact_only_source_blocker');
 
 $adminCarrierBlockers = UiResourcePackManifest::adminFrontendCarrierBlockers();
-assert($adminCarrierBlockers === [
+assert($adminCarrierBlockers === []);
+assert(UiResourcePackManifest::adminFrontendCarrierSourceBlockers() === [
     'admin.menu',
     'admin.menu_item',
     'navigation.breadcrumbs',
@@ -76,8 +79,35 @@ foreach ($adminCarrierAssetGraph->criticalRequirements() as $requirement) {
     assert($requirement->finalPathOwnedByCoreAssets);
 }
 
+$packageOwnedCarriers = UiResourcePackManifest::adminFrontendPackageOwnedCarriers();
+assert(array_keys($packageOwnedCarriers) === [
+    'admin.menu',
+    'admin.menu_item',
+    'navigation.breadcrumbs',
+    'data.table',
+    'data.tree_item',
+]);
+assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
+    'sf-admin-menu',
+    'sf-admin-menu-item',
+    'sf-breadcrumbs',
+    'sf-table',
+    'sf-tree-item',
+]);
+foreach ($packageOwnedCarriers as $carrier) {
+    assert($carrier['source_backed_status'] === 'larena_owned_fallback_carrier');
+    assert(is_file(__DIR__ . '/../../' . $carrier['resource_path']));
+}
+
 $adminCompleteReadiness = $resourcePack->adminFrontendSmokeReadiness(array_values(
     UiResourcePackManifest::ADMIN_FRONTEND_REQUIRED_CUSTOM_ELEMENTS,
 ));
 assert($adminCompleteReadiness['status'] === 'ready_for_browser_smoke');
 assert($adminCompleteReadiness['missing_custom_elements'] === []);
+
+$adminPackageOwnedReadiness = $resourcePack->adminFrontendSmokeReadiness([
+    ...UiResourcePackManifest::adminFrontendReferenceCustomElements(),
+    ...UiResourcePackManifest::adminFrontendPackageOwnedCustomElements(),
+]);
+assert($adminPackageOwnedReadiness['status'] === 'ready_for_browser_smoke');
+assert($adminPackageOwnedReadiness['missing_custom_elements'] === []);

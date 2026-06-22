@@ -1,0 +1,12 @@
+{
+    "schema": "larena.graph_sync_proposal.v1",
+    "canonical_update_allowed": false,
+    "proposals": [
+        {
+            "id": "ui_admin_smart_carrier_fallback_resources",
+            "status": "proposal_only",
+            "owner": "larena/ui",
+            "summary": "Register larena/ui as owner of minimal fallback resource modules for admin smart resource pack browser-smoke carriers."
+        }
+    ]
+}

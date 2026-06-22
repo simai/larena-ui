@@ -99,13 +99,20 @@ final readonly class UiResourcePackManifest
     /**
      * @var list<string>
      */
-    public const ADMIN_FRONTEND_BLOCKED_CARRIER_KEYS = [
+    public const ADMIN_FRONTEND_SOURCE_BLOCKER_KEYS = [
         'admin.menu',
         'admin.menu_item',
         'navigation.breadcrumbs',
         'data.table',
         'data.tree_item',
     ];
+
+    /**
+     * Active blockers after Larena-owned fallback resources are considered.
+     *
+     * @var list<string>
+     */
+    public const ADMIN_FRONTEND_BLOCKED_CARRIER_KEYS = [];
 
     /**
      * @var array<string, array{asset_key: string, kind: UiAssetKind}>
@@ -130,6 +137,50 @@ final readonly class UiResourcePackManifest
         'data.tree_item' => [
             'asset_key' => 'data.tree_item.smart',
             'kind' => UiAssetKind::Module,
+        ],
+    ];
+
+    /**
+     * Minimal Larena-owned fallback modules for custom elements required by the
+     * admin browser smoke. They are package resources, not root app runtime.
+     *
+     * @var array<string, array{
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     smoke_role: string
+     * }>
+     */
+    public const ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS = [
+        'admin.menu' => [
+            'custom_element' => 'sf-admin-menu',
+            'resource_path' => 'resources/simai/smart/admin-menu/admin-menu.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_navigation_container',
+        ],
+        'admin.menu_item' => [
+            'custom_element' => 'sf-admin-menu-item',
+            'resource_path' => 'resources/simai/smart/admin-menu-item/admin-menu-item.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_navigation_link',
+        ],
+        'navigation.breadcrumbs' => [
+            'custom_element' => 'sf-breadcrumbs',
+            'resource_path' => 'resources/simai/smart/breadcrumbs/breadcrumbs.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_breadcrumbs',
+        ],
+        'data.table' => [
+            'custom_element' => 'sf-table',
+            'resource_path' => 'resources/simai/smart/table/table.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_table',
+        ],
+        'data.tree_item' => [
+            'custom_element' => 'sf-tree-item',
+            'resource_path' => 'resources/simai/smart/tree-item/tree-item.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_tree_item',
         ],
     ];
 
@@ -224,6 +275,14 @@ final readonly class UiResourcePackManifest
         return self::ADMIN_FRONTEND_BLOCKED_CARRIER_KEYS;
     }
 
+    /**
+     * @return list<string>
+     */
+    public static function adminFrontendCarrierSourceBlockers(): array
+    {
+        return self::ADMIN_FRONTEND_SOURCE_BLOCKER_KEYS;
+    }
+
     public static function adminFrontendCarrierAssetGraph(): UiAssetGraph
     {
         $requirements = [];
@@ -235,6 +294,27 @@ final readonly class UiResourcePackManifest
         }
 
         return new UiAssetGraph($requirements, $explain);
+    }
+
+    /**
+     * @return array<string, array{
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     smoke_role: string
+     * }>
+     */
+    public static function adminFrontendPackageOwnedCarriers(): array
+    {
+        return self::ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function adminFrontendPackageOwnedCustomElements(): array
+    {
+        return self::normalizeCustomElements(array_column(self::ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS, 'custom_element'));
     }
 
     /**

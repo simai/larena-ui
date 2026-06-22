@@ -26,8 +26,8 @@
     "phpstan/phpstan": "^2.0"
   },
   "scripts": {
-    "test": "php scripts/test-placeholder.php",
-    "test:unit": "php scripts/test-placeholder.php",
+    "test": "php scripts/test-placeholder.php && php tests/Unit/UiContractTest.php && php tests/Unit/UiFailsClosedTest.php",
+    "test:unit": "php scripts/test-placeholder.php && php tests/Unit/UiContractTest.php && php tests/Unit/UiFailsClosedTest.php",
     "lint": "php scripts/lint.php",
     "analyse": "php scripts/analyse.php",
     "validate:larena": "php scripts/validate-larena-package.php",
