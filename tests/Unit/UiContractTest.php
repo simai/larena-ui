@@ -56,6 +56,18 @@ assert($adminReferenceReadiness['missing_custom_elements'] === [
 ]);
 assert($adminReferenceReadiness['boundaries']['activation_owned_by_core_assets']);
 assert($adminReferenceReadiness['boundaries']['no_frontend_runtime_copy']);
+assert($adminReferenceReadiness['carrier_source_status']['navigation.breadcrumbs']['source_backed_status'] === 'component_backed_adapter_candidate');
+assert($adminReferenceReadiness['carrier_source_status']['data.table']['source_backed_status'] === 'smart_runtime_missing_static_utility_available');
+assert($adminReferenceReadiness['carrier_source_status']['admin.menu']['source_backed_status'] === 'artifact_only_source_blocker');
+
+$adminCarrierBlockers = UiResourcePackManifest::adminFrontendCarrierBlockers();
+assert($adminCarrierBlockers === [
+    'admin.menu',
+    'admin.menu_item',
+    'navigation.breadcrumbs',
+    'data.table',
+    'data.tree_item',
+]);
 
 $adminCompleteReadiness = $resourcePack->adminFrontendSmokeReadiness(array_values(
     UiResourcePackManifest::ADMIN_FRONTEND_REQUIRED_CUSTOM_ELEMENTS,

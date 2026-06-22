@@ -45,6 +45,67 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
+     * Source classification for admin carriers required before browser smoke.
+     * These values describe evidence and next work; they do not activate assets.
+     *
+     * @var array<string, array{
+     *     custom_element: string,
+     *     source_backed_status: string,
+     *     source_kind: string,
+     *     adapter_required: bool,
+     *     browser_smoke_ready: bool
+     * }>
+     */
+    public const ADMIN_FRONTEND_CARRIER_SOURCE_STATUS = [
+        'admin.menu' => [
+            'custom_element' => 'sf-admin-menu',
+            'source_backed_status' => 'artifact_only_source_blocker',
+            'source_kind' => 'ui_admin_artifact_only',
+            'adapter_required' => true,
+            'browser_smoke_ready' => false,
+        ],
+        'admin.menu_item' => [
+            'custom_element' => 'sf-admin-menu-item',
+            'source_backed_status' => 'artifact_only_source_blocker',
+            'source_kind' => 'ui_admin_artifact_only',
+            'adapter_required' => true,
+            'browser_smoke_ready' => false,
+        ],
+        'navigation.breadcrumbs' => [
+            'custom_element' => 'sf-breadcrumbs',
+            'source_backed_status' => 'component_backed_adapter_candidate',
+            'source_kind' => 'simai_framework_component',
+            'adapter_required' => true,
+            'browser_smoke_ready' => false,
+        ],
+        'data.table' => [
+            'custom_element' => 'sf-table',
+            'source_backed_status' => 'smart_runtime_missing_static_utility_available',
+            'source_kind' => 'simai_framework_static_utility',
+            'adapter_required' => true,
+            'browser_smoke_ready' => false,
+        ],
+        'data.tree_item' => [
+            'custom_element' => 'sf-tree-item',
+            'source_backed_status' => 'artifact_only_source_blocker',
+            'source_kind' => 'ui_admin_artifact_only',
+            'adapter_required' => true,
+            'browser_smoke_ready' => false,
+        ],
+    ];
+
+    /**
+     * @var list<string>
+     */
+    public const ADMIN_FRONTEND_BLOCKED_CARRIER_KEYS = [
+        'admin.menu',
+        'admin.menu_item',
+        'navigation.breadcrumbs',
+        'data.table',
+        'data.tree_item',
+    ];
+
+    /**
      * @param list<string> $smartComponentRefs
      * @param list<string> $distAssetRefs
      */
@@ -72,7 +133,14 @@ final readonly class UiResourcePackManifest
      *     available_custom_elements: list<string>,
      *     missing_custom_elements: array<string, string>,
      *     reference_carriers: array<string, string>,
-     *     boundaries: array<string, bool>
+     *     boundaries: array<string, bool>,
+     *     carrier_source_status: array<string, array{
+     *         custom_element: string,
+     *         source_backed_status: string,
+     *         source_kind: string,
+     *         adapter_required: bool,
+     *         browser_smoke_ready: bool
+     *     }>
      * }
      */
     public function adminFrontendSmokeReadiness(array $availableCustomElements): array
@@ -102,7 +170,30 @@ final readonly class UiResourcePackManifest
                 'no_hardcoded_cdn_contract' => true,
                 'no_write_methods' => true,
             ],
+            'carrier_source_status' => self::adminFrontendCarrierSourceStatus(),
         ];
+    }
+
+    /**
+     * @return array<string, array{
+     *     custom_element: string,
+     *     source_backed_status: string,
+     *     source_kind: string,
+     *     adapter_required: bool,
+     *     browser_smoke_ready: bool
+     * }>
+     */
+    public static function adminFrontendCarrierSourceStatus(): array
+    {
+        return self::ADMIN_FRONTEND_CARRIER_SOURCE_STATUS;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function adminFrontendCarrierBlockers(): array
+    {
+        return self::ADMIN_FRONTEND_BLOCKED_CARRIER_KEYS;
     }
 
     /**
