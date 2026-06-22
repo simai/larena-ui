@@ -77,6 +77,7 @@ assert($adminCarrierAssetGraph->isValid());
 assert(count($adminCarrierAssetGraph->criticalRequirements()) === 5);
 foreach ($adminCarrierAssetGraph->criticalRequirements() as $requirement) {
     assert($requirement->finalPathOwnedByCoreAssets);
+    assert($requirement->kind === UiAssetKind::Module);
 }
 
 $packageOwnedCarriers = UiResourcePackManifest::adminFrontendPackageOwnedCarriers();
@@ -97,6 +98,15 @@ assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
 foreach ($packageOwnedCarriers as $carrier) {
     assert($carrier['source_backed_status'] === 'larena_owned_fallback_carrier');
     assert(is_file(__DIR__ . '/../../' . $carrier['resource_path']));
+}
+
+$publicationAssets = UiResourcePackManifest::adminFrontendPackageOwnedCarrierPublicationAssets();
+assert(count($publicationAssets) === 5);
+assert($publicationAssets[0]['asset_key'] === 'admin.menu.smart');
+assert($publicationAssets[0]['kind'] === 'module');
+foreach ($publicationAssets as $asset) {
+    assert($asset['source_backed_status'] === 'larena_owned_fallback_carrier');
+    assert(is_file(__DIR__ . '/../../' . $asset['resource_path']));
 }
 
 $adminCompleteReadiness = $resourcePack->adminFrontendSmokeReadiness(array_values(

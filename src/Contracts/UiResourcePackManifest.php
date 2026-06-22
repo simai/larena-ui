@@ -128,7 +128,7 @@ final readonly class UiResourcePackManifest
         ],
         'navigation.breadcrumbs' => [
             'asset_key' => 'navigation.breadcrumbs.component',
-            'kind' => UiAssetKind::Css,
+            'kind' => UiAssetKind::Module,
         ],
         'data.table' => [
             'asset_key' => 'data.table.read_only_adapter',
@@ -307,6 +307,38 @@ final readonly class UiResourcePackManifest
     public static function adminFrontendPackageOwnedCarriers(): array
     {
         return self::ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS;
+    }
+
+    /**
+     * @return list<array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: string,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }>
+     */
+    public static function adminFrontendPackageOwnedCarrierPublicationAssets(): array
+    {
+        $assets = [];
+
+        foreach (self::ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS as $carrierKey => $carrier) {
+            $asset = self::ADMIN_FRONTEND_CARRIER_ASSET_REQUIREMENTS[$carrierKey];
+
+            $assets[] = [
+                'carrier_key' => $carrierKey,
+                'asset_key' => $asset['asset_key'],
+                'kind' => $asset['kind']->value,
+                'custom_element' => $carrier['custom_element'],
+                'resource_path' => $carrier['resource_path'],
+                'source_backed_status' => $carrier['source_backed_status'],
+                'final_path_owned_by_core_assets' => true,
+            ];
+        }
+
+        return $assets;
     }
 
     /**
