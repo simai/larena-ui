@@ -69,6 +69,13 @@ assert($adminCarrierBlockers === [
     'data.tree_item',
 ]);
 
+$adminCarrierAssetGraph = UiResourcePackManifest::adminFrontendCarrierAssetGraph();
+assert($adminCarrierAssetGraph->isValid());
+assert(count($adminCarrierAssetGraph->criticalRequirements()) === 5);
+foreach ($adminCarrierAssetGraph->criticalRequirements() as $requirement) {
+    assert($requirement->finalPathOwnedByCoreAssets);
+}
+
 $adminCompleteReadiness = $resourcePack->adminFrontendSmokeReadiness(array_values(
     UiResourcePackManifest::ADMIN_FRONTEND_REQUIRED_CUSTOM_ELEMENTS,
 ));

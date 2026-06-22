@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larena\Ui\Contracts;
 
+use Larena\Ui\Enums\UiAssetKind;
+
 final readonly class UiResourcePackManifest
 {
     /**
@@ -106,6 +108,32 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
+     * @var array<string, array{asset_key: string, kind: UiAssetKind}>
+     */
+    public const ADMIN_FRONTEND_CARRIER_ASSET_REQUIREMENTS = [
+        'admin.menu' => [
+            'asset_key' => 'admin.menu.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'admin.menu_item' => [
+            'asset_key' => 'admin.menu_item.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'navigation.breadcrumbs' => [
+            'asset_key' => 'navigation.breadcrumbs.component',
+            'kind' => UiAssetKind::Css,
+        ],
+        'data.table' => [
+            'asset_key' => 'data.table.read_only_adapter',
+            'kind' => UiAssetKind::Module,
+        ],
+        'data.tree_item' => [
+            'asset_key' => 'data.tree_item.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+    ];
+
+    /**
      * @param list<string> $smartComponentRefs
      * @param list<string> $distAssetRefs
      */
@@ -194,6 +222,19 @@ final readonly class UiResourcePackManifest
     public static function adminFrontendCarrierBlockers(): array
     {
         return self::ADMIN_FRONTEND_BLOCKED_CARRIER_KEYS;
+    }
+
+    public static function adminFrontendCarrierAssetGraph(): UiAssetGraph
+    {
+        $requirements = [];
+        $explain = [];
+
+        foreach (self::ADMIN_FRONTEND_CARRIER_ASSET_REQUIREMENTS as $componentKey => $asset) {
+            $requirements[] = new UiAssetRequirement($asset['asset_key'], $asset['kind'], true);
+            $explain[] = 'admin-carrier:' . $componentKey;
+        }
+
+        return new UiAssetGraph($requirements, $explain);
     }
 
     /**
