@@ -1,0 +1,11 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "status": "proposal_only",
+  "proposals": [
+    {
+      "id": "ui_admin_smart_carrier_extended_fallback_resources",
+      "target": "larena/ui",
+      "summary": "Record larena/ui ownership of the full current 12-carrier local/testing admin smart resource pack fallback set."
+    }
+  ]
+}

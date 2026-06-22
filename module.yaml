@@ -9,6 +9,7 @@ features:
   - ui.component_registry_atlas
   - ui.design_pack
   - ui.admin_smart_carrier_fallback_resources
+  - ui.admin_smart_carrier_extended_fallback_resources
   - ui.hydration_contract
   - ui.resource_pack_integration
   - ui.smart_component_manifest

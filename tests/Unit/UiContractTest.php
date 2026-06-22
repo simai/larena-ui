@@ -61,20 +61,16 @@ assert($adminReferenceReadiness['boundaries']['no_frontend_runtime_copy']);
 assert($adminReferenceReadiness['carrier_source_status']['navigation.breadcrumbs']['source_backed_status'] === 'component_backed_adapter_candidate');
 assert($adminReferenceReadiness['carrier_source_status']['data.table']['source_backed_status'] === 'smart_runtime_missing_static_utility_available');
 assert($adminReferenceReadiness['carrier_source_status']['admin.menu']['source_backed_status'] === 'artifact_only_source_blocker');
+assert($adminReferenceReadiness['carrier_source_status']['form.checkbox']['source_backed_status'] === 'larena_owned_fallback_carrier');
+assert($adminReferenceReadiness['carrier_source_status']['toolbar.icon_button']['browser_smoke_ready']);
 
 $adminCarrierBlockers = UiResourcePackManifest::adminFrontendCarrierBlockers();
 assert($adminCarrierBlockers === []);
-assert(UiResourcePackManifest::adminFrontendCarrierSourceBlockers() === [
-    'admin.menu',
-    'admin.menu_item',
-    'navigation.breadcrumbs',
-    'data.table',
-    'data.tree_item',
-]);
+assert(UiResourcePackManifest::adminFrontendCarrierSourceBlockers() === []);
 
 $adminCarrierAssetGraph = UiResourcePackManifest::adminFrontendCarrierAssetGraph();
 assert($adminCarrierAssetGraph->isValid());
-assert(count($adminCarrierAssetGraph->criticalRequirements()) === 5);
+assert(count($adminCarrierAssetGraph->criticalRequirements()) === 12);
 foreach ($adminCarrierAssetGraph->criticalRequirements() as $requirement) {
     assert($requirement->finalPathOwnedByCoreAssets);
     assert($requirement->kind === UiAssetKind::Module);
@@ -87,6 +83,13 @@ assert(array_keys($packageOwnedCarriers) === [
     'navigation.breadcrumbs',
     'data.table',
     'data.tree_item',
+    'form.checkbox',
+    'media.avatar',
+    'navigation.pagination',
+    'status.progress_scale',
+    'status.tag',
+    'theme.toggle',
+    'toolbar.icon_button',
 ]);
 assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
     'sf-admin-menu',
@@ -94,6 +97,13 @@ assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
     'sf-breadcrumbs',
     'sf-table',
     'sf-tree-item',
+    'sf-checkbox',
+    'sf-avatar',
+    'sf-pagination',
+    'sf-progress-scale',
+    'sf-tag',
+    'sf-toggle',
+    'sf-icon-button',
 ]);
 foreach ($packageOwnedCarriers as $carrier) {
     assert($carrier['source_backed_status'] === 'larena_owned_fallback_carrier');
@@ -101,7 +111,7 @@ foreach ($packageOwnedCarriers as $carrier) {
 }
 
 $publicationAssets = UiResourcePackManifest::adminFrontendPackageOwnedCarrierPublicationAssets();
-assert(count($publicationAssets) === 5);
+assert(count($publicationAssets) === 12);
 assert($publicationAssets[0]['asset_key'] === 'admin.menu.smart');
 assert($publicationAssets[0]['kind'] === 'module');
 foreach ($publicationAssets as $asset) {

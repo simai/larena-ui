@@ -1,0 +1,15 @@
+{
+  "schema": "larena.evidence.deviations.v1",
+  "deviations": [
+    {
+      "id": "fallback_carriers_not_final_ui",
+      "status": "accepted",
+      "reason": "The added modules are minimal custom-element carriers for local/testing smoke and package ownership proof, not final SIMAI Framework smart component runtime behavior."
+    },
+    {
+      "id": "no_production_asset_pipeline",
+      "status": "accepted",
+      "reason": "core.assets remains the owner of final publishable paths; this batch only makes package resources available for controlled local/testing activation."
+    }
+  ]
+}

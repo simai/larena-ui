@@ -1,0 +1,16 @@
+{
+  "schema": "larena.evidence.file_map.v1",
+  "files": {
+    ".larena/launch-context.json": "Extends allowed files for the 12-carrier admin smart fallback batch.",
+    "module.yaml": "Records the extended admin smart carrier feature.",
+    "src/Contracts/UiResourcePackManifest.php": "Declares the full 12-carrier package-owned asset graph and publication assets.",
+    "resources/simai/smart/checkbox/checkbox.js": "Registers sf-checkbox.",
+    "resources/simai/smart/avatar/avatar.js": "Registers sf-avatar.",
+    "resources/simai/smart/pagination/pagination.js": "Registers sf-pagination.",
+    "resources/simai/smart/progress-scale/progress-scale.js": "Registers sf-progress-scale.",
+    "resources/simai/smart/tag/tag.js": "Registers sf-tag.",
+    "resources/simai/smart/toggle/toggle.js": "Registers sf-toggle.",
+    "resources/simai/smart/icon-button/icon-button.js": "Registers sf-icon-button.",
+    "tests/Unit/UiContractTest.php": "Requires 12 package-owned carriers and checks resource files exist."
+  }
+}

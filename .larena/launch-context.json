@@ -14,7 +14,8 @@
     "ui.component_registry_atlas",
     "ui.component_playground_coverage",
     "ui.resource_pack_integration",
-    "ui.admin_smart_carrier_fallback_resources"
+    "ui.admin_smart_carrier_fallback_resources",
+    "ui.admin_smart_carrier_extended_fallback_resources"
   ],
   "allowed_files": [
     ".env.example",
@@ -69,6 +70,13 @@
     "resources/simai/smart/breadcrumbs/breadcrumbs.js",
     "resources/simai/smart/table/table.js",
     "resources/simai/smart/tree-item/tree-item.js",
+    "resources/simai/smart/checkbox/checkbox.js",
+    "resources/simai/smart/avatar/avatar.js",
+    "resources/simai/smart/pagination/pagination.js",
+    "resources/simai/smart/progress-scale/progress-scale.js",
+    "resources/simai/smart/tag/tag.js",
+    "resources/simai/smart/toggle/toggle.js",
+    "resources/simai/smart/icon-button/icon-button.js",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/README.md",
@@ -78,7 +86,13 @@
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/smoke.md",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/file-map.json",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/deviations.json",
-    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/graph-sync-proposal.json"
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/graph-sync-proposal.json",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/README.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/implementation-summary.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/tests.md",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/file-map.json",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/deviations.json",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/graph-sync-proposal.json"
   ],
   "forbidden_files": [
     "config/*",

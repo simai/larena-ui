@@ -94,17 +94,61 @@ final readonly class UiResourcePackManifest
             'adapter_required' => true,
             'browser_smoke_ready' => false,
         ],
+        'form.checkbox' => [
+            'custom_element' => 'sf-checkbox',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
+        'media.avatar' => [
+            'custom_element' => 'sf-avatar',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
+        'navigation.pagination' => [
+            'custom_element' => 'sf-pagination',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
+        'status.progress_scale' => [
+            'custom_element' => 'sf-progress-scale',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
+        'status.tag' => [
+            'custom_element' => 'sf-tag',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
+        'theme.toggle' => [
+            'custom_element' => 'sf-toggle',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
+        'toolbar.icon_button' => [
+            'custom_element' => 'sf-icon-button',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'source_kind' => 'simai_framework_reference_adapter',
+            'adapter_required' => true,
+            'browser_smoke_ready' => true,
+        ],
     ];
 
     /**
      * @var list<string>
      */
     public const ADMIN_FRONTEND_SOURCE_BLOCKER_KEYS = [
-        'admin.menu',
-        'admin.menu_item',
-        'navigation.breadcrumbs',
-        'data.table',
-        'data.tree_item',
     ];
 
     /**
@@ -136,6 +180,34 @@ final readonly class UiResourcePackManifest
         ],
         'data.tree_item' => [
             'asset_key' => 'data.tree_item.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'form.checkbox' => [
+            'asset_key' => 'form.checkbox.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'media.avatar' => [
+            'asset_key' => 'media.avatar.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'navigation.pagination' => [
+            'asset_key' => 'navigation.pagination.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'status.progress_scale' => [
+            'asset_key' => 'status.progress_scale.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'status.tag' => [
+            'asset_key' => 'status.tag.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'theme.toggle' => [
+            'asset_key' => 'theme.toggle.smart',
+            'kind' => UiAssetKind::Module,
+        ],
+        'toolbar.icon_button' => [
+            'asset_key' => 'toolbar.icon_button.smart',
             'kind' => UiAssetKind::Module,
         ],
     ];
@@ -181,6 +253,48 @@ final readonly class UiResourcePackManifest
             'resource_path' => 'resources/simai/smart/tree-item/tree-item.js',
             'source_backed_status' => 'larena_owned_fallback_carrier',
             'smoke_role' => 'read_only_tree_item',
+        ],
+        'form.checkbox' => [
+            'custom_element' => 'sf-checkbox',
+            'resource_path' => 'resources/simai/smart/checkbox/checkbox.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_boolean_marker',
+        ],
+        'media.avatar' => [
+            'custom_element' => 'sf-avatar',
+            'resource_path' => 'resources/simai/smart/avatar/avatar.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_identity_marker',
+        ],
+        'navigation.pagination' => [
+            'custom_element' => 'sf-pagination',
+            'resource_path' => 'resources/simai/smart/pagination/pagination.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_pagination_marker',
+        ],
+        'status.progress_scale' => [
+            'custom_element' => 'sf-progress-scale',
+            'resource_path' => 'resources/simai/smart/progress-scale/progress-scale.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_progress_marker',
+        ],
+        'status.tag' => [
+            'custom_element' => 'sf-tag',
+            'resource_path' => 'resources/simai/smart/tag/tag.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_status_marker',
+        ],
+        'theme.toggle' => [
+            'custom_element' => 'sf-toggle',
+            'resource_path' => 'resources/simai/smart/toggle/toggle.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_toggle_marker',
+        ],
+        'toolbar.icon_button' => [
+            'custom_element' => 'sf-icon-button',
+            'resource_path' => 'resources/simai/smart/icon-button/icon-button.js',
+            'source_backed_status' => 'larena_owned_fallback_carrier',
+            'smoke_role' => 'read_only_toolbar_action_marker',
         ],
     ];
 
