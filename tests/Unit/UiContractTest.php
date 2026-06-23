@@ -119,6 +119,16 @@ foreach ($publicationAssets as $asset) {
     assert(is_file(__DIR__ . '/../../' . $asset['resource_path']));
 }
 
+$routePublicationAssets = UiResourcePackManifest::adminFrontendReadOnlyRoutePublicationAssets();
+assert(count($routePublicationAssets) === 13);
+assert($routePublicationAssets[12]['asset_key'] === 'admin.shell.read_only_route.css');
+assert($routePublicationAssets[12]['kind'] === 'css');
+assert(is_file(__DIR__ . '/../../' . $routePublicationAssets[12]['resource_path']));
+
+$routeAssetGraph = UiResourcePackManifest::adminFrontendReadOnlyRouteAssetGraph();
+assert($routeAssetGraph->isValid());
+assert(count($routeAssetGraph->criticalRequirements()) === 13);
+
 $adminCompleteReadiness = $resourcePack->adminFrontendSmokeReadiness(array_values(
     UiResourcePackManifest::ADMIN_FRONTEND_REQUIRED_CUSTOM_ELEMENTS,
 ));

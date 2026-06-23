@@ -213,6 +213,31 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
+     * Package-owned stylesheet for the read-only admin route smoke shell. This
+     * keeps Blade markup free of inline CSS while preserving core.assets final
+     * path ownership.
+     *
+     * @var array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: UiAssetKind,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }
+     */
+    public const ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET = [
+        'carrier_key' => 'admin.shell.styles',
+        'asset_key' => 'admin.shell.read_only_route.css',
+        'kind' => UiAssetKind::Css,
+        'custom_element' => 'admin-shell',
+        'resource_path' => 'resources/simai/smart/admin-shell/read-only-route.css',
+        'source_backed_status' => 'larena_owned_shell_style',
+        'final_path_owned_by_core_assets' => true,
+    ];
+
+    /**
      * Minimal Larena-owned fallback modules for custom elements required by the
      * admin browser smoke. They are package resources, not root app runtime.
      *
@@ -410,6 +435,24 @@ final readonly class UiResourcePackManifest
         return new UiAssetGraph($requirements, $explain);
     }
 
+    public static function adminFrontendReadOnlyRouteAssetGraph(): UiAssetGraph
+    {
+        return new UiAssetGraph(
+            [
+                ...self::adminFrontendCarrierAssetGraph()->requirements,
+                new UiAssetRequirement(
+                    self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['asset_key'],
+                    self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['kind'],
+                    true,
+                ),
+            ],
+            [
+                ...self::adminFrontendCarrierAssetGraph()->explain,
+                'admin-route-style:package-owned-read-only-shell',
+            ],
+        );
+    }
+
     /**
      * @return array<string, array{
      *     custom_element: string,
@@ -453,6 +496,33 @@ final readonly class UiResourcePackManifest
         }
 
         return $assets;
+    }
+
+    /**
+     * @return list<array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: string,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }>
+     */
+    public static function adminFrontendReadOnlyRoutePublicationAssets(): array
+    {
+        return [
+            ...self::adminFrontendPackageOwnedCarrierPublicationAssets(),
+            [
+                'carrier_key' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['carrier_key'],
+                'asset_key' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['asset_key'],
+                'kind' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['kind']->value,
+                'custom_element' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['custom_element'],
+                'resource_path' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['resource_path'],
+                'source_backed_status' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['source_backed_status'],
+                'final_path_owned_by_core_assets' => true,
+            ],
+        ];
     }
 
     /**

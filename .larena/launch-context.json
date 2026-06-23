@@ -77,6 +77,7 @@
     "resources/simai/smart/tag/tag.js",
     "resources/simai/smart/toggle/toggle.js",
     "resources/simai/smart/icon-button/icon-button.js",
+    "resources/simai/smart/admin-shell/read-only-route.css",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/README.md",
