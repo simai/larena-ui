@@ -68,6 +68,8 @@ code,
 pre {
     font-family: "SFMono-Regular", Consolas, monospace;
     font-size: 13px;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 pre {
@@ -78,6 +80,22 @@ pre {
     max-width: 100%;
     overflow: auto;
     padding: 16px;
+    white-space: pre-wrap;
+}
+
+sf-table {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+sf-tag {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 @media (max-width: 640px) {
