@@ -526,6 +526,74 @@ final readonly class UiResourcePackManifest
     }
 
     /**
+     * @return array{
+     *     schema: string,
+     *     status: string,
+     *     owners: array<string, string>,
+     *     allowed_sources: list<string>,
+     *     forbidden_sources: list<string>,
+     *     reference_warnings: array<string, bool>,
+     *     required_actions: list<string>,
+     *     boundaries: array<string, bool>
+     * }
+     */
+    public static function adminFrontendArtifactAdapterPublicationPlan(): array
+    {
+        return [
+            'schema' => 'larena.ui.admin_frontend_artifact_adapter_publication_plan.v1',
+            'status' => 'adapter_plan_ready_with_reference_warnings',
+            'owners' => [
+                'smart_manifest' => 'larena/ui',
+                'resource_pack' => 'larena/ui',
+                'asset_activation' => 'larena/core:core.assets',
+                'shell_route' => 'larena/admin',
+                'layout_plan' => 'larena/layout',
+                'access' => 'larena/access',
+            ],
+            'allowed_sources' => [
+                'larena/ui resource pack descriptors',
+                'larena/ui package-owned smart carrier resources',
+                'larena/core:core.assets final publication paths',
+                'larena/admin PHP facade/backend descriptors',
+                'larena/layout page descriptor and zones',
+            ],
+            'forbidden_sources' => [
+                'ui-admin/dist copied into root simai/larena',
+                'ui-admin/node_modules copied into root simai/larena',
+                'hardcoded cdn.jsdelivr.net runtime dependency in Larena templates',
+                'hardcoded icons.simai.io runtime dependency in Larena templates',
+                'local /distr demo path as Larena runtime dependency',
+                'legacy SF5 label as Larena runtime or contract name',
+            ],
+            'reference_warnings' => [
+                'cdn_reference_requires_core_assets_repackaging' => true,
+                'legacy_sf5_label_requires_larena_naming_adapter' => true,
+                'ui_admin_demo_menu_requires_package_navigation_mapping' => true,
+                'write_events_require_guarded_settings_or_crud_launch' => true,
+                'test_actor_header_is_not_production_auth' => true,
+            ],
+            'required_actions' => [
+                'publish smart resources through larena/core:core.assets',
+                'replace demo CDN/script/style refs with package resource pack descriptors',
+                'map demo menu labels/routes to larena/admin navigation descriptors',
+                'keep write events deferred until guarded settings or CRUD launch',
+                'run browser smoke with no CDN failures before product UI claim',
+            ],
+            'boundaries' => [
+                'reference_only' => true,
+                'root_frontend_source_of_truth' => false,
+                'frontend_distribution_copy_allowed' => false,
+                'node_modules_copy_allowed' => false,
+                'hardcoded_cdn_allowed_in_larena_runtime' => false,
+                'legacy_sf5_contract_name_allowed' => false,
+                'database_writes' => false,
+                'crud_enabled' => false,
+                'production_ui_claim' => false,
+            ],
+        ];
+    }
+
+    /**
      * @return list<string>
      */
     public static function adminFrontendPackageOwnedCustomElements(): array
