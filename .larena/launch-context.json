@@ -16,7 +16,8 @@
     "ui.resource_pack_integration",
     "ui.admin_smart_carrier_fallback_resources",
     "ui.admin_smart_carrier_extended_fallback_resources",
-    "ui.in_memory_runtime.frontend_conveyor_demo"
+    "ui.in_memory_runtime.frontend_conveyor_demo",
+    "ui.package_asset_descriptor_pilot"
   ],
   "allowed_files": [
     ".env.example",
@@ -30,6 +31,7 @@
     "README.md",
     "composer.json",
     "composer.lock",
+    "assets.yaml",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/README.md",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/deviations.json",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/file-map.json",
@@ -71,6 +73,7 @@
     "resources/simai/smart/admin-menu-item/admin-menu-item.js",
     "resources/simai/smart/breadcrumbs/breadcrumbs.js",
     "resources/simai/smart/table/table.js",
+    "resources/assets/smart/table/table.js",
     "resources/simai/smart/tree-item/tree-item.js",
     "resources/simai/smart/checkbox/checkbox.js",
     "resources/simai/smart/avatar/avatar.js",
@@ -80,6 +83,7 @@
     "resources/simai/smart/toggle/toggle.js",
     "resources/simai/smart/icon-button/icon-button.js",
     "resources/simai/smart/admin-shell/read-only-route.css",
+    "resources/assets/admin-shell/read-only-route.css",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "tests/Unit/InMemoryUiRuntimeTest.php",

@@ -1,0 +1,28 @@
+{
+  "schema": "larena.core_assets.set.v1",
+  "asset_set": "admin.read_only_shell",
+  "owner_package": "larena/ui",
+  "activation_owner": "larena/core:core.assets",
+  "version": "0.1.0",
+  "context": "admin",
+  "resources": [
+    {
+      "key": "data.table.read_only_adapter",
+      "kind": "module",
+      "path": "resources/assets/smart/table/table.js",
+      "load": "critical"
+    },
+    {
+      "key": "admin.shell.read_only_route.css",
+      "kind": "css",
+      "path": "resources/assets/admin-shell/read-only-route.css",
+      "load": "critical"
+    }
+  ],
+  "policy": {
+    "local_only": true,
+    "allow_cdn": false,
+    "allow_template_direct_include": false,
+    "final_path_owned_by_core_assets": true
+  }
+}

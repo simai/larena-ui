@@ -232,7 +232,7 @@ final readonly class UiResourcePackManifest
         'asset_key' => 'admin.shell.read_only_route.css',
         'kind' => UiAssetKind::Css,
         'custom_element' => 'admin-shell',
-        'resource_path' => 'resources/simai/smart/admin-shell/read-only-route.css',
+        'resource_path' => 'resources/assets/admin-shell/read-only-route.css',
         'source_backed_status' => 'larena_owned_shell_style',
         'final_path_owned_by_core_assets' => true,
     ];
@@ -269,7 +269,7 @@ final readonly class UiResourcePackManifest
         ],
         'data.table' => [
             'custom_element' => 'sf-table',
-            'resource_path' => 'resources/simai/smart/table/table.js',
+            'resource_path' => 'resources/assets/smart/table/table.js',
             'source_backed_status' => 'larena_owned_fallback_carrier',
             'smoke_role' => 'read_only_table',
         ],
@@ -520,6 +520,55 @@ final readonly class UiResourcePackManifest
                 'custom_element' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['custom_element'],
                 'resource_path' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['resource_path'],
                 'source_backed_status' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['source_backed_status'],
+                'final_path_owned_by_core_assets' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @return array{
+     *     schema: string,
+     *     asset_set: string,
+     *     owner_package: string,
+     *     activation_owner: string,
+     *     version: string,
+     *     context: string,
+     *     resources: list<array{key: string, kind: string, path: string, load: string}>,
+     *     policy: array{
+     *         local_only: bool,
+     *         allow_cdn: bool,
+     *         allow_template_direct_include: bool,
+     *         final_path_owned_by_core_assets: bool
+     *     }
+     * }
+     */
+    public static function adminReadOnlyShellAssetDescriptor(): array
+    {
+        return [
+            'schema' => 'larena.core_assets.set.v1',
+            'asset_set' => 'admin.read_only_shell',
+            'owner_package' => 'larena/ui',
+            'activation_owner' => 'larena/core:core.assets',
+            'version' => '0.1.0',
+            'context' => 'admin',
+            'resources' => [
+                [
+                    'key' => 'data.table.read_only_adapter',
+                    'kind' => 'module',
+                    'path' => self::ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS['data.table']['resource_path'],
+                    'load' => 'critical',
+                ],
+                [
+                    'key' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['asset_key'],
+                    'kind' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['kind']->value,
+                    'path' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['resource_path'],
+                    'load' => 'critical',
+                ],
+            ],
+            'policy' => [
+                'local_only' => true,
+                'allow_cdn' => false,
+                'allow_template_direct_include' => false,
                 'final_path_owned_by_core_assets' => true,
             ],
         ];

@@ -129,6 +129,22 @@ $routeAssetGraph = UiResourcePackManifest::adminFrontendReadOnlyRouteAssetGraph(
 assert($routeAssetGraph->isValid());
 assert(count($routeAssetGraph->criticalRequirements()) === 13);
 
+$assetDescriptorPath = __DIR__ . '/../../assets.yaml';
+$assetDescriptor = json_decode((string) file_get_contents($assetDescriptorPath), true, 512, JSON_THROW_ON_ERROR);
+assert($assetDescriptor === UiResourcePackManifest::adminReadOnlyShellAssetDescriptor());
+assert($assetDescriptor['schema'] === 'larena.core_assets.set.v1');
+assert($assetDescriptor['owner_package'] === 'larena/ui');
+assert($assetDescriptor['activation_owner'] === 'larena/core:core.assets');
+assert($assetDescriptor['policy']['local_only'] === true);
+assert($assetDescriptor['policy']['allow_cdn'] === false);
+assert($assetDescriptor['policy']['allow_template_direct_include'] === false);
+assert($assetDescriptor['policy']['final_path_owned_by_core_assets'] === true);
+assert(count($assetDescriptor['resources']) === 2);
+foreach ($assetDescriptor['resources'] as $resource) {
+    assert(is_file(__DIR__ . '/../../' . $resource['path']));
+    assert(str_starts_with($resource['path'], 'resources/assets/'));
+}
+
 $artifactPublicationPlan = UiResourcePackManifest::adminFrontendArtifactAdapterPublicationPlan();
 assert($artifactPublicationPlan['schema'] === 'larena.ui.admin_frontend_artifact_adapter_publication_plan.v1');
 assert($artifactPublicationPlan['status'] === 'adapter_plan_ready_with_reference_warnings');
