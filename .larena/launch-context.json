@@ -15,7 +15,8 @@
     "ui.component_playground_coverage",
     "ui.resource_pack_integration",
     "ui.admin_smart_carrier_fallback_resources",
-    "ui.admin_smart_carrier_extended_fallback_resources"
+    "ui.admin_smart_carrier_extended_fallback_resources",
+    "ui.in_memory_runtime.frontend_conveyor_demo"
   ],
   "allowed_files": [
     ".env.example",
@@ -62,6 +63,7 @@
     "src/Contracts/UiPlaygroundScenario.php",
     "src/Contracts/UiResourcePackManifest.php",
     "src/Contracts/UiRuntime.php",
+    "src/Runtime/InMemoryUiRuntime.php",
     "src/Enums/HydrationStrategy.php",
     "src/Enums/RenderStrategy.php",
     "src/Enums/UiAssetKind.php",
@@ -80,6 +82,7 @@
     "resources/simai/smart/admin-shell/read-only-route.css",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
+    "tests/Unit/InMemoryUiRuntimeTest.php",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/README.md",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/implementation-summary.md",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/independent-review.md",

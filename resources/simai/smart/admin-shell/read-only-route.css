@@ -126,6 +126,29 @@ pre {
     white-space: pre-wrap;
 }
 
+table {
+    border-collapse: collapse;
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+th,
+td {
+    border-bottom: 1px solid #d9e0ea;
+    max-width: 260px;
+    overflow-wrap: anywhere;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+    word-break: break-word;
+}
+
+th {
+    color: #5b6675;
+    font-weight: 600;
+}
+
 [data-smart="carrier-smoke"] {
     display: grid;
     gap: 14px;
