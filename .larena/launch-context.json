@@ -86,6 +86,7 @@
     "resources/simai/smart/icon-button/icon-button.js",
     "resources/simai/smart/admin-shell/read-only-route.css",
     "resources/assets/admin-shell/read-only-route.css",
+    "resources/assets/admin-foundation/preview.css",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "tests/Unit/InMemoryUiRuntimeTest.php",

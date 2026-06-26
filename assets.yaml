@@ -17,6 +17,12 @@
       "kind": "css",
       "path": "resources/assets/admin-shell/read-only-route.css",
       "load": "critical"
+    },
+    {
+      "key": "admin.foundation.preview.css",
+      "kind": "css",
+      "path": "resources/assets/admin-foundation/preview.css",
+      "load": "critical"
     }
   ],
   "policy": {

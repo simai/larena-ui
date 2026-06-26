@@ -238,6 +238,30 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
+     * Shared stylesheet for older admin foundation preview surfaces while they
+     * are migrated to the descriptor/runtime frontend conveyor.
+     *
+     * @var array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: UiAssetKind,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }
+     */
+    public const ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET = [
+        'carrier_key' => 'admin.foundation.preview.styles',
+        'asset_key' => 'admin.foundation.preview.css',
+        'kind' => UiAssetKind::Css,
+        'custom_element' => 'admin-foundation-preview',
+        'resource_path' => 'resources/assets/admin-foundation/preview.css',
+        'source_backed_status' => 'larena_owned_foundation_preview_style',
+        'final_path_owned_by_core_assets' => true,
+    ];
+
+    /**
      * Minimal Larena-owned fallback modules for custom elements required by the
      * admin browser smoke. They are package resources, not root app runtime.
      *
@@ -445,10 +469,16 @@ final readonly class UiResourcePackManifest
                     self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['kind'],
                     true,
                 ),
+                new UiAssetRequirement(
+                    self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['asset_key'],
+                    self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['kind'],
+                    true,
+                ),
             ],
             [
                 ...self::adminFrontendCarrierAssetGraph()->explain,
                 'admin-route-style:package-owned-read-only-shell',
+                'admin-foundation-preview-style:package-owned-legacy-preview-cleanup',
             ],
         );
     }
@@ -522,6 +552,15 @@ final readonly class UiResourcePackManifest
                 'source_backed_status' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['source_backed_status'],
                 'final_path_owned_by_core_assets' => true,
             ],
+            [
+                'carrier_key' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['carrier_key'],
+                'asset_key' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['asset_key'],
+                'kind' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['kind']->value,
+                'custom_element' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['custom_element'],
+                'resource_path' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['resource_path'],
+                'source_backed_status' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['source_backed_status'],
+                'final_path_owned_by_core_assets' => true,
+            ],
         ];
     }
 
@@ -562,6 +601,12 @@ final readonly class UiResourcePackManifest
                     'key' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['asset_key'],
                     'kind' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['kind']->value,
                     'path' => self::ADMIN_FRONTEND_READ_ONLY_ROUTE_STYLE_ASSET['resource_path'],
+                    'load' => 'critical',
+                ],
+                [
+                    'key' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['asset_key'],
+                    'kind' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['kind']->value,
+                    'path' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['resource_path'],
                     'load' => 'critical',
                 ],
             ],

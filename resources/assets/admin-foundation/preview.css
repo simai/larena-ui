@@ -1,0 +1,177 @@
+body {
+    margin: 0;
+    background: #f8fafc;
+    color: #111827;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+main {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 32px 20px 56px;
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    line-height: 1.15;
+}
+
+h2 {
+    margin: 0 0 16px;
+    font-size: 20px;
+}
+
+h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+}
+
+p {
+    margin: 0 0 14px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+a {
+    color: #1d4ed8;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card,
+.panel {
+    background: #fff;
+    border: 1px solid #dbe3ef;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.panel {
+    margin: 18px 0;
+}
+
+.section {
+    margin-top: 18px;
+}
+
+.list {
+    display: grid;
+    gap: 14px;
+}
+
+.item {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+    background: #fbfdff;
+}
+
+.badge,
+.blocked,
+.status,
+.tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-weight: 800;
+}
+
+.badge,
+.status,
+.tag.ok {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.blocked,
+.tag.blocked {
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+.tag {
+    margin: 0 6px 6px 0;
+    background: #eef2f7;
+    color: #111827;
+}
+
+.muted {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+table,
+.pairs {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td,
+.pairs th,
+.pairs td {
+    padding: 10px 8px;
+    border-top: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+th,
+.pairs th {
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.pairs th {
+    width: 280px;
+}
+
+code,
+.mono {
+    border-radius: 6px;
+    background: #eef2f7;
+    padding: 2px 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.mono {
+    background: transparent;
+    padding: 0;
+}
+
+.links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+@media (max-width: 760px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    .panel,
+    .card {
+        padding: 16px;
+    }
+
+    .pairs th,
+    .pairs td {
+        display: block;
+        width: auto;
+    }
+}
