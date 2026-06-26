@@ -18,5 +18,7 @@ features:
 runtime:
   php: "^8.3"
   laravel: "^13.0"
+assets:
+  path: assets.yaml
 evidence:
   path: docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/
