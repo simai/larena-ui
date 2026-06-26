@@ -72,12 +72,16 @@ assert($serialized['schema'] === 'larena.ui.frontend_render_artifact.v1');
 assert($serialized['owner_package'] === 'larena/ui');
 assert($serialized['renderable'] === true);
 assert($serialized['html_is_render_artifact'] === true);
+assert($serialized['html'] === $render->html);
+assert($serialized['hydration']['valid'] === true);
+assert($serialized['hydration']['strategy'] === $render->hydration->strategy->value);
 assert($serialized['backend_render']['safe'] === true);
 assert($serialized['backend_render']['copied_frontend_source'] === false);
 assert($serialized['asset_graph']['valid'] === true);
 assert($serialized['asset_graph']['requirement_count'] === 2);
 assert($serialized['asset_activation']['activation_owner'] === 'larena/core:core.assets');
 assert($serialized['asset_activation']['renderable_tag_count'] === 2);
+assert($serialized['asset_activation']['renderable_tags'] === $artifact->assetTags());
 assert($serialized['diagnostics']['root_frontend_source_of_truth'] === false);
 
 $unsafeRender = new BackendRenderResult(

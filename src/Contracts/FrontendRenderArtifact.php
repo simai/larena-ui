@@ -62,6 +62,14 @@ final readonly class FrontendRenderArtifact
             'owner_package' => 'larena/ui',
             'renderable' => $this->isRenderable(),
             'html_is_render_artifact' => true,
+            'html' => $this->html(),
+            'hydration' => [
+                'valid' => $this->render->hydration->isValid(),
+                'strategy' => $this->render->hydration->strategy->value,
+                'props_hash' => $this->render->hydration->propsHash,
+                'dom_strategy' => $this->render->hydration->domStrategy,
+                'frontend_runtime_available' => $this->render->hydration->frontendRuntimeAvailable,
+            ],
             'backend_render' => [
                 'safe' => $this->render->isSafe(),
                 'strategy' => $this->render->strategy->value,
@@ -85,6 +93,7 @@ final readonly class FrontendRenderArtifact
                 'uses_hardcoded_cdn' => $this->assetActivation['uses_hardcoded_cdn'] ?? null,
                 'asset_count' => $this->assetActivation['asset_count'] ?? null,
                 'renderable_tag_count' => count($this->assetTags()),
+                'renderable_tags' => $this->assetTags(),
             ],
             'diagnostics' => $this->diagnostics,
         ];
