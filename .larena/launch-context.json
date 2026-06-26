@@ -17,7 +17,8 @@
     "ui.admin_smart_carrier_fallback_resources",
     "ui.admin_smart_carrier_extended_fallback_resources",
     "ui.in_memory_runtime.frontend_conveyor_demo",
-    "ui.package_asset_descriptor_pilot"
+    "ui.package_asset_descriptor_pilot",
+    "ui.frontend_render_artifact"
   ],
   "allowed_files": [
     ".env.example",
@@ -57,6 +58,7 @@
     "src/Contracts/BackendRenderResult.php",
     "src/Contracts/ComponentAtlasEntry.php",
     "src/Contracts/DesignPackDescriptor.php",
+    "src/Contracts/FrontendRenderArtifact.php",
     "src/Contracts/HydrationContract.php",
     "src/Contracts/SmartComponentManifest.php",
     "src/Contracts/SmartViewDescriptor.php",
@@ -87,6 +89,7 @@
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "tests/Unit/InMemoryUiRuntimeTest.php",
+    "tests/Unit/FrontendRenderArtifactTest.php",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/README.md",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/implementation-summary.md",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/independent-review.md",
