@@ -424,6 +424,35 @@ pre {
     font-weight: 700;
 }
 
+.status-row {
+    display: grid;
+    grid-template-columns: minmax(170px, 25%) minmax(180px, 22%) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 10px 0;
+    border-top: 1px solid #d9dde3;
+}
+
+.status-row:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.status-row > * {
+    min-width: 0;
+}
+
+.status-row .pill {
+    white-space: normal;
+}
+
+.boundary-note,
+.action-note,
+.status-row p,
+.status-row strong {
+    overflow-wrap: anywhere;
+}
+
 @media (max-width: 760px) {
     h1 {
         font-size: 28px;
@@ -432,7 +461,9 @@ pre {
     header,
     .metric-grid,
     .metrics,
-    .kv {
+    .kv,
+    .status-row,
+    .summary-grid {
         display: grid;
         grid-template-columns: 1fr;
     }
