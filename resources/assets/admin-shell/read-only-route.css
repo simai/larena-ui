@@ -175,6 +175,15 @@ sf-table {
     overflow-y: hidden;
 }
 
+[data-larena-page-builder-preview],
+[data-larena-page-builder-preview] section,
+[data-larena-atomic-block] {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
 sf-tag {
     display: inline-block;
     max-width: 100%;
