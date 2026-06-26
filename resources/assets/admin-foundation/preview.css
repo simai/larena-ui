@@ -92,6 +92,16 @@ a {
     color: #166534;
 }
 
+.badge.high {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge.medium {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
 .blocked,
 .tag.blocked {
     background: #fff7ed;
@@ -157,6 +167,12 @@ code,
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 8px;
+}
+
+.value {
+    margin: 8px 0;
+    font-size: 24px;
+    font-weight: 800;
 }
 
 @media (max-width: 760px) {
