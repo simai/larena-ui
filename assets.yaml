@@ -23,6 +23,24 @@
       "kind": "css",
       "path": "resources/assets/admin-foundation/preview.css",
       "load": "critical"
+    },
+    {
+      "key": "root.preview.internal_artifact.css",
+      "kind": "css",
+      "path": "resources/assets/admin-foundation/preview.css",
+      "load": "critical"
+    },
+    {
+      "key": "root.preview.file_operation_guarded_flow.css",
+      "kind": "css",
+      "path": "resources/assets/admin-foundation/preview.css",
+      "load": "critical"
+    },
+    {
+      "key": "root.preview.guarded_data_content_runtime_bridge.css",
+      "kind": "css",
+      "path": "resources/assets/admin-foundation/preview.css",
+      "load": "critical"
     }
   ],
   "policy": {

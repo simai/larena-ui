@@ -120,17 +120,20 @@ foreach ($publicationAssets as $asset) {
 }
 
 $routePublicationAssets = UiResourcePackManifest::adminFrontendReadOnlyRoutePublicationAssets();
-assert(count($routePublicationAssets) === 14);
+assert(count($routePublicationAssets) === 17);
 assert($routePublicationAssets[12]['asset_key'] === 'admin.shell.read_only_route.css');
 assert($routePublicationAssets[12]['kind'] === 'css');
 assert(is_file(__DIR__ . '/../../' . $routePublicationAssets[12]['resource_path']));
 assert($routePublicationAssets[13]['asset_key'] === 'admin.foundation.preview.css');
 assert($routePublicationAssets[13]['kind'] === 'css');
 assert(is_file(__DIR__ . '/../../' . $routePublicationAssets[13]['resource_path']));
+assert($routePublicationAssets[14]['asset_key'] === 'root.preview.internal_artifact.css');
+assert($routePublicationAssets[15]['asset_key'] === 'root.preview.file_operation_guarded_flow.css');
+assert($routePublicationAssets[16]['asset_key'] === 'root.preview.guarded_data_content_runtime_bridge.css');
 
 $routeAssetGraph = UiResourcePackManifest::adminFrontendReadOnlyRouteAssetGraph();
 assert($routeAssetGraph->isValid());
-assert(count($routeAssetGraph->criticalRequirements()) === 14);
+assert(count($routeAssetGraph->criticalRequirements()) === 17);
 
 $assetDescriptorPath = __DIR__ . '/../../assets.yaml';
 $assetDescriptor = json_decode((string) file_get_contents($assetDescriptorPath), true, 512, JSON_THROW_ON_ERROR);
@@ -142,8 +145,11 @@ assert($assetDescriptor['policy']['local_only'] === true);
 assert($assetDescriptor['policy']['allow_cdn'] === false);
 assert($assetDescriptor['policy']['allow_template_direct_include'] === false);
 assert($assetDescriptor['policy']['final_path_owned_by_core_assets'] === true);
-assert(count($assetDescriptor['resources']) === 3);
+assert(count($assetDescriptor['resources']) === 6);
 assert($assetDescriptor['resources'][2]['key'] === 'admin.foundation.preview.css');
+assert($assetDescriptor['resources'][3]['key'] === 'root.preview.internal_artifact.css');
+assert($assetDescriptor['resources'][4]['key'] === 'root.preview.file_operation_guarded_flow.css');
+assert($assetDescriptor['resources'][5]['key'] === 'root.preview.guarded_data_content_runtime_bridge.css');
 foreach ($assetDescriptor['resources'] as $resource) {
     assert(is_file(__DIR__ . '/../../' . $resource['path']));
     assert(str_starts_with($resource['path'], 'resources/assets/'));
