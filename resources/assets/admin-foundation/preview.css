@@ -251,6 +251,12 @@ code,
     gap: 12px;
 }
 
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
 .metric {
     margin-bottom: 0;
 }
@@ -334,6 +340,27 @@ code,
     padding-top: 0;
 }
 
+.surface-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.surface-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+}
+
+.surface-list li {
+    border-top: 1px solid #dbe3ef;
+    padding: 10px 0;
+}
+
+.surface-list li:first-child {
+    border-top: 0;
+}
+
 .kv {
     display: grid;
     grid-template-columns: minmax(180px, 300px) minmax(0, 1fr);
@@ -351,6 +378,12 @@ code,
     gap: 8px;
     align-items: center;
     margin: 6px 0;
+}
+
+.status-hint {
+    display: block;
+    color: #6b7280;
+    margin-top: 4px;
 }
 
 dl {
@@ -393,6 +426,7 @@ pre {
 
     header,
     .metric-grid,
+    .metrics,
     .kv {
         display: grid;
         grid-template-columns: 1fr;
