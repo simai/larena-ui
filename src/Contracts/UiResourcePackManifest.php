@@ -262,6 +262,53 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
+     * Minimal source-backed SIMAI Framework buttons proof slice. These package
+     * resources are copied from the local owner-skill source mirror into
+     * larena/ui, then activated through larena/core:core.assets read-only route
+     * publication. They are not root app assets and do not imply full asset
+     * rollout.
+     *
+     * @var array<string, array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: UiAssetKind,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }>
+     */
+    public const SOURCE_BACKED_SF5_BUTTON_ASSETS = [
+        'component_css' => [
+            'carrier_key' => 'source_backed_sf5.buttons.component_css',
+            'asset_key' => 'source_backed_sf5.buttons.component_css',
+            'kind' => UiAssetKind::Css,
+            'custom_element' => 'button.sf-button',
+            'resource_path' => 'resources/assets/source-backed-sf5/buttons/component/css/buttons.css',
+            'source_backed_status' => 'source_backed_sf5_component_adapter',
+            'final_path_owned_by_core_assets' => true,
+        ],
+        'component_js' => [
+            'carrier_key' => 'source_backed_sf5.buttons.component_js',
+            'asset_key' => 'source_backed_sf5.buttons.component_js',
+            'kind' => UiAssetKind::JavaScript,
+            'custom_element' => 'button.sf-button',
+            'resource_path' => 'resources/assets/source-backed-sf5/buttons/component/js/buttons.js',
+            'source_backed_status' => 'source_backed_sf5_component_adapter',
+            'final_path_owned_by_core_assets' => true,
+        ],
+        'smart_js' => [
+            'carrier_key' => 'source_backed_sf5.buttons.smart_js',
+            'asset_key' => 'source_backed_sf5.buttons.smart_js',
+            'kind' => UiAssetKind::Module,
+            'custom_element' => 'sf-button',
+            'resource_path' => 'resources/assets/source-backed-sf5/buttons/smart/js/buttons.js',
+            'source_backed_status' => 'source_backed_sf5_smart_component_adapter',
+            'final_path_owned_by_core_assets' => true,
+        ],
+    ];
+
+    /**
      * Compatibility preview styles that used to be linked from root
      * public/larena assets. They stay in the shared package stylesheet until
      * the corresponding root compatibility renderers are retired or moved.
@@ -633,6 +680,77 @@ final readonly class UiResourcePackManifest
         }
 
         return $assets;
+    }
+
+    /**
+     * @return list<array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: string,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }>
+     */
+    public static function sourceBackedSf5ButtonPublicationAssets(): array
+    {
+        return array_map(
+            static fn (array $asset): array => [
+                'carrier_key' => $asset['carrier_key'],
+                'asset_key' => $asset['asset_key'],
+                'kind' => $asset['kind']->value,
+                'custom_element' => $asset['custom_element'],
+                'resource_path' => $asset['resource_path'],
+                'source_backed_status' => $asset['source_backed_status'],
+                'final_path_owned_by_core_assets' => true,
+            ],
+            array_values(self::SOURCE_BACKED_SF5_BUTTON_ASSETS),
+        );
+    }
+
+    /**
+     * @return array{
+     *     schema: string,
+     *     asset_set: string,
+     *     owner_package: string,
+     *     activation_owner: string,
+     *     version: string,
+     *     context: string,
+     *     resources: list<array{key: string, kind: string, path: string, load: string}>,
+     *     policy: array{
+     *         local_only: bool,
+     *         allow_cdn: bool,
+     *         allow_template_direct_include: bool,
+     *         final_path_owned_by_core_assets: bool
+     *     }
+     * }
+     */
+    public static function sourceBackedSf5ButtonAssetDescriptor(): array
+    {
+        return [
+            'schema' => 'larena.core_assets.set.v1',
+            'asset_set' => 'source_backed_sf5.buttons',
+            'owner_package' => 'larena/ui',
+            'activation_owner' => 'larena/core:core.assets',
+            'version' => '0.1.0',
+            'context' => 'internal_demo',
+            'resources' => array_map(
+                static fn (array $asset): array => [
+                    'key' => $asset['asset_key'],
+                    'kind' => $asset['kind']->value,
+                    'path' => $asset['resource_path'],
+                    'load' => 'critical',
+                ],
+                array_values(self::SOURCE_BACKED_SF5_BUTTON_ASSETS),
+            ),
+            'policy' => [
+                'local_only' => true,
+                'allow_cdn' => false,
+                'allow_template_direct_include' => false,
+                'final_path_owned_by_core_assets' => true,
+            ],
+        ];
     }
 
     /**
