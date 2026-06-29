@@ -19,7 +19,8 @@
     "ui.in_memory_runtime.frontend_conveyor_demo",
     "ui.package_asset_descriptor_pilot",
     "ui.frontend_render_artifact",
-    "ui.source_backed_sf5_button_resource_pack_demo"
+    "ui.source_backed_sf5_button_resource_pack_demo",
+    "ui.source_backed_sf5_catalog_adapter_pipeline_demo"
   ],
   "allowed_files": [
     ".env.example",
@@ -92,6 +93,16 @@
     "resources/assets/source-backed-sf5/buttons/component/js/buttons.js",
     "resources/assets/source-backed-sf5/buttons/component/json/button.utility.json",
     "resources/assets/source-backed-sf5/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf5/catalog/buttons/component/css/buttons.css",
+    "resources/assets/source-backed-sf5/catalog/buttons/component/js/buttons.js",
+    "resources/assets/source-backed-sf5/catalog/buttons/component/json/button.utility.json",
+    "resources/assets/source-backed-sf5/catalog/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf5/catalog/tags/component/css/tags.css",
+    "resources/assets/source-backed-sf5/catalog/tags/component/js/tags.js",
+    "resources/assets/source-backed-sf5/catalog/tags/smart/js/tags.js",
+    "resources/assets/source-backed-sf5/catalog/pagination/component/css/pagination.css",
+    "resources/assets/source-backed-sf5/catalog/pagination/component/js/pagination.js",
+    "resources/assets/source-backed-sf5/catalog/pagination/smart/js/pagination.js",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "tests/Unit/InMemoryUiRuntimeTest.php",

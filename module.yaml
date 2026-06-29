@@ -13,6 +13,8 @@ features:
   - ui.hydration_contract
   - ui.resource_pack_integration
   - ui.smart_component_manifest
+  - ui.source_backed_sf5_button_resource_pack_demo
+  - ui.source_backed_sf5_catalog_adapter_pipeline_demo
   - ui.ui_asset_graph
   - ui.frontend_render_artifact
 runtime:

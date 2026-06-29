@@ -309,6 +309,121 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
+     * First repeatable source-backed SIMAI Framework catalog adapter set. Each
+     * slice is copied from the local SF5 source mirror into larena/ui package
+     * resources and can be activated only through larena/core:core.assets
+     * read-only publication.
+     *
+     * @var array<string, array<string, array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: UiAssetKind,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }>>
+     */
+    public const SOURCE_BACKED_SF5_CATALOG_ASSETS = [
+        'buttons' => [
+            'component_css' => [
+                'carrier_key' => 'source_backed_sf5.catalog.buttons.component_css',
+                'asset_key' => 'source_backed_sf5.catalog.buttons.component_css',
+                'kind' => UiAssetKind::Css,
+                'custom_element' => 'button.sf-button',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/buttons/component/css/buttons.css',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'component_js' => [
+                'carrier_key' => 'source_backed_sf5.catalog.buttons.component_js',
+                'asset_key' => 'source_backed_sf5.catalog.buttons.component_js',
+                'kind' => UiAssetKind::JavaScript,
+                'custom_element' => 'button.sf-button',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/buttons/component/js/buttons.js',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'component_json' => [
+                'carrier_key' => 'source_backed_sf5.catalog.buttons.component_json',
+                'asset_key' => 'source_backed_sf5.catalog.buttons.component_json',
+                'kind' => UiAssetKind::Manifest,
+                'custom_element' => 'button.sf-button',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/buttons/component/json/button.utility.json',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'smart_js' => [
+                'carrier_key' => 'source_backed_sf5.catalog.buttons.smart_js',
+                'asset_key' => 'source_backed_sf5.catalog.buttons.smart_js',
+                'kind' => UiAssetKind::Module,
+                'custom_element' => 'sf-button',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/buttons/smart/js/buttons.js',
+                'source_backed_status' => 'source_backed_sf5_catalog_smart_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+        ],
+        'tags' => [
+            'component_css' => [
+                'carrier_key' => 'source_backed_sf5.catalog.tags.component_css',
+                'asset_key' => 'source_backed_sf5.catalog.tags.component_css',
+                'kind' => UiAssetKind::Css,
+                'custom_element' => 'span.sf-tag',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/tags/component/css/tags.css',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'component_js' => [
+                'carrier_key' => 'source_backed_sf5.catalog.tags.component_js',
+                'asset_key' => 'source_backed_sf5.catalog.tags.component_js',
+                'kind' => UiAssetKind::JavaScript,
+                'custom_element' => 'span.sf-tag',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/tags/component/js/tags.js',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'smart_js' => [
+                'carrier_key' => 'source_backed_sf5.catalog.tags.smart_js',
+                'asset_key' => 'source_backed_sf5.catalog.tags.smart_js',
+                'kind' => UiAssetKind::Module,
+                'custom_element' => 'sf-tag',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/tags/smart/js/tags.js',
+                'source_backed_status' => 'source_backed_sf5_catalog_smart_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+        ],
+        'pagination' => [
+            'component_css' => [
+                'carrier_key' => 'source_backed_sf5.catalog.pagination.component_css',
+                'asset_key' => 'source_backed_sf5.catalog.pagination.component_css',
+                'kind' => UiAssetKind::Css,
+                'custom_element' => 'nav.sf-pagination',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/pagination/component/css/pagination.css',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'component_js' => [
+                'carrier_key' => 'source_backed_sf5.catalog.pagination.component_js',
+                'asset_key' => 'source_backed_sf5.catalog.pagination.component_js',
+                'kind' => UiAssetKind::JavaScript,
+                'custom_element' => 'nav.sf-pagination',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/pagination/component/js/pagination.js',
+                'source_backed_status' => 'source_backed_sf5_catalog_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+            'smart_js' => [
+                'carrier_key' => 'source_backed_sf5.catalog.pagination.smart_js',
+                'asset_key' => 'source_backed_sf5.catalog.pagination.smart_js',
+                'kind' => UiAssetKind::Module,
+                'custom_element' => 'sf-pagination',
+                'resource_path' => 'resources/assets/source-backed-sf5/catalog/pagination/smart/js/pagination.js',
+                'source_backed_status' => 'source_backed_sf5_catalog_smart_component_adapter',
+                'final_path_owned_by_core_assets' => true,
+            ],
+        ],
+    ];
+
+    /**
      * Compatibility preview styles that used to be linked from root
      * public/larena assets. They stay in the shared package stylesheet until
      * the corresponding root compatibility renderers are retired or moved.
@@ -707,6 +822,86 @@ final readonly class UiResourcePackManifest
             ],
             array_values(self::SOURCE_BACKED_SF5_BUTTON_ASSETS),
         );
+    }
+
+    /**
+     * @return list<array{
+     *     carrier_key: string,
+     *     asset_key: string,
+     *     kind: string,
+     *     custom_element: string,
+     *     resource_path: string,
+     *     source_backed_status: string,
+     *     final_path_owned_by_core_assets: true
+     * }>
+     */
+    public static function sourceBackedSf5CatalogPublicationAssets(): array
+    {
+        $assets = [];
+
+        foreach (self::SOURCE_BACKED_SF5_CATALOG_ASSETS as $sliceAssets) {
+            foreach ($sliceAssets as $asset) {
+                $assets[] = [
+                    'carrier_key' => $asset['carrier_key'],
+                    'asset_key' => $asset['asset_key'],
+                    'kind' => $asset['kind']->value,
+                    'custom_element' => $asset['custom_element'],
+                    'resource_path' => $asset['resource_path'],
+                    'source_backed_status' => $asset['source_backed_status'],
+                    'final_path_owned_by_core_assets' => true,
+                ];
+            }
+        }
+
+        return $assets;
+    }
+
+    /**
+     * @return array{
+     *     schema: string,
+     *     asset_set: string,
+     *     owner_package: string,
+     *     activation_owner: string,
+     *     version: string,
+     *     context: string,
+     *     slice_count: int,
+     *     resources: list<array{key: string, kind: string, path: string, load: string}>,
+     *     policy: array{
+     *         local_only: bool,
+     *         allow_cdn: bool,
+     *         allow_template_direct_include: bool,
+     *         final_path_owned_by_core_assets: bool,
+     *         full_asset_rollout: bool
+     *     }
+     * }
+     */
+    public static function sourceBackedSf5CatalogAssetDescriptor(): array
+    {
+        return [
+            'schema' => 'larena.core_assets.set.v1',
+            'asset_set' => 'source_backed_sf5.catalog_adapter_pipeline',
+            'owner_package' => 'larena/ui',
+            'activation_owner' => 'larena/core:core.assets',
+            'version' => '0.1.0',
+            'context' => 'internal_demo',
+            'slice_count' => count(self::SOURCE_BACKED_SF5_CATALOG_ASSETS),
+            'resources' => array_map(
+                static fn (array $asset): array => [
+                    'key' => $asset['asset_key'],
+                    'kind' => $asset['kind'],
+                    'path' => $asset['resource_path'],
+                    'load' => 'critical',
+                ],
+                self::sourceBackedSf5CatalogPublicationAssets(),
+            ),
+            'policy' => [
+                'local_only' => true,
+                'allow_cdn' => false,
+                'allow_template_direct_include' => false,
+                'final_path_owned_by_core_assets' => true,
+                'full_asset_rollout' => false,
+            ],
+        ];
     }
 
     /**
