@@ -9,6 +9,22 @@ body {
     box-sizing: border-box;
 }
 
+html,
+body,
+main,
+section,
+div {
+    max-width: 100%;
+    min-width: 0;
+}
+
+main,
+section,
+div,
+li {
+    overflow-wrap: anywhere;
+}
+
 main {
     max-width: 1220px;
     margin: 0 auto;
