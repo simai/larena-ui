@@ -120,7 +120,8 @@
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/tests.md",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/file-map.json",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/deviations.json",
-    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/graph-sync-proposal.json"
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/graph-sync-proposal.json",
+    "scripts/run-unit-tests.php"
   ],
   "forbidden_files": [
     "config/*",
