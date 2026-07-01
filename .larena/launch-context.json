@@ -121,7 +121,9 @@
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/file-map.json",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/deviations.json",
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/graph-sync-proposal.json",
-    "scripts/run-unit-tests.php"
+    "scripts/run-unit-tests.php",
+    "scripts/analyse.php",
+    "tests/bootstrap.php"
   ],
   "forbidden_files": [
     "config/*",
