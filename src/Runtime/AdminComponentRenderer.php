@@ -55,7 +55,7 @@ final class AdminComponentRenderer
         if (!isset($manifests[$key])) {
             throw new InvalidArgumentException('ui_lab_unknown_recipe:' . $key);
         }
-        $html = match ($key) {
+        $render = match ($key) {
             'dataview' => $this->tableRecipe($labels),
             'crud_form' => $this->crudRecipe($labels),
             'dashboard' => $this->dashboardRecipe($labels),
@@ -64,7 +64,12 @@ final class AdminComponentRenderer
             default => throw new InvalidArgumentException('ui_lab_recipe_renderer_missing:' . $key),
         };
 
-        return $this->artifact($manifests[$key], $html, $assetActivation, ['kind' => 'recipe', 'key' => $key, 'layout_regions' => $this->recipeRegions($key)]);
+        return new FrontendRenderArtifact(
+            $render,
+            new UiAssetGraph($render->assetRequirements, ['source-backed:simai/ui-smart', 'smart-recipe:' . $key]),
+            $assetActivation,
+            ['kind' => 'recipe', 'key' => $key, 'layout_regions' => $this->recipeRegions($key), 'manifest' => $manifests[$key]->componentKey, 'owner_package' => 'larena/ui', 'production_ready' => false, 'all_41_packages_ready' => false],
+        );
     }
 
     /** @return list<string> */
@@ -76,16 +81,6 @@ final class AdminComponentRenderer
             'crud_form', 'settings_form' => ['workspace', 'notifications'],
             default => ['workspace'],
         };
-    }
-
-    private function artifact(SmartComponentManifest $manifest, string $html, array $activation, array $diagnostics): FrontendRenderArtifact
-    {
-        return new FrontendRenderArtifact(
-            new BackendRenderResult($html, RenderStrategy::Native, HydrationContract::none(), $manifest->assetRequirements),
-            new UiAssetGraph($manifest->assetRequirements, ['smart-component:' . $manifest->componentKey, 'package-owned:larena/ui']),
-            $activation,
-            $diagnostics + ['manifest' => $manifest->componentKey, 'owner_package' => 'larena/ui', 'production_ready' => false, 'all_41_packages_ready' => false],
-        );
     }
 
     private function buttonRender(array $p): BackendRenderResult
@@ -238,11 +233,58 @@ final class AdminComponentRenderer
         };
     }
 
-    private function tableRecipe(array $l): string { return '<div data-larena-smart-component="admin.dataview"><div class="larena-dataview-scroll" role="region" tabindex="0" aria-label="'.$this->e((string)($l['table_label']??'Pages')).'"><table class="larena-table"><thead><tr><th scope="col">'. $this->e((string)($l['title']??'Title')).'</th><th scope="col">Status</th></tr></thead><tbody><tr><td><a href="/admin/docara/pages">Larena</a></td><td><span class="larena-status larena-status-published">Published</span></td></tr></tbody></table></div></div>'; }
-    private function crudRecipe(array $l): string { return '<form class="larena-form" data-larena-smart-component="admin.crud_form"><div class="larena-field"><label for="recipe-title">'.$this->e((string)($l['title']??'Title')).'</label><input id="recipe-title" value="Larena"></div><div class="larena-field"><label for="recipe-status">Status</label><select id="recipe-status"><option>Draft</option><option>Published</option></select></div><div class="larena-form-actions"><button class="larena-button larena-button-primary" type="button">'.$this->e((string)($l['save']??'Save')).'</button></div></form>'; }
-    private function dashboardRecipe(array $l): string { return '<section class="larena-lab-dashboard" data-larena-smart-component="admin.dashboard"><article><strong>12</strong><span>'.$this->e((string)($l['pages']??'Pages')).'</span></article><article><strong>4</strong><span>'.$this->e((string)($l['published']??'Published')).'</span></article><article><strong>3</strong><span>'.$this->e((string)($l['users']??'Users')).'</span></article></section>'; }
-    private function mediaRecipe(array $l): string { return '<section class="larena-media-grid" data-larena-smart-component="admin.media_picker" aria-label="'.$this->e((string)($l['media']??'Media picker')).'"><button class="larena-media-card larena-lab-media-option" type="button" aria-pressed="true"><span class="larena-media-card__preview">PNG</span><strong>hero.png</strong></button><button class="larena-media-card larena-lab-media-option" type="button" aria-pressed="false"><span class="larena-media-card__preview">JPG</span><strong>team.jpg</strong></button></section>'; }
-    private function settingsRecipe(array $l): string { return '<form class="larena-form" data-larena-smart-component="admin.settings_form"><fieldset><legend>'.$this->e((string)($l['general']??'General')).'</legend><div class="larena-field"><label for="recipe-site-name">'.$this->e((string)($l['site_name']??'Site name')).'</label><input id="recipe-site-name" value="Larena"></div></fieldset><div class="larena-form-actions"><button class="larena-button larena-button-primary" type="button">'.$this->e((string)($l['save']??'Save')).'</button></div></form>'; }
+    private function tableRecipe(array $labels): BackendRenderResult
+    {
+        return Smart::render('sf-table', [
+            'aria-label' => (string) ($labels['table_label'] ?? 'Pages'),
+            'root-class' => 'larena-recipe-sf-table',
+            'data' => [
+                'columns' => [
+                    ['key' => 'title', 'label' => (string) ($labels['title'] ?? 'Title')],
+                    ['key' => 'status', 'label' => 'Status'],
+                ],
+                'rows' => [[
+                    'title' => 'Larena',
+                    'status' => (string) ($labels['published'] ?? 'Published'),
+                ]],
+                'pagination' => ['page' => 1, 'pageSize' => 10, 'total' => 1],
+            ],
+        ]);
+    }
+
+    private function crudRecipe(array $labels): BackendRenderResult
+    {
+        $title = Smart::render('sf-input', ['id' => 'recipe-title', 'name' => 'title', 'label' => (string) ($labels['title'] ?? 'Title'), 'value' => 'Larena', 'type' => 'bordered', 'size' => '1']);
+        $status = Smart::render('sf-input', ['id' => 'recipe-status', 'name' => 'status', 'label' => 'Status', 'value' => 'Draft', 'type' => 'bordered', 'size' => '1']);
+        $save = Smart::render('sf-button', $this->buttonProps(['label' => (string) ($labels['save'] ?? 'Save')]));
+        return $this->composition('<form class="grid gap-3" data-larena-smart-composition="admin.crud_form">' . $title->html . $status->html . '<div class="flex content-main-end">' . $save->html . '</div></form>', [$title, $status, $save]);
+    }
+
+    private function dashboardRecipe(array $labels): BackendRenderResult
+    {
+        $metrics = [
+            Smart::render('sf-badge', ['size' => '1', 'type' => 'tonal', 'scheme' => 'primary', 'text' => '12 ' . (string) ($labels['pages'] ?? 'Pages')]),
+            Smart::render('sf-badge', ['size' => '1', 'type' => 'tonal', 'scheme' => 'success', 'text' => '4 ' . (string) ($labels['published'] ?? 'Published')]),
+            Smart::render('sf-badge', ['size' => '1', 'type' => 'tonal', 'scheme' => 'secondary', 'text' => '3 ' . (string) ($labels['users'] ?? 'Users')]),
+        ];
+        return $this->composition('<section class="grid grid-col-3 gap-2 md:grid-col-1" data-larena-smart-composition="admin.dashboard">' . implode('', array_map(static fn (BackendRenderResult $render): string => $render->html, $metrics)) . '</section>', $metrics);
+    }
+
+    private function mediaRecipe(array $labels): BackendRenderResult
+    {
+        $items = [
+            Smart::render('sf-button', ['text' => 'PNG · hero.png', 'type' => 'tonal', 'scheme' => 'primary', 'native-type' => 'button', 'aria-label' => 'hero.png']),
+            Smart::render('sf-button', ['text' => 'JPG · team.jpg', 'type' => 'tonal', 'scheme' => 'secondary', 'native-type' => 'button', 'aria-label' => 'team.jpg']),
+        ];
+        return $this->composition('<section class="flex flex-wrap gap-2" data-larena-smart-composition="admin.media_picker" aria-label="' . $this->e((string) ($labels['media'] ?? 'Media picker')) . '">' . implode('', array_map(static fn (BackendRenderResult $render): string => $render->html, $items)) . '</section>', $items);
+    }
+
+    private function settingsRecipe(array $labels): BackendRenderResult
+    {
+        $name = Smart::render('sf-input', ['id' => 'recipe-site-name', 'name' => 'site_name', 'label' => (string) ($labels['site_name'] ?? 'Site name'), 'value' => 'Larena', 'type' => 'bordered', 'size' => '1']);
+        $save = Smart::render('sf-button', $this->buttonProps(['label' => (string) ($labels['save'] ?? 'Save')]));
+        return $this->composition('<form class="grid gap-3" data-larena-smart-composition="admin.settings_form"><fieldset class="grid gap-2"><legend>' . $this->e((string) ($labels['general'] ?? 'General')) . '</legend>' . $name->html . '</fieldset><div class="flex content-main-end">' . $save->html . '</div></form>', [$name, $save]);
+    }
     private function e(string $v): string { return htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
     private function token(string $v): string { return preg_replace('/[^a-z0-9_-]/', '', strtolower($v)) ?: 'default'; }
 }

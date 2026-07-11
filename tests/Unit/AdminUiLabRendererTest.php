@@ -18,12 +18,22 @@ foreach (array_keys($catalog->definitions()) as $key) {
     assert(str_contains($artifact->html(), '<' . $runtimeTags[$key]));
     assert(($artifact->diagnostics['runtime_tags'] ?? []) !== []);
 }
-foreach (['dataview','crud_form','dashboard','media_picker','settings_form'] as $key) {
+$recipeTags = [
+    'dataview' => ['sf-table'],
+    'crud_form' => ['sf-input', 'sf-button'],
+    'dashboard' => ['sf-badge'],
+    'media_picker' => ['sf-button'],
+    'settings_form' => ['sf-input', 'sf-button'],
+];
+foreach ($recipeTags as $key => $tags) {
     $artifact = $renderer->recipe($key, [], $activation);
     assert($artifact->isRenderable());
     assert(($artifact->diagnostics['production_ready'] ?? true) === false);
     assert($renderer->recipeRegions($key) !== []);
+    foreach ($tags as $tag) assert(str_contains($artifact->html(), '<' . $tag));
 }
+assert(!str_contains($renderer->recipe('dataview', [], $activation)->html(), '<table'));
+assert(!str_contains($renderer->recipe('crud_form', [], $activation)->html(), '<input'));
 assert(str_contains($renderer->component('modal', [], $activation)->html(), '<sf-modal'));
 assert(!str_contains($renderer->component('modal', [], $activation)->html(), '<dialog'));
 assert(str_contains($renderer->component('field', ['error'=>'Required'], $activation)->html(), '<sf-input'));
