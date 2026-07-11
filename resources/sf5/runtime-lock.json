@@ -1,14 +1,14 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v1",
   "runtime": "simai-framework",
-  "pair_id": "sf5-v5.3.1-96577eb1-0242425c",
-  "tag": "v5.3.1",
+  "pair_id": "sf5-v5.3.2-7e836d8a-0242425c",
+  "tag": "v5.3.2",
   "ui": {
-    "tag": "v5.3.1",
-    "commit": "96577eb157ed785d5043d5323d24508613af8462",
+    "tag": "v5.3.2",
+    "commit": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "7d2364dd249f716089bc4e0a98d4b7b1adc8a1379b09a4397ba02862907cd7af",
+    "sha256": "481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7",
     "files": 2596
   },
   "ui_smart": {

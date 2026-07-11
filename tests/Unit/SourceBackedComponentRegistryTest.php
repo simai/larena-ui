@@ -8,9 +8,9 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->tag() === 'v5.3.1');
-assert($lock->pairId() === 'sf5-v5.3.1-96577eb1-0242425c');
-assert($lock->toArray()['ui']['commit'] === '96577eb157ed785d5043d5323d24508613af8462');
+assert($lock->tag() === 'v5.3.2');
+assert($lock->pairId() === 'sf5-v5.3.2-7e836d8a-0242425c');
+assert($lock->toArray()['ui']['commit'] === '7e836d8a9414d5da553fb1ab0404721e5b48769a');
 assert($lock->toArray()['ui_smart']['commit'] === '0242425c8f1e20548a04319422ec2d0584cda1a9');
 
 $registry = SourceBackedComponentRegistry::bundled();
