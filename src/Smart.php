@@ -24,6 +24,7 @@ final class Smart
 
         $hash = hash('sha256', json_encode($props, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $payload = null;
+        $children = '';
         $id = isset($props['id']) && is_string($props['id']) && preg_match('/^[A-Za-z][A-Za-z0-9_-]*$/', $props['id'])
             ? $props['id']
             : ($tag === 'sf-table' ? 'larena-smart-' . substr($hash, 0, 12) : null);
@@ -34,6 +35,10 @@ final class Smart
         foreach ($props as $key => $value) {
             if ($key === 'data' && $tag === 'sf-table') {
                 $payload = $value;
+                continue;
+            }
+            if ($key === 'options' && $tag === 'sf-dropdown') {
+                $children = self::dropdownOptions($value);
                 continue;
             }
             if (is_bool($value)) {
@@ -48,7 +53,7 @@ final class Smart
             $attributes[$key] = (string) $value;
         }
 
-        $html = '<' . $tag . self::attributes($attributes) . '></' . $tag . '>';
+        $html = '<' . $tag . self::attributes($attributes) . '>' . $children . '</' . $tag . '>';
         if ($payload !== null && $id !== null) {
             if (!is_array($payload)) {
                 throw new \InvalidArgumentException('ui_smart_table_data_must_be_array');
@@ -109,5 +114,41 @@ final class Smart
     private static function escape(string $value): string
     {
         return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    private static function dropdownOptions(mixed $options): string
+    {
+        if (!is_array($options) || !array_is_list($options)) {
+            throw new \InvalidArgumentException('ui_smart_dropdown_options_must_be_list');
+        }
+
+        $html = '';
+        $allowed = ['text', 'value', 'type', 'size', 'icon', 'selected', 'disabled', 'aria-label'];
+        foreach ($options as $option) {
+            if (!is_array($option) || !isset($option['text'], $option['value'])) {
+                throw new \InvalidArgumentException('ui_smart_dropdown_option_invalid');
+            }
+            foreach (array_keys($option) as $key) {
+                if (!in_array($key, $allowed, true)) {
+                    throw new \InvalidArgumentException('ui_smart_dropdown_option_prop_unknown:' . (string) $key);
+                }
+            }
+            $attributes = [];
+            foreach ($option as $key => $value) {
+                if (is_bool($value)) {
+                    if ($value) {
+                        $attributes[$key] = '';
+                    }
+                    continue;
+                }
+                if (!is_scalar($value)) {
+                    throw new \InvalidArgumentException('ui_smart_dropdown_option_attribute_must_be_scalar:' . (string) $key);
+                }
+                $attributes[$key] = (string) $value;
+            }
+            $html .= '<sf-list-item' . self::attributes($attributes) . '></sf-list-item>';
+        }
+
+        return $html;
     }
 }

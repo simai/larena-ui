@@ -44,6 +44,9 @@ final readonly class SourceBackedComponentRegistry
         if ($tag === 'sf-table') {
             $allowed = [...$allowed, 'data'];
         }
+        if ($tag === 'sf-dropdown') {
+            $allowed = [...$allowed, 'options'];
+        }
         foreach (array_keys($props) as $key) {
             if (!in_array($key, $allowed, true)) {
                 throw new InvalidArgumentException('ui_smart_prop_unknown:' . $tag . ':' . (string) $key);

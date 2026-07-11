@@ -9,9 +9,9 @@ use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
 assert($lock->tag() === 'v5.3.2');
-assert($lock->pairId() === 'sf5-v5.3.2-7e836d8a-0242425c');
+assert($lock->pairId() === 'sf5-v5.3.2-7e836d8a-dd786bba');
 assert($lock->toArray()['ui']['commit'] === '7e836d8a9414d5da553fb1ab0404721e5b48769a');
-assert($lock->toArray()['ui_smart']['commit'] === '0242425c8f1e20548a04319422ec2d0584cda1a9');
+assert($lock->toArray()['ui_smart']['commit'] === 'dd786bbae98391fb21df9b4e1e6cd402ead0614c');
 
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'smart/buttons');
@@ -22,10 +22,12 @@ assert($registry->get('sf-pagination')['source'] === 'smart/pagination');
 assert($registry->get('sf-input')['source'] === 'smart/inputs');
 assert($registry->get('sf-modal')['source'] === 'smart/modal');
 assert($registry->get('sf-textarea')['source'] === 'smart/textarea');
+assert($registry->get('sf-dropdown')['source'] === 'smart/dropdown');
 $registry->assertPropsAllowed('sf-button', ['text' => 'Create', 'disabled' => false]);
 $registry->assertPropsAllowed('sf-table', ['aria-label' => 'Pages', 'data' => ['columns' => [], 'rows' => []]]);
 $registry->assertPropsAllowed('sf-input', ['label' => 'Title', 'required' => true, 'error' => false]);
 $registry->assertPropsAllowed('sf-modal', ['id' => 'dialog', 'title' => 'Dialog', 'overlay' => true]);
+$registry->assertPropsAllowed('sf-dropdown', ['name' => 'locale', 'options' => [['text' => 'English', 'value' => 'en']]]);
 
 $failed = false;
 try { $registry->assertPropsAllowed('sf-button', ['onclick' => 'unsafe']); } catch (InvalidArgumentException) { $failed = true; }

@@ -32,4 +32,19 @@ foreach ([
     assert($render->isSafe());
 }
 
+$dropdown = Smart::render('sf-dropdown', [
+    'name' => 'locale',
+    'label' => 'Language',
+    'value' => 'en',
+    'required' => true,
+    'options' => [
+        ['text' => 'English', 'value' => 'en', 'selected' => true],
+        ['text' => 'Русский', 'value' => 'ru'],
+    ],
+]);
+assert(str_contains($dropdown->html, '<sf-dropdown'));
+assert(str_contains($dropdown->html, '<sf-list-item text="English" value="en" selected>'));
+assert(!str_contains($dropdown->html, 'options='));
+assert($dropdown->isSafe());
+
 echo "SmartTest passed\n";

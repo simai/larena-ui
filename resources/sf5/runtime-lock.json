@@ -1,7 +1,7 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v1",
   "runtime": "simai-framework",
-  "pair_id": "sf5-v5.3.2-7e836d8a-0242425c",
+  "pair_id": "sf5-v5.3.2-7e836d8a-dd786bba",
   "tag": "v5.3.2",
   "ui": {
     "tag": "v5.3.2",
@@ -12,11 +12,11 @@
     "files": 2596
   },
   "ui_smart": {
-    "tag": "v5.3.0",
-    "commit": "0242425c8f1e20548a04319422ec2d0584cda1a9",
+    "tag": "v5.3.1",
+    "commit": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "d64d90f539715b13d4147d20fea7265241759566f794a394cb5ae45c5e30f53c",
+    "sha256": "1c2eacbc58f3deb1d351b11dfb5da6755502386bb1224554754477bc700c9262",
     "files": 112
   },
   "boot": {
@@ -74,6 +74,12 @@
       "javascript": "smart/smart/textarea/js/textarea.js",
       "css": null,
       "attributes": ["template", "size", "type", "label", "required", "rows", "placeholder", "hint", "name", "value", "disabled", "error", "mask", "mask-pattern", "mask-options", "aria-label", "id", "class"]
+    },
+    "sf-dropdown": {
+      "source": "smart/dropdown",
+      "javascript": "smart/smart/dropdown/js/dropdown.js",
+      "css": null,
+      "attributes": ["template", "size", "type", "mode", "multiple", "portal", "value", "name", "label", "required", "placeholder", "search-placeholder", "search", "disabled", "aria-label", "id", "class"]
     }
   }
 }
