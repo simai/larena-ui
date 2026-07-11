@@ -1,10 +1,10 @@
 {
   "schema": "larena.package_launch_context.v1",
   "package": "larena/ui",
-  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/admin-ui-runtime-dataview-pages-users.json",
+  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/ui-lab-admin-recipes.json",
   "specs_repo": "simai/larena-specs",
   "specs_commit": "fb58c18db29213e1d0e1cb52f4ade437093199f5",
-  "base_commit": "99b08186adb97fffbe5a65a56f63bd0f76423d90",
+  "base_commit": "10b6bf8",
   "selected_features": [
     "ui.smart_component_manifest",
     "ui.backend_first_rendering",
@@ -21,6 +21,8 @@
     "ui.frontend_render_artifact",
     "ui.source_backed_sf5_button_resource_pack_demo",
     "ui.source_backed_sf5_catalog_adapter_pipeline_demo"
+    ,"ui.admin_component_atlas"
+    ,"ui.admin_recipes"
   ],
   "allowed_files": [
     "src/Assets/AdminDataviewAssetManifest.php",
@@ -28,6 +30,11 @@
     "src/Runtime/AdminDataviewRenderer.php",
     "resources/css/admin-dataview.css",
     "tests/Unit/AdminDataviewRendererTest.php",
+    "src/Assets/AdminUiLabAssetManifest.php",
+    "src/Runtime/AdminUiLabRenderer.php",
+    "resources/css/admin-ui-lab.css",
+    "resources/js/admin-ui-lab.js",
+    "tests/Unit/AdminUiLabRendererTest.php",
     ".env.example",
     ".githooks/pre-commit",
     ".githooks/pre-push",
@@ -156,11 +163,11 @@
   ],
   "evidence_path": "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/",
   "graph_sync_proposal_path": "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/graph-sync-proposal.json",
-  "status": "contract_skeleton_review_passed",
+  "status": "coding_started",
   "coding_started": true,
   "repository_enforcement_installed": true,
-  "review_completed": true,
-  "next_transition": "merge_to_main",
+  "review_completed": false,
+  "next_transition": "browser_acceptance_and_commit",
   "repository_reset_pre_codegen": true,
   "repository_created_locally": true,
   "remote_push_status": "not_attempted_current_batch_github_cli_not_authenticated"

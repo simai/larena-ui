@@ -59,6 +59,7 @@ if ($codingStarted) {
     if (!in_array(($launchContext['launch_record_ref'] ?? null), [
         'specs/implementation-planning/launch-records/ui-batch-1-contract-skeletons-current.json',
         '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/admin-ui-runtime-dataview-pages-users.json',
+        '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/ui-lab-admin-recipes.json',
     ], true)) {
         $errors[] = 'coding_started requires the current ui batch 1 launch record.';
     }

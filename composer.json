@@ -30,7 +30,7 @@
     "phpstan/phpstan": "^2.0"
   },
   "scripts": {
-    "test": ["@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminDataviewRendererTest.php"],
+    "test": ["@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminDataviewRendererTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminUiLabRendererTest.php"],
     "test:unit": "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
     "lint": "@php scripts/lint.php",
     "analyse": "@php scripts/analyse.php",
