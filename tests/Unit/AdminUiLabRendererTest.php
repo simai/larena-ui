@@ -5,12 +5,12 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Larena\Ui\Components\AdminComponentCatalog;
-use Larena\Ui\Runtime\AdminUiLabRenderer;
+use Larena\Ui\Runtime\AdminComponentRenderer;
 
 $activation = ['activation_owner'=>'larena/core:core.assets','physical_publication_ready'=>true,'writes_database'=>false,'copies_to_root'=>false,'uses_hardcoded_cdn'=>false,'renderable_tags'=>['<link href="/ui.css" rel="stylesheet">']];
 $catalog = new AdminComponentCatalog();
 assert(array_keys($catalog->definitions()) === ['button','badge','toolbar','empty_state','pagination','field','notice','modal']);
-$renderer = new AdminUiLabRenderer($catalog);
+$renderer = new AdminComponentRenderer($catalog);
 foreach (array_keys($catalog->definitions()) as $key) {
     $artifact = $renderer->component($key, ['label'=>'Example','title'=>'Example','message'=>'Example','error'=>'Required'], $activation);
     assert($artifact->isRenderable());
