@@ -31,6 +31,7 @@
     "resources/css/admin-dataview.css",
     "tests/Unit/AdminDataviewRendererTest.php",
     "src/Assets/AdminUiLabAssetManifest.php",
+    "src/Runtime/AdminComponentRenderer.php",
     "src/Runtime/AdminUiLabRenderer.php",
     "resources/css/admin-ui-lab.css",
     "resources/js/admin-ui-lab.js",

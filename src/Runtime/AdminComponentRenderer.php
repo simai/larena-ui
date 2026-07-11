@@ -13,7 +13,7 @@ use Larena\Ui\Contracts\SmartComponentManifest;
 use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Enums\RenderStrategy;
 
-final class AdminUiLabRenderer
+final class AdminComponentRenderer
 {
     public function __construct(private readonly AdminComponentCatalog $catalog = new AdminComponentCatalog()) {}
 
