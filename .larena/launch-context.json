@@ -145,9 +145,11 @@
     "src/Frontend/FrontendRuntimeAssetResolver.php",
     "src/Frontend/SourceBackedComponentRegistry.php",
     "src/Smart.php",
+    "src/SfActionLink.php",
     "resources/js/sf-runtime-bridge.js",
     "tests/Unit/SourceBackedComponentRegistryTest.php",
     "tests/Unit/SmartTest.php",
+    "tests/Unit/SfActionLinkTest.php",
     "tests/Unit/FrontendRuntimeAssetResolverTest.php",
     "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/*"
   ],
