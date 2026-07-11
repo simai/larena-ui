@@ -12,6 +12,8 @@ use Larena\Ui\Contracts\HydrationContract;
 use Larena\Ui\Contracts\SmartComponentManifest;
 use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Enums\RenderStrategy;
+use Larena\Ui\Enums\HydrationStrategy;
+use Larena\Ui\Smart;
 
 final class AdminComponentRenderer
 {
@@ -26,8 +28,16 @@ final class AdminComponentRenderer
         }
         /** @var SmartComponentManifest $manifest */
         $manifest = $definitions[$key]['manifest'];
+        if ($key === 'button') {
+            $render = $this->buttonRender($props);
+            return new FrontendRenderArtifact(
+                $render,
+                new UiAssetGraph($render->assetRequirements, ['smart-component:sf-button', 'source-backed:simai/ui-smart']),
+                $assetActivation,
+                ['kind' => 'component', 'key' => $key, 'manifest' => $manifest->componentKey, 'runtime_tag' => 'sf-button', 'owner_package' => 'larena/ui', 'production_ready' => false, 'all_41_packages_ready' => false],
+            );
+        }
         $html = match ($key) {
-            'button' => $this->button($props),
             'badge' => $this->badge($props),
             'toolbar' => $this->toolbar($props),
             'empty_state' => $this->emptyState($props),
@@ -81,14 +91,38 @@ final class AdminComponentRenderer
         );
     }
 
-    private function button(array $p): string
+    private function buttonRender(array $p): BackendRenderResult
     {
         if (!empty($p['show_states'])) {
             $base = $p; unset($base['show_states']);
-            return '<div class="larena-lab-toolbar" aria-label="Component states">'.$this->button($base).$this->button($base+['loading'=>true]).$this->button($base+['disabled'=>true]).'</div>';
+            $renders = [
+                Smart::render('sf-button', $this->buttonProps($base)),
+                Smart::render('sf-button', $this->buttonProps($base + ['loading' => true])),
+                Smart::render('sf-button', $this->buttonProps($base + ['disabled' => true])),
+            ];
+            $html = '<div class="larena-lab-toolbar" aria-label="Component states">' . implode('', array_map(static fn (BackendRenderResult $render): string => $render->html, $renders)) . '</div>';
+            return new BackendRenderResult(
+                $html,
+                RenderStrategy::Host,
+                new HydrationContract(HydrationStrategy::Adopt, hash('sha256', $html), 'stable-hosts', true),
+                $renders[0]->assetRequirements,
+            );
         }
-        $loading = (bool) ($p['loading'] ?? false); $disabled = (bool) ($p['disabled'] ?? false) || $loading;
-        return '<button class="larena-button larena-button-' . $this->token((string) ($p['variant'] ?? 'primary')) . '" type="button" data-larena-smart-component="admin.button"' . ($disabled ? ' disabled aria-disabled="true"' : '') . ($loading ? ' aria-busy="true"' : '') . '>' . ($loading ? '<span aria-hidden="true">…</span> ' : '') . $this->e((string) ($p['label'] ?? 'Button')) . '</button>';
+        return Smart::render('sf-button', $this->buttonProps($p));
+    }
+
+    /** @return array<string, mixed> */
+    private function buttonProps(array $props): array
+    {
+        $variant = (string) ($props['variant'] ?? 'primary');
+        return [
+            'text' => (string) ($props['label'] ?? 'Button'),
+            'type' => $variant === 'secondary' ? 'tonal' : ($variant === 'outline' ? 'outline' : 'default'),
+            'scheme' => $variant === 'secondary' ? 'secondary' : 'primary',
+            'loading' => (bool) ($props['loading'] ?? false),
+            'disabled' => (bool) ($props['disabled'] ?? false) || (bool) ($props['loading'] ?? false),
+            'native-type' => 'button',
+        ];
     }
 
     private function badge(array $p): string { return '<span class="larena-status larena-status-' . $this->token((string) ($p['tone'] ?? 'neutral')) . '" data-larena-smart-component="admin.badge">' . $this->e((string) ($p['label'] ?? 'Badge')) . '</span>'; }

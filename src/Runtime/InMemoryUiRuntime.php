@@ -111,12 +111,25 @@ final class InMemoryUiRuntime implements \Larena\Ui\Contracts\UiRuntime
      */
     private function assertPropsMatchSchema(SmartComponentManifest $manifest, array $props): void
     {
-        foreach ($manifest->propsSchema as $propKey => $definition) {
+        $schema = $manifest->propsSchema;
+        $jsonSchema = ($schema['type'] ?? null) === 'object' && is_array($schema['properties'] ?? null);
+        $definitions = $jsonSchema ? $schema['properties'] : $schema;
+        $requiredKeys = $jsonSchema && is_array($schema['required'] ?? null) ? $schema['required'] : null;
+
+        if ($jsonSchema && ($schema['additionalProperties'] ?? true) === false) {
+            foreach (array_keys($props) as $propKey) {
+                if (!array_key_exists($propKey, $definitions)) {
+                    throw new InvalidArgumentException('ui_runtime_unknown_prop:' . $propKey);
+                }
+            }
+        }
+
+        foreach ($definitions as $propKey => $definition) {
             if (!is_array($definition)) {
                 throw new InvalidArgumentException('ui_runtime_invalid_props_schema:' . $propKey);
             }
 
-            $required = $definition['required'] ?? true;
+            $required = $requiredKeys === null ? ($definition['required'] ?? !$jsonSchema) : in_array($propKey, $requiredKeys, true);
             if ($required && !array_key_exists($propKey, $props)) {
                 throw new InvalidArgumentException('ui_runtime_missing_required_prop:' . $propKey);
             }

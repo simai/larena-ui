@@ -12,6 +12,7 @@ use Larena\Ui\Contracts\FrontendRenderArtifact;
 use Larena\Ui\Contracts\HydrationContract;
 use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Enums\RenderStrategy;
+use Larena\Ui\Smart;
 
 final class AdminDataviewRenderer
 {
@@ -35,62 +36,72 @@ final class AdminDataviewRenderer
         }
 
         $html = '<section class="larena-panel larena-dataview" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview">';
+        $smartRender = null;
         if ($page->projection->rows === []) {
             $html .= $this->emptyState($emptyState);
         } else {
-            $html .= '<div class="larena-dataview-scroll" role="region" tabindex="0" aria-label="' . $this->e($ariaLabel) . '">';
-            $html .= '<table class="larena-table larena-dataview-table"><thead><tr>';
+            $columns = [];
             foreach ($page->projection->descriptor->fields as $field) {
                 if (!$field->hidden) {
-                    $html .= '<th scope="col">' . $this->e($labels[$field->fieldKey] ?? $field->fieldKey) . '</th>';
+                    $column = ['key' => $field->fieldKey, 'label' => $labels[$field->fieldKey] ?? $field->fieldKey];
+                    foreach ($page->projection->rows as $candidate) {
+                        $cell = $candidate[$field->fieldKey] ?? null;
+                        if (is_array($cell) && isset($cell['href'])) {
+                            $column['renderer'] = 'link';
+                            break;
+                        }
+                    }
+                    $columns[] = $column;
                 }
             }
-            $html .= '</tr></thead><tbody>';
+            $rows = [];
             foreach ($page->projection->rows as $row) {
-                $html .= '<tr>';
+                $smartRow = [];
                 foreach ($page->projection->descriptor->fields as $field) {
                     if (!$field->hidden) {
-                        $html .= '<td data-label="' . $this->e($labels[$field->fieldKey] ?? $field->fieldKey) . '">' . $this->cell($row[$field->fieldKey] ?? '') . '</td>';
+                        $smartRow[$field->fieldKey] = $this->smartCell($row[$field->fieldKey] ?? '');
                     }
                 }
-                $html .= '</tr>';
+                $rows[] = $smartRow;
             }
-            $html .= '</tbody></table></div>';
-            $html .= $this->pagination($page, $currentUrl, $labels);
+            $smartRender = Smart::render('sf-table', [
+                'aria-label' => $ariaLabel,
+                'root-class' => 'larena-pages-sf-table',
+                'data' => [
+                    'columns' => $columns,
+                    'rows' => $rows,
+                    'pagination' => [
+                        'page' => $page->pagination->page,
+                        'pageSize' => $page->pagination->perPage,
+                        'total' => $page->pagination->total,
+                    ],
+                ],
+            ]);
+            $html .= $smartRender->html;
         }
         $html .= '</section>';
 
-        $requirements = $manifests['dataview']->assetRequirements;
+        $requirements = $smartRender === null ? $manifests['dataview']->assetRequirements : $smartRender->assetRequirements;
+        $backendRender = $smartRender === null
+            ? new BackendRenderResult($html, RenderStrategy::Native, HydrationContract::none(), $requirements)
+            : new BackendRenderResult($html, $smartRender->strategy, $smartRender->hydration, $requirements);
         return new FrontendRenderArtifact(
-            new BackendRenderResult($html, RenderStrategy::Native, HydrationContract::none(), $requirements),
-            new UiAssetGraph($requirements, ['smart-component:admin.dataview', 'components:button,badge,toolbar,empty-state,pagination']),
+            $backendRender,
+            new UiAssetGraph($requirements, ['smart-component:sf-table', 'source-backed:simai/ui-smart', 'larena-view:admin.dataview']),
             $assetActivation,
-            ['manifest' => $manifests['dataview']->componentKey, 'source' => $page->projection->descriptor->source->sourceKey],
+            ['manifest' => $manifests['dataview']->componentKey, 'source' => $page->projection->descriptor->source->sourceKey, 'runtime_tag' => $smartRender === null ? null : 'sf-table'],
         );
     }
 
-    private function cell(mixed $cell): string
+    private function smartCell(mixed $cell): mixed
     {
         if (!is_array($cell)) {
-            return $this->e((string) $cell);
+            return $cell;
         }
-        $text = $this->e((string) ($cell['text'] ?? ''));
-        $type = (string) ($cell['type'] ?? 'text');
-        if ($type === 'badge') {
-            $tone = preg_replace('/[^a-z0-9_-]/', '', (string) ($cell['tone'] ?? 'neutral')) ?: 'neutral';
-            return '<span class="larena-status larena-status-' . $tone . '" data-larena-component="admin.badge">' . $text . '</span>';
-        }
-        $content = !empty($cell['strong']) ? '<strong>' . $text . '</strong>' : $text;
         if (isset($cell['href'])) {
-            $content = '<a class="larena-table-title" href="' . $this->e((string) $cell['href']) . '">' . $content . '</a>';
+            return ['href' => (string) $cell['href'], 'text' => (string) ($cell['text'] ?? '')];
         }
-        if (isset($cell['subtext'])) {
-            $content .= '<br><small>' . $this->e((string) $cell['subtext']) . '</small>';
-        }
-        if ($type === 'code') {
-            $content = '<code>' . $text . '</code>';
-        }
-        return $content;
+        return (string) ($cell['text'] ?? '');
     }
 
     /** @param array<string, mixed> $state */
@@ -101,20 +112,6 @@ final class AdminDataviewRenderer
             $html .= '<a class="larena-button larena-button-primary" data-larena-component="admin.button" href="' . $this->e((string) $state['action_href']) . '">' . $this->e((string) $state['action_label']) . '</a>';
         }
         return $html . '</div>';
-    }
-
-    /** @param array<string, string> $labels */
-    private function pagination(DataviewTablePage $page, string $currentUrl, array $labels): string
-    {
-        if ($page->pagination->lastPage() <= 1) {
-            return '';
-        }
-        $separator = str_contains($currentUrl, '?') ? '&amp;' : '?';
-        $html = '<nav class="larena-dataview-pagination" data-larena-component="admin.pagination" aria-label="' . $this->e($labels['_pagination'] ?? 'Pagination') . '">';
-        for ($i = 1; $i <= $page->pagination->lastPage(); $i++) {
-            $html .= '<a href="' . $this->e($currentUrl) . $separator . 'page=' . $i . '"' . ($i === $page->pagination->page ? ' aria-current="page"' : '') . '>' . $i . '</a>';
-        }
-        return $html . '</nav>';
     }
 
     private function e(string $value): string

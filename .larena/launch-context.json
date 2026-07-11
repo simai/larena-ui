@@ -1,10 +1,10 @@
 {
   "schema": "larena.package_launch_context.v1",
   "package": "larena/ui",
-  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/ui-lab-admin-recipes.json",
+  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-sf5-runtime-first-product-slice.json",
   "specs_repo": "simai/larena-specs",
   "specs_commit": "fb58c18db29213e1d0e1cb52f4ade437093199f5",
-  "base_commit": "10b6bf8",
+  "base_commit": "ff771ff086b6",
   "selected_features": [
     "ui.smart_component_manifest",
     "ui.backend_first_rendering",
@@ -23,6 +23,9 @@
     "ui.source_backed_sf5_catalog_adapter_pipeline_demo"
     ,"ui.admin_component_atlas"
     ,"ui.admin_recipes"
+    ,"ui.source_backed_component_registry"
+    ,"ui.laravel_smart_facade"
+    ,"ui.pinned_simai_framework_runtime"
   ],
   "allowed_files": [
     "src/Assets/AdminDataviewAssetManifest.php",
@@ -136,7 +139,15 @@
     "docs/project-management/evidence/frontend-composition/admin-smart-carrier-extended-fallback-resources/graph-sync-proposal.json",
     "scripts/run-unit-tests.php",
     "scripts/analyse.php",
-    "tests/bootstrap.php"
+    "tests/bootstrap.php",
+    "resources/sf5/runtime-lock.json",
+    "src/Frontend/FrontendRuntimeLock.php",
+    "src/Frontend/SourceBackedComponentRegistry.php",
+    "src/Smart.php",
+    "resources/js/sf-runtime-bridge.js",
+    "tests/Unit/SourceBackedComponentRegistryTest.php",
+    "tests/Unit/SmartTest.php",
+    "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/*"
   ],
   "forbidden_files": [
     "config/*",
@@ -158,12 +169,11 @@
     "component_registry_generator_runtime",
     "resource_pack_activation_runtime",
     "route_or_controller_runtime",
-    "production_rendering_behavior",
     "direct_larena_specs_update_by_package_agent",
     "migration_or_route_change"
   ],
-  "evidence_path": "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/",
-  "graph_sync_proposal_path": "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/graph-sync-proposal.json",
+  "evidence_path": "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/",
+  "graph_sync_proposal_path": "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/graph-sync-proposal.json",
   "status": "coding_started",
   "coding_started": true,
   "repository_enforcement_installed": true,

@@ -14,7 +14,9 @@ $renderer = new AdminComponentRenderer($catalog);
 foreach (array_keys($catalog->definitions()) as $key) {
     $artifact = $renderer->component($key, ['label'=>'Example','title'=>'Example','message'=>'Example','error'=>'Required'], $activation);
     assert($artifact->isRenderable());
-    assert(str_contains($artifact->html(), 'data-larena-smart-component="admin.'));
+    assert($key === 'button'
+        ? str_contains($artifact->html(), '<sf-button')
+        : str_contains($artifact->html(), 'data-larena-smart-component="admin.'));
 }
 foreach (['dataview','crud_form','dashboard','media_picker','settings_form'] as $key) {
     $artifact = $renderer->recipe($key, [], $activation);

@@ -1,8 +1,8 @@
 package: larena/ui
 title: Larena UI
-status: developer_vertical_slice
+status: coding_started
 cluster: frontend-composition
-batch: batch-0-clean-pre-codegen-baseline
+batch: larena-sf5-runtime-first-product-slice
 features:
   - ui.backend_first_rendering
   - ui.component_playground_coverage
@@ -17,10 +17,13 @@ features:
   - ui.source_backed_sf5_catalog_adapter_pipeline_demo
   - ui.ui_asset_graph
   - ui.frontend_render_artifact
+  - ui.source_backed_component_registry
+  - ui.laravel_smart_facade
+  - ui.pinned_simai_framework_runtime
 runtime:
   php: "^8.3"
   laravel: "^13.0"
 assets:
   path: assets.yaml
 evidence:
-  path: docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/
+  path: docs/project-management/evidence/larena-sf5-runtime-first-product-slice/

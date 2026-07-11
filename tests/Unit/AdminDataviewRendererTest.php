@@ -33,7 +33,8 @@ $activation = [
 $artifact = (new AdminDataviewRenderer())->render($page, ['name' => 'Name', 'status' => 'Status'], [], 'Users', '/admin/users', $activation);
 assert($artifact->isRenderable());
 assert(str_contains($artifact->html(), 'data-larena-smart-component="admin.dataview"'));
-assert(str_contains($artifact->html(), '&lt;Admin&gt;'));
+assert(str_contains($artifact->html(), '<sf-table'));
+assert(str_contains($artifact->html(), '\\u003CAdmin\\u003E'));
 assert(!str_contains($artifact->html(), '<Admin>'));
-assert(str_contains($artifact->html(), 'role="region" tabindex="0"'));
+assert(str_contains($artifact->html(), 'type="application/json"'));
 echo "AdminDataviewRendererTest: OK\n";

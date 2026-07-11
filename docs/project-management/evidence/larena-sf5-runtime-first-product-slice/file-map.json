@@ -1,0 +1,1 @@
+{"schema":"larena.evidence.file_map.v1","files":["resources/sf5/runtime-lock.json","src/Frontend/FrontendRuntimeLock.php","src/Frontend/SourceBackedComponentRegistry.php","src/Smart.php","resources/js/sf-runtime-bridge.js","src/Runtime/AdminComponentRenderer.php","src/Runtime/AdminDataviewRenderer.php"]}

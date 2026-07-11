@@ -1,0 +1,43 @@
+{
+  "schema": "larena.ui.frontend_runtime_lock.v1",
+  "runtime": "simai-framework",
+  "pair_id": "sf5-v5.3.1-96577eb1-0242425c",
+  "tag": "v5.3.1",
+  "ui": {
+    "tag": "v5.3.1",
+    "commit": "96577eb157ed785d5043d5323d24508613af8462",
+    "tree": "distr",
+    "mount": "ui",
+    "sha256": "7d2364dd249f716089bc4e0a98d4b7b1adc8a1379b09a4397ba02862907cd7af",
+    "files": 2596
+  },
+  "ui_smart": {
+    "tag": "v5.3.0",
+    "commit": "0242425c8f1e20548a04319422ec2d0584cda1a9",
+    "tree": "smart",
+    "mount": "smart",
+    "sha256": "d64d90f539715b13d4147d20fea7265241759566f794a394cb5ae45c5e30f53c",
+    "files": 112
+  },
+  "boot": {
+    "css": "ui/distr/core/css/core.css",
+    "javascript": "ui/distr/core/js/core.js",
+    "smart_base": "ui/distr/core/js/smart-base.js",
+    "ui_base": "ui/distr/",
+    "smart_base_path": "smart/"
+  },
+  "components": {
+    "sf-button": {
+      "source": "smart/buttons",
+      "javascript": "smart/smart/buttons/js/buttons.js",
+      "css": null,
+      "attributes": ["template", "size", "type", "scheme", "text", "icon", "icon-left", "icon-right", "icon-position", "text-position", "tightness", "radius", "root-class", "loading", "disabled", "native-type", "aria-label", "id", "class"]
+    },
+    "sf-table": {
+      "source": "smart/table",
+      "javascript": "smart/smart/table/js/table.js",
+      "css": "smart/smart/table/css/table.css",
+      "attributes": ["template", "root-class", "aria-label", "id", "class"]
+    }
+  }
+}
