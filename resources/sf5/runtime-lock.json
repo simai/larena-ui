@@ -61,7 +61,7 @@
       "source": "smart/inputs",
       "javascript": "smart/smart/inputs/js/inputs.js",
       "css": "smart/smart/inputs/css/inputs.css",
-      "attributes": ["template", "size", "type", "label", "required", "placeholder", "hint", "name", "value", "default-value", "input-type", "left-icon", "right-text", "hint-icon", "disabled", "error", "min", "max", "step", "mask", "mask-pattern", "mask-options", "mask-placeholder-char", "aria-label", "id", "class"]
+      "attributes": ["template", "size", "type", "label", "required", "placeholder", "hint", "name", "value", "default-value", "input-type", "autocomplete", "left-icon", "right-text", "hint-icon", "disabled", "error", "min", "max", "step", "mask", "mask-pattern", "mask-options", "mask-placeholder-char", "aria-label", "id", "class"]
     },
     "sf-modal": {
       "source": "smart/modal",
