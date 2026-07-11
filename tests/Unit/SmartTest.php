@@ -25,6 +25,7 @@ foreach ([
     'sf-pagination' => ['current' => 2, 'total' => 4],
     'sf-input' => ['name' => 'title', 'label' => 'Title', 'required' => true],
     'sf-modal' => ['id' => 'dialog', 'title' => 'Dialog', 'overlay' => true],
+    'sf-textarea' => ['name' => 'body', 'label' => 'Body', 'rows' => 8, 'required' => true],
 ] as $tag => $props) {
     $render = Smart::render($tag, $props);
     assert(str_contains($render->html, '<' . $tag));

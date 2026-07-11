@@ -21,6 +21,7 @@ assert($registry->get('sf-alert')['source'] === 'smart/alert');
 assert($registry->get('sf-pagination')['source'] === 'smart/pagination');
 assert($registry->get('sf-input')['source'] === 'smart/inputs');
 assert($registry->get('sf-modal')['source'] === 'smart/modal');
+assert($registry->get('sf-textarea')['source'] === 'smart/textarea');
 $registry->assertPropsAllowed('sf-button', ['text' => 'Create', 'disabled' => false]);
 $registry->assertPropsAllowed('sf-table', ['aria-label' => 'Pages', 'data' => ['columns' => [], 'rows' => []]]);
 $registry->assertPropsAllowed('sf-input', ['label' => 'Title', 'required' => true, 'error' => false]);
