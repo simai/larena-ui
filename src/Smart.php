@@ -7,6 +7,7 @@ namespace Larena\Ui;
 use Larena\Ui\Contracts\BackendRenderResult;
 use Larena\Ui\Contracts\HydrationContract;
 use Larena\Ui\Contracts\UiAssetRequirement;
+use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Enums\HydrationStrategy;
 use Larena\Ui\Enums\RenderStrategy;
 use Larena\Ui\Enums\UiAssetKind;
@@ -63,12 +64,11 @@ final class Smart
             $html,
             RenderStrategy::Host,
             new HydrationContract(HydrationStrategy::Adopt, $hash, 'stable-host', true),
-            self::requirements($tag),
+            self::assetGraph($tag)->requirements,
         );
     }
 
-    /** @return list<UiAssetRequirement> */
-    private static function requirements(string $tag): array
+    public static function assetGraph(string $tag): UiAssetGraph
     {
         $requirements = [
             new UiAssetRequirement('simai.framework.core.css', UiAssetKind::Css, true),
@@ -83,7 +83,12 @@ final class Smart
             $requirements[] = new UiAssetRequirement('simai.framework.sf_table.css', UiAssetKind::Css, true);
             $requirements[] = new UiAssetRequirement('simai.framework.sf_table.js', UiAssetKind::JavaScript, true);
         }
-        return $requirements;
+
+        return new UiAssetGraph($requirements, [
+            'runtime:simai-framework',
+            'smart-component:' . $tag,
+            'delivery:pinned-immutable-pair',
+        ]);
     }
 
     /** @param array<string, string> $attributes */

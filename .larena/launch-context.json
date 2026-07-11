@@ -142,11 +142,13 @@
     "tests/bootstrap.php",
     "resources/sf5/runtime-lock.json",
     "src/Frontend/FrontendRuntimeLock.php",
+    "src/Frontend/FrontendRuntimeAssetResolver.php",
     "src/Frontend/SourceBackedComponentRegistry.php",
     "src/Smart.php",
     "resources/js/sf-runtime-bridge.js",
     "tests/Unit/SourceBackedComponentRegistryTest.php",
     "tests/Unit/SmartTest.php",
+    "tests/Unit/FrontendRuntimeAssetResolverTest.php",
     "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/*"
   ],
   "forbidden_files": [
