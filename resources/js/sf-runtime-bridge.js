@@ -35,6 +35,22 @@
     scope.querySelectorAll('sf-input').forEach(applyNativeInputAttributes);
   }
 
+  function applyReadOnlyTable(target) {
+    if (!target || target.localName !== 'sf-table' || target.getAttribute('read-only') !== 'true') return;
+    ['selectable', 'settings', 'actions'].forEach(function (attribute) {
+      if (target.getAttribute(attribute) !== 'false') target.setAttribute(attribute, 'false');
+    });
+    var toolbar = target.querySelector('.sf-table-toolbar');
+    if (toolbar) toolbar.remove();
+  }
+
+  function syncReadOnlyTables(root) {
+    var scope = root && typeof root.querySelectorAll === 'function' ? root : document;
+    if (root && root.localName === 'sf-table') applyReadOnlyTable(root);
+    if (root && typeof root.closest === 'function') applyReadOnlyTable(root.closest('sf-table'));
+    scope.querySelectorAll('sf-table[read-only="true"]').forEach(applyReadOnlyTable);
+  }
+
   async function boot() {
     var descriptors = document.querySelectorAll('script[type="application/json"][data-larena-smart-hydration]');
     for (var index = 0; index < descriptors.length; index += 1) {
@@ -49,6 +65,10 @@
       await customElements.whenDefined('sf-input');
       syncNativeInputAttributes(document);
     }
+    if (document.querySelector('sf-table[read-only="true"]')) {
+      await customElements.whenDefined('sf-table');
+      syncReadOnlyTables(document);
+    }
     new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         if (mutation.type === 'attributes') {
@@ -56,10 +76,13 @@
           return;
         }
         mutation.addedNodes.forEach(function (node) {
-          if (node instanceof Element) syncNativeInputAttributes(node);
+          if (node instanceof Element) {
+            syncNativeInputAttributes(node);
+            syncReadOnlyTables(node);
+          }
         });
       });
-    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete'] });
+    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete', 'read-only'] });
     window.dispatchEvent(new CustomEvent('larena-smart-ready'));
     document.documentElement.dataset.larenaSmartReady = 'true';
   }

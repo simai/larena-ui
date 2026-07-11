@@ -37,7 +37,7 @@
       "source": "smart/table",
       "javascript": "smart/smart/table/js/table.js",
       "css": "smart/smart/table/css/table.css",
-      "attributes": ["template", "root-class", "aria-label", "id", "class"]
+      "attributes": ["template", "root-class", "read-only", "aria-label", "id", "class"]
     },
     "sf-badge": {
       "source": "smart/badges",
