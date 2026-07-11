@@ -80,6 +80,12 @@
       "javascript": "smart/smart/dropdown/js/dropdown.js",
       "css": null,
       "attributes": ["template", "size", "type", "mode", "multiple", "portal", "value", "name", "label", "required", "placeholder", "search-placeholder", "search", "disabled", "aria-label", "id", "class"]
+    },
+    "sf-checkbox": {
+      "source": "smart/checkbox",
+      "javascript": "smart/smart/checkbox/js/checkbox.js",
+      "css": "smart/smart/checkbox/css/checkbox.css",
+      "attributes": ["size", "label", "description", "help", "position", "root-class", "checked", "disabled", "indeterminate", "name", "value", "error", "id", "class"]
     }
   }
 }

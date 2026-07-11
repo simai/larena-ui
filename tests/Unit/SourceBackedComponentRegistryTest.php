@@ -23,11 +23,13 @@ assert($registry->get('sf-input')['source'] === 'smart/inputs');
 assert($registry->get('sf-modal')['source'] === 'smart/modal');
 assert($registry->get('sf-textarea')['source'] === 'smart/textarea');
 assert($registry->get('sf-dropdown')['source'] === 'smart/dropdown');
+assert($registry->get('sf-checkbox')['source'] === 'smart/checkbox');
 $registry->assertPropsAllowed('sf-button', ['text' => 'Create', 'disabled' => false]);
 $registry->assertPropsAllowed('sf-table', ['aria-label' => 'Pages', 'data' => ['columns' => [], 'rows' => []]]);
 $registry->assertPropsAllowed('sf-input', ['label' => 'Title', 'required' => true, 'error' => false]);
 $registry->assertPropsAllowed('sf-modal', ['id' => 'dialog', 'title' => 'Dialog', 'overlay' => true]);
 $registry->assertPropsAllowed('sf-dropdown', ['name' => 'locale', 'options' => [['text' => 'English', 'value' => 'en']]]);
+$registry->assertPropsAllowed('sf-checkbox', ['name' => 'is_active', 'label' => 'Active', 'checked' => true]);
 
 $failed = false;
 try { $registry->assertPropsAllowed('sf-button', ['onclick' => 'unsafe']); } catch (InvalidArgumentException) { $failed = true; }
