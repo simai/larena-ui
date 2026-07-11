@@ -65,11 +65,8 @@ final readonly class FrontendRuntimeAssetResolver
             'simai.framework.core.js' => (string) $this->lock->toArray()['boot']['javascript'],
             'simai.framework.smart_base.js' => (string) $this->lock->toArray()['boot']['smart_base'],
             'simai.framework.bridge.js' => 'resources/js/sf-runtime-bridge.js',
-            'simai.framework.sf_button.js' => (string) $this->lock->component('sf-button')['javascript'],
-            'simai.framework.sf_table.css' => (string) $this->lock->component('sf-table')['css'],
-            'simai.framework.sf_table.js' => (string) $this->lock->component('sf-table')['javascript'],
         ];
-        $relativePath = $paths[$requirement->assetKey] ?? null;
+        $relativePath = $paths[$requirement->assetKey] ?? $this->componentAssetPath($requirement->assetKey);
         if (!is_string($relativePath) || $relativePath === '') {
             throw new RuntimeException('ui_frontend_runtime_asset_unknown:' . $requirement->assetKey);
         }
@@ -80,5 +77,18 @@ final readonly class FrontendRuntimeAssetResolver
             'relative_path' => $relativePath,
             'critical' => $requirement->critical,
         ];
+    }
+
+    private function componentAssetPath(string $assetKey): ?string
+    {
+        if (!preg_match('/^simai\.framework\.(sf_[a-z0-9_]+)\.(css|js)$/', $assetKey, $matches)) {
+            return null;
+        }
+        $tag = str_replace('_', '-', $matches[1]);
+        $definition = $this->lock->component($tag);
+        $field = $matches[2] === 'css' ? 'css' : 'javascript';
+        $path = $definition[$field] ?? null;
+
+        return is_string($path) && $path !== '' ? $path : null;
     }
 }

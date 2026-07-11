@@ -64,24 +64,26 @@ final class Smart
             $html,
             RenderStrategy::Host,
             new HydrationContract(HydrationStrategy::Adopt, $hash, 'stable-host', true),
-            self::assetGraph($tag)->requirements,
+            self::assetGraph($tag, $registry)->requirements,
         );
     }
 
-    public static function assetGraph(string $tag): UiAssetGraph
+    public static function assetGraph(string $tag, ?SourceBackedComponentRegistry $registry = null): UiAssetGraph
     {
+        $registry ??= SourceBackedComponentRegistry::bundled();
+        $definition = $registry->get($tag);
         $requirements = [
             new UiAssetRequirement('simai.framework.core.css', UiAssetKind::Css, true),
             new UiAssetRequirement('simai.framework.core.js', UiAssetKind::JavaScript, true),
             new UiAssetRequirement('simai.framework.smart_base.js', UiAssetKind::JavaScript, true),
             new UiAssetRequirement('simai.framework.bridge.js', UiAssetKind::JavaScript, true),
         ];
-        if ($tag === 'sf-button') {
-            $requirements[] = new UiAssetRequirement('simai.framework.sf_button.js', UiAssetKind::JavaScript, true);
+        $assetPrefix = 'simai.framework.' . str_replace('-', '_', $tag);
+        if (is_string($definition['css'] ?? null) && $definition['css'] !== '') {
+            $requirements[] = new UiAssetRequirement($assetPrefix . '.css', UiAssetKind::Css, true);
         }
-        if ($tag === 'sf-table') {
-            $requirements[] = new UiAssetRequirement('simai.framework.sf_table.css', UiAssetKind::Css, true);
-            $requirements[] = new UiAssetRequirement('simai.framework.sf_table.js', UiAssetKind::JavaScript, true);
+        if (is_string($definition['javascript'] ?? null) && $definition['javascript'] !== '') {
+            $requirements[] = new UiAssetRequirement($assetPrefix . '.js', UiAssetKind::JavaScript, true);
         }
 
         return new UiAssetGraph($requirements, [

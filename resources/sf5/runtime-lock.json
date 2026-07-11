@@ -38,6 +38,36 @@
       "javascript": "smart/smart/table/js/table.js",
       "css": "smart/smart/table/css/table.css",
       "attributes": ["template", "root-class", "aria-label", "id", "class"]
+    },
+    "sf-badge": {
+      "source": "smart/badges",
+      "javascript": "smart/smart/badges/js/badges.js",
+      "css": null,
+      "attributes": ["template", "size", "type", "scheme", "text", "icon", "icon-left", "icon-right", "icon-position", "aria-label", "id", "class"]
+    },
+    "sf-alert": {
+      "source": "smart/alert",
+      "javascript": "smart/smart/alert/js/alert.js",
+      "css": null,
+      "attributes": ["type", "variant", "icon", "title", "supporting-text", "action-text", "action", "secondary-action-text", "secondary-action", "closable", "aria-label", "id", "class"]
+    },
+    "sf-pagination": {
+      "source": "smart/pagination",
+      "javascript": "smart/smart/pagination/js/pagination.js",
+      "css": null,
+      "attributes": ["current", "total", "top", "main", "bottom", "top-class", "main-class", "bottom-class", "show-more-text", "page-sizes", "page-size-label", "actions", "action", "action-apply-text", "action-for-all-label", "aria-label", "id", "class"]
+    },
+    "sf-input": {
+      "source": "smart/inputs",
+      "javascript": "smart/smart/inputs/js/inputs.js",
+      "css": "smart/smart/inputs/css/inputs.css",
+      "attributes": ["template", "size", "type", "label", "required", "placeholder", "hint", "name", "value", "default-value", "input-type", "left-icon", "right-text", "hint-icon", "disabled", "error", "min", "max", "step", "mask", "mask-pattern", "mask-options", "mask-placeholder-char", "aria-label", "id", "class"]
+    },
+    "sf-modal": {
+      "source": "smart/modal",
+      "javascript": "smart/smart/modal/js/modal.js",
+      "css": null,
+      "attributes": ["template", "modal-id", "title", "text", "open", "overlay", "display", "width", "height", "blur", "blur-type", "surface-padding", "src", "slot", "aria-label", "id", "class"]
     }
   }
 }

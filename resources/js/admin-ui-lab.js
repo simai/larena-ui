@@ -1,6 +1,14 @@
 (() => {
   let returnFocus = null;
   document.addEventListener('click', (event) => {
+    const sfModalTrigger = event.target.closest('[data-larena-sf-modal-trigger]');
+    if (sfModalTrigger) {
+      const modal = document.getElementById(sfModalTrigger.dataset.larenaSfModalTrigger);
+      returnFocus = sfModalTrigger.querySelector('sf-button') || sfModalTrigger;
+      if (typeof modal?.open === 'function') modal.open();
+      else modal?.setAttribute('open', '');
+      return;
+    }
     const open = event.target.closest('[data-larena-dialog-open]');
     if (open) {
       const dialog = document.getElementById(open.dataset.larenaDialogOpen);

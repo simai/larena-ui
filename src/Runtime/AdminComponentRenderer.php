@@ -28,27 +28,24 @@ final class AdminComponentRenderer
         }
         /** @var SmartComponentManifest $manifest */
         $manifest = $definitions[$key]['manifest'];
-        if ($key === 'button') {
-            $render = $this->buttonRender($props);
-            return new FrontendRenderArtifact(
-                $render,
-                new UiAssetGraph($render->assetRequirements, ['smart-component:sf-button', 'source-backed:simai/ui-smart']),
-                $assetActivation,
-                ['kind' => 'component', 'key' => $key, 'manifest' => $manifest->componentKey, 'runtime_tag' => 'sf-button', 'owner_package' => 'larena/ui', 'production_ready' => false, 'all_41_packages_ready' => false],
-            );
-        }
-        $html = match ($key) {
-            'badge' => $this->badge($props),
-            'toolbar' => $this->toolbar($props),
-            'empty_state' => $this->emptyState($props),
-            'pagination' => $this->pagination($props),
-            'field' => $this->field($props),
-            'notice' => $this->notice($props),
-            'modal' => $this->modal($props),
+        $render = match ($key) {
+            'button' => $this->buttonRender($props),
+            'badge' => $this->badgeRender($props),
+            'toolbar' => $this->toolbarRender($props),
+            'empty_state' => $this->emptyStateRender($props),
+            'pagination' => $this->paginationRender($props),
+            'field' => $this->fieldRender($props),
+            'notice' => $this->noticeRender($props),
+            'modal' => $this->modalRender($props),
             default => throw new InvalidArgumentException('ui_lab_renderer_missing:' . $key),
         };
 
-        return $this->artifact($manifest, $html, $assetActivation, ['kind' => 'component', 'key' => $key]);
+        return new FrontendRenderArtifact(
+            $render,
+            new UiAssetGraph($render->assetRequirements, ['source-backed:simai/ui-smart', 'atlas-component:' . $key]),
+            $assetActivation,
+            ['kind' => 'component', 'key' => $key, 'manifest' => $manifest->componentKey, 'runtime_tags' => $this->runtimeTags($key), 'owner_package' => 'larena/ui', 'production_ready' => false, 'all_41_packages_ready' => false],
+        );
     }
 
     /** @param array<string, mixed> $labels @param array<string, mixed> $assetActivation */
@@ -125,13 +122,122 @@ final class AdminComponentRenderer
         ];
     }
 
-    private function badge(array $p): string { return '<span class="larena-status larena-status-' . $this->token((string) ($p['tone'] ?? 'neutral')) . '" data-larena-smart-component="admin.badge">' . $this->e((string) ($p['label'] ?? 'Badge')) . '</span>'; }
-    private function toolbar(array $p): string { return '<div class="larena-lab-toolbar" role="toolbar" aria-label="' . $this->e((string) ($p['aria_label'] ?? 'Actions')) . '" data-larena-smart-component="admin.toolbar"><strong>' . $this->e((string) ($p['title'] ?? 'Toolbar')) . '</strong><button class="larena-button" type="button">' . $this->e((string) ($p['action_label'] ?? 'Action')) . '</button></div>'; }
-    private function emptyState(array $p): string { return '<div class="larena-empty" data-larena-smart-component="admin.empty_state"><h3>' . $this->e((string) ($p['title'] ?? 'Nothing here')) . '</h3><p>' . $this->e((string) ($p['text'] ?? '')) . '</p><a class="larena-button larena-button-primary" href="' . $this->e((string) ($p['action_href'] ?? '#')) . '">' . $this->e((string) ($p['action_label'] ?? 'Create')) . '</a></div>'; }
-    private function pagination(array $p): string { $current = max(1, (int) ($p['page'] ?? 2)); $last = max($current, (int) ($p['last_page'] ?? 3)); $h = '<nav class="larena-dataview-pagination" aria-label="' . $this->e((string) ($p['aria_label'] ?? 'Pagination')) . '" data-larena-smart-component="admin.pagination">'; for ($i=1;$i<=$last;$i++) {$h .= '<a href="#page-' . $i . '"' . ($i === $current ? ' aria-current="page"' : '') . '>' . $i . '</a>';} return $h . '</nav>'; }
-    private function field(array $p): string { if(!empty($p['show_states'])){$base=$p;unset($base['show_states'],$base['error']);return '<div class="larena-form">'.$this->field($base).$this->field($base+['disabled'=>true]).$this->field($base+['error'=>(string)($p['error']??'Error')]).'</div>';} $id='lab-field-'.$this->token((string)($p['name']??'field')).(!empty($p['disabled'])?'-disabled':((string)($p['error']??'')!==''?'-error':'')); $error=(string)($p['error']??''); return '<div class="larena-field" data-larena-smart-component="admin.field"><label for="'.$id.'">'.$this->e((string)($p['label']??'Field')).'</label><input id="'.$id.'" name="'.$this->e((string)($p['name']??'field')).'" type="'.$this->token((string)($p['type']??'text')).'" value="'.$this->e((string)($p['value']??'')) . '"' . (!empty($p['required'])?' required':'') . (!empty($p['disabled'])?' disabled':'') . ($error!==''?' aria-invalid="true" aria-describedby="'.$id.'-error"':'') . '>' . ($error!==''?'<span id="'.$id.'-error" class="larena-field-error">'.$this->e($error).'</span>':'') . '</div>'; }
-    private function notice(array $p): string { $error=($p['tone']??'success')==='error'; return '<div class="larena-notice larena-notice-'.($error?'error':'success').'" role="'.($error?'alert':'status').'" data-larena-smart-component="admin.notice">'.$this->e((string)($p['message']??'Notice')).'</div>'; }
-    private function modal(array $p): string { $id=$this->token((string)($p['id']??'lab-dialog')); return '<div data-larena-smart-component="admin.modal"><button class="larena-button" type="button" data-larena-dialog-open="'.$id.'">'.$this->e((string)($p['trigger_label']??'Open dialog')).'</button><dialog id="'.$id.'" class="larena-dialog" aria-labelledby="'.$id.'-title"><h3 id="'.$id.'-title">'.$this->e((string)($p['title']??'Dialog')).'</h3><p>'.$this->e((string)($p['description']??'')).'</p><button class="larena-button" type="button" data-larena-dialog-close>'.$this->e((string)($p['close_label']??'Close')).'</button></dialog></div>'; }
+    private function badgeRender(array $props): BackendRenderResult
+    {
+        $tone = (string) ($props['tone'] ?? 'neutral');
+        return Smart::render('sf-badge', [
+            'size' => '1/2',
+            'type' => 'tonal',
+            'scheme' => $tone === 'published' ? 'success' : ($tone === 'error' ? 'error' : 'neutral'),
+            'text' => (string) ($props['label'] ?? 'Badge'),
+        ]);
+    }
+
+    private function toolbarRender(array $props): BackendRenderResult
+    {
+        $action = Smart::render('sf-button', $this->buttonProps(['label' => (string) ($props['action_label'] ?? 'Action')]));
+        $html = '<div class="larena-lab-toolbar" role="toolbar" aria-label="' . $this->e((string) ($props['aria_label'] ?? 'Actions')) . '" data-larena-smart-composition="admin.toolbar"><strong>' . $this->e((string) ($props['title'] ?? 'Toolbar')) . '</strong>' . $action->html . '</div>';
+        return $this->composition($html, [$action]);
+    }
+
+    private function emptyStateRender(array $props): BackendRenderResult
+    {
+        $action = Smart::render('sf-button', $this->buttonProps(['label' => (string) ($props['action_label'] ?? 'Create')]));
+        $html = '<div class="larena-empty" data-larena-smart-composition="admin.empty_state"><h3>' . $this->e((string) ($props['title'] ?? 'Nothing here')) . '</h3><p>' . $this->e((string) ($props['text'] ?? '')) . '</p>' . $action->html . '</div>';
+        return $this->composition($html, [$action]);
+    }
+
+    private function paginationRender(array $props): BackendRenderResult
+    {
+        return Smart::render('sf-pagination', [
+            'current' => max(1, (int) ($props['page'] ?? 1)),
+            'total' => max(1, (int) ($props['last_page'] ?? 1)),
+            'bottom' => false,
+            'aria-label' => (string) ($props['aria_label'] ?? 'Pagination'),
+        ]);
+    }
+
+    private function fieldRender(array $props): BackendRenderResult
+    {
+        if (!empty($props['show_states'])) {
+            $base = $props;
+            unset($base['show_states'], $base['error']);
+            $renders = [
+                $this->fieldRender($base),
+                $this->fieldRender($base + ['disabled' => true]),
+                $this->fieldRender($base + ['error' => (string) ($props['error'] ?? 'Error')]),
+            ];
+            return $this->composition('<div class="larena-form" data-larena-smart-composition="admin.field.states">' . implode('', array_map(static fn (BackendRenderResult $render): string => $render->html, $renders)) . '</div>', $renders);
+        }
+        $error = (string) ($props['error'] ?? '');
+        return Smart::render('sf-input', [
+            'id' => 'lab-field-' . $this->token((string) ($props['name'] ?? 'field')) . ($error !== '' ? '-error' : (!empty($props['disabled']) ? '-disabled' : '')),
+            'name' => (string) ($props['name'] ?? 'field'),
+            'label' => (string) ($props['label'] ?? 'Field'),
+            'input-type' => (string) ($props['type'] ?? 'text'),
+            'value' => (string) ($props['value'] ?? ''),
+            'required' => (bool) ($props['required'] ?? false),
+            'disabled' => (bool) ($props['disabled'] ?? false),
+            'error' => $error !== '',
+            'hint' => $error,
+            'type' => 'bordered',
+            'size' => '1',
+        ]);
+    }
+
+    private function noticeRender(array $props): BackendRenderResult
+    {
+        $error = ($props['tone'] ?? 'success') === 'error';
+        return Smart::render('sf-alert', [
+            'type' => $error ? 'danger' : 'clear',
+            'variant' => 'default',
+            'title' => $error ? 'Error' : 'Success',
+            'supporting-text' => (string) ($props['message'] ?? 'Notice'),
+        ]);
+    }
+
+    private function modalRender(array $props): BackendRenderResult
+    {
+        $id = $this->token((string) ($props['id'] ?? 'lab-modal'));
+        $trigger = Smart::render('sf-button', $this->buttonProps(['label' => (string) ($props['trigger_label'] ?? 'Open dialog')]));
+        $modal = Smart::render('sf-modal', [
+            'id' => $id,
+            'modal-id' => $id,
+            'title' => (string) ($props['title'] ?? 'Dialog'),
+            'text' => (string) ($props['description'] ?? ''),
+            'overlay' => true,
+        ]);
+        $html = '<div data-larena-smart-composition="admin.modal"><span data-larena-sf-modal-trigger="' . $this->e($id) . '">' . $trigger->html . '</span>' . $modal->html . '</div>';
+        return $this->composition($html, [$trigger, $modal]);
+    }
+
+    /** @param list<BackendRenderResult> $renders */
+    private function composition(string $html, array $renders): BackendRenderResult
+    {
+        $requirements = [];
+        foreach ($renders as $render) {
+            foreach ($render->assetRequirements as $requirement) {
+                $requirements[$requirement->assetKey] = $requirement;
+            }
+        }
+        return new BackendRenderResult($html, RenderStrategy::Host, new HydrationContract(HydrationStrategy::Adopt, hash('sha256', $html), 'stable-hosts', true), array_values($requirements));
+    }
+
+    /** @return list<string> */
+    private function runtimeTags(string $key): array
+    {
+        return match ($key) {
+            'button' => ['sf-button'],
+            'badge' => ['sf-badge'],
+            'toolbar', 'empty_state' => ['sf-button'],
+            'pagination' => ['sf-pagination'],
+            'field' => ['sf-input'],
+            'notice' => ['sf-alert'],
+            'modal' => ['sf-button', 'sf-modal'],
+            default => [],
+        };
+    }
+
     private function tableRecipe(array $l): string { return '<div data-larena-smart-component="admin.dataview"><div class="larena-dataview-scroll" role="region" tabindex="0" aria-label="'.$this->e((string)($l['table_label']??'Pages')).'"><table class="larena-table"><thead><tr><th scope="col">'. $this->e((string)($l['title']??'Title')).'</th><th scope="col">Status</th></tr></thead><tbody><tr><td><a href="/admin/docara/pages">Larena</a></td><td><span class="larena-status larena-status-published">Published</span></td></tr></tbody></table></div></div>'; }
     private function crudRecipe(array $l): string { return '<form class="larena-form" data-larena-smart-component="admin.crud_form"><div class="larena-field"><label for="recipe-title">'.$this->e((string)($l['title']??'Title')).'</label><input id="recipe-title" value="Larena"></div><div class="larena-field"><label for="recipe-status">Status</label><select id="recipe-status"><option>Draft</option><option>Published</option></select></div><div class="larena-form-actions"><button class="larena-button larena-button-primary" type="button">'.$this->e((string)($l['save']??'Save')).'</button></div></form>'; }
     private function dashboardRecipe(array $l): string { return '<section class="larena-lab-dashboard" data-larena-smart-component="admin.dashboard"><article><strong>12</strong><span>'.$this->e((string)($l['pages']??'Pages')).'</span></article><article><strong>4</strong><span>'.$this->e((string)($l['published']??'Published')).'</span></article><article><strong>3</strong><span>'.$this->e((string)($l['users']??'Users')).'</span></article></section>'; }

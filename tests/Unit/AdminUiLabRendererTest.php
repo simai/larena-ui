@@ -11,12 +11,12 @@ $activation = ['activation_owner'=>'larena/core:core.assets','physical_publicati
 $catalog = new AdminComponentCatalog();
 assert(array_keys($catalog->definitions()) === ['button','badge','toolbar','empty_state','pagination','field','notice','modal']);
 $renderer = new AdminComponentRenderer($catalog);
+$runtimeTags = ['button'=>'sf-button','badge'=>'sf-badge','toolbar'=>'sf-button','empty_state'=>'sf-button','pagination'=>'sf-pagination','field'=>'sf-input','notice'=>'sf-alert','modal'=>'sf-modal'];
 foreach (array_keys($catalog->definitions()) as $key) {
     $artifact = $renderer->component($key, ['label'=>'Example','title'=>'Example','message'=>'Example','error'=>'Required'], $activation);
     assert($artifact->isRenderable());
-    assert($key === 'button'
-        ? str_contains($artifact->html(), '<sf-button')
-        : str_contains($artifact->html(), 'data-larena-smart-component="admin.'));
+    assert(str_contains($artifact->html(), '<' . $runtimeTags[$key]));
+    assert(($artifact->diagnostics['runtime_tags'] ?? []) !== []);
 }
 foreach (['dataview','crud_form','dashboard','media_picker','settings_form'] as $key) {
     $artifact = $renderer->recipe($key, [], $activation);
@@ -24,6 +24,7 @@ foreach (['dataview','crud_form','dashboard','media_picker','settings_form'] as 
     assert(($artifact->diagnostics['production_ready'] ?? true) === false);
     assert($renderer->recipeRegions($key) !== []);
 }
-assert(str_contains($renderer->component('modal', [], $activation)->html(), '<dialog'));
-assert(str_contains($renderer->component('field', ['error'=>'Required'], $activation)->html(), 'aria-invalid="true"'));
+assert(str_contains($renderer->component('modal', [], $activation)->html(), '<sf-modal'));
+assert(!str_contains($renderer->component('modal', [], $activation)->html(), '<dialog'));
+assert(str_contains($renderer->component('field', ['error'=>'Required'], $activation)->html(), '<sf-input'));
 echo "AdminUiLabRendererTest: OK\n";
