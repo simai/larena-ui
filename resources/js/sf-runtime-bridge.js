@@ -51,6 +51,22 @@
     scope.querySelectorAll('sf-table[read-only="true"]').forEach(applyReadOnlyTable);
   }
 
+  new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      if (mutation.type === 'attributes') {
+        applyNativeInputAttributes(mutation.target);
+        applyReadOnlyTable(mutation.target);
+        return;
+      }
+      mutation.addedNodes.forEach(function (node) {
+        if (node instanceof Element) {
+          syncNativeInputAttributes(node);
+          syncReadOnlyTables(node);
+        }
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete', 'read-only'] });
+
   async function boot() {
     var descriptors = document.querySelectorAll('script[type="application/json"][data-larena-smart-hydration]');
     for (var index = 0; index < descriptors.length; index += 1) {
@@ -69,20 +85,6 @@
       await customElements.whenDefined('sf-table');
       syncReadOnlyTables(document);
     }
-    new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        if (mutation.type === 'attributes') {
-          applyNativeInputAttributes(mutation.target);
-          return;
-        }
-        mutation.addedNodes.forEach(function (node) {
-          if (node instanceof Element) {
-            syncNativeInputAttributes(node);
-            syncReadOnlyTables(node);
-          }
-        });
-      });
-    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete', 'read-only'] });
     window.dispatchEvent(new CustomEvent('larena-smart-ready'));
     document.documentElement.dataset.larenaSmartReady = 'true';
   }
