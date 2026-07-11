@@ -23,6 +23,15 @@ final readonly class FrontendRuntimeLock
         return $lock;
     }
 
+    /** @param array<string, mixed> $data */
+    public static function fromArray(array $data): self
+    {
+        $lock = new self($data);
+        $lock->assertValid();
+
+        return $lock;
+    }
+
     public function pairId(): string { return (string) $this->data['pair_id']; }
     public function tag(): string { return (string) $this->data['tag']; }
 
@@ -79,6 +88,16 @@ final readonly class FrontendRuntimeLock
             ) {
                 throw new RuntimeException('ui_frontend_runtime_source_invalid:' . $source);
             }
+        }
+
+        $expectedPairId = sprintf(
+            'sf5-%s-%s-%s',
+            (string) $this->data['tag'],
+            substr((string) $this->data['ui']['commit'], 0, 8),
+            substr((string) $this->data['ui_smart']['commit'], 0, 8),
+        );
+        if ($this->data['pair_id'] !== $expectedPairId) {
+            throw new RuntimeException('ui_frontend_runtime_pair_identity_mismatch');
         }
     }
 }
