@@ -6,22 +6,22 @@ namespace Larena\Ui\Runtime;
 
 use InvalidArgumentException;
 use Larena\Dataview\Contracts\DataviewTablePage;
-use Larena\Ui\Components\AdminComponentCatalog;
 use Larena\Ui\Contracts\BackendRenderResult;
 use Larena\Ui\Contracts\FrontendRenderArtifact;
 use Larena\Ui\Contracts\HydrationContract;
 use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Enums\RenderStrategy;
+use Larena\Ui\Registry\SmartRegistry;
 
 final class AdminDataviewRenderer
 {
-    private readonly AdminComponentCatalog $catalog;
+    private readonly SmartRegistry $registry;
     private readonly SmartManager $smart;
 
-    public function __construct(?AdminComponentCatalog $catalog = null, ?SmartManager $smart = null)
+    public function __construct(?SmartRegistry $registry = null, ?SmartManager $smart = null)
     {
-        $this->catalog = $catalog ?? new AdminComponentCatalog();
-        $this->smart = $smart ?? SmartManager::withDefaults();
+        $this->registry = $registry ?? SmartRegistry::withDefaults();
+        $this->smart = $smart ?? new SmartManager($this->registry);
     }
 
     /**
@@ -34,12 +34,11 @@ final class AdminDataviewRenderer
         if (!$page->isSafeForRender()) {
             throw new InvalidArgumentException('ui_admin_dataview_unsafe_projection');
         }
-        $manifests = $this->catalog->manifests();
-        foreach ($manifests as $manifest) {
-            if (!$manifest->isValid()) {
-                throw new InvalidArgumentException('ui_admin_component_manifest_invalid:' . $manifest->componentKey);
-            }
+        $manifest = $this->registry->manifest('ui.dataview');
+        if (!$manifest->isCanonical()) {
+            throw new InvalidArgumentException('ui_admin_component_manifest_invalid:' . $manifest->componentKey);
         }
+        $this->registry->renderer($manifest->rendererId);
 
         $html = '<section class="larena-panel larena-dataview" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview">';
         $smartArtifact = null;
@@ -72,7 +71,6 @@ final class AdminDataviewRenderer
             }
             $smartArtifact = $this->smart->render('ui.dataview', [
                 'aria-label' => $ariaLabel,
-                'root-class' => 'larena-pages-sf-table',
                 'data' => [
                     'columns' => $columns,
                     'rows' => $rows,
@@ -87,7 +85,7 @@ final class AdminDataviewRenderer
         }
         $html .= '</section>';
 
-        $requirements = $smartArtifact === null ? $manifests['dataview']->assetRequirements : $smartArtifact->render->assetRequirements;
+        $requirements = $smartArtifact === null ? $manifest->assetRequirements : $smartArtifact->render->assetRequirements;
         $backendRender = $smartArtifact === null
             ? new BackendRenderResult($html, RenderStrategy::Native, HydrationContract::none(), $requirements)
             : new BackendRenderResult($html, $smartArtifact->render->strategy, $smartArtifact->render->hydration, $requirements);
@@ -96,7 +94,7 @@ final class AdminDataviewRenderer
             new UiAssetGraph($requirements, ['smart-component:ui.dataview', 'frontend-tag:sf-table', 'source-backed:simai/ui-smart', 'larena-view:admin.dataview']),
             $assetActivation,
             [
-                'manifest' => $smartArtifact === null ? $manifests['dataview']->componentKey : 'ui.dataview',
+                'manifest' => $manifest->componentKey,
                 'source' => $page->projection->descriptor->source->sourceKey,
                 'runtime_tag' => $smartArtifact === null ? null : 'sf-table',
                 'smart_manager' => $smartArtifact === null ? null : $smartArtifact->toArray()['diagnostics'],

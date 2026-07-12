@@ -87,10 +87,18 @@ final class SmartRegistry
     /** @return list<SmartComponentManifest> */
     public function atlasManifests(): array
     {
-        return array_values(array_filter(
+        $manifests = array_values(array_filter(
             $this->manifests(),
             static fn (SmartComponentManifest $manifest): bool => ($manifest->atlas['visible'] ?? false) === true,
         ));
+        usort($manifests, static function (SmartComponentManifest $left, SmartComponentManifest $right): int {
+            $leftOrder = is_int($left->atlas['order'] ?? null) ? $left->atlas['order'] : PHP_INT_MAX;
+            $rightOrder = is_int($right->atlas['order'] ?? null) ? $right->atlas['order'] : PHP_INT_MAX;
+
+            return ($leftOrder <=> $rightOrder) ?: ($left->componentKey <=> $right->componentKey);
+        });
+
+        return $manifests;
     }
 
     /** @return list<string> */

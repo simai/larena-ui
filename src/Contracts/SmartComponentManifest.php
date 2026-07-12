@@ -10,6 +10,18 @@ use Larena\Ui\Enums\UiAssetKind;
 
 final readonly class SmartComponentManifest
 {
+    /** @var list<string> */
+    private const SAFE_PROVENANCE_KEYS = [
+        'source',
+        'runtime_lock',
+        'upstream_component',
+        'upstream_revision',
+        'reference_status',
+        'evidence',
+        'manifest_path',
+        'manifest_sha256',
+    ];
+
     /**
      * @param array<string, mixed> $propsSchema
      * @param list<string> $slotKeys
@@ -76,10 +88,16 @@ final readonly class SmartComponentManifest
                 (bool) ($asset['critical'] ?? false),
             );
         }
-        $provenance = is_array($data['provenance'] ?? null) ? $data['provenance'] : [];
+        $provenance = self::sanitizeProvenance(
+            is_array($data['provenance'] ?? null) ? $data['provenance'] : [],
+        );
         if ($sourcePath !== null) {
-            $provenance['manifest_path'] = $sourcePath;
-            $provenance['manifest_sha256'] = hash_file('sha256', $sourcePath);
+            $provenance['manifest_path'] = self::packageManifestPath($sourcePath);
+            $sha256 = hash_file('sha256', $sourcePath);
+            if (!is_string($sha256) || preg_match('/^[a-f0-9]{64}$/', $sha256) !== 1) {
+                throw new InvalidArgumentException('ui_smart_manifest_hash_invalid');
+            }
+            $provenance['manifest_sha256'] = $sha256;
         }
 
         $manifest = new self(
@@ -162,5 +180,54 @@ final readonly class SmartComponentManifest
             'atlas' => $this->atlas,
             'provenance' => $this->provenance,
         ];
+    }
+
+    /** @param array<string, mixed> $provenance @return array<string, string> */
+    private static function sanitizeProvenance(array $provenance): array
+    {
+        $safe = [];
+        foreach (self::SAFE_PROVENANCE_KEYS as $key) {
+            $value = $provenance[$key] ?? null;
+            if (!is_string($value)) {
+                continue;
+            }
+            $value = trim($value);
+            if ($value === '' || strlen($value) > 512 || preg_match('/[\x00-\x1F\x7F<>]/', $value) === 1) {
+                continue;
+            }
+            if (str_contains($value, '://')
+                || str_contains(str_replace('\\', '/', $value), '../')
+                || str_starts_with(str_replace('\\', '/', $value), '/')
+                || preg_match('/^[A-Za-z]:[\\\\\/]/', $value) === 1) {
+                continue;
+            }
+            if ($key === 'manifest_path'
+                && preg_match('#^resources/smart/[a-z0-9][a-z0-9._-]*(?:/[a-z0-9][a-z0-9._-]*)*/manifest\.json$#', $value) !== 1) {
+                continue;
+            }
+            if ($key === 'manifest_sha256' && preg_match('/^[a-f0-9]{64}$/', $value) !== 1) {
+                continue;
+            }
+            $safe[$key] = $value;
+        }
+
+        return $safe;
+    }
+
+    private static function packageManifestPath(string $sourcePath): string
+    {
+        $normalized = str_replace('\\', '/', $sourcePath);
+        $marker = '/resources/smart/';
+        $position = strrpos($normalized, $marker);
+        if ($position === false) {
+            throw new InvalidArgumentException('ui_smart_manifest_source_path_invalid');
+        }
+        $relative = 'resources/smart/' . substr($normalized, $position + strlen($marker));
+        if (preg_match('#^resources/smart/[a-z0-9][a-z0-9._-]*(?:/[a-z0-9][a-z0-9._-]*)*/manifest\.json$#', $relative) !== 1
+            || str_contains($relative, '../')) {
+            throw new InvalidArgumentException('ui_smart_manifest_source_path_invalid');
+        }
+
+        return $relative;
     }
 }

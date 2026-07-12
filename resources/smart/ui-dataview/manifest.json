@@ -8,7 +8,6 @@
     "type": "object",
     "properties": {
       "aria-label": {"type": "string"},
-      "root-class": {"type": "string"},
       "data": {"type": "object"}
     },
     "required": ["aria-label", "data"],

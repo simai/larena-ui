@@ -1,6 +1,11 @@
 {
   "schema": "larena.graph_sync_proposal.v1",
   "canonical_update_allowed": false,
-  "status": "proposal_pending_review",
-  "proposals": []
+  "status": "proposal_only",
+  "capabilities": [
+    "smart_catalog_projection_v1",
+    "smart_ai_catalog_projection_v1",
+    "package_relative_smart_manifest_provenance_v1"
+  ],
+  "apply": false
 }

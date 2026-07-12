@@ -1,12 +1,18 @@
 {
   "schema": "larena.evidence_deviations.v1",
-  "status": "in_progress",
+  "status": "b1_package_complete",
   "deviations": [
     {
       "id": "ui-static-analysis-memory-wrapper",
       "blocking": false,
       "resolved": true,
       "detail": "The wrapper now applies a configurable 1G default after the inherited 128M limit proved insufficient."
+    },
+    {
+      "id": "protected-browser-acceptance-owned-by-integration",
+      "blocking": false,
+      "resolved": false,
+      "detail": "UI package tests prove the projection and renderer contracts; protected Admin routes, themes, keyboard and 390 px behavior remain in the root integration batch."
     }
   ]
 }

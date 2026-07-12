@@ -72,17 +72,22 @@ if ($codingStarted) {
         'src/Contracts/DesignPackDescriptor.php',
         'src/Contracts/HydrationContract.php',
         'src/Contracts/SmartComponentManifest.php',
+        'src/Contracts/SmartCatalogEntry.php',
         'src/Contracts/SmartViewDescriptor.php',
         'src/Contracts/UiAssetGraph.php',
         'src/Contracts/UiAssetRequirement.php',
         'src/Contracts/UiPlaygroundScenario.php',
         'src/Contracts/UiResourcePackManifest.php',
         'src/Contracts/UiRuntime.php',
+        'src/Developer/SmartAiCatalogProjection.php',
+        'src/Developer/SmartCatalogProjection.php',
         'src/Enums/HydrationStrategy.php',
         'src/Enums/RenderStrategy.php',
         'src/Enums/UiAssetKind.php',
         'tests/Unit/UiContractTest.php',
         'tests/Unit/UiFailsClosedTest.php',
+        'tests/Unit/SmartAiCatalogProjectionTest.php',
+        'tests/Unit/SmartCatalogProjectionTest.php',
     ];
     foreach ($requiredContractFiles as $file) {
         if (!is_file($file)) {

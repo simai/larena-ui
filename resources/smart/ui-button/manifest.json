@@ -81,6 +81,12 @@
     "category": "actions",
     "order": 10,
     "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
     "states": ["default", "hover", "focus", "active", "loading", "disabled"],
     "accessibility": ["native_button", "visible_focus", "disabled_semantics", "accessible_name"],
     "product_href": "/admin/docara/pages/create",

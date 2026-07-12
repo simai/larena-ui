@@ -1,10 +1,26 @@
 {
   "schema": "larena.evidence_file_map.v1",
-  "status": "in_progress",
+  "status": "b1_package_complete",
   "files": [
     ".larena/launch-context.json",
+    "README.md",
+    "composer.json",
+    "module.yaml",
     "scripts/analyse.php",
     "scripts/validate-larena-package.php",
+    "src/Components/AdminComponentCatalog.php (removed)",
+    "src/Contracts/SmartCatalogEntry.php",
+    "src/Contracts/SmartComponentManifest.php",
+    "src/Developer/SmartAiCatalogProjection.php",
+    "src/Developer/SmartCatalogProjection.php",
+    "src/Registry/SmartRegistry.php",
+    "src/Runtime/AdminComponentRenderer.php (removed)",
+    "src/Runtime/AdminDataviewRenderer.php",
+    "resources/smart/ui-button/manifest.json",
+    "tests/Unit/AdminUiLabRendererTest.php (removed)",
+    "tests/Unit/InMemoryUiRuntimeTest.php",
+    "tests/Unit/SmartAiCatalogProjectionTest.php",
+    "tests/Unit/SmartCatalogProjectionTest.php",
     "docs/project-management/evidence/larena-smart-ui-foundation-v1/"
   ]
 }

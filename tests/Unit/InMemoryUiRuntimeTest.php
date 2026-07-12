@@ -11,7 +11,6 @@ use Larena\Ui\Contracts\UiResourcePackManifest;
 use Larena\Ui\Enums\RenderStrategy;
 use Larena\Ui\Enums\UiAssetKind;
 use Larena\Ui\Runtime\InMemoryUiRuntime;
-use Larena\Ui\Components\AdminComponentCatalog;
 
 $runtime = new InMemoryUiRuntime([
     'admin.menu.smart',
@@ -105,9 +104,5 @@ assert($missingManifest);
 
 assert($runtime->validateDesignPack(new DesignPackDescriptor('design.admin', ['color.primary' => '#111111'])));
 assert($runtime->validateResourcePack(new UiResourcePackManifest('ui.admin', ['sf.table'], ['resources/simai/smart/table/table.js'])));
-
-$catalogButton = (new AdminComponentCatalog())->manifests()['button'];
-$catalogRender = (new InMemoryUiRuntime())->renderBackend($catalogButton, ['label' => 'Save']);
-assert(str_contains($catalogRender->html, 'label="Save"'));
 
 echo "InMemoryUiRuntimeTest passed.\n";

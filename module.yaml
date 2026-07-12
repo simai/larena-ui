@@ -1,8 +1,8 @@
 package: larena/ui
 title: Larena UI
-status: review_completed
+status: coding_started
 cluster: frontend-composition
-batch: larena-simai-framework-canonical-naming-migration
+batch: larena-smart-ui-foundation-v1
 features:
   - ui.backend_first_rendering
   - ui.component_playground_coverage
@@ -20,10 +20,12 @@ features:
   - ui.source_backed_component_registry
   - ui.laravel_smart_facade
   - ui.pinned_simai_framework_runtime
+  - ui.smart_registry_catalog_projection
+  - ui.smart_ai_catalog_projection
 runtime:
   php: "^8.3"
   laravel: "^13.0"
 assets:
   path: assets.yaml
 evidence:
-  path: docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/
+  path: docs/project-management/evidence/larena-smart-ui-foundation-v1/
