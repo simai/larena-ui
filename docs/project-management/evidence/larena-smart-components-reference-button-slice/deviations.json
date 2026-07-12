@@ -1,0 +1,18 @@
+{
+  "deviations": [],
+  "deferred": [
+    "typed slots",
+    "backend event-handler binding",
+    "event payload and propagation metadata",
+    "explicit asset manifests for legacy ui.dataview and ui.input",
+    "complete activation-to-delivery asset attestation beyond the pinned runtime pair",
+    "component archetypes beyond ui.button"
+  ],
+  "nonclaims": [
+    "production readiness",
+    "all 41 packages ready"
+  ],
+  "tooling_notes": [
+    "the legacy UI package validator neither accepts review_completed nor recognizes the current multi-package launch record"
+  ]
+}

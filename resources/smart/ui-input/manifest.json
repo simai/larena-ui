@@ -1,0 +1,33 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.input",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "id": {"type": "string"},
+      "name": {"type": "string"},
+      "label": {"type": "string"},
+      "value": {"type": "string"},
+      "required": {"type": "boolean"},
+      "type": {"type": "string"},
+      "size": {"type": "string"},
+      "error": {"type": "boolean"},
+      "hint": {"type": "string"}
+    },
+    "required": ["id", "name", "label"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {},
+  "views": {"admin": {}},
+  "presets": {},
+  "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-input"},
+  "assets": [],
+  "atlas": {"visible": false},
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json"}
+}

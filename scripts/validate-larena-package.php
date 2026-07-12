@@ -43,6 +43,7 @@ $allowedStatuses = [
     'repository_prepared_pending_review',
     'coding_started',
     'contract_skeleton_review_passed',
+    'review_completed',
 ];
 if (!in_array((string) ($launchContext['status'] ?? ''), $allowedStatuses, true)) {
     $errors[] = 'launch-context status is not allowed for this package stage.';
@@ -60,7 +61,8 @@ if ($codingStarted) {
         'specs/implementation-planning/launch-records/ui-batch-1-contract-skeletons-current.json',
         '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/admin-ui-runtime-dataview-pages-users.json',
         '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/ui-lab-admin-recipes.json',
-        '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-sf5-runtime-first-product-slice.json',
+        '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-simai-framework-canonical-naming-migration.json',
+        '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-smart-ui-foundation-v1.json',
     ], true)) {
         $errors[] = 'coding_started requires the current ui batch 1 launch record.';
     }

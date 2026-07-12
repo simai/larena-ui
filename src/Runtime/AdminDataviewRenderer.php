@@ -12,11 +12,17 @@ use Larena\Ui\Contracts\FrontendRenderArtifact;
 use Larena\Ui\Contracts\HydrationContract;
 use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Enums\RenderStrategy;
-use Larena\Ui\Smart;
 
 final class AdminDataviewRenderer
 {
-    public function __construct(private readonly AdminComponentCatalog $catalog = new AdminComponentCatalog()) {}
+    private readonly AdminComponentCatalog $catalog;
+    private readonly SmartManager $smart;
+
+    public function __construct(?AdminComponentCatalog $catalog = null, ?SmartManager $smart = null)
+    {
+        $this->catalog = $catalog ?? new AdminComponentCatalog();
+        $this->smart = $smart ?? SmartManager::withDefaults();
+    }
 
     /**
      * @param array<string, string> $labels
@@ -36,7 +42,7 @@ final class AdminDataviewRenderer
         }
 
         $html = '<section class="larena-panel larena-dataview" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview">';
-        $smartRender = null;
+        $smartArtifact = null;
         if ($page->projection->rows === []) {
             $html .= $this->emptyState($emptyState);
         } else {
@@ -64,7 +70,7 @@ final class AdminDataviewRenderer
                 }
                 $rows[] = $smartRow;
             }
-            $smartRender = Smart::render('sf-table', [
+            $smartArtifact = $this->smart->render('ui.dataview', [
                 'aria-label' => $ariaLabel,
                 'root-class' => 'larena-pages-sf-table',
                 'data' => [
@@ -76,20 +82,25 @@ final class AdminDataviewRenderer
                         'total' => $page->pagination->total,
                     ],
                 ],
-            ]);
-            $html .= $smartRender->html;
+            ], $assetActivation);
+            $html .= $smartArtifact->html();
         }
         $html .= '</section>';
 
-        $requirements = $smartRender === null ? $manifests['dataview']->assetRequirements : $smartRender->assetRequirements;
-        $backendRender = $smartRender === null
+        $requirements = $smartArtifact === null ? $manifests['dataview']->assetRequirements : $smartArtifact->render->assetRequirements;
+        $backendRender = $smartArtifact === null
             ? new BackendRenderResult($html, RenderStrategy::Native, HydrationContract::none(), $requirements)
-            : new BackendRenderResult($html, $smartRender->strategy, $smartRender->hydration, $requirements);
+            : new BackendRenderResult($html, $smartArtifact->render->strategy, $smartArtifact->render->hydration, $requirements);
         return new FrontendRenderArtifact(
             $backendRender,
-            new UiAssetGraph($requirements, ['smart-component:sf-table', 'source-backed:simai/ui-smart', 'larena-view:admin.dataview']),
+            new UiAssetGraph($requirements, ['smart-component:ui.dataview', 'frontend-tag:sf-table', 'source-backed:simai/ui-smart', 'larena-view:admin.dataview']),
             $assetActivation,
-            ['manifest' => $manifests['dataview']->componentKey, 'source' => $page->projection->descriptor->source->sourceKey, 'runtime_tag' => $smartRender === null ? null : 'sf-table'],
+            [
+                'manifest' => $smartArtifact === null ? $manifests['dataview']->componentKey : 'ui.dataview',
+                'source' => $page->projection->descriptor->source->sourceKey,
+                'runtime_tag' => $smartArtifact === null ? null : 'sf-table',
+                'smart_manager' => $smartArtifact === null ? null : $smartArtifact->toArray()['diagnostics'],
+            ],
         );
     }
 

@@ -1,0 +1,12 @@
+{
+  "schema": "larena.evidence_deviations.v1",
+  "status": "in_progress",
+  "deviations": [
+    {
+      "id": "ui-static-analysis-memory-wrapper",
+      "blocking": false,
+      "resolved": true,
+      "detail": "The wrapper now applies a configurable 1G default after the inherited 128M limit proved insufficient."
+    }
+  ]
+}

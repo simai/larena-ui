@@ -165,16 +165,16 @@ assert(in_array('larena/ui package-owned smart carrier resources', $artifactPubl
 assert(in_array('ui-admin/dist copied into root simai/larena', $artifactPublicationPlan['forbidden_sources'], true));
 assert(in_array('ui-admin/node_modules copied into root simai/larena', $artifactPublicationPlan['forbidden_sources'], true));
 assert(in_array('hardcoded cdn.jsdelivr.net runtime dependency in Larena templates', $artifactPublicationPlan['forbidden_sources'], true));
-assert(in_array('legacy SF5 label as Larena runtime or contract name', $artifactPublicationPlan['forbidden_sources'], true));
+assert(in_array('legacy versioned framework label as Larena runtime or contract name', $artifactPublicationPlan['forbidden_sources'], true));
 assert($artifactPublicationPlan['reference_warnings']['cdn_reference_requires_core_assets_repackaging'] === true);
-assert($artifactPublicationPlan['reference_warnings']['legacy_sf5_label_requires_larena_naming_adapter'] === true);
+assert($artifactPublicationPlan['reference_warnings']['legacy_versioned_framework_label_requires_larena_naming_adapter'] === true);
 assert($artifactPublicationPlan['reference_warnings']['write_events_require_guarded_settings_or_crud_launch'] === true);
 assert($artifactPublicationPlan['boundaries']['reference_only'] === true);
 assert($artifactPublicationPlan['boundaries']['root_frontend_source_of_truth'] === false);
 assert($artifactPublicationPlan['boundaries']['frontend_distribution_copy_allowed'] === false);
 assert($artifactPublicationPlan['boundaries']['node_modules_copy_allowed'] === false);
 assert($artifactPublicationPlan['boundaries']['hardcoded_cdn_allowed_in_larena_runtime'] === false);
-assert($artifactPublicationPlan['boundaries']['legacy_sf5_contract_name_allowed'] === false);
+assert($artifactPublicationPlan['boundaries']['legacy_versioned_framework_label_contract_name_allowed'] === false);
 assert($artifactPublicationPlan['boundaries']['production_ui_claim'] === false);
 
 $adminCompleteReadiness = $resourcePack->adminFrontendSmokeReadiness(array_values(

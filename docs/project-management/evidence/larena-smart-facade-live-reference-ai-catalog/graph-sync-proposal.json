@@ -1,0 +1,11 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "status": "proposal_only",
+  "canonical_update_allowed": false,
+  "capabilities": [
+    "ui_smart_facade_v1",
+    "smart_reference_auto_submit_v1",
+    "laravel_empty_select_normalization_v1"
+  ],
+  "apply": false
+}

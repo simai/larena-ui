@@ -1,0 +1,17 @@
+{
+  "package": "larena/ui",
+  "files": [
+    "src/Contracts/SmartComponentManifest.php",
+    "src/Contracts/SmartBackendRenderer.php",
+    "src/Contracts/SmartContributionProvider.php",
+    "src/Registry/SmartRegistry.php",
+    "src/Registry/UiSmartContribution.php",
+    "src/Runtime/SmartManager.php",
+    "src/Runtime/Sf5ElementBackendRenderer.php",
+    "src/Runtime/AdminDataviewRenderer.php",
+    "resources/smart/ui-dataview/manifest.json",
+    "resources/smart/ui-input/manifest.json",
+    "tests/Unit/SmartManagerTest.php",
+    "tests/Unit/AdminDataviewRendererTest.php"
+  ]
+}

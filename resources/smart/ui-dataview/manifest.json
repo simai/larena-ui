@@ -1,0 +1,27 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.dataview",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "aria-label": {"type": "string"},
+      "root-class": {"type": "string"},
+      "data": {"type": "object"}
+    },
+    "required": ["aria-label", "data"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {},
+  "views": {"admin": {}},
+  "presets": {},
+  "constraints": {"read_only_first_slice": true},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-table"},
+  "assets": [],
+  "atlas": {"visible": false},
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json"}
+}

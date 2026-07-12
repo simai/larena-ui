@@ -1,0 +1,10 @@
+{
+  "schema": "larena.evidence_file_map.v1",
+  "status": "in_progress",
+  "files": [
+    ".larena/launch-context.json",
+    "scripts/analyse.php",
+    "scripts/validate-larena-package.php",
+    "docs/project-management/evidence/larena-smart-ui-foundation-v1/"
+  ]
+}

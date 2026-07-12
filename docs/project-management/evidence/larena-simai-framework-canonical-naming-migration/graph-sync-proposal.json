@@ -1,0 +1,12 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "status": "proposal_only",
+  "canonical_update_allowed": false,
+  "capabilities": [
+    "ui_simai_framework_canonical_product_naming",
+    "ui_sf_machine_contract",
+    "ui_sf_renderer_contract",
+    "ui_sf_runtime_lock_identity"
+  ],
+  "apply": false
+}

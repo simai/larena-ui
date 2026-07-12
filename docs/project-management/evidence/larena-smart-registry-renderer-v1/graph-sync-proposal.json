@@ -1,0 +1,10 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "status": "proposal_only",
+  "capabilities": [
+    "smart_manifest_v1",
+    "smart_registry_v1",
+    "smart_manager_v1"
+  ],
+  "apply": false
+}

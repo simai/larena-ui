@@ -1,8 +1,8 @@
 package: larena/ui
 title: Larena UI
-status: coding_started
+status: review_completed
 cluster: frontend-composition
-batch: larena-sf5-runtime-first-product-slice
+batch: larena-simai-framework-canonical-naming-migration
 features:
   - ui.backend_first_rendering
   - ui.component_playground_coverage
@@ -13,8 +13,8 @@ features:
   - ui.hydration_contract
   - ui.resource_pack_integration
   - ui.smart_component_manifest
-  - ui.source_backed_sf5_button_resource_pack_demo
-  - ui.source_backed_sf5_catalog_adapter_pipeline_demo
+  - ui.source_backed_sf_button_resource_pack_demo
+  - ui.source_backed_sf_catalog_adapter_pipeline_demo
   - ui.ui_asset_graph
   - ui.frontend_render_artifact
   - ui.source_backed_component_registry
@@ -26,4 +26,4 @@ runtime:
 assets:
   path: assets.yaml
 evidence:
-  path: docs/project-management/evidence/larena-sf5-runtime-first-product-slice/
+  path: docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/

@@ -8,7 +8,7 @@ final class AdminUiLabAssetManifest
 {
     public const CSS_KEY = 'admin.ui_lab.css';
     public const JS_KEY = 'admin.ui_lab.js';
-    public const ASSET_REVISION = '20260711-ui-lab-2';
+    public const ASSET_REVISION = '20260712-ui-lab-6';
 
     /** @return list<array<string, mixed>> */
     public static function publicationAssets(): array

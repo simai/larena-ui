@@ -1,0 +1,11 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "status": "proposal_only",
+  "canonical_update_allowed": false,
+  "capabilities": [
+    "smart_component_reference_v1",
+    "smart_invocation_example_builder_v1",
+    "ui_button_manifest_v1"
+  ],
+  "apply": false
+}

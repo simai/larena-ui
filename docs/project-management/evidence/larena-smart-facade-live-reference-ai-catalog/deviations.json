@@ -1,0 +1,21 @@
+{
+  "deviations": [],
+  "deferred": [
+    "central UI Laravel provider for registry and manager bindings",
+    "optional Illuminate facade adapter on top of the framework-neutral facade",
+    "manifest v2 semantics for typed slots, event payloads, data and effects",
+    "AI-safe recipe and invocation-plan runtime",
+    "Smart component archetypes beyond the accepted ui.button slice",
+    "migration of the legacy frontend-tag Larena Ui Smart adapter"
+  ],
+  "nonclaims": [
+    "production readiness",
+    "all 41 packages ready",
+    "safe data binding",
+    "safe effect execution"
+  ],
+  "tooling_notes": [
+    "the system Homebrew PHP is linked to a removed ICU 73 library; checks used the working ServBay PHP 8.4 runtime",
+    "the legacy UI package-stage validator has a hard-coded launch/status allowlist that predates this launch"
+  ]
+}

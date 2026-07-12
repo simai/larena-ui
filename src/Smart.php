@@ -13,7 +13,7 @@ use Larena\Ui\Enums\RenderStrategy;
 use Larena\Ui\Enums\UiAssetKind;
 use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
-/** Laravel-native entry point for pinned SIMAI Framework smart elements. */
+/** Laravel-native entry point for pinned Simai Framework smart elements. */
 final class Smart
 {
     /** @param array<string, mixed> $props */

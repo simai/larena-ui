@@ -12,6 +12,7 @@ use Larena\Dataview\Contracts\DataviewViewDescriptor;
 use Larena\Dataview\Enums\DataviewViewType;
 use Larena\Dataview\Runtime\DataviewTableRuntime;
 use Larena\Ui\Runtime\AdminDataviewRenderer;
+use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $source = new DataviewSourceDescriptor('auth.users', 'larena/auth', true);
 $provider = new class($source) implements DataviewSourceProvider {
@@ -28,7 +29,7 @@ $activation = [
     'schema' => 'larena.core_assets.activation_contract.v1', 'status' => 'ready', 'activation_owner' => 'larena/core:core.assets',
     'activation_mode' => 'read_only_route', 'physical_publication_ready' => true, 'writes_database' => false,
     'copies_to_root' => false, 'uses_hardcoded_cdn' => false, 'asset_count' => 1,
-    'renderable_tags' => ['<link rel="stylesheet" href="/ui.css">'],
+    'runtime_pair' => FrontendRuntimeLock::bundled()->pairId(), 'renderable_tags' => ['<link rel="stylesheet" href="/ui.css">'],
 ];
 $artifact = (new AdminDataviewRenderer())->render($page, ['name' => 'Name', 'status' => 'Status'], [], 'Users', '/admin/users', $activation);
 assert($artifact->isRenderable());
@@ -37,4 +38,6 @@ assert(str_contains($artifact->html(), '<sf-table'));
 assert(str_contains($artifact->html(), '\\u003CAdmin\\u003E'));
 assert(!str_contains($artifact->html(), '<Admin>'));
 assert(str_contains($artifact->html(), 'type="application/json"'));
+assert(($artifact->toArray()['diagnostics']['smart_manager']['component_key'] ?? null) === 'ui.dataview');
+assert(in_array('smart-component:ui.dataview', $artifact->assetGraph->explain, true));
 echo "AdminDataviewRendererTest: OK\n";

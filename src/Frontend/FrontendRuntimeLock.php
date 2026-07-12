@@ -13,7 +13,7 @@ final readonly class FrontendRuntimeLock
 
     public static function bundled(): self
     {
-        $path = dirname(__DIR__, 2) . '/resources/sf5/runtime-lock.json';
+        $path = dirname(__DIR__, 2) . '/resources/sf/runtime-lock.json';
         $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($data)) {
             throw new RuntimeException('ui_frontend_runtime_lock_invalid');
@@ -91,7 +91,7 @@ final readonly class FrontendRuntimeLock
         }
 
         $expectedPairId = sprintf(
-            'sf5-%s-%s-%s',
+            'sf-%s-%s-%s',
             (string) $this->data['tag'],
             substr((string) $this->data['ui']['commit'], 0, 8),
             substr((string) $this->data['ui_smart']['commit'], 0, 8),

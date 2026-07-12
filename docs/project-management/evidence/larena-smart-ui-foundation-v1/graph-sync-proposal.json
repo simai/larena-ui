@@ -1,0 +1,6 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "canonical_update_allowed": false,
+  "status": "proposal_pending_review",
+  "proposals": []
+}

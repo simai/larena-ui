@@ -1,0 +1,55 @@
+{
+  "schema": "larena.evidence.deviations.v1",
+  "deviations": [],
+  "resolved_findings": [
+    {
+      "id": "ui_catalog_css_provenance_drift",
+      "status": "resolved",
+      "resolution": "package-owned CSS refreshed byte-for-byte from the pinned ui source",
+      "assets": [
+        {
+          "slice": "buttons",
+          "sha256": "4b3d7d38214c28417d0b097cdfbb1f05a6f1b5d6ac12d3735ffd0de0a25886ce",
+          "package_copies": [
+            "resources/assets/source-backed-sf/buttons/component/css/buttons.css",
+            "resources/assets/source-backed-sf/catalog/buttons/component/css/buttons.css"
+          ]
+        },
+        {
+          "slice": "tags",
+          "sha256": "d255c73fe824561c9dc39fa1c067d5724ea3d10fecf21f5f3f438cf5996cb63e"
+        },
+        {
+          "slice": "pagination",
+          "sha256": "21136fa97dbef25a43ac93d6f52df7c4871d55dd043e108206ab23a00f534389"
+        }
+      ],
+      "admin_pipeline": {
+        "status": "passed",
+        "all_package_resources_match_source": true,
+        "failed_diagnostics": []
+      },
+      "admin_binding_demo": {
+        "status": "passed",
+        "resource_provenance_matches": 4,
+        "resource_provenance_total": 4,
+        "failed_diagnostics": []
+      }
+    }
+  ],
+  "deferred": [
+    "cross-package browser and remaining entry-application integration evidence",
+    "browser publication smoke for the shared Larena runtime",
+    "retirement of previously published local static bundles after shared smoke"
+  ],
+  "nonclaims": [
+    "production readiness",
+    "all Larena packages ready",
+    "browser closeout",
+    "cross-package compatibility before coordinated consumer migration"
+  ],
+  "tooling_notes": [
+    "the default Homebrew PHP 8.2 binary cannot load the removed ICU 73 library; verification used PHP 8.3.31",
+    "legacy paths in launch-context allowed_files are deletion tombstones, not active runtime dependencies"
+  ]
+}

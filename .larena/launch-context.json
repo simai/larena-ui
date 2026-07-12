@@ -1,10 +1,10 @@
 {
   "schema": "larena.package_launch_context.v1",
   "package": "larena/ui",
-  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-sf5-runtime-first-product-slice.json",
+  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-smart-ui-foundation-v1.json",
   "specs_repo": "simai/larena-specs",
-  "specs_commit": "fb58c18db29213e1d0e1cb52f4ade437093199f5",
-  "base_commit": "ff771ff086b6",
+  "specs_commit": "665f7d8bf5abcd13f06b852f0702e31582b8708e",
+  "base_commit": "86c43b86db972b8f8d1964ab4f494f562cb53acc",
   "selected_features": [
     "ui.smart_component_manifest",
     "ui.backend_first_rendering",
@@ -19,13 +19,26 @@
     "ui.in_memory_runtime.frontend_conveyor_demo",
     "ui.package_asset_descriptor_pilot",
     "ui.frontend_render_artifact",
-    "ui.source_backed_sf5_button_resource_pack_demo",
-    "ui.source_backed_sf5_catalog_adapter_pipeline_demo"
+    "ui.source_backed_sf_button_resource_pack_demo",
+    "ui.source_backed_sf_catalog_adapter_pipeline_demo"
     ,"ui.admin_component_atlas"
     ,"ui.admin_recipes"
     ,"ui.source_backed_component_registry"
     ,"ui.laravel_smart_facade"
     ,"ui.pinned_simai_framework_runtime"
+    ,"ui.canonical_smart_manifest_v1"
+    ,"ui.package_smart_contributions"
+    ,"ui.smart_registry_v1"
+    ,"ui.smart_manager_renderer_v1"
+    ,"ui.button_smart_manifest"
+    ,"ui.smart_component_reference_model"
+    ,"ui.smart_invocation_example_builder"
+    ,"ui.smart_facade"
+    ,"ui.smart_reference_auto_submit"
+    ,"ui.smart_registry_catalog_projection"
+    ,"ui.smart_ai_catalog_projection"
+    ,"ui.smart_recipe_manifest"
+    ,"ui.smart_component_archetype_library"
   ],
   "allowed_files": [
     "src/Assets/AdminDataviewAssetManifest.php",
@@ -105,20 +118,24 @@
     "resources/simai/smart/admin-shell/read-only-route.css",
     "resources/assets/admin-shell/read-only-route.css",
     "resources/assets/admin-foundation/preview.css",
+    "resources/assets/source-backed-sf/buttons/component/css/buttons.css",
+    "resources/assets/source-backed-sf/buttons/component/js/buttons.js",
+    "resources/assets/source-backed-sf/buttons/component/json/button.utility.json",
+    "resources/assets/source-backed-sf/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf/catalog/buttons/component/css/buttons.css",
+    "resources/assets/source-backed-sf/catalog/buttons/component/js/buttons.js",
+    "resources/assets/source-backed-sf/catalog/buttons/component/json/button.utility.json",
+    "resources/assets/source-backed-sf/catalog/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf/catalog/tags/component/css/tags.css",
+    "resources/assets/source-backed-sf/catalog/tags/component/js/tags.js",
+    "resources/assets/source-backed-sf/catalog/tags/smart/js/tags.js",
     "resources/assets/source-backed-sf5/buttons/component/css/buttons.css",
-    "resources/assets/source-backed-sf5/buttons/component/js/buttons.js",
-    "resources/assets/source-backed-sf5/buttons/component/json/button.utility.json",
-    "resources/assets/source-backed-sf5/buttons/smart/js/buttons.js",
     "resources/assets/source-backed-sf5/catalog/buttons/component/css/buttons.css",
-    "resources/assets/source-backed-sf5/catalog/buttons/component/js/buttons.js",
-    "resources/assets/source-backed-sf5/catalog/buttons/component/json/button.utility.json",
-    "resources/assets/source-backed-sf5/catalog/buttons/smart/js/buttons.js",
-    "resources/assets/source-backed-sf5/catalog/tags/component/css/tags.css",
-    "resources/assets/source-backed-sf5/catalog/tags/component/js/tags.js",
-    "resources/assets/source-backed-sf5/catalog/tags/smart/js/tags.js",
     "resources/assets/source-backed-sf5/catalog/pagination/component/css/pagination.css",
-    "resources/assets/source-backed-sf5/catalog/pagination/component/js/pagination.js",
-    "resources/assets/source-backed-sf5/catalog/pagination/smart/js/pagination.js",
+    "resources/assets/source-backed-sf5/catalog/tags/component/css/tags.css",
+    "resources/assets/source-backed-sf/catalog/pagination/component/css/pagination.css",
+    "resources/assets/source-backed-sf/catalog/pagination/component/js/pagination.js",
+    "resources/assets/source-backed-sf/catalog/pagination/smart/js/pagination.js",
     "tests/Unit/UiContractTest.php",
     "tests/Unit/UiFailsClosedTest.php",
     "tests/Unit/InMemoryUiRuntimeTest.php",
@@ -140,7 +157,7 @@
     "scripts/run-unit-tests.php",
     "scripts/analyse.php",
     "tests/bootstrap.php",
-    "resources/sf5/runtime-lock.json",
+    "resources/sf/runtime-lock.json",
     "src/Frontend/FrontendRuntimeLock.php",
     "src/Frontend/FrontendRuntimeAssetResolver.php",
     "src/Frontend/SourceBackedComponentRegistry.php",
@@ -151,7 +168,61 @@
     "tests/Unit/SmartTest.php",
     "tests/Unit/SfActionLinkTest.php",
     "tests/Unit/FrontendRuntimeAssetResolverTest.php",
-    "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/*"
+    "src/Contracts/SmartBackendRenderer.php",
+    "src/Contracts/SmartContributionProvider.php",
+    "src/Registry/SmartRegistry.php",
+    "src/Registry/UiSmartContribution.php",
+    "src/Runtime/SmartManager.php",
+    "src/Runtime/SfElementBackendRenderer.php",
+    "resources/smart/ui-dataview/manifest.json",
+    "resources/smart/ui-input/manifest.json",
+    "tests/Unit/SmartManagerTest.php",
+    "resources/smart/ui-button/manifest.json",
+    "src/Developer/SmartInvocationExampleBuilder.php",
+    "src/Facades/Smart.php",
+    "src/Validation/SmartPropsValidator.php",
+    "src/Reference/SmartComponentReference.php",
+    "tests/Unit/SmartComponentReferenceTest.php",
+    "tests/Unit/SmartFacadeTest.php",
+    "tests/Unit/AdminUiLabReferenceBehaviorTest.php",
+    "docs/project-management/evidence/larena-smart-registry-renderer-v1/deviations.json",
+    "docs/project-management/evidence/larena-smart-registry-renderer-v1/file-map.json",
+    "docs/project-management/evidence/larena-smart-registry-renderer-v1/graph-sync-proposal.json",
+    "docs/project-management/evidence/larena-smart-registry-renderer-v1/implementation-summary.md",
+    "docs/project-management/evidence/larena-smart-registry-renderer-v1/independent-review.md",
+    "docs/project-management/evidence/larena-smart-registry-renderer-v1/tests.md",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/README.md",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/implementation-summary.md",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/independent-review.md",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/tests.md",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/smoke.md",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/file-map.json",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/deviations.json",
+    "docs/project-management/evidence/larena-smart-components-reference-button-slice/graph-sync-proposal.json",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/README.md",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/implementation-summary.md",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/independent-review.md",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/tests.md",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/smoke.md",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/file-map.json",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/deviations.json",
+    "docs/project-management/evidence/larena-smart-facade-live-reference-ai-catalog/graph-sync-proposal.json",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/README.md",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/implementation-summary.md",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/independent-review.md",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/tests.md",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/smoke.md",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/file-map.json",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/deviations.json",
+    "docs/project-management/evidence/larena-simai-framework-canonical-naming-migration/graph-sync-proposal.json",
+    "src/Contracts/SmartCatalogEntry.php",
+    "src/Contracts/SmartRecipeManifest.php",
+    "src/Developer/SmartCatalogProjection.php",
+    "src/Developer/SmartAiCatalogProjection.php",
+    "src/Validation/SmartRecipeValidator.php",
+    "tests/Unit/SmartCatalogProjectionTest.php",
+    "tests/Unit/SmartAiCatalogProjectionTest.php",
+    "tests/Unit/SmartRecipeManifestTest.php"
   ],
   "forbidden_files": [
     "config/*",
@@ -162,28 +233,32 @@
     "src/Build/*",
     "src/Http/*",
     "src/Playground/*",
-    "src/Providers/ProductionUiServiceProvider.php",
-    "src/Registries/RuntimeComponentRegistry.php",
-    "src/Renderers/ProductionRenderer.php"
+    "src/Providers/ProductionUiServiceProvider.php"
   ],
   "forbidden_behavior": [
     "frontend_build_pipeline",
     "blade_vue_react_runtime",
     "component_playground_page_runtime",
-    "component_registry_generator_runtime",
     "resource_pack_activation_runtime",
     "route_or_controller_runtime",
     "direct_larena_specs_update_by_package_agent",
-    "migration_or_route_change"
+    "migration_or_route_change",
+    "parallel_component_or_recipe_registry",
+    "manual_catalog_as_source_of_truth",
+    "synthetic_preview_instead_of_real_renderer",
+    "arbitrary_runtime_handler_from_content",
+    "backend_record_or_effect_ownership"
   ],
-  "evidence_path": "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/",
-  "graph_sync_proposal_path": "docs/project-management/evidence/larena-sf5-runtime-first-product-slice/graph-sync-proposal.json",
+  "evidence_path": "docs/project-management/evidence/larena-smart-ui-foundation-v1/",
+  "graph_sync_proposal_path": "docs/project-management/evidence/larena-smart-ui-foundation-v1/graph-sync-proposal.json",
   "status": "coding_started",
+  "coding_allowed": true,
   "coding_started": true,
   "repository_enforcement_installed": true,
   "review_completed": false,
-  "next_transition": "browser_acceptance_and_commit",
+  "next_transition": "tests_recorded",
   "repository_reset_pre_codegen": true,
   "repository_created_locally": true,
-  "remote_push_status": "not_attempted_current_batch_github_cli_not_authenticated"
+  "remote_push_status": "not_attempted_current_batch",
+  "coding_branch": "codex/frontend-smart-ui-foundation"
 }

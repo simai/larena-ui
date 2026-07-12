@@ -1,0 +1,15 @@
+{
+  "package": "larena/ui",
+  "files": [
+    "resources/smart/ui-button/manifest.json",
+    "src/Reference/SmartComponentReference.php",
+    "src/Developer/SmartInvocationExampleBuilder.php",
+    "src/Validation/SmartPropsValidator.php",
+    "src/Registry/UiSmartContribution.php",
+    "src/Runtime/SmartManager.php",
+    "src/Assets/AdminUiLabAssetManifest.php",
+    "resources/css/admin-ui-lab.css",
+    "tests/Unit/SmartComponentReferenceTest.php",
+    "README.md"
+  ]
+}

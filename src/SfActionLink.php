@@ -9,7 +9,7 @@ use Larena\Ui\Contracts\HydrationContract;
 use Larena\Ui\Enums\HydrationStrategy;
 use Larena\Ui\Enums\RenderStrategy;
 
-/** Semantic anchor rendered with the native SIMAI Framework button component. */
+/** Semantic anchor rendered with the native Simai Framework button component. */
 final class SfActionLink
 {
     public static function render(
@@ -27,7 +27,7 @@ final class SfActionLink
         $attributes = [
             'href' => $href,
             'class' => sprintf('sf-button sf-button--%s sf-button--%s sf-button--size-%s', $type, $scheme, $size),
-            'data-larena-ui-runtime' => 'larena/ui:sf5_action_link',
+            'data-larena-ui-runtime' => 'larena/ui:sf_action_link',
         ];
         if ($current) {
             $attributes['aria-current'] = 'page';
