@@ -50,7 +50,7 @@
   "atlas": {
     "visible": true,
     "title": "Pagination",
-    "description": "A bounded collection-navigation component verified against the pinned Simai Framework source, with page actions exposed only as DOM events.",
+    "description": "Moves through pages in a long list.",
     "category": "collections",
     "order": 70,
     "status": "developer_testable",
@@ -81,13 +81,13 @@
     "i18n": {
       "en": {
         "title": "Pagination",
-        "description": "A bounded collection-navigation component verified against the pinned Simai Framework source, with page actions exposed only as DOM events.",
+        "description": "Moves through pages in a long list.",
         "controls": {"page": "Current page", "show-more-text": "Show-more text"},
         "options": {"page": {"first_page": "First page", "middle_page": "Middle page", "last_page": "Last page"}}
       },
       "ru": {
         "title": "Постраничная навигация",
-        "description": "Компонент навигации по коллекции, подтверждённый зафиксированным исходным кодом Simai Framework; действия страниц доступны только как DOM-события.",
+        "description": "Переключает страницы длинного списка.",
         "controls": {"page": "Текущая страница", "show-more-text": "Текст кнопки «Показать ещё»"},
         "options": {"page": {"first_page": "Первая страница", "middle_page": "Средняя страница", "last_page": "Последняя страница"}}
       }

@@ -51,7 +51,7 @@
   "atlas": {
     "visible": true,
     "title": "Modal",
-    "description": "A deliberately effect-free inline dialog reference verified against the pinned Simai Framework source, without remote content or callback bindings.",
+    "description": "Shows focused content in a dialog.",
     "category": "overlays",
     "order": 100,
     "status": "developer_testable",
@@ -83,13 +83,13 @@
     "i18n": {
       "en": {
         "title": "Modal",
-        "description": "A deliberately effect-free inline dialog reference verified against the pinned Simai Framework source, without remote content or callback bindings.",
+        "description": "Shows focused content in a dialog.",
         "controls": {"title": "Title", "text": "Text", "open": "Open"},
         "options": {}
       },
       "ru": {
         "title": "Диалог",
-        "description": "Намеренно безопасный inline-диалог, подтверждённый зафиксированным исходным кодом Simai Framework, без удалённого содержимого и привязки обработчиков.",
+        "description": "Показывает отдельное содержимое в диалоговом окне.",
         "controls": {"title": "Заголовок", "text": "Текст", "open": "Открыт"},
         "options": {}
       }

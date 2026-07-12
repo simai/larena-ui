@@ -31,7 +31,7 @@
   "atlas": {
     "visible": true,
     "title": "Data view",
-    "description": "A read-only structured data table rendered by SmartManager through the pinned Simai Framework runtime.",
+    "description": "Shows structured data in a table.",
     "category": "collections",
     "order": 60,
     "status": "developer_testable",
@@ -65,13 +65,13 @@
     "i18n": {
       "en": {
         "title": "Data view",
-        "description": "A read-only structured data table rendered by SmartManager through the pinned Simai Framework runtime.",
+        "description": "Shows structured data in a table.",
         "controls": {"aria-label": "Accessible name"},
         "options": {}
       },
       "ru": {
         "title": "Представление данных",
-        "description": "Таблица для чтения структурированных данных, которую SmartManager отрисовывает через зафиксированный runtime Simai Framework.",
+        "description": "Показывает структурированные данные в таблице.",
         "controls": {"aria-label": "Доступное название"},
         "options": {}
       }

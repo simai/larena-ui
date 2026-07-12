@@ -35,7 +35,7 @@ assert($manifest->frontendTag === 'sf-button');
 assert($manifest->atlas['title'] === 'Button');
 assert($manifest->atlas['i18n']['en']['title'] === 'Button');
 assert($manifest->atlas['i18n']['ru']['title'] === 'Кнопка');
-assert(str_contains($manifest->atlas['description'], 'Simai Framework'));
+assert($manifest->atlas['description'] === 'Starts an action such as save, create, or navigate.');
 assert($manifest->provenance['runtime_lock'] === 'resources/sf/runtime-lock.json');
 assert(array_keys($manifest->atlas['i18n']) === ['en', 'ru']);
 assert(array_keys($manifest->atlas['i18n']['en']['controls']) === array_keys($manifest->atlas['i18n']['ru']['controls']));

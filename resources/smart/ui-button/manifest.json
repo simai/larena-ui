@@ -77,7 +77,7 @@
   "atlas": {
     "visible": true,
     "title": "Button",
-    "description": "A backend-first action button rendered by SmartManager through the pinned Simai Framework runtime.",
+    "description": "Starts an action such as save, create, or navigate.",
     "category": "actions",
     "order": 10,
     "status": "developer_testable",
@@ -112,7 +112,7 @@
     "i18n": {
       "en": {
         "title": "Button",
-        "description": "A backend-first action button rendered by SmartManager through the pinned Simai Framework runtime.",
+        "description": "Starts an action such as save, create, or navigate.",
         "controls": {"text": "Text", "variant": "Variant", "size": "Size", "radius": "Corner radius", "loading": "Loading", "disabled": "Disabled"},
         "options": {
           "variant": {"primary": "Primary", "on_surface": "Default on surface", "secondary": "Secondary tonal", "tonal_on_surface": "Tonal on surface", "outline": "Outline primary", "outline_on_surface": "Outline on surface", "link": "Link primary", "link_on_surface": "Link on surface"},
@@ -122,7 +122,7 @@
       },
       "ru": {
         "title": "Кнопка",
-        "description": "Backend-first кнопка, которую SmartManager отрисовывает через зафиксированный runtime Simai Framework.",
+        "description": "Запускает действие: сохранить, создать или перейти.",
         "controls": {"text": "Текст", "variant": "Вариант", "size": "Размер", "radius": "Скругление", "loading": "Загрузка", "disabled": "Отключена"},
         "options": {
           "variant": {"primary": "Основная", "on_surface": "Обычная на поверхности", "secondary": "Вторичная тональная", "tonal_on_surface": "Тональная на поверхности", "outline": "Контурная основная", "outline_on_surface": "Контурная на поверхности", "link": "Ссылка основная", "link_on_surface": "Ссылка на поверхности"},

@@ -41,7 +41,7 @@
   "atlas": {
     "visible": true,
     "title": "Alert",
-    "description": "A feedback message verified against the pinned Simai Framework source, with explicit tone, supporting text and optional close state.",
+    "description": "Reports a result, warning, or error.",
     "category": "feedback",
     "order": 90,
     "status": "developer_testable",
@@ -74,7 +74,7 @@
     "i18n": {
       "en": {
         "title": "Alert",
-        "description": "A feedback message verified against the pinned Simai Framework source, with explicit tone, supporting text and optional close state.",
+        "description": "Reports a result, warning, or error.",
         "controls": {
           "type": "Tone",
           "variant": "Variant",
@@ -89,7 +89,7 @@
       },
       "ru": {
         "title": "Уведомление",
-        "description": "Сообщение обратной связи, подтверждённое зафиксированным исходным кодом Simai Framework, с явным тоном, пояснением и необязательным закрытием.",
+        "description": "Сообщает о результате, предупреждении или ошибке.",
         "controls": {
           "type": "Тон",
           "variant": "Вариант",

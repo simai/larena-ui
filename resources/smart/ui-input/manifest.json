@@ -46,7 +46,7 @@
   "atlas": {
     "visible": true,
     "title": "Input",
-    "description": "A labelled text input rendered by SmartManager through the pinned Simai Framework runtime.",
+    "description": "Enters a short text value.",
     "category": "fields",
     "order": 20,
     "status": "developer_testable",
@@ -85,7 +85,7 @@
     "i18n": {
       "en": {
         "title": "Input",
-        "description": "A labelled text input rendered by SmartManager through the pinned Simai Framework runtime.",
+        "description": "Enters a short text value.",
         "controls": {
           "label": "Label",
           "value": "Value",
@@ -103,7 +103,7 @@
       },
       "ru": {
         "title": "Поле ввода",
-        "description": "Поле ввода с подписью, которое SmartManager отрисовывает через зафиксированный runtime Simai Framework.",
+        "description": "Вводит короткое текстовое значение.",
         "controls": {
           "label": "Подпись",
           "value": "Значение",

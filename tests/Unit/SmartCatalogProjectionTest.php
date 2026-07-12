@@ -48,7 +48,7 @@ assert(($english[0]->toArray()['manifest']['key'] ?? null) === 'ui.button');
 
 $russian = $projection->component('ui.button', 'ru');
 assert($russian->title === 'Кнопка');
-assert(str_contains($russian->description, 'Simai Framework'));
+assert($russian->description === 'Запускает действие: сохранить, создать или перейти.');
 assert($russian->controls[0]['label'] === 'Текст');
 assert($russian->controls[1]['option_labels']['primary'] === 'Основная');
 

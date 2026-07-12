@@ -49,7 +49,7 @@
   "atlas": {
     "visible": true,
     "title": "Textarea",
-    "description": "A multiline native-form field verified against the pinned Simai Framework source, with explicit required, disabled and error states.",
+    "description": "Enters text across multiple lines.",
     "category": "fields",
     "order": 30,
     "status": "developer_testable",
@@ -90,7 +90,7 @@
     "i18n": {
       "en": {
         "title": "Textarea",
-        "description": "A multiline native-form field verified against the pinned Simai Framework source, with explicit required, disabled and error states.",
+        "description": "Enters text across multiple lines.",
         "controls": {"label": "Label", "value": "Value", "type": "Type", "size": "Size", "required": "Required", "disabled": "Disabled", "error": "Error"},
         "options": {
           "type": {"bordered": "Bordered", "filled": "Filled"},
@@ -99,7 +99,7 @@
       },
       "ru": {
         "title": "Многострочное поле",
-        "description": "Многострочное поле нативной формы, подтверждённое зафиксированным исходным кодом Simai Framework, с явными состояниями обязательности, отключения и ошибки.",
+        "description": "Вводит текст в несколько строк.",
         "controls": {"label": "Подпись", "value": "Значение", "type": "Тип", "size": "Размер", "required": "Обязательное", "disabled": "Отключено", "error": "Ошибка"},
         "options": {
           "type": {"bordered": "С рамкой", "filled": "Заполненное"},

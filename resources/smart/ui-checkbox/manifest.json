@@ -47,7 +47,7 @@
   "atlas": {
     "visible": true,
     "title": "Checkbox",
-    "description": "A native-form checkbox verified against the pinned Simai Framework source, with explicit checked, mixed, disabled and error states.",
+    "description": "Turns an option on or off.",
     "category": "fields",
     "order": 40,
     "status": "developer_testable",
@@ -86,7 +86,7 @@
     "i18n": {
       "en": {
         "title": "Checkbox",
-        "description": "A native-form checkbox verified against the pinned Simai Framework source, with explicit checked, mixed, disabled and error states.",
+        "description": "Turns an option on or off.",
         "controls": {
           "label": "Label",
           "size": "Size",
@@ -103,7 +103,7 @@
       },
       "ru": {
         "title": "Флажок",
-        "description": "Флажок нативной формы, подтверждённый зафиксированным исходным кодом Simai Framework, с явными состояниями выбора, смешанного значения, отключения и ошибки.",
+        "description": "Включает или выключает отдельный параметр.",
         "controls": {
           "label": "Подпись",
           "size": "Размер",

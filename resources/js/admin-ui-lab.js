@@ -4,6 +4,63 @@
   let inlinePreviewFocusReleaseArmed = false;
   let inlinePreviewFocusReleaseTimer = null;
 
+  const setupCatalogSearch = () => {
+    const panel = document.querySelector('[data-larena-catalog-search-panel]');
+    const input = panel?.querySelector('[data-larena-catalog-search]');
+    const grid = document.querySelector('[data-larena-ui-lab="atlas"]');
+    const cards = Array.from(grid?.querySelectorAll('[data-larena-catalog-card]') || []);
+    const results = panel?.querySelector('[data-larena-catalog-results]');
+    const clear = panel?.querySelector('[data-larena-catalog-clear]');
+    const empty = document.querySelector('[data-larena-catalog-empty]');
+    const reset = empty?.querySelector('[data-larena-catalog-reset]');
+
+    if (!(panel instanceof HTMLElement) || !(input instanceof HTMLInputElement) || !(grid instanceof HTMLElement) || cards.length === 0) return;
+
+    const normalize = (value) => String(value).trim().toLocaleLowerCase();
+    const update = () => {
+      const query = normalize(input.value);
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const matches = query === '' || normalize(card.dataset.larenaCatalogSearchText).includes(query);
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      });
+
+      grid.hidden = visible === 0;
+      if (empty instanceof HTMLElement) empty.hidden = visible !== 0;
+      if (clear instanceof HTMLButtonElement) clear.hidden = query === '';
+      if (results instanceof HTMLElement) {
+        results.textContent = String(results.dataset.resultsTemplate || '')
+          .replace(':visible', String(visible))
+          .replace(':total', String(cards.length));
+      }
+    };
+    const clearSearch = () => {
+      input.value = '';
+      update();
+      input.focus();
+    };
+
+    panel.hidden = false;
+    input.addEventListener('input', update);
+    input.addEventListener('search', update);
+    input.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || input.value === '') return;
+      event.preventDefault();
+      clearSearch();
+    });
+    clear?.addEventListener('click', clearSearch);
+    reset?.addEventListener('click', clearSearch);
+    update();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCatalogSearch, { once: true });
+  } else {
+    setupCatalogSearch();
+  }
+
   const isInlinePreviewModalPanel = (target) => {
     if (!(target instanceof HTMLElement) || !target.matches('[data-sf-modal-panel]')) return false;
     const modal = target.closest('sf-modal[display="inline"]');

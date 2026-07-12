@@ -50,7 +50,7 @@
   "atlas": {
     "visible": true,
     "title": "Dropdown",
-    "description": "A source-verified select field with backend-rendered safe options and no executable callbacks in its manifest contract.",
+    "description": "Selects one option from a list.",
     "category": "fields",
     "order": 50,
     "status": "developer_testable",
@@ -95,7 +95,7 @@
     "i18n": {
       "en": {
         "title": "Dropdown",
-        "description": "A select field verified against the pinned Simai Framework source, with backend-rendered safe options and no executable callbacks in its manifest contract.",
+        "description": "Selects one option from a list.",
         "controls": {"label": "Label", "value": "Selected value", "type": "Type", "mode": "Mode", "disabled": "Disabled"},
         "options": {
           "value": {"draft": "Draft", "published": "Published"},
@@ -105,7 +105,7 @@
       },
       "ru": {
         "title": "Выпадающий список",
-        "description": "Поле выбора, подтверждённое зафиксированным исходным кодом Simai Framework, с безопасными вариантами из backend и без исполняемых обработчиков в манифесте.",
+        "description": "Выбирает один вариант из списка.",
         "controls": {"label": "Подпись", "value": "Выбранное значение", "type": "Тип", "mode": "Режим", "disabled": "Отключён"},
         "options": {
           "value": {"draft": "Черновик", "published": "Опубликовано"},

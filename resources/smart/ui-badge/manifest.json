@@ -39,7 +39,7 @@
   "atlas": {
     "visible": true,
     "title": "Badge",
-    "description": "A compact status label verified against the pinned Simai Framework source, whose meaning remains readable without relying on color alone.",
+    "description": "Shows a state or type in a compact label.",
     "category": "status",
     "order": 80,
     "status": "developer_testable",
@@ -70,7 +70,7 @@
     "i18n": {
       "en": {
         "title": "Badge",
-        "description": "A compact status label verified against the pinned Simai Framework source, whose meaning remains readable without relying on color alone.",
+        "description": "Shows a state or type in a compact label.",
         "controls": {"text": "Text", "size": "Size", "type": "Type", "scheme": "Color scheme"},
         "options": {
           "size": {"1/3": "Extra small", "1/2": "Small", "1": "Default"},
@@ -80,7 +80,7 @@
       },
       "ru": {
         "title": "Метка",
-        "description": "Компактная метка статуса, подтверждённая зафиксированным исходным кодом Simai Framework; её смысл понятен без опоры только на цвет.",
+        "description": "Коротко показывает состояние или тип.",
         "controls": {"text": "Текст", "size": "Размер", "type": "Тип", "scheme": "Цветовая схема"},
         "options": {
           "size": {"1/3": "Очень маленькая", "1/2": "Маленькая", "1": "Обычная"},
