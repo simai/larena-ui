@@ -79,15 +79,15 @@ $unknownRendererRegistry->registerManifest(SmartComponentManifest::fromArray([
     'kind' => 'smart',
     'props' => ['type' => 'object', 'properties' => [], 'additionalProperties' => false],
     'slots' => [], 'events' => [], 'views' => [], 'presets' => [], 'constraints' => [],
-    'render' => ['strategy' => 'host', 'renderer' => 'vendor.unknown'],
-    'frontend' => ['runtime' => 'simai-framework', 'tag' => 'sf-input'],
+    'render' => ['strategy' => 'host', 'renderer' => 'vendor.custom.element'],
+    'frontend' => [],
     'assets' => [], 'atlas' => [], 'provenance' => [],
 ]));
 $unknownRendererRejected = false;
 try {
     (new SmartManager($unknownRendererRegistry))->render('vendor.unknown', [], $activation);
 } catch (InvalidArgumentException $exception) {
-    $unknownRendererRejected = $exception->getMessage() === 'ui_smart_renderer_unknown:vendor.unknown';
+    $unknownRendererRejected = $exception->getMessage() === 'ui_smart_renderer_unknown:vendor.custom.element';
 }
 assert($unknownRendererRejected);
 

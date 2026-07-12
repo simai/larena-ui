@@ -162,7 +162,8 @@ assert($invalidVisibleRejected);
 
 $missingRendererData = $alphaData;
 $missingRendererData['key'] = 'ui.missing_renderer';
-$missingRendererData['render']['renderer'] = 'ui.missing_renderer';
+$missingRendererData['render']['renderer'] = 'vendor.custom.element';
+$missingRendererData['frontend'] = ['runtime' => null, 'tag' => null];
 $missingRendererData['provenance']['manifest_path'] = 'resources/smart/ui-missing-renderer/manifest.json';
 $missingRendererData['provenance']['manifest_sha256'] = str_repeat('d', 64);
 $registry->registerManifest(SmartComponentManifest::fromArray($missingRendererData));
@@ -170,7 +171,7 @@ $missingRendererRejected = false;
 try {
     $projection->component('ui.missing_renderer');
 } catch (InvalidArgumentException $exception) {
-    $missingRendererRejected = $exception->getMessage() === 'ui_smart_renderer_unknown:ui.missing_renderer';
+    $missingRendererRejected = $exception->getMessage() === 'ui_smart_renderer_unknown:vendor.custom.element';
 }
 assert($missingRendererRejected);
 

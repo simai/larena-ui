@@ -38,7 +38,7 @@
     "last_page": {"props": {"current": 4}}
   },
   "constraints": {},
-  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "render": {"strategy": "host", "renderer": "ui.sf.element"},
   "frontend": {"runtime": "simai-framework", "tag": "sf-pagination"},
   "assets": [
     {"key": "simai.framework.core.css", "kind": "css", "critical": true},

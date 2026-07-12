@@ -43,7 +43,7 @@ final class SmartRegistry
 
     public function registerRenderer(string $id, SmartBackendRenderer $renderer): void
     {
-        if (!SmartComponentManifest::isStableKey($id)) {
+        if (!SmartComponentManifest::isRendererId($id)) {
             throw new InvalidArgumentException('ui_smart_renderer_id_invalid');
         }
         if (isset($this->renderers[$id]) && $this->renderers[$id] !== $renderer) {

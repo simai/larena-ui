@@ -10,6 +10,8 @@ use Larena\Ui\Enums\UiAssetKind;
 
 final readonly class SmartComponentManifest
 {
+    public const SIMAI_FRAMEWORK_RENDERER_ID = 'ui.sf.element';
+
     /** @var list<string> */
     private const SAFE_PROVENANCE_KEYS = [
         'source',
@@ -132,6 +134,17 @@ final readonly class SmartComponentManifest
         return preg_match('/^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$/', $key) === 1;
     }
 
+    public static function isComponentKey(string $key): bool
+    {
+        return self::isStableKey($key) && str_contains($key, '.');
+    }
+
+    public static function isRendererId(string $id): bool
+    {
+        return preg_match('/^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$/', $id) === 1
+            && !self::hasVersionLikeSegment($id);
+    }
+
     public function isValid(): bool
     {
         foreach ($this->assetRequirements as $assetRequirement) {
@@ -140,7 +153,7 @@ final readonly class SmartComponentManifest
             }
         }
 
-        return self::isStableKey($this->componentKey)
+        return self::isComponentKey($this->componentKey)
             && $this->propsSchema !== [];
     }
 
@@ -150,8 +163,10 @@ final readonly class SmartComponentManifest
             && preg_match('/^\d+\.\d+\.\d+$/', $this->version) === 1
             && preg_match('/^[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*$/', $this->ownerPackage) === 1
             && in_array($this->kind, ['element', 'smart', 'composite'], true)
-            && self::isStableKey($this->rendererId)
-            && ($this->frontendTag === null || preg_match('/^sf-[a-z0-9-]+$/', $this->frontendTag) === 1)
+            && self::isRendererId($this->rendererId)
+            && ($this->frontendRuntime !== 'simai-framework'
+                || $this->rendererId === self::SIMAI_FRAMEWORK_RENDERER_ID)
+            && ($this->frontendTag === null || preg_match('/^sf-[a-z][a-z0-9-]*$/', $this->frontendTag) === 1)
             && ($this->frontendTag === null || $this->frontendRuntime === 'simai-framework');
     }
 
@@ -212,6 +227,17 @@ final readonly class SmartComponentManifest
         }
 
         return $safe;
+    }
+
+    private static function hasVersionLikeSegment(string $key): bool
+    {
+        foreach (explode('.', $key) as $segment) {
+            if (preg_match('/^[a-z]+\d+$/', $segment) === 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static function packageManifestPath(string $sourcePath): string

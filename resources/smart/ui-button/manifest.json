@@ -65,7 +65,7 @@
       {"when": {"loading": true}, "then": {"disabled": true}}
     ]
   },
-  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "render": {"strategy": "host", "renderer": "ui.sf.element"},
   "frontend": {"runtime": "simai-framework", "tag": "sf-button"},
   "assets": [
     {"key": "simai.framework.core.css", "kind": "css", "critical": true},

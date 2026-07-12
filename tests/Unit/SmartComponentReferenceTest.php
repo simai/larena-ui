@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/bootstrap.php';
 
-use Larena\Ui\Developer\SmartInvocationExampleBuilder;
+use Larena\Ui\Contracts\SmartComponentManifest;
 use Larena\Ui\Contracts\UiAssetRequirement;
+use Larena\Ui\Developer\SmartInvocationExampleBuilder;
 use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 use Larena\Ui\Reference\SmartComponentReference;
@@ -30,7 +31,7 @@ $activation = [
 $registry = SmartRegistry::withDefaults();
 $manifest = $registry->manifest('ui.button');
 assert($manifest->isCanonical());
-assert($manifest->rendererId === 'ui.sf_element');
+assert($manifest->rendererId === SmartComponentManifest::SIMAI_FRAMEWORK_RENDERER_ID);
 assert($manifest->frontendTag === 'sf-button');
 assert($manifest->atlas['title'] === 'Button');
 assert($manifest->atlas['i18n']['en']['title'] === 'Button');

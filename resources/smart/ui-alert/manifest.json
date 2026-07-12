@@ -29,7 +29,7 @@
   "views": {"default": {}, "admin": {}},
   "presets": {},
   "constraints": {},
-  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "render": {"strategy": "host", "renderer": "ui.sf.element"},
   "frontend": {"runtime": "simai-framework", "tag": "sf-alert"},
   "assets": [
     {"key": "simai.framework.core.css", "kind": "css", "critical": true},

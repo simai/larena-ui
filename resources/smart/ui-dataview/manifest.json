@@ -18,7 +18,7 @@
   "views": {"default": {}, "admin": {}},
   "presets": {},
   "constraints": {"read_only_first_slice": true},
-  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "render": {"strategy": "host", "renderer": "ui.sf.element"},
   "frontend": {"runtime": "simai-framework", "tag": "sf-table"},
   "assets": [
     {"key": "simai.framework.core.css", "kind": "css", "critical": true},

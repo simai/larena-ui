@@ -17,7 +17,10 @@ final class UiSmartContribution implements SmartContributionProvider
 
     public function contribute(SmartRegistry $registry): void
     {
-        $registry->registerRenderer('ui.sf_element', new SfElementBackendRenderer());
+        $registry->registerRenderer(
+            SmartComponentManifest::SIMAI_FRAMEWORK_RENDERER_ID,
+            new SfElementBackendRenderer(),
+        );
         foreach ([
             'ui-button',
             'ui-input',

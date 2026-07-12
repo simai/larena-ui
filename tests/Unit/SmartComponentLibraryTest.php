@@ -58,6 +58,48 @@ $manager = new SmartManager($registry);
 $catalog = new SmartCatalogProjection($registry, new SmartInvocationExampleBuilder());
 $ai = new SmartAiCatalogProjection($catalog);
 $alternateRenderCount = 0;
+$legacyRendererId = implode('.', ['ui', 'sf_element']);
+
+assert(SmartComponentManifest::isStableKey('ui'));
+assert(SmartComponentManifest::isStableKey('ui.sf.element'));
+assert(SmartComponentManifest::isComponentKey('ui.button'));
+assert(SmartComponentManifest::isComponentKey('docara.page_title_field'));
+assert(SmartComponentManifest::isComponentKey('ui.button2'));
+assert(SmartComponentManifest::isComponentKey('admin.shell.workspace'));
+assert(!SmartComponentManifest::isComponentKey('ui'));
+assert(!SmartComponentManifest::isComponentKey('UI.button'));
+assert(SmartComponentManifest::isRendererId(SmartComponentManifest::SIMAI_FRAMEWORK_RENDERER_ID));
+assert(!SmartComponentManifest::isRendererId($legacyRendererId));
+assert(!SmartComponentManifest::isRendererId('ui.element'));
+assert(!SmartComponentManifest::isRendererId('ui.adapter2.element'));
+assert(!SmartComponentManifest::isRendererId('ui.sf.element.v2'));
+
+$buttonFixture = json_decode(
+    (string) file_get_contents(dirname(__DIR__, 2) . '/resources/smart/ui-button/manifest.json'),
+    true,
+    512,
+    JSON_THROW_ON_ERROR,
+);
+assert(is_array($buttonFixture));
+$manifestRejected = static function (array $fixture): bool {
+    try {
+        SmartComponentManifest::fromArray($fixture);
+    } catch (InvalidArgumentException) {
+        return true;
+    }
+
+    return false;
+};
+foreach (['ui', 'UI.button', 'ui.-button'] as $invalidComponentKey) {
+    $fixture = $buttonFixture;
+    $fixture['key'] = $invalidComponentKey;
+    assert($manifestRejected($fixture));
+}
+foreach ([$legacyRendererId, 'ui.element', 'ui.adapter2.element', 'ui.sf.element.v2', 'ui.custom.element'] as $invalidRendererId) {
+    $fixture = $buttonFixture;
+    $fixture['render']['renderer'] = $invalidRendererId;
+    assert($manifestRejected($fixture));
+}
 
 assert(array_map(
     static fn ($entry): string => $entry->key,
@@ -71,6 +113,7 @@ foreach ($components as $key => $definition) {
     $manifest = $registry->manifest($key);
     assert($parsed->toArray() === $manifest->toArray());
     assert($manifest->componentKey === $key);
+    assert($manifest->rendererId === SmartComponentManifest::SIMAI_FRAMEWORK_RENDERER_ID);
     assert($manifest->frontendRuntime === 'simai-framework');
     assert($manifest->frontendTag === $definition['tag']);
     assert(($manifest->provenance['runtime_lock'] ?? null) === 'resources/sf/runtime-lock.json');
