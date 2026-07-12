@@ -7,37 +7,42 @@
   const setupCatalogSearch = () => {
     const panel = document.querySelector('[data-larena-catalog-search-panel]');
     const input = panel?.querySelector('[data-larena-catalog-search]');
-    const grid = document.querySelector('[data-larena-ui-lab="atlas"]');
-    const cards = Array.from(grid?.querySelectorAll('[data-larena-catalog-card]') || []);
+    const category = panel?.querySelector('[data-larena-catalog-category]');
+    const catalog = document.querySelector('[data-larena-ui-lab="atlas"]');
+    const cards = Array.from(catalog?.querySelectorAll('[data-larena-catalog-card]') || []);
     const results = panel?.querySelector('[data-larena-catalog-results]');
     const clear = panel?.querySelector('[data-larena-catalog-clear]');
     const empty = document.querySelector('[data-larena-catalog-empty]');
     const reset = empty?.querySelector('[data-larena-catalog-reset]');
 
-    if (!(panel instanceof HTMLElement) || !(input instanceof HTMLInputElement) || !(grid instanceof HTMLElement) || cards.length === 0) return;
+    if (!(panel instanceof HTMLElement) || !(input instanceof HTMLInputElement) || !(category instanceof HTMLSelectElement) || !(catalog instanceof HTMLElement) || cards.length === 0) return;
 
     const normalize = (value) => String(value).trim().toLocaleLowerCase();
     const update = () => {
       const query = normalize(input.value);
+      const selectedCategory = normalize(category.value);
       let visible = 0;
 
       cards.forEach((card) => {
-        const matches = query === '' || normalize(card.dataset.larenaCatalogSearchText).includes(query);
+        const matchesText = query === '' || normalize(card.dataset.larenaCatalogSearchText).includes(query);
+        const matchesCategory = selectedCategory === '' || normalize(card.dataset.larenaCatalogCategoryValue) === selectedCategory;
+        const matches = matchesText && matchesCategory;
         card.hidden = !matches;
         if (matches) visible += 1;
       });
 
-      grid.hidden = visible === 0;
+      catalog.hidden = visible === 0;
       if (empty instanceof HTMLElement) empty.hidden = visible !== 0;
-      if (clear instanceof HTMLButtonElement) clear.hidden = query === '';
+      if (clear instanceof HTMLButtonElement) clear.hidden = query === '' && selectedCategory === '';
       if (results instanceof HTMLElement) {
         results.textContent = String(results.dataset.resultsTemplate || '')
           .replace(':visible', String(visible))
           .replace(':total', String(cards.length));
       }
     };
-    const clearSearch = () => {
+    const clearFilters = () => {
       input.value = '';
+      category.value = '';
       update();
       input.focus();
     };
@@ -45,13 +50,14 @@
     panel.hidden = false;
     input.addEventListener('input', update);
     input.addEventListener('search', update);
+    category.addEventListener('change', update);
     input.addEventListener('keydown', (event) => {
-      if (event.key !== 'Escape' || input.value === '') return;
+      if (event.key !== 'Escape' || (input.value === '' && category.value === '')) return;
       event.preventDefault();
-      clearSearch();
+      clearFilters();
     });
-    clear?.addEventListener('click', clearSearch);
-    reset?.addEventListener('click', clearSearch);
+    clear?.addEventListener('click', clearFilters);
+    reset?.addEventListener('click', clearFilters);
     update();
   };
 

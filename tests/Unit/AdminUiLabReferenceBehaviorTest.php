@@ -7,20 +7,27 @@ $css = (string) file_get_contents(__DIR__ . '/../../resources/css/admin-ui-lab.c
 
 assert(str_contains($script, '[data-larena-catalog-search-panel]'));
 assert(str_contains($script, '[data-larena-catalog-card]'));
+assert(str_contains($script, '[data-larena-catalog-category]'));
 assert(str_contains($script, "input.addEventListener('input', update)"));
 assert(str_contains($script, "input.addEventListener('search', update)"));
+assert(str_contains($script, "category.addEventListener('change', update)"));
 assert(str_contains($script, "event.key !== 'Escape'"));
+assert(str_contains($script, 'matchesText && matchesCategory'));
 assert(str_contains($script, 'card.hidden = !matches'));
-assert(str_contains($script, 'grid.hidden = visible === 0'));
-assert(str_contains($script, "clear.hidden = query === ''"));
+assert(str_contains($script, 'catalog.hidden = visible === 0'));
+assert(str_contains($script, "clear.hidden = query === '' && selectedCategory === ''"));
+assert(str_contains($script, "category.value = ''"));
 assert(str_contains($script, 'input.focus()'));
 assert(str_contains($css, '.larena-catalog-search'));
-assert(str_contains($css, 'grid-template-rows:8rem'));
-assert(str_contains($css, '.larena-lab-card[hidden]{display:none}'));
+assert(str_contains($css, '.larena-component-catalog-table'));
+assert(str_contains($css, '.larena-component-catalog-table [data-larena-catalog-card][hidden]{display:none}'));
+assert(str_contains($css, '.larena-catalog-preview-column,.larena-catalog-preview-cell{display:none}'));
 assert(str_contains($css, 'pointer-events:none'));
 assert(str_contains($css, '-webkit-line-clamp:2'));
 assert(str_contains($css, 'var(--sf-on-surface-variant'));
 assert(str_contains($css, '@media(max-width:390px)'));
+assert(!str_contains($css, '.larena-lab-grid'));
+assert(!str_contains($css, '.larena-lab-card'));
 
 assert(str_contains($script, '[data-larena-smart-reference-form]'));
 assert(str_contains($script, "document.addEventListener('change'"));
