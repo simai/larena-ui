@@ -38,6 +38,12 @@ merely by accepting a value without changing real SmartManager output.
 Structured dropdown options and dataview data retain working backend examples
 and renders while reporting frontend snippets as explicitly unavailable.
 
+The UI Lab integration releases the initial focus taken by an already-open
+inline modal preview after the pinned runtime becomes ready. This keeps the
+real modal behavior intact when a developer opens it, while allowing the
+page-level skip link to remain the first keyboard destination on catalog,
+reference and recipe demonstrators.
+
 Source event projection now accepts bounded colon-separated names required by
 `sf-dropdown:change` and the real `modal:*` lifecycle. Spaces, slashes,
 malformed separators and `on*` handler-style names still fail closed, and no

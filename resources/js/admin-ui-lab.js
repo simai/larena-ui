@@ -2,6 +2,19 @@
   let returnFocus = null;
   let referenceSubmitTimer = null;
 
+  const releaseInlinePreviewAutofocus = () => {
+    window.requestAnimationFrame(() => {
+      const active = document.activeElement;
+      if (!(active instanceof HTMLElement) || !active.matches('[data-sf-modal-panel]')) return;
+      const modal = active.closest('sf-modal[display="inline"]');
+      if (!modal?.closest('.larena-lab-preview, .larena-smart-reference, .larena-recipe-artifact')) return;
+      active.blur();
+    });
+  };
+
+  window.addEventListener('larena-smart-ready', releaseInlinePreviewAutofocus, { once: true });
+  if (document.documentElement.dataset.larenaSmartReady === 'true') releaseInlinePreviewAutofocus();
+
   const submitReferenceForm = (form, delay = 0) => {
     window.clearTimeout(referenceSubmitTimer);
     referenceSubmitTimer = window.setTimeout(() => {

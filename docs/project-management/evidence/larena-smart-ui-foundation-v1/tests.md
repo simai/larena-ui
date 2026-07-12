@@ -51,3 +51,11 @@ Batch B2 on PHP 8.4.20:
   pagination, dropdown and modal events classified as custom;
 - dropdown and dataview backend render paths passed while frontend snippets
   remained explicitly unavailable for their structured props.
+
+Browser-driven integration follow-up:
+
+- the initial inline modal preview no longer owns focus after runtime-ready;
+- the UI Lab skip link remains the first keyboard destination;
+- the correction is bounded to catalog, reference and recipe preview surfaces;
+- interactive modal focus, focus return and Escape behavior remain owned by the
+  pinned Simai Framework runtime.
