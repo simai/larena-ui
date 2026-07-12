@@ -16,6 +16,7 @@ assert(str_contains($script, "clear.hidden = query === ''"));
 assert(str_contains($script, 'input.focus()'));
 assert(str_contains($css, '.larena-catalog-search'));
 assert(str_contains($css, 'grid-template-rows:8rem'));
+assert(str_contains($css, '.larena-lab-card[hidden]{display:none}'));
 assert(str_contains($css, 'pointer-events:none'));
 assert(str_contains($css, '-webkit-line-clamp:2'));
 assert(str_contains($css, 'var(--sf-on-surface-variant'));
