@@ -42,7 +42,10 @@ The UI Lab integration releases the initial focus taken by an already-open
 inline modal preview after the pinned runtime becomes ready. This keeps the
 real modal behavior intact when a developer opens it, while allowing the
 page-level skip link to remain the first keyboard destination on catalog,
-reference and recipe demonstrators.
+reference and recipe demonstrators. The correction also resets the browser's
+sequential focus starting point to the document body after releasing the
+preview panel, because blurring the panel alone leaves the next Tab position
+inside that modal in Chromium.
 
 Source event projection now accepts bounded colon-separated names required by
 `sf-dropdown:change` and the real `modal:*` lifecycle. Spaces, slashes,

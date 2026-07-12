@@ -1,19 +1,52 @@
 (() => {
   let returnFocus = null;
   let referenceSubmitTimer = null;
+  let inlinePreviewFocusReleaseArmed = false;
+  let inlinePreviewFocusReleaseTimer = null;
 
-  const releaseInlinePreviewAutofocus = () => {
-    window.requestAnimationFrame(() => {
-      const active = document.activeElement;
-      if (!(active instanceof HTMLElement) || !active.matches('[data-sf-modal-panel]')) return;
-      const modal = active.closest('sf-modal[display="inline"]');
-      if (!modal?.closest('.larena-lab-preview, .larena-smart-reference, .larena-recipe-artifact')) return;
-      active.blur();
-    });
+  const isInlinePreviewModalPanel = (target) => {
+    if (!(target instanceof HTMLElement) || !target.matches('[data-sf-modal-panel]')) return false;
+    const modal = target.closest('sf-modal[display="inline"]');
+    return Boolean(modal?.closest('.larena-lab-preview, .larena-smart-reference, .larena-recipe-artifact'));
   };
 
-  window.addEventListener('larena-smart-ready', releaseInlinePreviewAutofocus, { once: true });
-  if (document.documentElement.dataset.larenaSmartReady === 'true') releaseInlinePreviewAutofocus();
+  const disarmInlinePreviewFocusRelease = () => {
+    inlinePreviewFocusReleaseArmed = false;
+    window.clearTimeout(inlinePreviewFocusReleaseTimer);
+    document.removeEventListener('focusin', releaseInlinePreviewAutofocus, true);
+    document.removeEventListener('pointerdown', disarmOnInitialUserInput, true);
+    document.removeEventListener('keydown', disarmOnInitialUserInput, true);
+  };
+
+  const releaseInlinePreviewAutofocus = (event) => {
+    if (!inlinePreviewFocusReleaseArmed) return;
+    const target = event instanceof FocusEvent ? event.target : document.activeElement;
+    if (!isInlinePreviewModalPanel(target)) return;
+    target.blur();
+    const previousTabindex = document.body.getAttribute('tabindex');
+    document.body.setAttribute('tabindex', '-1');
+    document.body.focus({ preventScroll: true });
+    if (previousTabindex === null) document.body.removeAttribute('tabindex');
+    else document.body.setAttribute('tabindex', previousTabindex);
+    disarmInlinePreviewFocusRelease();
+  };
+
+  const disarmOnInitialUserInput = (event) => {
+    if (event.isTrusted) disarmInlinePreviewFocusRelease();
+  };
+
+  const armInlinePreviewFocusRelease = () => {
+    if (inlinePreviewFocusReleaseArmed) return;
+    inlinePreviewFocusReleaseArmed = true;
+    document.addEventListener('focusin', releaseInlinePreviewAutofocus, true);
+    document.addEventListener('pointerdown', disarmOnInitialUserInput, true);
+    document.addEventListener('keydown', disarmOnInitialUserInput, true);
+    inlinePreviewFocusReleaseTimer = window.setTimeout(disarmInlinePreviewFocusRelease, 1500);
+    releaseInlinePreviewAutofocus();
+  };
+
+  window.addEventListener('larena-smart-ready', armInlinePreviewFocusRelease, { once: true });
+  if (document.documentElement.dataset.larenaSmartReady === 'true') armInlinePreviewFocusRelease();
 
   const submitReferenceForm = (form, delay = 0) => {
     window.clearTimeout(referenceSubmitTimer);
