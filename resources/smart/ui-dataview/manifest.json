@@ -7,7 +7,7 @@
   "props": {
     "type": "object",
     "properties": {
-      "aria-label": {"type": "string"},
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
       "data": {"type": "object"}
     },
     "required": ["aria-label", "data"],
@@ -15,12 +15,73 @@
   },
   "slots": {},
   "events": {},
-  "views": {"admin": {}},
+  "views": {"default": {}, "admin": {}},
   "presets": {},
   "constraints": {"read_only_first_slice": true},
   "render": {"strategy": "host", "renderer": "ui.sf_element"},
   "frontend": {"runtime": "simai-framework", "tag": "sf-table"},
-  "assets": [],
-  "atlas": {"visible": false},
-  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json"}
+  "assets": [
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_table.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.sf_table.js", "kind": "javascript", "critical": true}
+  ],
+  "atlas": {
+    "visible": true,
+    "title": "Data view",
+    "description": "A read-only structured data table rendered by SmartManager through the pinned Simai Framework runtime.",
+    "category": "collections",
+    "order": 60,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["default", "loading", "empty", "error"],
+    "accessibility": ["labelled_region", "table_headers", "keyboard_scroll_region"],
+    "product_href": "/admin/docara/pages",
+    "example_props": {
+      "aria-label": "Pages",
+      "data": {
+        "columns": [
+          {"key": "title", "label": "Title"},
+          {"key": "status", "label": "Status"}
+        ],
+        "rows": [
+          {"title": "Welcome", "status": "Published"},
+          {"title": "About", "status": "Draft"}
+        ],
+        "pagination": {"page": 1, "pageSize": 10, "total": 2}
+      }
+    },
+    "controls": [
+      {"key": "aria-label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 120}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Data view",
+        "description": "A read-only structured data table rendered by SmartManager through the pinned Simai Framework runtime.",
+        "controls": {"aria-label": "Accessible name"},
+        "options": {}
+      },
+      "ru": {
+        "title": "Представление данных",
+        "description": "Таблица для чтения структурированных данных, которую SmartManager отрисовывает через зафиксированный runtime Simai Framework.",
+        "controls": {"aria-label": "Доступное название"},
+        "options": {}
+      }
+    }
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui-smart:smart/table",
+    "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+    "reference_status": "source_backed"
+  }
 }

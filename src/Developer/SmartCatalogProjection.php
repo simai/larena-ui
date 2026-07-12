@@ -311,7 +311,7 @@ final readonly class SmartCatalogProjection
     {
         $events = [];
         foreach ($manifest->eventSchema as $name => $event) {
-            if (preg_match('/^[a-z][a-z0-9-]*$/', $name) !== 1 || !is_array($event)) {
+            if (!$this->isSafeEventName($name) || !is_array($event)) {
                 $this->invalid($manifest, 'events');
             }
             $kind = $event['kind'] ?? null;
@@ -357,6 +357,13 @@ final readonly class SmartCatalogProjection
             ], $manifest->assetRequirements),
             'provenance' => $provenance,
         ];
+    }
+
+    private function isSafeEventName(mixed $name): bool
+    {
+        return is_string($name)
+            && preg_match('/^[a-z][a-z0-9-]*(?::[a-z][a-z0-9-]*)*$/', $name) === 1
+            && preg_match('/^on[a-z0-9-]*(?::|$)/', $name) !== 1;
     }
 
     /** @return array{available: bool, value?: string, reason?: string} */

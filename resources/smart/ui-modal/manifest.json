@@ -1,0 +1,106 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.modal",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "modal-id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+      "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "text": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S"},
+      "open": {"type": "boolean"},
+      "overlay": {"type": "boolean"},
+      "display": {"type": "string", "enum": ["inline", "modal"]},
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
+    },
+    "required": ["modal-id", "title", "text", "open", "overlay", "display", "aria-label", "id"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {
+    "modal:ready": {"kind": "custom", "backend_handler_binding": false},
+    "modal:update": {"kind": "custom", "backend_handler_binding": false},
+    "modal:before-open": {"kind": "custom", "backend_handler_binding": false},
+    "modal:after-open": {"kind": "custom", "backend_handler_binding": false},
+    "modal:before-close": {"kind": "custom", "backend_handler_binding": false},
+    "modal:after-close": {"kind": "custom", "backend_handler_binding": false},
+    "modal:before-hide": {"kind": "custom", "backend_handler_binding": false},
+    "modal:after-hide": {"kind": "custom", "backend_handler_binding": false},
+    "modal:before-show": {"kind": "custom", "backend_handler_binding": false},
+    "modal:after-show": {"kind": "custom", "backend_handler_binding": false},
+    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-before-render": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}
+  },
+  "views": {"default": {}, "admin": {}},
+  "presets": {},
+  "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-modal"},
+  "assets": [
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_modal.js", "kind": "javascript", "critical": true}
+  ],
+  "atlas": {
+    "visible": true,
+    "title": "Modal",
+    "description": "A deliberately effect-free inline dialog reference verified against the pinned Simai Framework source, without remote content or callback bindings.",
+    "category": "overlays",
+    "order": 100,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["inline", "open", "closed", "focus"],
+    "accessibility": ["accessible_name", "dialog_semantics", "focus_management", "inline_preview", "no_remote_content"],
+    "product_href": "/admin/ui/components/ui.modal",
+    "example_props": {
+      "modal-id": "ui-modal-reference",
+      "title": "Safe inline dialog",
+      "text": "This preview stays inline and does not load remote content.",
+      "open": true,
+      "overlay": true,
+      "display": "inline",
+      "aria-label": "Safe inline dialog",
+      "id": "ui-modal-reference"
+    },
+    "controls": [
+      {"key": "title", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
+      {"key": "text", "source": "prop", "widget": "text", "min_length": 1, "max_length": 500},
+      {"key": "open", "source": "prop", "widget": "boolean"}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Modal",
+        "description": "A deliberately effect-free inline dialog reference verified against the pinned Simai Framework source, without remote content or callback bindings.",
+        "controls": {"title": "Title", "text": "Text", "open": "Open"},
+        "options": {}
+      },
+      "ru": {
+        "title": "Диалог",
+        "description": "Намеренно безопасный inline-диалог, подтверждённый зафиксированным исходным кодом Simai Framework, без удалённого содержимого и привязки обработчиков.",
+        "controls": {"title": "Заголовок", "text": "Текст", "open": "Открыт"},
+        "options": {}
+      }
+    }
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui-smart:smart/modal",
+    "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+    "reference_status": "source_backed",
+    "evidence": "resources/sf/runtime-lock.json"
+  }
+}

@@ -11,9 +11,21 @@ use Larena\Ui\Registry\SmartRegistry;
 
 $registry = SmartRegistry::withDefaults();
 $projection = new SmartCatalogProjection($registry, new SmartInvocationExampleBuilder());
+$expectedKeys = [
+    'ui.button',
+    'ui.input',
+    'ui.textarea',
+    'ui.checkbox',
+    'ui.dropdown',
+    'ui.dataview',
+    'ui.pagination',
+    'ui.badge',
+    'ui.alert',
+    'ui.modal',
+];
 
 $english = $projection->components('en');
-assert(count($english) === 1);
+assert(array_map(static fn ($entry): string => $entry->key, $english) === $expectedKeys);
 assert($english[0]->key === 'ui.button');
 assert($english[0]->title === 'Button');
 assert($english[0]->manifest === $registry->manifest('ui.button'));
@@ -40,11 +52,17 @@ assert(str_contains($russian->description, 'Simai Framework'));
 assert($russian->controls[0]['label'] === 'Текст');
 assert($russian->controls[1]['option_labels']['primary'] === 'Основная');
 
+$hiddenData = $registry->manifest('ui.button')->toArray();
+$hiddenData['key'] = 'ui.hidden';
+$hiddenData['atlas']['visible'] = false;
+$hiddenData['provenance']['manifest_path'] = 'resources/smart/ui-hidden/manifest.json';
+$hiddenData['provenance']['manifest_sha256'] = str_repeat('e', 64);
+$registry->registerManifest(SmartComponentManifest::fromArray($hiddenData));
 $hiddenRejected = false;
 try {
-    $projection->component('ui.input');
+    $projection->component('ui.hidden');
 } catch (InvalidArgumentException $exception) {
-    $hiddenRejected = $exception->getMessage() === 'ui_smart_catalog_component_not_visible:ui.input';
+    $hiddenRejected = $exception->getMessage() === 'ui_smart_catalog_component_not_visible:ui.hidden';
 }
 assert($hiddenRejected);
 
@@ -75,59 +93,57 @@ $alphaData['provenance'] = [
 ];
 $registry->registerManifest(SmartComponentManifest::fromArray($alphaData));
 $sorted = $projection->components();
-assert(array_map(static fn ($entry): string => $entry->key, $sorted) === ['ui.alpha', 'ui.button']);
+assert(array_map(static fn ($entry): string => $entry->key, $sorted) === ['ui.alpha', ...$expectedKeys]);
 assert($sorted[0]->controls[0]['label'] === 'Text');
 assert($sorted[0]->controls[1]['option_labels']['primary'] === 'Primary');
 assert(!array_key_exists('callback', $sorted[0]->provenance));
 assert(!array_key_exists('evidence', $sorted[0]->provenance));
 
-$complexData = $registry->manifest('ui.dataview')->toArray();
-$complexData['key'] = 'ui.complex_table';
-$complexData['atlas'] = [
-    'visible' => true,
-    'title' => 'Complex table',
-    'description' => 'A source-backed table with a structured data payload.',
-    'category' => 'collections',
-    'order' => 20,
-    'status' => 'contract_only',
-    'readiness' => [
-        'safe_to_suggest' => false,
-        'safe_to_render' => false,
-        'safe_to_bind_data' => false,
-        'safe_to_execute_effect' => false,
-    ],
-    'states' => ['default', 'loading', 'empty', 'error'],
-    'accessibility' => ['labelled_region', 'keyboard_scroll'],
-    'product_href' => '/admin/ui/components',
-    'example_props' => [
-        'aria-label' => 'Pages',
-        'data' => ['columns' => [], 'rows' => []],
-    ],
-    'controls' => [
-        ['key' => 'aria-label', 'source' => 'prop', 'widget' => 'text', 'min_length' => 1, 'max_length' => 120],
-    ],
-    'i18n' => [
-        'en' => [
-            'title' => 'Complex table',
-            'description' => 'A source-backed table with a structured data payload.',
-            'controls' => ['aria-label' => 'Accessible name'],
-            'options' => [],
-        ],
-        'ru' => [
-            'title' => 'Таблица со структурированными данными',
-            'description' => 'Таблица с проверяемым структурированным payload данных.',
-            'controls' => ['aria-label' => 'Доступное название'],
-            'options' => [],
-        ],
-    ],
+$realEventNames = [
+    'sf-dropdown:change',
+    'modal:ready',
+    'modal:update',
+    'modal:before-open',
+    'modal:after-open',
+    'modal:before-close',
+    'modal:after-close',
+    'modal:before-hide',
+    'modal:after-hide',
+    'modal:before-show',
+    'modal:after-show',
 ];
-$complexData['provenance']['manifest_path'] = 'resources/smart/ui-complex-table/manifest.json';
-$complexData['provenance']['manifest_sha256'] = str_repeat('b', 64);
-$registry->registerManifest(SmartComponentManifest::fromArray($complexData));
-$complex = $projection->component('ui.complex_table');
+$eventData = $registry->manifest('ui.button')->toArray();
+$eventData['key'] = 'ui.real_events';
+$eventData['events'] = array_fill_keys($realEventNames, [
+    'kind' => 'dom',
+    'backend_handler_binding' => false,
+]);
+$eventData['provenance']['manifest_path'] = 'resources/smart/ui-real-events/manifest.json';
+$eventData['provenance']['manifest_sha256'] = str_repeat('f', 64);
+$registry->registerManifest(SmartComponentManifest::fromArray($eventData));
+$eventEntry = $projection->component('ui.real_events');
+assert(array_keys($eventEntry->manifestProjection['events']) === $realEventNames);
+
+foreach (['bad event', 'bad/event', 'modal::ready', 'onclick', 'onload:ready'] as $index => $unsafeEvent) {
+    $unsafeEventData = $eventData;
+    $unsafeEventData['key'] = 'ui.unsafe_event_' . $index;
+    $unsafeEventData['events'] = [$unsafeEvent => ['kind' => 'dom', 'backend_handler_binding' => false]];
+    $unsafeEventData['provenance']['manifest_path'] = 'resources/smart/ui-unsafe-event-' . $index . '/manifest.json';
+    $unsafeEventData['provenance']['manifest_sha256'] = str_repeat((string) ($index + 1), 64);
+    $registry->registerManifest(SmartComponentManifest::fromArray($unsafeEventData));
+    $unsafeEventRejected = false;
+    try {
+        $projection->component($unsafeEventData['key']);
+    } catch (InvalidArgumentException $exception) {
+        $unsafeEventRejected = $exception->getMessage() === 'ui_smart_catalog_manifest_invalid:' . $unsafeEventData['key'] . ':events';
+    }
+    assert($unsafeEventRejected);
+}
+
+$complex = $projection->component('ui.dataview');
 assert($complex->examples['backend']['available'] === true);
 assert($complex->examples['frontend']['available'] === false);
-assert(str_contains((string) $complex->examples['frontend']['reason'], 'frontend_value_invalid'));
+assert($complex->examples['frontend']['reason'] === 'ui_smart_reference_frontend_value_invalid:ui.dataview:data');
 
 $invalidData = $alphaData;
 $invalidData['key'] = 'ui.invalid';

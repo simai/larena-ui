@@ -1,0 +1,115 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.alert",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "type": {"type": "string", "enum": ["clear", "info", "danger", "warning", "success"]},
+      "variant": {"type": "string", "enum": ["default", "flat", "outlined"]},
+      "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "supporting-text": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S"},
+      "closable": {"type": "boolean"},
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
+    },
+    "required": ["type", "variant", "title", "supporting-text", "closable", "aria-label", "id"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {
+    "sf-alert-action": {"kind": "custom", "backend_handler_binding": false},
+    "sf-alert-close": {"kind": "custom", "backend_handler_binding": false},
+    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}
+  },
+  "views": {"default": {}, "admin": {}},
+  "presets": {},
+  "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-alert"},
+  "assets": [
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_alert.js", "kind": "javascript", "critical": true}
+  ],
+  "atlas": {
+    "visible": true,
+    "title": "Alert",
+    "description": "A feedback message verified against the pinned Simai Framework source, with explicit tone, supporting text and optional close state.",
+    "category": "feedback",
+    "order": 90,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["default", "info", "success", "warning", "danger", "closable"],
+    "accessibility": ["status_message", "text_not_color_only", "optional_close_control"],
+    "product_href": "/admin/ui/components/ui.alert",
+    "example_props": {
+      "type": "info",
+      "variant": "default",
+      "title": "Information",
+      "supporting-text": "The page is ready for review.",
+      "closable": false,
+      "aria-label": "Information",
+      "id": "ui-alert-reference"
+    },
+    "controls": [
+      {"key": "type", "source": "prop", "widget": "select"},
+      {"key": "variant", "source": "prop", "widget": "select"},
+      {"key": "title", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
+      {"key": "supporting-text", "source": "prop", "widget": "text", "min_length": 1, "max_length": 500},
+      {"key": "closable", "source": "prop", "widget": "boolean"}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Alert",
+        "description": "A feedback message verified against the pinned Simai Framework source, with explicit tone, supporting text and optional close state.",
+        "controls": {
+          "type": "Tone",
+          "variant": "Variant",
+          "title": "Title",
+          "supporting-text": "Supporting text",
+          "closable": "Closable"
+        },
+        "options": {
+          "type": {"clear": "Clear", "info": "Information", "danger": "Danger", "warning": "Warning", "success": "Success"},
+          "variant": {"default": "Default", "flat": "Flat", "outlined": "Outlined"}
+        }
+      },
+      "ru": {
+        "title": "Уведомление",
+        "description": "Сообщение обратной связи, подтверждённое зафиксированным исходным кодом Simai Framework, с явным тоном, пояснением и необязательным закрытием.",
+        "controls": {
+          "type": "Тон",
+          "variant": "Вариант",
+          "title": "Заголовок",
+          "supporting-text": "Поясняющий текст",
+          "closable": "Можно закрыть"
+        },
+        "options": {
+          "type": {"clear": "Нейтральный", "info": "Информация", "danger": "Опасность", "warning": "Предупреждение", "success": "Успех"},
+          "variant": {"default": "Обычный", "flat": "Плоский", "outlined": "Контурный"}
+        }
+      }
+    }
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui-smart:smart/alert",
+    "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+    "reference_status": "source_backed",
+    "evidence": "resources/sf/runtime-lock.json"
+  }
+}

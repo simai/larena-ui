@@ -18,7 +18,18 @@ final class UiSmartContribution implements SmartContributionProvider
     public function contribute(SmartRegistry $registry): void
     {
         $registry->registerRenderer('ui.sf_element', new SfElementBackendRenderer());
-        foreach (['ui-button', 'ui-dataview', 'ui-input'] as $directory) {
+        foreach ([
+            'ui-button',
+            'ui-input',
+            'ui-textarea',
+            'ui-checkbox',
+            'ui-dropdown',
+            'ui-dataview',
+            'ui-pagination',
+            'ui-badge',
+            'ui-alert',
+            'ui-modal',
+        ] as $directory) {
             $registry->registerManifest(SmartComponentManifest::fromJsonFile(
                 __DIR__ . '/../../resources/smart/' . $directory . '/manifest.json',
             ));

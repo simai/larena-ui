@@ -88,6 +88,7 @@ if ($codingStarted) {
         'tests/Unit/UiFailsClosedTest.php',
         'tests/Unit/SmartAiCatalogProjectionTest.php',
         'tests/Unit/SmartCatalogProjectionTest.php',
+        'tests/Unit/SmartComponentLibraryTest.php',
     ];
     foreach ($requiredContractFiles as $file) {
         if (!is_file($file)) {

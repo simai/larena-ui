@@ -11,6 +11,18 @@ use Larena\Ui\Registry\SmartRegistry;
 
 $catalog = new SmartCatalogProjection(SmartRegistry::withDefaults(), new SmartInvocationExampleBuilder());
 $ai = new SmartAiCatalogProjection($catalog);
+$expectedKeys = [
+    'ui.button',
+    'ui.input',
+    'ui.textarea',
+    'ui.checkbox',
+    'ui.dropdown',
+    'ui.dataview',
+    'ui.pagination',
+    'ui.badge',
+    'ui.alert',
+    'ui.modal',
+];
 
 $first = $ai->toArray('en');
 $second = $ai->toArray('en');
@@ -22,15 +34,17 @@ assert($firstJson === $secondJson);
 assert($first['schema'] === 'larena.ui.smart_ai_catalog.v1');
 assert($first['source'] === 'SmartRegistry');
 assert($first['locale'] === 'en');
-assert(array_column($first['components'], 'key') === ['ui.button']);
+assert(array_column($first['components'], 'key') === $expectedKeys);
 assert($first['recipes'] === []);
 assert($first['components'][0] === $catalog->components('en')[0]->toArray());
-assert($first['components'][0]['readiness'] === [
-    'safe_to_suggest' => true,
-    'safe_to_render' => true,
-    'safe_to_bind_data' => false,
-    'safe_to_execute_effect' => false,
-]);
+foreach ($first['components'] as $component) {
+    assert($component['readiness'] === [
+        'safe_to_suggest' => true,
+        'safe_to_render' => true,
+        'safe_to_bind_data' => false,
+        'safe_to_execute_effect' => false,
+    ]);
+}
 assert($first['nonclaims'] === [
     'production_ready' => false,
     'all_packages_ready' => false,
@@ -43,17 +57,20 @@ assert(!str_contains($firstJson, 'file://'));
 assert(!str_contains($firstJson, '../'));
 assert(!str_contains($firstJson, 'generated_at'));
 assert(!str_contains($firstJson, 'created_at'));
-assert(!str_contains($firstJson, 'callback'));
+assert(!str_contains($firstJson, '"callback":'));
+assert(!str_contains($firstJson, '"callbacks":'));
 assert(!str_contains($firstJson, '"classes"'));
 assert(!str_contains($firstJson, '"templates"'));
 assert(!str_contains($firstJson, '"raw_html"'));
 assert(str_contains($firstJson, 'resources/smart/ui-button/manifest.json'));
+assert(str_contains($firstJson, 'resources/smart/ui-dataview/manifest.json'));
 assert(str_contains($firstJson, 'Simai Framework'));
 assert(str_contains($firstJson, '<sf-button'));
 assert(str_contains($firstJson, 'Smart::render'));
 
 $russian = $ai->toArray('ru');
 assert($russian['components'][0]['title'] === 'Кнопка');
+assert(array_column($russian['components'], 'key') === $expectedKeys);
 assert($russian['locale'] === 'ru');
 
 echo "SmartAiCatalogProjectionTest passed.\n";

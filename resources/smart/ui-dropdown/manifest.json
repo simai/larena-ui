@@ -1,0 +1,126 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.dropdown",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "size": {"type": "string", "enum": ["1/3", "1/2", "1", "2", "3"]},
+      "type": {"type": "string", "enum": ["filled", "outlined"]},
+      "mode": {"type": "string", "enum": ["tag", "select"]},
+      "multiple": {"type": "boolean"},
+      "portal": {"type": "boolean"},
+      "value": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"},
+      "label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "required": {"type": "boolean"},
+      "placeholder": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "search-placeholder": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "search": {"type": "boolean"},
+      "disabled": {"type": "boolean"},
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+      "options": {"type": "array"}
+    },
+    "required": ["size", "type", "mode", "multiple", "portal", "value", "name", "label", "required", "placeholder", "search-placeholder", "search", "disabled", "aria-label", "id", "options"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {
+    "change": {"kind": "dom", "backend_handler_binding": false},
+    "sf-dropdown:change": {"kind": "custom", "backend_handler_binding": false},
+    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}
+  },
+  "views": {"default": {}, "admin": {}},
+  "presets": {},
+  "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-dropdown"},
+  "assets": [
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_dropdown.js", "kind": "javascript", "critical": true}
+  ],
+  "atlas": {
+    "visible": true,
+    "title": "Dropdown",
+    "description": "A source-verified select field with backend-rendered safe options and no executable callbacks in its manifest contract.",
+    "category": "fields",
+    "order": 50,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["closed", "open", "selected", "searching", "disabled", "focus"],
+    "accessibility": ["labelled_combobox", "keyboard_navigation", "selected_state", "disabled_semantics", "visible_focus"],
+    "product_href": "/admin/ui/components/ui.dropdown",
+    "example_props": {
+      "size": "1",
+      "type": "outlined",
+      "mode": "select",
+      "multiple": false,
+      "portal": false,
+      "value": "published",
+      "name": "status",
+      "label": "Status",
+      "required": true,
+      "placeholder": "Select status",
+      "search-placeholder": "Find status",
+      "search": true,
+      "disabled": false,
+      "aria-label": "Status",
+      "id": "ui-dropdown-reference",
+      "options": [
+        {"text": "Draft", "value": "draft", "type": "text", "size": "1", "selected": false, "disabled": false, "aria-label": "Draft"},
+        {"text": "Published", "value": "published", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Published"}
+      ]
+    },
+    "controls": [
+      {"key": "label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
+      {"key": "value", "source": "prop", "widget": "select", "options": ["draft", "published"]},
+      {"key": "type", "source": "prop", "widget": "select"},
+      {"key": "mode", "source": "prop", "widget": "select"},
+      {"key": "disabled", "source": "prop", "widget": "boolean"}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Dropdown",
+        "description": "A select field verified against the pinned Simai Framework source, with backend-rendered safe options and no executable callbacks in its manifest contract.",
+        "controls": {"label": "Label", "value": "Selected value", "type": "Type", "mode": "Mode", "disabled": "Disabled"},
+        "options": {
+          "value": {"draft": "Draft", "published": "Published"},
+          "type": {"filled": "Filled", "outlined": "Outlined"},
+          "mode": {"tag": "Tag", "select": "Select"}
+        }
+      },
+      "ru": {
+        "title": "Выпадающий список",
+        "description": "Поле выбора, подтверждённое зафиксированным исходным кодом Simai Framework, с безопасными вариантами из backend и без исполняемых обработчиков в манифесте.",
+        "controls": {"label": "Подпись", "value": "Выбранное значение", "type": "Тип", "mode": "Режим", "disabled": "Отключён"},
+        "options": {
+          "value": {"draft": "Черновик", "published": "Опубликовано"},
+          "type": {"filled": "Заполненный", "outlined": "Контурный"},
+          "mode": {"tag": "Метка", "select": "Выбор"}
+        }
+      }
+    }
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui-smart:smart/dropdown",
+    "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+    "reference_status": "source_backed",
+    "evidence": "resources/sf/runtime-lock.json"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schema": "larena.evidence_deviations.v1",
-  "status": "b1_package_complete",
+  "status": "b2_package_complete",
   "deviations": [
     {
       "id": "ui-static-analysis-memory-wrapper",
@@ -13,6 +13,12 @@
       "blocking": false,
       "resolved": false,
       "detail": "UI package tests prove the projection and renderer contracts; protected Admin routes, themes, keyboard and 390 px behavior remain in the root integration batch."
+    },
+    {
+      "id": "pagination-lock-main-source-middle",
+      "blocking": false,
+      "resolved": false,
+      "detail": "The pinned runtime lock advertises pagination main while the paired source reads middle; the manifest exposes neither disputed prop and relies on the source default until the upstream lock is reconciled."
     }
   ]
 }

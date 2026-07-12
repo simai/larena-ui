@@ -1,0 +1,104 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.pagination",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "current": {"type": "integer"},
+      "total": {"type": "integer"},
+      "top": {"type": "boolean"},
+      "bottom": {"type": "boolean"},
+      "show-more-text": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+      "page-size-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
+    },
+    "required": ["current", "total", "top", "bottom", "show-more-text", "page-size-label", "aria-label", "id"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {
+    "sf-page-change": {"kind": "custom", "backend_handler_binding": false},
+    "sf-show-more": {"kind": "custom", "backend_handler_binding": false},
+    "sf-page-size-change": {"kind": "custom", "backend_handler_binding": false},
+    "sf-action-change": {"kind": "custom", "backend_handler_binding": false},
+    "sf-action-apply": {"kind": "custom", "backend_handler_binding": false},
+    "sf-action-for-all-change": {"kind": "custom", "backend_handler_binding": false},
+    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}
+  },
+  "views": {"default": {}, "admin": {}},
+  "presets": {
+    "first_page": {"props": {"current": 1}},
+    "middle_page": {"props": {"current": 2}},
+    "last_page": {"props": {"current": 4}}
+  },
+  "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-pagination"},
+  "assets": [
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_pagination.js", "kind": "javascript", "critical": true}
+  ],
+  "atlas": {
+    "visible": true,
+    "title": "Pagination",
+    "description": "A bounded collection-navigation component verified against the pinned Simai Framework source, with page actions exposed only as DOM events.",
+    "category": "collections",
+    "order": 70,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["default", "first_page", "middle_page", "last_page", "show_more_available"],
+    "accessibility": ["labelled_page_buttons", "current_page_state", "keyboard_controls", "bounded_page_state"],
+    "product_href": "/admin/ui/components/ui.pagination",
+    "example_props": {
+      "current": 2,
+      "total": 40,
+      "top": true,
+      "bottom": true,
+      "show-more-text": "Show more",
+      "page-size-label": "Items per page",
+      "aria-label": "Page navigation",
+      "id": "ui-pagination-reference"
+    },
+    "controls": [
+      {"key": "page", "source": "preset", "widget": "select", "default": "middle_page"},
+      {"key": "show-more-text", "source": "prop", "widget": "text", "min_length": 1, "max_length": 120}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Pagination",
+        "description": "A bounded collection-navigation component verified against the pinned Simai Framework source, with page actions exposed only as DOM events.",
+        "controls": {"page": "Current page", "show-more-text": "Show-more text"},
+        "options": {"page": {"first_page": "First page", "middle_page": "Middle page", "last_page": "Last page"}}
+      },
+      "ru": {
+        "title": "Постраничная навигация",
+        "description": "Компонент навигации по коллекции, подтверждённый зафиксированным исходным кодом Simai Framework; действия страниц доступны только как DOM-события.",
+        "controls": {"page": "Текущая страница", "show-more-text": "Текст кнопки «Показать ещё»"},
+        "options": {"page": {"first_page": "Первая страница", "middle_page": "Средняя страница", "last_page": "Последняя страница"}}
+      }
+    }
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui-smart:smart/pagination",
+    "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+    "reference_status": "source_backed",
+    "evidence": "resources/sf/runtime-lock.json"
+  }
+}

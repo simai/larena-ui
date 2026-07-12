@@ -5,7 +5,10 @@
   "capabilities": [
     "smart_catalog_projection_v1",
     "smart_ai_catalog_projection_v1",
-    "package_relative_smart_manifest_provenance_v1"
+    "package_relative_smart_manifest_provenance_v1",
+    "source_backed_smart_archetype_library_v1",
+    "bounded_colon_event_projection_v1",
+    "smart_control_real_render_regression_v1"
   ],
   "apply": false
 }

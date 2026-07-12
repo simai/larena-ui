@@ -47,6 +47,7 @@ $payload = $artifact->toArray();
 assert(($payload['diagnostics']['component_key'] ?? null) === 'ui.input');
 assert(($payload['diagnostics']['manifest_version'] ?? null) === '1.0.0');
 assert(($payload['diagnostics']['frontend_tag'] ?? null) === 'sf-input');
+assert(($payload['diagnostics']['asset_contract_mode'] ?? null) === 'manifest_verified');
 assert(($payload['diagnostics']['production_ready'] ?? null) === false);
 
 $unknownPropRejected = false;

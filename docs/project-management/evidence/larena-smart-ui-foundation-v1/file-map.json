@@ -1,6 +1,6 @@
 {
   "schema": "larena.evidence_file_map.v1",
-  "status": "b1_package_complete",
+  "status": "b2_package_complete",
   "files": [
     ".larena/launch-context.json",
     "README.md",
@@ -14,13 +14,24 @@
     "src/Developer/SmartAiCatalogProjection.php",
     "src/Developer/SmartCatalogProjection.php",
     "src/Registry/SmartRegistry.php",
+    "src/Registry/UiSmartContribution.php",
     "src/Runtime/AdminComponentRenderer.php (removed)",
     "src/Runtime/AdminDataviewRenderer.php",
     "resources/smart/ui-button/manifest.json",
+    "resources/smart/ui-input/manifest.json",
+    "resources/smart/ui-textarea/manifest.json",
+    "resources/smart/ui-checkbox/manifest.json",
+    "resources/smart/ui-dropdown/manifest.json",
+    "resources/smart/ui-dataview/manifest.json",
+    "resources/smart/ui-pagination/manifest.json",
+    "resources/smart/ui-badge/manifest.json",
+    "resources/smart/ui-alert/manifest.json",
+    "resources/smart/ui-modal/manifest.json",
     "tests/Unit/AdminUiLabRendererTest.php (removed)",
     "tests/Unit/InMemoryUiRuntimeTest.php",
     "tests/Unit/SmartAiCatalogProjectionTest.php",
     "tests/Unit/SmartCatalogProjectionTest.php",
+    "tests/Unit/SmartComponentLibraryTest.php",
     "docs/project-management/evidence/larena-smart-ui-foundation-v1/"
   ]
 }

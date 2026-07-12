@@ -180,6 +180,7 @@
     "resources/smart/ui-pagination/manifest.json",
     "resources/smart/ui-textarea/manifest.json",
     "tests/Unit/SmartManagerTest.php",
+    "tests/Unit/SmartComponentLibraryTest.php",
     "resources/smart/ui-button/manifest.json",
     "src/Developer/SmartInvocationExampleBuilder.php",
     "src/Facades/Smart.php",

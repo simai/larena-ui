@@ -31,3 +31,23 @@ and canonical `ui.dataview` rendering.
 
 The Composer PHAR emits upstream PHP 8.4 deprecation notices before running
 scripts; every package command itself exits successfully.
+
+Batch B2 on PHP 8.4.20:
+
+- `composer quality:gate`: passed end to end;
+- complete Composer test suite: passed, including the ten-component library;
+- PHP syntax lint: passed, 61 files;
+- PHPStan: passed with no errors;
+- package launch-context validator, evidence contract and scope check: passed;
+- focused catalog, AI projection and component-library tests: passed;
+- all 10 manifest files parsed canonically and matched the pinned prop/asset
+  contracts;
+- real SmartManager default renders: 10 of 10 passed;
+- deterministic submitted alternate renders: 48 of 48 exposed controls changed
+  both resolved props and host HTML;
+- source event projection accepted all real dropdown/modal colon names and
+  rejected spaces, slashes, malformed separators and handler-style names;
+- every event keeps `backend_handler_binding=false`, with emitted alert,
+  pagination, dropdown and modal events classified as custom;
+- dropdown and dataview backend render paths passed while frontend snippets
+  remained explicitly unavailable for their structured props.

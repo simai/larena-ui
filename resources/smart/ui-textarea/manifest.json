@@ -1,0 +1,119 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "ui.textarea",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "size": {"type": "string", "enum": ["1/3", "1/2", "1", "2", "3"]},
+      "type": {"type": "string", "enum": ["bordered", "filled"]},
+      "label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "required": {"type": "boolean"},
+      "rows": {"type": "integer"},
+      "placeholder": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
+      "hint": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "\\S"},
+      "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"},
+      "value": {"type": "string", "maxLength": 2000},
+      "disabled": {"type": "boolean"},
+      "error": {"type": "boolean"},
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
+    },
+    "required": ["size", "type", "label", "required", "rows", "placeholder", "hint", "name", "value", "disabled", "error", "aria-label", "id"],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {
+    "input": {"kind": "dom", "backend_handler_binding": false},
+    "change": {"kind": "dom", "backend_handler_binding": false},
+    "focusin": {"kind": "dom", "backend_handler_binding": false},
+    "focusout": {"kind": "dom", "backend_handler_binding": false},
+    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}
+  },
+  "views": {"default": {}, "admin": {}},
+  "presets": {},
+  "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf_element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-textarea"},
+  "assets": [
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_textarea.js", "kind": "javascript", "critical": true}
+  ],
+  "atlas": {
+    "visible": true,
+    "title": "Textarea",
+    "description": "A multiline native-form field verified against the pinned Simai Framework source, with explicit required, disabled and error states.",
+    "category": "fields",
+    "order": 30,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["default", "required", "filled", "disabled", "error", "focus"],
+    "accessibility": ["native_textarea", "label_association", "required_semantics", "error_state", "disabled_semantics", "visible_focus"],
+    "product_href": "/admin/ui/components/ui.textarea",
+    "example_props": {
+      "size": "1",
+      "type": "bordered",
+      "label": "Summary",
+      "required": true,
+      "rows": 4,
+      "placeholder": "Describe the page",
+      "hint": "A short summary for editors.",
+      "name": "summary",
+      "value": "The page explains the current release.",
+      "disabled": false,
+      "error": false,
+      "aria-label": "Summary",
+      "id": "ui-textarea-reference"
+    },
+    "controls": [
+      {"key": "label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
+      {"key": "value", "source": "prop", "widget": "text", "min_length": 0, "max_length": 1000},
+      {"key": "type", "source": "prop", "widget": "select"},
+      {"key": "size", "source": "prop", "widget": "select"},
+      {"key": "required", "source": "prop", "widget": "boolean"},
+      {"key": "disabled", "source": "prop", "widget": "boolean"},
+      {"key": "error", "source": "prop", "widget": "boolean"}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Textarea",
+        "description": "A multiline native-form field verified against the pinned Simai Framework source, with explicit required, disabled and error states.",
+        "controls": {"label": "Label", "value": "Value", "type": "Type", "size": "Size", "required": "Required", "disabled": "Disabled", "error": "Error"},
+        "options": {
+          "type": {"bordered": "Bordered", "filled": "Filled"},
+          "size": {"1/3": "Extra small", "1/2": "Small", "1": "Default", "2": "Large", "3": "Extra large"}
+        }
+      },
+      "ru": {
+        "title": "Многострочное поле",
+        "description": "Многострочное поле нативной формы, подтверждённое зафиксированным исходным кодом Simai Framework, с явными состояниями обязательности, отключения и ошибки.",
+        "controls": {"label": "Подпись", "value": "Значение", "type": "Тип", "size": "Размер", "required": "Обязательное", "disabled": "Отключено", "error": "Ошибка"},
+        "options": {
+          "type": {"bordered": "С рамкой", "filled": "Заполненное"},
+          "size": {"1/3": "Очень маленький", "1/2": "Маленький", "1": "Обычный", "2": "Большой", "3": "Очень большой"}
+        }
+      }
+    }
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui-smart:smart/textarea",
+    "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+    "reference_status": "source_backed",
+    "evidence": "resources/sf/runtime-lock.json"
+  }
+}
