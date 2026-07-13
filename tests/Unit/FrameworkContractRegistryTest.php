@@ -139,6 +139,21 @@ assert($projected['upstream'] === $source);
 assert($projected['upstream_merged_into_adapters'] === false);
 assert($projected['larena_adapters'][0] === adapter($registry));
 
+$explorer = $projection->explorer();
+assert($explorer['schema'] === 'larena.ui.framework_catalog_explorer.v1');
+assert($explorer['source'] === 'immutable_upstream_registry');
+assert($explorer['counts'] === ['utility' => 5, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 8]);
+assert(array_column($explorer['entries'], 'id') === [
+    'component.buttons',
+    'recipe.admin.collection',
+    'smart.table',
+    'utility.display',
+    'utility.flex-direction',
+    'utility.gap',
+    'utility.overflow',
+    'utility.width',
+]);
+
 $copied = adapter($registry);
 $copied['props'] = ['text' => ['type' => 'string']];
 try {
