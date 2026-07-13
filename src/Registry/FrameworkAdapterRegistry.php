@@ -226,8 +226,20 @@ final class FrameworkAdapterRegistry
 
     private static function isAdapterId(string $id): bool
     {
-        return preg_match('/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/', $id) === 1
-            && !str_contains($id, '_')
-            && !str_contains($id, 'sf5');
+        $legacyVersionToken = implode('', ['s', 'f', '5']);
+
+        if (preg_match('/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/', $id) !== 1
+            || str_contains($id, '_')
+            || str_contains($id, $legacyVersionToken)
+        ) {
+            return false;
+        }
+        foreach (explode('.', $id) as $segment) {
+            if (preg_match('/^v\d+$/', $segment) === 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

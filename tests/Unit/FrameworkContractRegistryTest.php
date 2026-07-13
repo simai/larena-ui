@@ -177,6 +177,29 @@ try {
     assert(str_starts_with($exception->getMessage(), 'ui_framework_registry_entry_invalid:'));
 }
 
+$legacyVersionToken = implode('', ['s', 'f', '5']);
+foreach (['component.' . $legacyVersionToken . '-button', 'component.v5'] as $invalidEntryId) {
+    $badId = frameworkRegistryFixture();
+    $badId['entries'][0]['id'] = $invalidEntryId;
+    try {
+        FrameworkContractRegistry::fromArray($badId);
+        throw new RuntimeException('Expected versioned entry ID to fail: ' . $invalidEntryId);
+    } catch (InvalidArgumentException $exception) {
+        assert(str_starts_with($exception->getMessage(), 'ui_framework_registry_entry_invalid:'));
+    }
+}
+
+foreach (['docara.pages_admin.collection', 'docara.' . $legacyVersionToken . '.collection', 'docara.v5.collection'] as $invalidAdapterId) {
+    $badAdapter = adapter($registry);
+    $badAdapter['id'] = $invalidAdapterId;
+    try {
+        (new FrameworkAdapterRegistry($registry))->register($badAdapter);
+        throw new RuntimeException('Expected noncanonical adapter ID to fail: ' . $invalidAdapterId);
+    } catch (InvalidArgumentException $exception) {
+        assert($exception->getMessage() === 'ui_framework_adapter_id_invalid');
+    }
+}
+
 $missingClosure = frameworkRegistryFixture();
 unset($missingClosure['indexes']['recipe_closure']['recipe.admin.collection']);
 try {

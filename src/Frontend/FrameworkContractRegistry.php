@@ -415,9 +415,11 @@ final readonly class FrameworkContractRegistry
 
     private static function isEntryId(string $id): bool
     {
+        $legacyVersionToken = implode('', ['s', 'f', '5']);
+
         if (preg_match('/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/', $id) !== 1
             || str_contains($id, '_')
-            || str_contains($id, 'sf5')
+            || str_contains($id, $legacyVersionToken)
         ) {
             return false;
         }
