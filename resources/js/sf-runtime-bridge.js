@@ -36,7 +36,7 @@
   }
 
   function applyReadOnlyTable(target) {
-    if (!target || target.localName !== 'sf-table' || target.getAttribute('read-only') !== 'true') return;
+    if (!target || target.localName !== 'sf-table' || !target.closest('[data-larena-read-only="true"]')) return;
     ['selectable', 'settings', 'actions'].forEach(function (attribute) {
       if (target.getAttribute(attribute) !== 'false') target.setAttribute(attribute, 'false');
     });
@@ -48,7 +48,7 @@
     var scope = root && typeof root.querySelectorAll === 'function' ? root : document;
     if (root && root.localName === 'sf-table') applyReadOnlyTable(root);
     if (root && typeof root.closest === 'function') applyReadOnlyTable(root.closest('sf-table'));
-    scope.querySelectorAll('sf-table[read-only="true"]').forEach(applyReadOnlyTable);
+    scope.querySelectorAll('[data-larena-read-only="true"] sf-table').forEach(applyReadOnlyTable);
   }
 
   new MutationObserver(function (mutations) {
@@ -65,7 +65,7 @@
         }
       });
     });
-  }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete', 'read-only'] });
+  }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete', 'data-larena-read-only', 'selectable', 'settings', 'actions'] });
 
   async function boot() {
     var descriptors = document.querySelectorAll('script[type="application/json"][data-larena-smart-hydration]');
@@ -81,7 +81,7 @@
       await customElements.whenDefined('sf-input');
       syncNativeInputAttributes(document);
     }
-    if (document.querySelector('sf-table[read-only="true"]')) {
+    if (document.querySelector('[data-larena-read-only="true"] sf-table')) {
       await customElements.whenDefined('sf-table');
       syncReadOnlyTables(document);
     }

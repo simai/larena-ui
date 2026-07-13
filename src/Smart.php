@@ -44,6 +44,8 @@ final class Smart
             if (is_bool($value)) {
                 if ($value) {
                     $attributes[$key] = '';
+                } elseif (self::requiresExplicitFalse($tag, (string) $key)) {
+                    $attributes[$key] = 'false';
                 }
                 continue;
             }
@@ -114,6 +116,12 @@ final class Smart
     private static function escape(string $value): string
     {
         return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    private static function requiresExplicitFalse(string $tag, string $attribute): bool
+    {
+        return $tag === 'sf-table'
+            && in_array($attribute, ['selectable', 'settings', 'actions'], true);
     }
 
     private static function dropdownOptions(mixed $options): string

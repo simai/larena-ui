@@ -1,7 +1,8 @@
 {
-  "schema": "larena.ui.frontend_runtime_lock.v1",
+  "schema": "larena.ui.frontend_runtime_lock.v2",
   "runtime": "simai-framework",
   "pair_id": "sf-v5.3.2-7e836d8a-dd786bba",
+  "bundle_id": "sf-v5.3.2-7e836d8a-dd786bba-registry-2c596327",
   "tag": "v5.3.2",
   "ui": {
     "tag": "v5.3.2",
@@ -18,6 +19,21 @@
     "mount": "smart",
     "sha256": "1c2eacbc58f3deb1d351b11dfb5da6755502386bb1224554754477bc700c9262",
     "files": 112
+  },
+  "framework_registry": {
+    "schema_id": "simai.framework.contract-registry",
+    "compatibility_id": "sf-v5.3.2-7e836d8a-dd786bba",
+    "profile": "plain-assets-v1",
+    "relative_path": "contract/contracts/generated/framework-contract-registry.json",
+    "file_sha256": "2c5963276d31af09770fe41cad04826c04b634f7b2d798d9b0e32864517346b7",
+    "source": {
+      "commit": "b7e8a2e810c0d49e31cb749a7ab34c373dd48bc6",
+      "tree": "contracts/generated",
+      "tree_oid": "ed200af53182334542b48fb7402e219068091bd4",
+      "mount": "contract",
+      "sha256": "0f915061c3664571f8ce522793ed7192889b8eb19e4c62490440926449a13f9b",
+      "files": 1
+    }
   },
   "boot": {
     "css": "ui/distr/core/css/core.css",
@@ -37,7 +53,7 @@
       "source": "smart/table",
       "javascript": "smart/smart/table/js/table.js",
       "css": "smart/smart/table/css/table.css",
-      "attributes": ["template", "root-class", "read-only", "aria-label", "id", "class"]
+      "attributes": ["template", "root-class", "selectable", "settings", "actions", "aria-label", "id", "class"]
     },
     "sf-badge": {
       "source": "smart/badges",

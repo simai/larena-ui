@@ -33,7 +33,11 @@ final readonly class FrontendRuntimeLock
     }
 
     public function pairId(): string { return (string) $this->data['pair_id']; }
+    public function bundleId(): string { return (string) $this->data['bundle_id']; }
     public function tag(): string { return (string) $this->data['tag']; }
+
+    /** @return array<string, mixed> */
+    public function frameworkRegistry(): array { return $this->data['framework_registry']; }
 
     /** @return array<string, mixed> */
     public function component(string $tag): array
@@ -54,6 +58,7 @@ final readonly class FrontendRuntimeLock
         return [
             $this->source($this->data['ui'], $uiRepository),
             $this->source($this->data['ui_smart'], $smartRepository),
+            $this->source($this->data['framework_registry']['source'], $uiRepository),
         ];
     }
 
@@ -74,8 +79,9 @@ final readonly class FrontendRuntimeLock
 
     private function assertValid(): void
     {
-        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v1'
+        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v2'
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['pair_id'] ?? ''))
+            || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['bundle_id'] ?? ''))
             || !preg_match('/^v\d+\.\d+\.\d+$/', (string) ($this->data['tag'] ?? ''))
         ) {
             throw new RuntimeException('ui_frontend_runtime_lock_invalid');
@@ -83,11 +89,22 @@ final readonly class FrontendRuntimeLock
         foreach (['ui', 'ui_smart'] as $source) {
             $value = $this->data[$source] ?? null;
             if (!is_array($value)
+                || !preg_match('/^v\d+\.\d+\.\d+$/', (string) ($value['tag'] ?? ''))
                 || !preg_match('/^[a-f0-9]{40}$/', (string) ($value['commit'] ?? ''))
                 || !preg_match('/^[a-f0-9]{64}$/', (string) ($value['sha256'] ?? ''))
+                || !is_int($value['files'] ?? null)
+                || $value['files'] < 1
             ) {
                 throw new RuntimeException('ui_frontend_runtime_source_invalid:' . $source);
             }
+        }
+        if (($this->data['ui']['tag'] ?? null) !== ($this->data['tag'] ?? null)
+            || ($this->data['ui']['tree'] ?? null) !== 'distr'
+            || ($this->data['ui']['mount'] ?? null) !== 'ui'
+            || ($this->data['ui_smart']['tree'] ?? null) !== 'smart'
+            || ($this->data['ui_smart']['mount'] ?? null) !== 'smart'
+        ) {
+            throw new RuntimeException('ui_frontend_runtime_source_layout_invalid');
         }
 
         $expectedPairId = sprintf(
@@ -98,6 +115,31 @@ final readonly class FrontendRuntimeLock
         );
         if ($this->data['pair_id'] !== $expectedPairId) {
             throw new RuntimeException('ui_frontend_runtime_pair_identity_mismatch');
+        }
+
+        $registry = $this->data['framework_registry'] ?? null;
+        $source = is_array($registry) && is_array($registry['source'] ?? null)
+            ? $registry['source']
+            : null;
+        if (!is_array($registry)
+            || ($registry['schema_id'] ?? null) !== 'simai.framework.contract-registry'
+            || ($registry['compatibility_id'] ?? null) !== $expectedPairId
+            || ($registry['profile'] ?? null) !== 'plain-assets-v1'
+            || ($registry['relative_path'] ?? null) !== 'contract/contracts/generated/framework-contract-registry.json'
+            || !preg_match('/^[a-f0-9]{64}$/', (string) ($registry['file_sha256'] ?? ''))
+            || !is_array($source)
+            || !preg_match('/^[a-f0-9]{40}$/', (string) ($source['commit'] ?? ''))
+            || ($source['tree'] ?? null) !== 'contracts/generated'
+            || !preg_match('/^[a-f0-9]{40}$/', (string) ($source['tree_oid'] ?? ''))
+            || ($source['mount'] ?? null) !== 'contract'
+            || !preg_match('/^[a-f0-9]{64}$/', (string) ($source['sha256'] ?? ''))
+            || ($source['files'] ?? null) !== 1
+        ) {
+            throw new RuntimeException('ui_frontend_framework_registry_lock_invalid');
+        }
+        $expectedBundleId = $expectedPairId . '-registry-' . substr((string) $registry['file_sha256'], 0, 8);
+        if ($this->data['bundle_id'] !== $expectedBundleId) {
+            throw new RuntimeException('ui_frontend_runtime_bundle_identity_mismatch');
         }
     }
 }

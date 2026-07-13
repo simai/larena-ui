@@ -12,8 +12,12 @@ assert(str_contains($button->html, 'text="Create"'));
 assert(!str_contains($button->html, '<button'));
 assert($button->isSafe());
 
-$table = Smart::render('sf-table', ['aria-label' => 'Pages', 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Test']]]]);
+$table = Smart::render('sf-table', ['aria-label' => 'Pages', 'selectable' => false, 'settings' => false, 'actions' => false, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Test']]]]);
 assert(str_contains($table->html, '<sf-table'));
+assert(!str_contains($table->html, 'read-only='));
+assert(str_contains($table->html, 'selectable="false"'));
+assert(str_contains($table->html, 'settings="false"'));
+assert(str_contains($table->html, 'actions="false"'));
 assert(str_contains($table->html, 'type="application/json"'));
 assert(str_contains($table->html, 'larena-smart-hydration'));
 assert(count($table->assetRequirements) === 6);

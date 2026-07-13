@@ -8,9 +8,12 @@
     "type": "object",
     "properties": {
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+      "selectable": {"type": "boolean", "enum": [false]},
+      "settings": {"type": "boolean", "enum": [false]},
+      "actions": {"type": "boolean", "enum": [false]},
       "data": {"type": "object"}
     },
-    "required": ["aria-label", "data"],
+    "required": ["aria-label", "selectable", "settings", "actions", "data"],
     "additionalProperties": false
   },
   "slots": {},
@@ -46,6 +49,9 @@
     "product_href": "/admin/docara/pages",
     "example_props": {
       "aria-label": "Pages",
+      "selectable": false,
+      "settings": false,
+      "actions": false,
       "data": {
         "columns": [
           {"key": "title", "label": "Title"},

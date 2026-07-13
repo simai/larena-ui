@@ -6,6 +6,7 @@ namespace Larena\Ui\Runtime;
 
 use InvalidArgumentException;
 use Larena\Dataview\Contracts\DataviewTablePage;
+use Larena\Layout\Contracts\AdminCollectionLayoutPlan;
 use Larena\Ui\Contracts\BackendRenderResult;
 use Larena\Ui\Contracts\FrontendRenderArtifact;
 use Larena\Ui\Contracts\HydrationContract;
@@ -29,7 +30,7 @@ final class AdminDataviewRenderer
      * @param array<string, mixed> $emptyState
      * @param array<string, mixed> $assetActivation
      */
-    public function render(DataviewTablePage $page, array $labels, array $emptyState, string $ariaLabel, string $currentUrl, array $assetActivation): FrontendRenderArtifact
+    public function render(DataviewTablePage $page, array $labels, array $emptyState, string $ariaLabel, string $currentUrl, array $assetActivation, ?array $frameworkPlan = null): FrontendRenderArtifact
     {
         if (!$page->isSafeForRender()) {
             throw new InvalidArgumentException('ui_admin_dataview_unsafe_projection');
@@ -39,8 +40,14 @@ final class AdminDataviewRenderer
             throw new InvalidArgumentException('ui_admin_component_manifest_invalid:' . $manifest->componentKey);
         }
         $this->registry->renderer($manifest->rendererId);
+        $frameworkDiagnostics = $this->frameworkDiagnostics($frameworkPlan, $manifest->frontendTag);
 
-        $html = '<section class="larena-panel larena-dataview" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview">';
+        $utilityClasses = $frameworkPlan === null ? '' : ' ' . implode(' ', array_merge(...array_values(AdminCollectionLayoutPlan::frameworkUtilityClasses())));
+        $frameworkAttributes = $frameworkPlan === null ? ''
+            : ' data-framework-recipe="admin.collection"'
+                . ' data-framework-registry-sha256="' . $this->e((string) $frameworkPlan['registry_sha256']) . '"'
+                . ' data-framework-plan-sha256="' . $this->e((string) $frameworkPlan['plan_sha256']) . '"';
+        $html = '<section class="larena-panel larena-dataview' . $utilityClasses . '" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview" data-larena-read-only="true"' . $frameworkAttributes . '>';
         $smartArtifact = null;
         if ($page->projection->rows === []) {
             $html .= $this->emptyState($emptyState);
@@ -71,6 +78,9 @@ final class AdminDataviewRenderer
             }
             $smartArtifact = $this->smart->render('ui.dataview', [
                 'aria-label' => $ariaLabel,
+                'selectable' => false,
+                'settings' => false,
+                'actions' => false,
                 'data' => [
                     'columns' => $columns,
                     'rows' => $rows,
@@ -98,8 +108,57 @@ final class AdminDataviewRenderer
                 'source' => $page->projection->descriptor->source->sourceKey,
                 'runtime_tag' => $smartArtifact === null ? null : 'sf-table',
                 'smart_manager' => $smartArtifact === null ? null : $smartArtifact->toArray()['diagnostics'],
+                'framework_contract' => $frameworkDiagnostics,
+                'row_count' => count($page->projection->rows),
+                'read_only_controls_suppressed' => true,
             ],
         );
+    }
+
+    /** @param array<string, mixed>|null $plan @return array<string, mixed>|null */
+    private function frameworkDiagnostics(?array $plan, ?string $runtimeTag): ?array
+    {
+        if ($plan === null) {
+            return null;
+        }
+        $entries = is_array($plan['entries'] ?? null) ? $plan['entries'] : [];
+        $smartTable = null;
+        foreach ($entries as $entry) {
+            if (is_array($entry) && ($entry['id'] ?? null) === 'smart.table') {
+                $smartTable = $entry;
+                break;
+            }
+        }
+        if ($smartTable === null
+            || ($smartTable['kind'] ?? null) !== 'smart-component'
+            || !is_array($smartTable['runtime'] ?? null)
+            || !in_array($runtimeTag, $smartTable['runtime']['tags'] ?? [], true)
+            || ($plan['effects_allowed'] ?? null) !== false
+        ) {
+            throw new InvalidArgumentException('ui_admin_dataview_framework_plan_invalid');
+        }
+        $entryIds = is_array($plan['entry_ids'] ?? null) ? $plan['entry_ids'] : [];
+        foreach (array_keys(AdminCollectionLayoutPlan::frameworkUtilityClasses()) as $utilityId) {
+            if (!in_array($utilityId, $entryIds, true)) {
+                throw new InvalidArgumentException('ui_admin_dataview_framework_utility_missing:' . $utilityId);
+            }
+        }
+
+        return [
+            'compatibility_id' => $plan['compatibility_id'] ?? null,
+            'profile' => $plan['profile'] ?? null,
+            'registry_sha256' => $plan['registry_sha256'] ?? null,
+            'plan_sha256' => $plan['plan_sha256'] ?? null,
+            'adapter_id' => $plan['adapter']['id'] ?? null,
+            'recipe' => $plan['adapter']['upstream_recipe'] ?? null,
+            'entry_ids' => $plan['entry_ids'] ?? [],
+            'kinds' => $plan['kinds'] ?? [],
+            'effects_allowed' => false,
+            'uses_framework_utilities_for_layout' => true,
+            'layout_utility_classes' => AdminCollectionLayoutPlan::frameworkUtilityClasses(),
+            'upstream_gap' => $plan['adapter']['support']['upstream_gap'] ?? null,
+            'fallback' => $plan['adapter']['support']['fallback'] ?? null,
+        ];
     }
 
     private function smartCell(mixed $cell): mixed

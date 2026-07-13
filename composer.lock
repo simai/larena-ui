@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e6ef17952def501cfa1e2972a96a556",
+    "content-hash": "d2e3ce34b9d347c84ace011855cbb5db",
     "packages": [
         {
             "name": "larena/dataview",
@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "../dataview",
-                "reference": "3d5b5180c9ec5ab7e07ff3b26642278e2dbc7281"
+                "reference": "b84e964b4ed78e1ca08a46c88e7651b02744ee47"
             },
             "require": {
                 "php": "^8.3"
@@ -75,6 +75,77 @@
                 }
             ],
             "description": "Larena Dataview: Universal data presentation layer that can render the same structured dataset as table, kanban, calendar, gantt, cards, tree or other reusable views without reimplementing the same UI for every package.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "larena/layout",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../layout",
+                "reference": "a4c3c8768b894a5d9ffff0d8fc55c1430114e43f"
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Larena\\Layout\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Larena\\Layout\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php"
+                ],
+                "test:unit": [
+                    "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php"
+                ],
+                "lint": [
+                    "@php scripts/lint.php"
+                ],
+                "analyse": [
+                    "@php scripts/analyse.php"
+                ],
+                "validate:larena": [
+                    "@php scripts/validate-larena-package.php"
+                ],
+                "evidence:check": [
+                    "@php scripts/check-evidence.php"
+                ],
+                "scope:check": [
+                    "@php tools/larena-scope-check.php"
+                ],
+                "quality:gate": [
+                    "@validate:larena",
+                    "@lint",
+                    "@analyse",
+                    "@test",
+                    "@evidence:check",
+                    "@scope:check"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Rim Zabarov",
+                    "homepage": "https://github.com/zabarov"
+                }
+            ],
+            "description": "Larena Layout: Universal layout and page composition engine for public pages, admin pages, dashboards, forms, lists, detail pages, documentation pages and widgets in Larena.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -150,7 +221,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "larena/dataview": 20
+        "larena/dataview": 20,
+        "larena/layout": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
