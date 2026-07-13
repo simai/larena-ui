@@ -83,7 +83,9 @@ $sourceBackedArtifact = (new AdminDataviewRenderer())->render(
     $activation,
     $frameworkPlan,
 );
-assert(str_contains($sourceBackedArtifact->html(), 'flex flex-col gap-1 overflow-x-auto w-full'));
+assert(str_contains($sourceBackedArtifact->html(), 'class="larena-panel larena-dataview flex flex-col gap-1"'));
+assert(str_contains($sourceBackedArtifact->html(), 'class="larena-dataview-content overflow-x-auto w-full" data-framework-region="content"'));
+assert(!str_contains($sourceBackedArtifact->html(), 'larena-panel larena-dataview flex flex-col gap-1 overflow-x-auto'));
 assert(str_contains($sourceBackedArtifact->html(), 'data-framework-recipe="admin.collection"'));
 assert(str_contains($sourceBackedArtifact->html(), 'data-larena-read-only="true"'));
 assert(($sourceBackedArtifact->toArray()['diagnostics']['framework_contract']['uses_framework_utilities_for_layout'] ?? null) === true);
@@ -93,6 +95,17 @@ assert(($sourceBackedArtifact->toArray()['diagnostics']['framework_contract']['l
     'utility.gap' => ['gap-1'],
     'utility.overflow' => ['overflow-x-auto'],
     'utility.width' => ['w-full'],
+]);
+assert(($sourceBackedArtifact->toArray()['diagnostics']['framework_contract']['layout_utility_regions'] ?? null) === [
+    'collection' => [
+        'utility.display' => ['flex'],
+        'utility.flex-direction' => ['flex-col'],
+        'utility.gap' => ['gap-1'],
+    ],
+    'content' => [
+        'utility.overflow' => ['overflow-x-auto'],
+        'utility.width' => ['w-full'],
+    ],
 ]);
 
 $missingGapPlan = $frameworkPlan;

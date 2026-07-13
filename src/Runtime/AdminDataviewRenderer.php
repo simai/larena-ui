@@ -42,12 +42,15 @@ final class AdminDataviewRenderer
         $this->registry->renderer($manifest->rendererId);
         $frameworkDiagnostics = $this->frameworkDiagnostics($frameworkPlan, $manifest->frontendTag);
 
-        $utilityClasses = $frameworkPlan === null ? '' : ' ' . implode(' ', array_merge(...array_values(AdminCollectionLayoutPlan::frameworkUtilityClasses())));
+        $utilityRegions = AdminCollectionLayoutPlan::frameworkUtilityRegions();
+        $collectionUtilityClasses = $frameworkPlan === null ? '' : ' ' . implode(' ', array_merge(...array_values($utilityRegions['collection'])));
+        $contentUtilityClasses = $frameworkPlan === null ? '' : ' ' . implode(' ', array_merge(...array_values($utilityRegions['content'])));
         $frameworkAttributes = $frameworkPlan === null ? ''
             : ' data-framework-recipe="admin.collection"'
                 . ' data-framework-registry-sha256="' . $this->e((string) $frameworkPlan['registry_sha256']) . '"'
                 . ' data-framework-plan-sha256="' . $this->e((string) $frameworkPlan['plan_sha256']) . '"';
-        $html = '<section class="larena-panel larena-dataview' . $utilityClasses . '" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview" data-larena-read-only="true"' . $frameworkAttributes . '>';
+        $html = '<section class="larena-panel larena-dataview' . $collectionUtilityClasses . '" aria-label="' . $this->e($ariaLabel) . '" data-larena-smart-component="admin.dataview" data-larena-read-only="true"' . $frameworkAttributes . '>';
+        $html .= '<div class="larena-dataview-content' . $contentUtilityClasses . '" data-framework-region="content" role="region" tabindex="0" aria-label="' . $this->e($ariaLabel) . '">';
         $smartArtifact = null;
         if ($page->projection->rows === []) {
             $html .= $this->emptyState($emptyState);
@@ -93,7 +96,7 @@ final class AdminDataviewRenderer
             ], $assetActivation);
             $html .= $smartArtifact->html();
         }
-        $html .= '</section>';
+        $html .= '</div></section>';
 
         $requirements = $smartArtifact === null ? $manifest->assetRequirements : $smartArtifact->render->assetRequirements;
         $backendRender = $smartArtifact === null
@@ -156,6 +159,7 @@ final class AdminDataviewRenderer
             'effects_allowed' => false,
             'uses_framework_utilities_for_layout' => true,
             'layout_utility_classes' => AdminCollectionLayoutPlan::frameworkUtilityClasses(),
+            'layout_utility_regions' => AdminCollectionLayoutPlan::frameworkUtilityRegions(),
             'upstream_gap' => $plan['adapter']['support']['upstream_gap'] ?? null,
             'fallback' => $plan['adapter']['support']['fallback'] ?? null,
         ];

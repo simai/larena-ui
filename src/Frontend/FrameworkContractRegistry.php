@@ -51,7 +51,8 @@ final readonly class FrameworkContractRegistry
         }
 
         $marker = self::readJson($bundleRoot . DIRECTORY_SEPARATOR . '.larena-bundle.json');
-        if (($marker['schema'] ?? null) !== 'larena.core_assets.immutable_bundle.v1'
+        if (($marker['schema'] ?? null) !== 'larena.core_assets.immutable_bundle.v2'
+            || ($marker['publication_profile'] ?? null) !== $lock->publicationProfile()
             || ($marker['bundle_id'] ?? null) !== $lock->bundleId()
         ) {
             throw new RuntimeException('ui_framework_registry_bundle_marker_invalid');

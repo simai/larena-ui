@@ -34,6 +34,7 @@ final readonly class FrontendRuntimeLock
 
     public function pairId(): string { return (string) $this->data['pair_id']; }
     public function bundleId(): string { return (string) $this->data['bundle_id']; }
+    public function publicationProfile(): string { return (string) $this->data['publication_profile']; }
     public function tag(): string { return (string) $this->data['tag']; }
 
     /** @return array<string, mixed> */
@@ -79,9 +80,10 @@ final readonly class FrontendRuntimeLock
 
     private function assertValid(): void
     {
-        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v2'
+        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v3'
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['pair_id'] ?? ''))
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['bundle_id'] ?? ''))
+            || ($this->data['publication_profile'] ?? null) !== 'exact-git-tree-v2'
             || !preg_match('/^v\d+\.\d+\.\d+$/', (string) ($this->data['tag'] ?? ''))
         ) {
             throw new RuntimeException('ui_frontend_runtime_lock_invalid');
@@ -137,7 +139,9 @@ final readonly class FrontendRuntimeLock
         ) {
             throw new RuntimeException('ui_frontend_framework_registry_lock_invalid');
         }
-        $expectedBundleId = $expectedPairId . '-registry-' . substr((string) $registry['file_sha256'], 0, 8);
+        $expectedBundleId = $expectedPairId
+            . '-registry-' . substr((string) $registry['file_sha256'], 0, 8)
+            . '-' . $this->data['publication_profile'];
         if ($this->data['bundle_id'] !== $expectedBundleId) {
             throw new RuntimeException('ui_frontend_runtime_bundle_identity_mismatch');
         }

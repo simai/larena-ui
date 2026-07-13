@@ -8,7 +8,8 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
 assert($lock->pairId() === 'sf-v5.3.2-7e836d8a-dd786bba');
-assert($lock->bundleId() === 'sf-v5.3.2-7e836d8a-dd786bba-registry-2c596327');
+assert($lock->bundleId() === 'sf-v5.3.2-7e836d8a-dd786bba-registry-2c596327-exact-git-tree-v2');
+assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->pairId());
@@ -28,6 +29,8 @@ assert($sources[2] === [
 
 foreach ([
     static function (array &$data): void { $data['bundle_id'] = $data['pair_id']; },
+    static function (array &$data): void { $data['publication_profile'] = 'unverified-copy'; },
+    static function (array &$data): void { $data['schema'] = 'larena.ui.frontend_runtime_lock.v2'; },
     static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.3.2-wrong-wrong'; },
     static function (array &$data): void { $data['framework_registry']['relative_path'] = '../registry.json'; },
     static function (array &$data): void { $data['framework_registry']['source']['commit'] = str_repeat('0', 39); },
