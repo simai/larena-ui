@@ -120,8 +120,9 @@ final class Smart
 
     private static function requiresExplicitFalse(string $tag, string $attribute): bool
     {
-        return $tag === 'sf-table'
-            && in_array($attribute, ['selectable', 'settings', 'actions'], true);
+        return ($tag === 'sf-table'
+                && in_array($attribute, ['selectable', 'settings', 'actions'], true))
+            || ($tag === 'sf-dropdown' && $attribute === 'search');
     }
 
     private static function dropdownOptions(mixed $options): string

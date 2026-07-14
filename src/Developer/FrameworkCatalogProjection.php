@@ -219,11 +219,6 @@ final readonly class FrameworkCatalogProjection
                     continue 2;
                 }
             }
-            foreach ($demonstration['smart_component_ids'] as $id) {
-                if (($byId[$id]['kind'] ?? null) !== 'smart-component') {
-                    continue 2;
-                }
-            }
             $demonstrations[$utilityId] = $demonstration + [
                 'source' => 'larena_demonstration_bound_to_pinned_framework_source',
             ];
@@ -239,8 +234,8 @@ final readonly class FrameworkCatalogProjection
             'title_key' => 'gap_vertical_stack_title',
             'description_key' => 'gap_vertical_stack_description',
             'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.grid-template-columns', 'utility.background-color', 'utility.padding', 'utility.border-radius', 'utility.width'],
-            'component_ids' => ['component.buttons', 'component.highlight'],
-            'smart_component_ids' => ['smart.buttons'],
+            'component_ids' => ['component.highlight'],
+            'smart_component_keys' => ['ui.dropdown'],
             'base_classes' => 'flex flex-col',
             'initial_variant' => 'gap-1',
             'variant_contract' => [
@@ -266,9 +261,8 @@ final readonly class FrameworkCatalogProjection
                 'ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:distr/utility/gap/default/css/default.css',
                 'ui-play:examples/background/background-color/index.html',
                 'ui-play:examples/grid/grid-template-columns/index.html',
-                'ui:distr/component/buttons',
                 'ui:distr/component/highlight',
-                'ui-smart:smart/buttons',
+                'ui-smart:smart/dropdown',
             ],
         ],
     ];

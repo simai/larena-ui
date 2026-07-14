@@ -52,4 +52,7 @@ assert(str_contains($dropdown->html, '<sf-list-item text="English" value="en" se
 assert(!str_contains($dropdown->html, 'options='));
 assert($dropdown->isSafe());
 
+$dropdownWithoutSearch = Smart::render('sf-dropdown', ['name' => 'size', 'label' => 'Size', 'search' => false]);
+assert(str_contains($dropdownWithoutSearch->html, 'search="false"'));
+
 echo "SmartTest passed\n";
