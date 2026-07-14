@@ -214,6 +214,16 @@ final readonly class FrameworkCatalogProjection
                     continue 2;
                 }
             }
+            foreach ($demonstration['component_ids'] as $id) {
+                if (($byId[$id]['kind'] ?? null) !== 'component') {
+                    continue 2;
+                }
+            }
+            foreach ($demonstration['smart_component_ids'] as $id) {
+                if (($byId[$id]['kind'] ?? null) !== 'smart-component') {
+                    continue 2;
+                }
+            }
             $demonstrations[$utilityId] = $demonstration + [
                 'source' => 'larena_curated_composition_of_checked_upstream_examples',
             ];
@@ -228,8 +238,8 @@ final readonly class FrameworkCatalogProjection
             'id' => 'utility.gap.vertical-stack',
             'title_key' => 'gap_vertical_stack_title',
             'description_key' => 'gap_vertical_stack_description',
-            'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap'],
-            'component_ids' => ['component.buttons'],
+            'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.background-color', 'utility.padding', 'utility.border-radius'],
+            'component_ids' => ['component.buttons', 'component.highlight'],
             'smart_component_ids' => ['smart.buttons'],
             'base_classes' => 'flex flex-col',
             'variants' => [
@@ -240,7 +250,9 @@ final readonly class FrameworkCatalogProjection
             'source_refs' => [
                 'ui-play:examples/layout/display/index.html',
                 'ui-play:examples/grid/grid-template-columns/index.html',
+                'ui-play:examples/background/background-color/index.html',
                 'ui:distr/component/buttons',
+                'ui:distr/component/highlight',
                 'ui-smart:smart/buttons',
             ],
         ],

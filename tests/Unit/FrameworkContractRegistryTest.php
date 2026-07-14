@@ -12,6 +12,7 @@ function frameworkRegistryFixture(): array
 {
     $entries = [
         entry('component.buttons', 'component'),
+        entry('component.highlight', 'component'),
         entry('recipe.admin.collection', 'recipe', [
             'smart.table',
             'utility.display',
@@ -21,6 +22,9 @@ function frameworkRegistryFixture(): array
             'utility.width',
         ]),
         entry('smart.table', 'smart-component', ['component.buttons']),
+        entry('smart.buttons', 'smart-component', ['component.buttons']),
+        entry('utility.background-color', 'utility'),
+        entry('utility.border-radius', 'utility'),
         entry('utility.display', 'utility'),
         entry('utility.align-items', 'utility'),
         entry('utility.container', 'utility'),
@@ -59,7 +63,7 @@ function frameworkRegistryFixture(): array
             'path' => 'contracts/owners/' . $kind . '.manifest.json',
             'sha256' => str_repeat(match ($kind) { 'utility' => '1', 'component' => '2', 'smart-component' => '3', default => '4' }, 64),
         ], ['utility', 'component', 'smart-component', 'recipe']),
-        'counts' => ['utility' => 11, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 14],
+        'counts' => ['utility' => 13, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 18],
         'entries' => $entries,
         'indexes' => [
             'by_kind' => $byKind,
@@ -148,12 +152,16 @@ assert($projected['larena_adapters'][0] === adapter($registry));
 $explorer = $projection->explorer();
 assert($explorer['schema'] === 'larena.ui.framework_catalog_explorer.v1');
 assert($explorer['source'] === 'immutable_upstream_registry');
-assert($explorer['counts'] === ['utility' => 11, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 14]);
+assert($explorer['counts'] === ['utility' => 13, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 18]);
 assert(array_column($explorer['entries'], 'id') === [
     'component.buttons',
+    'component.highlight',
     'recipe.admin.collection',
+    'smart.buttons',
     'smart.table',
     'utility.align-items',
+    'utility.background-color',
+    'utility.border-radius',
     'utility.container',
     'utility.display',
     'utility.flex-direction',
@@ -169,7 +177,7 @@ assert(array_column($explorer['entries'], 'id') === [
 $utilityExplorer = $projection->utilities();
 assert($utilityExplorer['schema'] === 'larena.ui.framework_utility_explorer.v1');
 assert($utilityExplorer['source'] === 'immutable_upstream_registry');
-assert($utilityExplorer['counts'] === ['utilities' => 11, 'recipes' => 6, 'demonstrations' => 1]);
+assert($utilityExplorer['counts'] === ['utilities' => 13, 'recipes' => 6, 'demonstrations' => 1]);
 assert(array_column($utilityExplorer['recipes'], 'id') === [
     'layout.vertical-stack',
     'layout.balanced-toolbar',
@@ -183,7 +191,9 @@ assert($utilityExplorer['utilities'][0]['constraints']['value_grammar'] === 'not
 $gap = array_values(array_filter($utilityExplorer['utilities'], static fn (array $utility): bool => $utility['id'] === 'utility.gap'))[0];
 assert($gap['demonstration']['id'] === 'utility.gap.vertical-stack');
 assert($gap['demonstration']['title_key'] === 'gap_vertical_stack_title');
-assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap']);
+assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.background-color', 'utility.padding', 'utility.border-radius']);
+assert($gap['demonstration']['component_ids'] === ['component.buttons', 'component.highlight']);
+assert($gap['demonstration']['smart_component_ids'] === ['smart.buttons']);
 assert(array_column($gap['demonstration']['variants'], 'classes') === ['gap-1', 'gap-2', 'gap-3']);
 assert($projection->demonstration('utility.gap')['demonstration']['id'] === 'utility.gap.vertical-stack');
 assert($projection->demonstration('utility.display') === null);
