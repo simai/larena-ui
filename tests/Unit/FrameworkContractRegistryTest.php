@@ -22,9 +22,15 @@ function frameworkRegistryFixture(): array
         ]),
         entry('smart.table', 'smart-component', ['component.buttons']),
         entry('utility.display', 'utility'),
+        entry('utility.align-items', 'utility'),
+        entry('utility.container', 'utility'),
         entry('utility.flex-direction', 'utility'),
         entry('utility.gap', 'utility'),
+        entry('utility.grid-template-columns', 'utility'),
+        entry('utility.justify-content', 'utility'),
+        entry('utility.margin', 'utility'),
         entry('utility.overflow', 'utility'),
+        entry('utility.padding', 'utility'),
         entry('utility.width', 'utility'),
     ];
     $byKind = ['utility' => [], 'component' => [], 'smart-component' => [], 'recipe' => []];
@@ -53,11 +59,11 @@ function frameworkRegistryFixture(): array
             'path' => 'contracts/owners/' . $kind . '.manifest.json',
             'sha256' => str_repeat(match ($kind) { 'utility' => '1', 'component' => '2', 'smart-component' => '3', default => '4' }, 64),
         ], ['utility', 'component', 'smart-component', 'recipe']),
-        'counts' => ['utility' => 5, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 8],
+        'counts' => ['utility' => 11, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 14],
         'entries' => $entries,
         'indexes' => [
             'by_kind' => $byKind,
-            'safe_to_suggest' => array_column($entries, 'id'),
+            'safe_to_suggest' => (static function () use ($entries): array { $ids = array_column($entries, 'id'); sort($ids); return $ids; })(),
             'blocked' => [],
             'recipe_closure' => [
                 'recipe.admin.collection' => [
@@ -142,17 +148,38 @@ assert($projected['larena_adapters'][0] === adapter($registry));
 $explorer = $projection->explorer();
 assert($explorer['schema'] === 'larena.ui.framework_catalog_explorer.v1');
 assert($explorer['source'] === 'immutable_upstream_registry');
-assert($explorer['counts'] === ['utility' => 5, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 8]);
+assert($explorer['counts'] === ['utility' => 11, 'component' => 1, 'smart-component' => 1, 'recipe' => 1, 'total' => 14]);
 assert(array_column($explorer['entries'], 'id') === [
     'component.buttons',
     'recipe.admin.collection',
     'smart.table',
+    'utility.align-items',
+    'utility.container',
     'utility.display',
     'utility.flex-direction',
     'utility.gap',
+    'utility.grid-template-columns',
+    'utility.justify-content',
+    'utility.margin',
     'utility.overflow',
+    'utility.padding',
     'utility.width',
 ]);
+
+$utilityExplorer = $projection->utilities();
+assert($utilityExplorer['schema'] === 'larena.ui.framework_utility_explorer.v1');
+assert($utilityExplorer['source'] === 'immutable_upstream_registry');
+assert($utilityExplorer['counts'] === ['utilities' => 11, 'recipes' => 6]);
+assert(array_column($utilityExplorer['recipes'], 'id') === [
+    'layout.vertical-stack',
+    'layout.balanced-toolbar',
+    'layout.two-column-grid',
+    'layout.card-grid',
+    'layout.centered-container',
+    'layout.scroll-safe-region',
+]);
+assert($utilityExplorer['recipes'][0]['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap']);
+assert($utilityExplorer['utilities'][0]['constraints']['value_grammar'] === 'not_enumerated_by_registry');
 
 $copied = adapter($registry);
 $copied['props'] = ['text' => ['type' => 'string']];
