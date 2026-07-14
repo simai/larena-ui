@@ -169,7 +169,7 @@ assert(array_column($explorer['entries'], 'id') === [
 $utilityExplorer = $projection->utilities();
 assert($utilityExplorer['schema'] === 'larena.ui.framework_utility_explorer.v1');
 assert($utilityExplorer['source'] === 'immutable_upstream_registry');
-assert($utilityExplorer['counts'] === ['utilities' => 11, 'recipes' => 6]);
+assert($utilityExplorer['counts'] === ['utilities' => 11, 'recipes' => 6, 'demonstrations' => 1]);
 assert(array_column($utilityExplorer['recipes'], 'id') === [
     'layout.vertical-stack',
     'layout.balanced-toolbar',
@@ -180,6 +180,11 @@ assert(array_column($utilityExplorer['recipes'], 'id') === [
 ]);
 assert($utilityExplorer['recipes'][0]['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap']);
 assert($utilityExplorer['utilities'][0]['constraints']['value_grammar'] === 'not_enumerated_by_registry');
+$gap = array_values(array_filter($utilityExplorer['utilities'], static fn (array $utility): bool => $utility['id'] === 'utility.gap'))[0];
+assert($gap['demonstration']['id'] === 'utility.gap.vertical-stack');
+assert($gap['demonstration']['title_key'] === 'gap_vertical_stack_title');
+assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap']);
+assert(array_column($gap['demonstration']['variants'], 'classes') === ['gap-1', 'gap-2', 'gap-3']);
 
 $copied = adapter($registry);
 $copied['props'] = ['text' => ['type' => 'string']];

@@ -88,6 +88,7 @@ final readonly class FrameworkCatalogProjection
         foreach ($upstreamEntries as $entry) {
             $byId[(string) $entry['id']] = $entry;
         }
+        $demonstrations = $this->utilityDemonstrations($byId);
 
         $utilities = [];
         foreach ($upstreamEntries as $entry) {
@@ -119,6 +120,7 @@ final readonly class FrameworkCatalogProjection
                     $entry['example_refs'] ?? [],
                     $entry['provenance']['source_refs'] ?? [],
                 ))),
+                'demonstration' => $demonstrations[(string) $entry['id']] ?? null,
                 'search_text' => strtolower(implode(' ', [
                     (string) $entry['id'],
                     (string) ($entry['title'] ?? $entry['id']),
@@ -162,7 +164,7 @@ final readonly class FrameworkCatalogProjection
             'profile' => $this->upstream->profile(),
             'utilities' => $utilities,
             'recipes' => $recipes,
-            'counts' => ['utilities' => count($utilities), 'recipes' => count($recipes)],
+            'counts' => ['utilities' => count($utilities), 'recipes' => count($recipes), 'demonstrations' => count($demonstrations)],
             'source' => 'immutable_upstream_registry',
             'production_ready' => false,
         ];
@@ -176,6 +178,48 @@ final readonly class FrameworkCatalogProjection
         ['id' => 'layout.card-grid', 'title' => 'Card grid', 'description' => 'A compact three-column group for comparable items.', 'utility_ids' => ['utility.display', 'utility.grid-template-columns', 'utility.gap'], 'classes' => 'grid grid-col-3 gap-2'],
         ['id' => 'layout.centered-container', 'title' => 'Centered container', 'description' => 'A bounded reading area centered inside its parent.', 'utility_ids' => ['utility.container', 'utility.margin', 'utility.padding'], 'classes' => 'container m-inline-auto p-3'],
         ['id' => 'layout.scroll-safe-region', 'title' => 'Scroll-safe region', 'description' => 'Wide content stays within its parent without widening the page.', 'utility_ids' => ['utility.overflow', 'utility.width'], 'classes' => 'overflow-x-auto w-full'],
+    ];
+
+    /**
+     * Larena-local examples are deliberately small: values are included only
+     * when they are used by a checked upstream playground example. They are
+     * not a replacement grammar for the upstream utility family.
+     *
+     * @param array<string, array<string, mixed>> $byId
+     * @return array<string, array<string, mixed>>
+     */
+    private function utilityDemonstrations(array $byId): array
+    {
+        $demonstrations = [];
+        foreach (self::UTILITY_DEMONSTRATIONS as $utilityId => $demonstration) {
+            foreach ($demonstration['utility_ids'] as $id) {
+                if (($byId[$id]['kind'] ?? null) !== 'utility') {
+                    continue 2;
+                }
+            }
+            $demonstrations[$utilityId] = $demonstration + [
+                'source' => 'larena_curated_composition_of_checked_upstream_examples',
+            ];
+        }
+
+        return $demonstrations;
+    }
+
+    /** @var array<string, array<string, mixed>> */
+    private const UTILITY_DEMONSTRATIONS = [
+        'utility.gap' => [
+            'id' => 'utility.gap.vertical-stack',
+            'title_key' => 'gap_vertical_stack_title',
+            'description_key' => 'gap_vertical_stack_description',
+            'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap'],
+            'base_classes' => 'flex flex-col',
+            'variants' => [
+                ['id' => 'gap-1', 'classes' => 'gap-1', 'source_refs' => ['ui-play:examples/grid/grid-template-columns/index.html']],
+                ['id' => 'gap-2', 'classes' => 'gap-2', 'source_refs' => ['ui-play:examples/layout/display/index.html', 'ui-play:examples/grid/grid-template-columns/index.html']],
+                ['id' => 'gap-3', 'classes' => 'gap-3', 'source_refs' => ['ui-play:examples/grid/grid-template-columns/index.html']],
+            ],
+            'source_refs' => ['ui-play:examples/layout/display/index.html', 'ui-play:examples/grid/grid-template-columns/index.html'],
+        ],
     ];
 
     /** @return array<string, mixed> */
