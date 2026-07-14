@@ -44,6 +44,12 @@
     "smart_base_path": "smart/"
   },
   "components": {
+    "sf-icon": {
+      "source": "smart/icons",
+      "javascript": "smart/smart/icons/js/icons.js",
+      "css": null,
+      "attributes": ["icon", "size", "scheme", "aria-label", "id", "class"]
+    },
     "sf-button": {
       "source": "smart/buttons",
       "javascript": "smart/smart/buttons/js/buttons.js",
@@ -66,6 +72,7 @@
       "source": "smart/alert",
       "javascript": "smart/smart/alert/js/alert.js",
       "css": null,
+      "requires": ["sf-icon"],
       "attributes": ["type", "variant", "icon", "title", "supporting-text", "action-text", "action", "secondary-action-text", "secondary-action", "closable", "aria-label", "id", "class"]
     },
     "sf-pagination": {

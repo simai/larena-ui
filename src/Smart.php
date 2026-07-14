@@ -85,6 +85,38 @@ final class Smart
             new UiAssetRequirement('simai.framework.smart_base.js', UiAssetKind::JavaScript, true),
             new UiAssetRequirement('simai.framework.bridge.js', UiAssetKind::JavaScript, true),
         ];
+        $seen = [];
+        self::appendComponentRequirements($tag, $registry, $requirements, $seen);
+
+        return new UiAssetGraph($requirements, [
+            'runtime:simai-framework',
+            'smart-component:' . $tag,
+            'delivery:pinned-immutable-pair',
+        ]);
+    }
+
+    /**
+     * @param list<UiAssetRequirement> $requirements
+     * @param array<string, true> $seen
+     */
+    private static function appendComponentRequirements(
+        string $tag,
+        SourceBackedComponentRegistry $registry,
+        array &$requirements,
+        array &$seen,
+    ): void {
+        if (isset($seen[$tag])) {
+            return;
+        }
+        $seen[$tag] = true;
+        $definition = $registry->get($tag);
+        foreach ($definition['requires'] ?? [] as $requiredTag) {
+            if (!is_string($requiredTag)) {
+                throw new \InvalidArgumentException('ui_smart_component_requirement_invalid:' . $tag);
+            }
+            self::appendComponentRequirements($requiredTag, $registry, $requirements, $seen);
+        }
+
         $assetPrefix = 'simai.framework.' . str_replace('-', '_', $tag);
         if (is_string($definition['css'] ?? null) && $definition['css'] !== '') {
             $requirements[] = new UiAssetRequirement($assetPrefix . '.css', UiAssetKind::Css, true);
@@ -92,12 +124,6 @@ final class Smart
         if (is_string($definition['javascript'] ?? null) && $definition['javascript'] !== '') {
             $requirements[] = new UiAssetRequirement($assetPrefix . '.js', UiAssetKind::JavaScript, true);
         }
-
-        return new UiAssetGraph($requirements, [
-            'runtime:simai-framework',
-            'smart-component:' . $tag,
-            'delivery:pinned-immutable-pair',
-        ]);
     }
 
     /** @param array<string, string> $attributes */

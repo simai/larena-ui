@@ -25,7 +25,7 @@ assert($table->isSafe());
 
 foreach ([
     'sf-badge' => ['text' => 'Published', 'scheme' => 'success'],
-    'sf-alert' => ['type' => 'danger', 'title' => 'Error'],
+    'sf-alert' => ['type' => 'danger', 'icon' => 'error', 'title' => 'Error'],
     'sf-pagination' => ['current' => 2, 'total' => 4],
     'sf-input' => ['name' => 'title', 'label' => 'Title', 'required' => true],
     'sf-checkbox' => ['name' => 'is_active', 'label' => 'Active', 'checked' => true, 'value' => '1'],
@@ -36,6 +36,16 @@ foreach ([
     assert(str_contains($render->html, '<' . $tag));
     assert($render->isSafe());
 }
+
+$alertAssets = array_map(static fn ($asset): string => $asset->assetKey, Smart::assetGraph('sf-alert')->requirements);
+assert($alertAssets === [
+    'simai.framework.core.css',
+    'simai.framework.core.js',
+    'simai.framework.smart_base.js',
+    'simai.framework.bridge.js',
+    'simai.framework.sf_icon.js',
+    'simai.framework.sf_alert.js',
+]);
 
 $dropdown = Smart::render('sf-dropdown', [
     'name' => 'locale',

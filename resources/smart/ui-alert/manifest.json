@@ -1,7 +1,7 @@
 {
   "schema": "larena.ui.smart_manifest.v1",
   "key": "ui.alert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "owner_package": "larena/ui",
   "kind": "smart",
   "props": {
@@ -9,6 +9,7 @@
     "properties": {
       "type": {"type": "string", "enum": ["clear", "info", "danger", "warning", "success"]},
       "variant": {"type": "string", "enum": ["default", "flat", "outlined"]},
+      "icon": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
       "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "supporting-text": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S"},
       "closable": {"type": "boolean"},
@@ -36,6 +37,7 @@
     {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.sf_alert.js", "kind": "javascript", "critical": true}
   ],
   "atlas": {
