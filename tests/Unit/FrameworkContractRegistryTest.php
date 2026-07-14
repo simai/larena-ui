@@ -195,7 +195,7 @@ assert($gap['demonstration']['id'] === 'utility.gap.vertical-stack');
 assert($gap['demonstration']['title_key'] === 'gap_vertical_stack_title');
 assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.grid-template-columns', 'utility.background-color', 'utility.padding', 'utility.border-radius', 'utility.width']);
 assert($gap['demonstration']['component_ids'] === ['component.highlight']);
-assert($gap['demonstration']['smart_component_keys'] === ['ui.dropdown']);
+assert($gap['demonstration']['smart_component_keys'] === ['ui.dropdown', 'ui.alert']);
 assert($gap['demonstration']['initial_variant'] === 'gap-1');
 assert($gap['demonstration']['variant_contract'] === [
     'scope' => 'base-spacing-scale',

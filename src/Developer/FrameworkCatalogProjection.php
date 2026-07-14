@@ -235,7 +235,7 @@ final readonly class FrameworkCatalogProjection
             'description_key' => 'gap_vertical_stack_description',
             'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.grid-template-columns', 'utility.background-color', 'utility.padding', 'utility.border-radius', 'utility.width'],
             'component_ids' => ['component.highlight'],
-            'smart_component_keys' => ['ui.dropdown'],
+            'smart_component_keys' => ['ui.dropdown', 'ui.alert'],
             'base_classes' => 'flex flex-col',
             'initial_variant' => 'gap-1',
             'variant_contract' => [
@@ -263,6 +263,7 @@ final readonly class FrameworkCatalogProjection
                 'ui-play:examples/grid/grid-template-columns/index.html',
                 'ui:distr/component/highlight',
                 'ui-smart:smart/dropdown',
+                'ui-smart:smart/alert',
             ],
         ],
     ];
