@@ -198,9 +198,9 @@ final readonly class FrameworkCatalogProjection
     ];
 
     /**
-     * Larena-local examples are deliberately small: values are included only
-     * when they are used by a checked upstream playground example. They are
-     * not a replacement grammar for the upstream utility family.
+     * Larena-local demonstrations bind an exact pinned framework source to a
+     * small interactive scenario. A complete variant set is included only
+     * when the pinned source enumerates it; Larena does not infer a grammar.
      *
      * @param array<string, array<string, mixed>> $byId
      * @return array<string, array<string, mixed>>
@@ -225,7 +225,7 @@ final readonly class FrameworkCatalogProjection
                 }
             }
             $demonstrations[$utilityId] = $demonstration + [
-                'source' => 'larena_curated_composition_of_checked_upstream_examples',
+                'source' => 'larena_demonstration_bound_to_pinned_framework_source',
             ];
         }
 
@@ -238,19 +238,34 @@ final readonly class FrameworkCatalogProjection
             'id' => 'utility.gap.vertical-stack',
             'title_key' => 'gap_vertical_stack_title',
             'description_key' => 'gap_vertical_stack_description',
-            'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.background-color', 'utility.padding', 'utility.border-radius'],
+            'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.grid-template-columns', 'utility.background-color', 'utility.padding', 'utility.border-radius', 'utility.width'],
             'component_ids' => ['component.buttons', 'component.highlight'],
             'smart_component_ids' => ['smart.buttons'],
             'base_classes' => 'flex flex-col',
+            'initial_variant' => 'gap-1',
+            'variant_contract' => [
+                'scope' => 'base-spacing-scale',
+                'complete' => true,
+                'source_ref' => 'ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:distr/utility/gap/default/css/default.css',
+            ],
             'variants' => [
-                ['id' => 'gap-1', 'classes' => 'gap-1', 'source_refs' => ['ui-play:examples/grid/grid-template-columns/index.html']],
-                ['id' => 'gap-2', 'classes' => 'gap-2', 'source_refs' => ['ui-play:examples/layout/display/index.html', 'ui-play:examples/grid/grid-template-columns/index.html']],
-                ['id' => 'gap-3', 'classes' => 'gap-3', 'source_refs' => ['ui-play:examples/grid/grid-template-columns/index.html']],
+                ['id' => 'gap-0', 'classes' => 'gap-0'],
+                ['id' => 'gap-1/4', 'classes' => 'gap-1/4'],
+                ['id' => 'gap-1/3', 'classes' => 'gap-1/3'],
+                ['id' => 'gap-1/2', 'classes' => 'gap-1/2'],
+                ['id' => 'gap-1', 'classes' => 'gap-1'],
+                ['id' => 'gap-2', 'classes' => 'gap-2'],
+                ['id' => 'gap-3', 'classes' => 'gap-3'],
+                ['id' => 'gap-4', 'classes' => 'gap-4'],
+                ['id' => 'gap-5', 'classes' => 'gap-5'],
+                ['id' => 'gap-6', 'classes' => 'gap-6'],
+                ['id' => 'gap-7', 'classes' => 'gap-7'],
+                ['id' => 'gap-8', 'classes' => 'gap-8'],
             ],
             'source_refs' => [
-                'ui-play:examples/layout/display/index.html',
-                'ui-play:examples/grid/grid-template-columns/index.html',
+                'ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:distr/utility/gap/default/css/default.css',
                 'ui-play:examples/background/background-color/index.html',
+                'ui-play:examples/grid/grid-template-columns/index.html',
                 'ui:distr/component/buttons',
                 'ui:distr/component/highlight',
                 'ui-smart:smart/buttons',

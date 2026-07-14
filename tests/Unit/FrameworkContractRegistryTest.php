@@ -29,6 +29,7 @@ function frameworkRegistryFixture(): array
         entry('utility.align-items', 'utility'),
         entry('utility.container', 'utility'),
         entry('utility.flex-direction', 'utility'),
+        entry('utility.flex-wrap', 'utility'),
         entry('utility.gap', 'utility'),
         entry('utility.grid-template-columns', 'utility'),
         entry('utility.justify-content', 'utility'),
@@ -63,7 +64,7 @@ function frameworkRegistryFixture(): array
             'path' => 'contracts/owners/' . $kind . '.manifest.json',
             'sha256' => str_repeat(match ($kind) { 'utility' => '1', 'component' => '2', 'smart-component' => '3', default => '4' }, 64),
         ], ['utility', 'component', 'smart-component', 'recipe']),
-        'counts' => ['utility' => 13, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 18],
+        'counts' => ['utility' => 14, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 19],
         'entries' => $entries,
         'indexes' => [
             'by_kind' => $byKind,
@@ -152,7 +153,7 @@ assert($projected['larena_adapters'][0] === adapter($registry));
 $explorer = $projection->explorer();
 assert($explorer['schema'] === 'larena.ui.framework_catalog_explorer.v1');
 assert($explorer['source'] === 'immutable_upstream_registry');
-assert($explorer['counts'] === ['utility' => 13, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 18]);
+assert($explorer['counts'] === ['utility' => 14, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 19]);
 assert(array_column($explorer['entries'], 'id') === [
     'component.buttons',
     'component.highlight',
@@ -165,6 +166,7 @@ assert(array_column($explorer['entries'], 'id') === [
     'utility.container',
     'utility.display',
     'utility.flex-direction',
+    'utility.flex-wrap',
     'utility.gap',
     'utility.grid-template-columns',
     'utility.justify-content',
@@ -177,7 +179,7 @@ assert(array_column($explorer['entries'], 'id') === [
 $utilityExplorer = $projection->utilities();
 assert($utilityExplorer['schema'] === 'larena.ui.framework_utility_explorer.v1');
 assert($utilityExplorer['source'] === 'immutable_upstream_registry');
-assert($utilityExplorer['counts'] === ['utilities' => 13, 'recipes' => 6, 'demonstrations' => 1]);
+assert($utilityExplorer['counts'] === ['utilities' => 14, 'recipes' => 6, 'demonstrations' => 1]);
 assert(array_column($utilityExplorer['recipes'], 'id') === [
     'layout.vertical-stack',
     'layout.balanced-toolbar',
@@ -191,10 +193,19 @@ assert($utilityExplorer['utilities'][0]['constraints']['value_grammar'] === 'not
 $gap = array_values(array_filter($utilityExplorer['utilities'], static fn (array $utility): bool => $utility['id'] === 'utility.gap'))[0];
 assert($gap['demonstration']['id'] === 'utility.gap.vertical-stack');
 assert($gap['demonstration']['title_key'] === 'gap_vertical_stack_title');
-assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.background-color', 'utility.padding', 'utility.border-radius']);
+assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap', 'utility.grid-template-columns', 'utility.background-color', 'utility.padding', 'utility.border-radius', 'utility.width']);
 assert($gap['demonstration']['component_ids'] === ['component.buttons', 'component.highlight']);
 assert($gap['demonstration']['smart_component_ids'] === ['smart.buttons']);
-assert(array_column($gap['demonstration']['variants'], 'classes') === ['gap-1', 'gap-2', 'gap-3']);
+assert($gap['demonstration']['initial_variant'] === 'gap-1');
+assert($gap['demonstration']['variant_contract'] === [
+    'scope' => 'base-spacing-scale',
+    'complete' => true,
+    'source_ref' => 'ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:distr/utility/gap/default/css/default.css',
+]);
+assert(array_column($gap['demonstration']['variants'], 'classes') === [
+    'gap-0', 'gap-1/4', 'gap-1/3', 'gap-1/2', 'gap-1', 'gap-2',
+    'gap-3', 'gap-4', 'gap-5', 'gap-6', 'gap-7', 'gap-8',
+]);
 assert($projection->demonstration('utility.gap')['demonstration']['id'] === 'utility.gap.vertical-stack');
 assert($projection->demonstration('utility.display') === null);
 assert($projection->demonstration('unknown.entry') === null);
