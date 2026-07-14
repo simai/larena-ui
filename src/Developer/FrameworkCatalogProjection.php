@@ -170,6 +170,23 @@ final readonly class FrameworkCatalogProjection
         ];
     }
 
+    /** @return array{utility: array<string, mixed>, demonstration: array<string, mixed>}|null */
+    public function demonstration(string $entryId): ?array
+    {
+        foreach ($this->utilities()['utilities'] as $utility) {
+            if ($utility['id'] !== $entryId || $utility['demonstration'] === null) {
+                continue;
+            }
+
+            return [
+                'utility' => $utility,
+                'demonstration' => $utility['demonstration'],
+            ];
+        }
+
+        return null;
+    }
+
     /** @var list<array{id: string, title: string, description: string, utility_ids: list<string>, classes: string}> */
     private const LAYOUT_RECIPES = [
         ['id' => 'layout.vertical-stack', 'title' => 'Vertical stack', 'description' => 'A compact vertical group with consistent spacing.', 'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap'], 'classes' => 'flex flex-col gap-2'],

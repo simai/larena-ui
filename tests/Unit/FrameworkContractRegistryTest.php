@@ -185,6 +185,9 @@ assert($gap['demonstration']['id'] === 'utility.gap.vertical-stack');
 assert($gap['demonstration']['title_key'] === 'gap_vertical_stack_title');
 assert($gap['demonstration']['utility_ids'] === ['utility.display', 'utility.flex-direction', 'utility.gap']);
 assert(array_column($gap['demonstration']['variants'], 'classes') === ['gap-1', 'gap-2', 'gap-3']);
+assert($projection->demonstration('utility.gap')['demonstration']['id'] === 'utility.gap.vertical-stack');
+assert($projection->demonstration('utility.display') === null);
+assert($projection->demonstration('unknown.entry') === null);
 
 $copied = adapter($registry);
 $copied['props'] = ['text' => ['type' => 'string']];
