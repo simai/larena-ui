@@ -229,13 +229,20 @@ final readonly class FrameworkCatalogProjection
             'title_key' => 'gap_vertical_stack_title',
             'description_key' => 'gap_vertical_stack_description',
             'utility_ids' => ['utility.display', 'utility.flex-direction', 'utility.gap'],
+            'component_ids' => ['component.buttons'],
+            'smart_component_ids' => ['smart.buttons'],
             'base_classes' => 'flex flex-col',
             'variants' => [
                 ['id' => 'gap-1', 'classes' => 'gap-1', 'source_refs' => ['ui-play:examples/grid/grid-template-columns/index.html']],
                 ['id' => 'gap-2', 'classes' => 'gap-2', 'source_refs' => ['ui-play:examples/layout/display/index.html', 'ui-play:examples/grid/grid-template-columns/index.html']],
                 ['id' => 'gap-3', 'classes' => 'gap-3', 'source_refs' => ['ui-play:examples/grid/grid-template-columns/index.html']],
             ],
-            'source_refs' => ['ui-play:examples/layout/display/index.html', 'ui-play:examples/grid/grid-template-columns/index.html'],
+            'source_refs' => [
+                'ui-play:examples/layout/display/index.html',
+                'ui-play:examples/grid/grid-template-columns/index.html',
+                'ui:distr/component/buttons',
+                'ui-smart:smart/buttons',
+            ],
         ],
     ];
 
