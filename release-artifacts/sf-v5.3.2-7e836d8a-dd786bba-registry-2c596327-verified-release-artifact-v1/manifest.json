@@ -1,0 +1,43 @@
+{
+    "schema": "larena.ui.frontend_runtime_artifact.v1",
+    "publication_profile": "verified-release-artifact-v1",
+    "bundle_id": "sf-v5.3.2-7e836d8a-dd786bba-registry-2c596327-verified-release-artifact-v1",
+    "sources": [
+        {
+            "commit": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
+            "tree": "distr",
+            "mount": "ui",
+            "archive_sha256": "481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7",
+            "files": 2596,
+            "archive": "sources/ui.tar.gz",
+            "compressed_sha256": "889ead0bb74be395934e82e33caec692180347e91e662caafd52858287dad594",
+            "tree_fingerprint_sha256": "12fceac355f65662d5e68e7d3effff8dc50e26cfadf8c136f06614ab53e9aed1",
+            "object_format": "sha1",
+            "file_count": 2596
+        },
+        {
+            "commit": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+            "tree": "smart",
+            "mount": "smart",
+            "archive_sha256": "1c2eacbc58f3deb1d351b11dfb5da6755502386bb1224554754477bc700c9262",
+            "files": 112,
+            "archive": "sources/smart.tar.gz",
+            "compressed_sha256": "3963c47a3cc73bc28b48e3c37d8ecca8b9b3fcef2eb88b4e49e2715f62bf9503",
+            "tree_fingerprint_sha256": "35f5c8aa5fb02d1b4e9dee657d49704067b356798fdacb52c54bc2c52f57484f",
+            "object_format": "sha1",
+            "file_count": 112
+        },
+        {
+            "commit": "b7e8a2e810c0d49e31cb749a7ab34c373dd48bc6",
+            "tree": "contracts/generated",
+            "mount": "contract",
+            "archive_sha256": "0f915061c3664571f8ce522793ed7192889b8eb19e4c62490440926449a13f9b",
+            "files": 1,
+            "archive": "sources/contract.tar.gz",
+            "compressed_sha256": "8be21f09cd15bbca9865281efe7209a40bf5b284dd69acf78d14fdb43571d411",
+            "tree_fingerprint_sha256": "06b6b9c9e905489028301ac11bdd1c016bb7da53bedddb36d55764dfc14fdb55",
+            "object_format": "sha1",
+            "file_count": 1
+        }
+    ]
+}
