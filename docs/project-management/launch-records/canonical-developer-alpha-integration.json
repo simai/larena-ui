@@ -1,0 +1,24 @@
+{
+  "schema": "larena.package_launch_record.v1",
+  "id": "ui-canonical-developer-alpha-source-provenance",
+  "package": "larena/ui",
+  "status": "coding_started",
+  "branch": "codex/canonical-developer-alpha-integration",
+  "base_commit": "72324a8f0e8a9df505d81ebe95e57046fc5ff732",
+  "specs_commit": "665f7d8bf5abcd13f06b852f0702e31582b8708e",
+  "root_launch_record_id": "larena.launch.canonical_assembly_integration",
+  "goal": "Make source-backed Simai Framework assets portable by verifying vendored bytes against a tracked provenance lock while keeping external source repository audits opt-in.",
+  "selected_features": [
+    "ui.source_backed_sf_button_resource_pack_demo",
+    "ui.source_backed_sf_catalog_adapter_pipeline_demo",
+    "ui.pinned_simai_framework_runtime"
+  ],
+  "non_goals": [
+    "frontend build pipeline",
+    "route or controller runtime",
+    "external source repositories as a mandatory build dependency",
+    "production readiness"
+  ],
+  "rollback": "Reset only this isolated package branch to base_commit; no application database or active runtime is touched.",
+  "evidence": "docs/project-management/evidence/larena-smart-ui-foundation-v1/"
+}

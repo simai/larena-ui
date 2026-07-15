@@ -1,7 +1,7 @@
 {
   "schema": "larena.package_launch_context.v1",
   "package": "larena/ui",
-  "launch_record_ref": "/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-smart-ui-foundation-v1.json",
+  "launch_record_ref": "docs/project-management/launch-records/canonical-developer-alpha-integration.json",
   "specs_repo": "simai/larena-specs",
   "specs_commit": "665f7d8bf5abcd13f06b852f0702e31582b8708e",
   "base_commit": "72324a8f0e8a9df505d81ebe95e57046fc5ff732",
@@ -63,6 +63,7 @@
     "README.md",
     "composer.json",
     "composer.lock",
+    "docs/project-management/launch-records/canonical-developer-alpha-integration.json",
     "assets.yaml",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/README.md",
     "docs/project-management/evidence/frontend-composition/batch-0/ui-clean-baseline/deviations.json",
@@ -122,6 +123,7 @@
     "resources/assets/source-backed-sf/buttons/component/js/buttons.js",
     "resources/assets/source-backed-sf/buttons/component/json/button.utility.json",
     "resources/assets/source-backed-sf/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf/provenance-lock.json",
     "resources/assets/source-backed-sf/catalog/buttons/component/css/buttons.css",
     "resources/assets/source-backed-sf/catalog/buttons/component/js/buttons.js",
     "resources/assets/source-backed-sf/catalog/buttons/component/json/button.utility.json",
@@ -157,6 +159,7 @@
     "src/Developer/FrameworkCatalogProjection.php",
     "src/Frontend/FrameworkContractRegistry.php",
     "src/Frontend/FrontendRuntimeLock.php",
+    "src/Frontend/SourceBackedAssetProvenanceLock.php",
     "src/Frontend/FrontendRuntimeAssetResolver.php",
     "src/Frontend/SourceBackedComponentRegistry.php",
     "src/Registry/FrameworkAdapterRegistry.php",
@@ -169,6 +172,7 @@
     "tests/Unit/FrontendRuntimeAssetResolverTest.php",
     "tests/Unit/FrameworkContractRegistryTest.php",
     "tests/Unit/FrontendRuntimeLockTest.php",
+    "tests/Unit/SourceBackedAssetProvenanceLockTest.php",
     "src/Contracts/SmartBackendRenderer.php",
     "src/Contracts/SmartContributionProvider.php",
     "src/Registry/SmartRegistry.php",
@@ -269,5 +273,5 @@
   "repository_reset_pre_codegen": true,
   "repository_created_locally": true,
   "remote_push_status": "not_attempted_current_batch",
-  "coding_branch": "codex/frontend-smart-ui-foundation"
+  "coding_branch": "codex/canonical-developer-alpha-integration"
 }

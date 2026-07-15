@@ -1,0 +1,242 @@
+{
+  "schema": "larena.ui.source_backed_asset_provenance_lock.v1",
+  "runtime": "simai-framework",
+  "contract": {
+    "required_validation": "vendored_assets_match_tracked_provenance",
+    "external_source_audit": "opt_in",
+    "missing_external_sources": "source_audit_unavailable"
+  },
+  "sources": {
+    "ui": {
+      "repository": "https://github.com/simai/ui.git",
+      "revision": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
+      "environment": "LARENA_SIMAI_FRAMEWORK_UI_ROOT"
+    },
+    "ui_smart": {
+      "repository": "https://github.com/simai/ui-smart.git",
+      "revision": "36d5f50667c572db513e1fc36d4e23145bb05333",
+      "environment": "LARENA_SIMAI_FRAMEWORK_UI_SMART_ROOT"
+    },
+    "ui_play": {
+      "repository": "https://github.com/simai/ui-play.git",
+      "revision": "9bea3fcbf26119cd638863c9fa6c41e48408824f",
+      "environment": "LARENA_SIMAI_FRAMEWORK_UI_PLAY_ROOT"
+    }
+  },
+  "assets": {
+    "button_proof.component_css": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "component",
+      "asset_id": "component_css",
+      "package_resource_path": "resources/assets/source-backed-sf/buttons/component/css/buttons.css",
+      "source": "ui",
+      "source_path": "distr/component/buttons/css/buttons.css",
+      "sha256": "4b3d7d38214c28417d0b097cdfbb1f05a6f1b5d6ac12d3735ffd0de0a25886ce"
+    },
+    "button_proof.component_js": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "component",
+      "asset_id": "component_js",
+      "package_resource_path": "resources/assets/source-backed-sf/buttons/component/js/buttons.js",
+      "source": "ui",
+      "source_path": "distr/component/buttons/js/buttons.js",
+      "sha256": "f797caaad3a63e48a2cc13a2e2c3bf0fd74b1f005f389f038eed5ab4677bdadd"
+    },
+    "button_proof.component_json": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "component",
+      "asset_id": "component_json",
+      "package_resource_path": "resources/assets/source-backed-sf/buttons/component/json/button.utility.json",
+      "source": "ui",
+      "source_path": "distr/component/buttons/json/button.utility.json",
+      "sha256": "7488484bd67399b8539b96f2cf4d12086b559338b31b79791affe3da9b4917c2"
+    },
+    "button_proof.smart_js": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "smart_component",
+      "asset_id": "smart_js",
+      "package_resource_path": "resources/assets/source-backed-sf/buttons/smart/js/buttons.js",
+      "source": "ui_smart",
+      "source_path": "smart/buttons/js/buttons.js",
+      "sha256": "09c34fe497d6f3dd7f6ceaaf712107505af2f093b402d42e4a1541e83fa3553c"
+    },
+    "catalog.buttons.component_css": {
+      "scope": "catalog",
+      "slice": "buttons",
+      "surface": "component",
+      "asset_id": "component_css",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/buttons/component/css/buttons.css",
+      "source": "ui",
+      "source_path": "distr/component/buttons/css/buttons.css",
+      "sha256": "4b3d7d38214c28417d0b097cdfbb1f05a6f1b5d6ac12d3735ffd0de0a25886ce"
+    },
+    "catalog.buttons.component_js": {
+      "scope": "catalog",
+      "slice": "buttons",
+      "surface": "component",
+      "asset_id": "component_js",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/buttons/component/js/buttons.js",
+      "source": "ui",
+      "source_path": "distr/component/buttons/js/buttons.js",
+      "sha256": "f797caaad3a63e48a2cc13a2e2c3bf0fd74b1f005f389f038eed5ab4677bdadd"
+    },
+    "catalog.buttons.component_json": {
+      "scope": "catalog",
+      "slice": "buttons",
+      "surface": "component",
+      "asset_id": "component_json",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/buttons/component/json/button.utility.json",
+      "source": "ui",
+      "source_path": "distr/component/buttons/json/button.utility.json",
+      "sha256": "7488484bd67399b8539b96f2cf4d12086b559338b31b79791affe3da9b4917c2"
+    },
+    "catalog.buttons.smart_js": {
+      "scope": "catalog",
+      "slice": "buttons",
+      "surface": "smart_component",
+      "asset_id": "smart_js",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/buttons/smart/js/buttons.js",
+      "source": "ui_smart",
+      "source_path": "smart/buttons/js/buttons.js",
+      "sha256": "09c34fe497d6f3dd7f6ceaaf712107505af2f093b402d42e4a1541e83fa3553c"
+    },
+    "catalog.tags.component_css": {
+      "scope": "catalog",
+      "slice": "tags",
+      "surface": "component",
+      "asset_id": "component_css",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/tags/component/css/tags.css",
+      "source": "ui",
+      "source_path": "distr/component/tags/css/tags.css",
+      "sha256": "d255c73fe824561c9dc39fa1c067d5724ea3d10fecf21f5f3f438cf5996cb63e"
+    },
+    "catalog.tags.component_js": {
+      "scope": "catalog",
+      "slice": "tags",
+      "surface": "component",
+      "asset_id": "component_js",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/tags/component/js/tags.js",
+      "source": "ui",
+      "source_path": "distr/component/tags/js/tags.js",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "catalog.tags.smart_js": {
+      "scope": "catalog",
+      "slice": "tags",
+      "surface": "smart_component",
+      "asset_id": "smart_js",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/tags/smart/js/tags.js",
+      "source": "ui_smart",
+      "source_path": "smart/tags/js/tags.js",
+      "sha256": "90e9a020436db05c6c8d8de5114b89f88595a1ab35665f377f250f0c0f5d2427"
+    },
+    "catalog.pagination.component_css": {
+      "scope": "catalog",
+      "slice": "pagination",
+      "surface": "component",
+      "asset_id": "component_css",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/pagination/component/css/pagination.css",
+      "source": "ui",
+      "source_path": "distr/component/pagination/css/pagination.css",
+      "sha256": "21136fa97dbef25a43ac93d6f52df7c4871d55dd043e108206ab23a00f534389"
+    },
+    "catalog.pagination.component_js": {
+      "scope": "catalog",
+      "slice": "pagination",
+      "surface": "component",
+      "asset_id": "component_js",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/pagination/component/js/pagination.js",
+      "source": "ui",
+      "source_path": "distr/component/pagination/js/pagination.js",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "catalog.pagination.smart_js": {
+      "scope": "catalog",
+      "slice": "pagination",
+      "surface": "smart_component",
+      "asset_id": "smart_js",
+      "package_resource_path": "resources/assets/source-backed-sf/catalog/pagination/smart/js/pagination.js",
+      "source": "ui_smart",
+      "source_path": "smart/pagination/js/pagination.js",
+      "sha256": "3aae162c4c9e067a842e8d1f4e19d71e02a70066f96d04f08ca340374f8719a1"
+    }
+  },
+  "examples": {
+    "button_proof.component_all": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "component",
+      "source": "ui_play",
+      "source_path": "examples/components/buttons/all/index.html",
+      "sha256": "0d7513ab20a4c576df1237a2ca53bdb6696af02214141bd5debf69d2938eeef4"
+    },
+    "button_proof.smart_element": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "smart_component",
+      "source": "ui_play",
+      "source_path": "examples/smart-components/buttons/element/index.html",
+      "sha256": "23b3d3481e430720a6d7a1fa00995da0a9fe74567bc6c1759c73cfae969c6984"
+    },
+    "button_proof.smart_events": {
+      "scope": "button_proof",
+      "slice": "buttons",
+      "surface": "smart_component",
+      "source": "ui_play",
+      "source_path": "examples/smart-components/buttons/events/index.html",
+      "sha256": "4deaad29dde4f104e4634915552b17aeaafa74d88bdfdb8e39c856e01f514e46"
+    },
+    "catalog.buttons.component_all": {
+      "scope": "catalog",
+      "slice": "buttons",
+      "surface": "component",
+      "source": "ui_play",
+      "source_path": "examples/components/buttons/all/index.html",
+      "sha256": "0d7513ab20a4c576df1237a2ca53bdb6696af02214141bd5debf69d2938eeef4"
+    },
+    "catalog.buttons.smart_element": {
+      "scope": "catalog",
+      "slice": "buttons",
+      "surface": "smart_component",
+      "source": "ui_play",
+      "source_path": "examples/smart-components/buttons/element/index.html",
+      "sha256": "23b3d3481e430720a6d7a1fa00995da0a9fe74567bc6c1759c73cfae969c6984"
+    },
+    "catalog.tags.component_all": {
+      "scope": "catalog",
+      "slice": "tags",
+      "surface": "component",
+      "source": "ui_play",
+      "source_path": "examples/components/tags/all/index.html",
+      "sha256": "2c2bfb587007ea46b88930c40b652a98e28af7493ba0516454a20a631f41a603"
+    },
+    "catalog.tags.smart_element": {
+      "scope": "catalog",
+      "slice": "tags",
+      "surface": "smart_component",
+      "source": "ui_play",
+      "source_path": "examples/smart-components/tags/element/index.html",
+      "sha256": "25e05ed881bf545d2dbbcc5914e80872dc72c50a799a7ab94e3a60e0946cae04"
+    },
+    "catalog.pagination.component_default": {
+      "scope": "catalog",
+      "slice": "pagination",
+      "surface": "component",
+      "source": "ui_play",
+      "source_path": "examples/components/pagination/default/index.html",
+      "sha256": "28044d43587162a835526cba691284c55e620ad93ff2e97d61324bd631f07cbb"
+    },
+    "catalog.pagination.smart_default": {
+      "scope": "catalog",
+      "slice": "pagination",
+      "surface": "smart_component",
+      "source": "ui_play",
+      "source_path": "examples/smart-components/pagination/default/index.html",
+      "sha256": "a876d6be8347db8380a59b08f13fbee6b41a0e92dc2a5fd6cfa5eb9d5557c2c5"
+    }
+  }
+}

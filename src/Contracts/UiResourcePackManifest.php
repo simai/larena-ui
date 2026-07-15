@@ -262,11 +262,10 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
-     * Minimal source-backed Simai Framework buttons proof slice. These package
-     * resources are copied from the local owner-skill source mirror into
-     * larena/ui, then activated through larena/core:core.assets read-only route
-     * publication. They are not root app assets and do not imply full asset
-     * rollout.
+     * Minimal source-backed Simai Framework buttons proof slice. These vendored
+     * package resources are verified against the tracked provenance lock, then
+     * activated through larena/core:core.assets read-only route publication.
+     * They are not root app assets and do not imply full asset rollout.
      *
      * @var array<string, array{
      *     carrier_key: string,
@@ -310,9 +309,8 @@ final readonly class UiResourcePackManifest
 
     /**
      * First repeatable source-backed Simai Framework catalog adapter set. Each
-     * slice is copied from the local Simai Framework source mirror into larena/ui package
-     * resources and can be activated only through larena/core:core.assets
-     * read-only publication.
+     * vendored slice is pinned by the larena/ui provenance lock and can be
+     * activated only through larena/core:core.assets read-only publication.
      *
      * @var array<string, array<string, array{
      *     carrier_key: string,
