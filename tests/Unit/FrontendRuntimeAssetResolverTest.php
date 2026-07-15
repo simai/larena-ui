@@ -34,7 +34,7 @@ $baseline = FrontendRuntimeLock::bundled()->toArray();
 $switched = $baseline;
 $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 $switched['pair_id'] = 'sf-v5.3.2-aaaaaaaa-dd786bba';
-$switched['bundle_id'] = 'sf-v5.3.2-aaaaaaaa-dd786bba-registry-2c596327-exact-git-tree-v2';
+$switched['bundle_id'] = 'sf-v5.3.2-aaaaaaaa-dd786bba-registry-2c596327-verified-release-artifact-v1';
 $switched['framework_registry']['compatibility_id'] = $switched['pair_id'];
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
