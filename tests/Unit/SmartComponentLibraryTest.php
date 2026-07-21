@@ -208,6 +208,8 @@ $modalEvents = [
     'modal:after-hide',
     'modal:before-show',
     'modal:after-show',
+    'modal:before-content-upload',
+    'modal:after-content-upload',
 ];
 foreach ($modalEvents as $eventName) {
     $event = $registry->manifest('ui.modal')->eventSchema[$eventName] ?? null;

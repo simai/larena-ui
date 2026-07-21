@@ -55,6 +55,20 @@ $artifact = Smart::render('ui.button', [
 ], $activation);
 assert($artifact->isRenderable());
 assert(str_contains($artifact->html(), 'text="Facade"'));
+
+$modalArtifact = Smart::render('ui.modal', [
+    'modal-id' => 'profile-modal',
+    'title' => 'Profile',
+    'text' => 'Profile details',
+    'open' => false,
+    'overlay' => true,
+    'display' => 'modal',
+    'aria-label' => 'Profile details',
+    'id' => 'profile-modal',
+], $activation, []);
+assert($modalArtifact->isRenderable());
+assert(str_contains($modalArtifact->html(), '<sf-modal'));
+assert(str_contains($modalArtifact->html(), 'aria-label="Profile details"'));
 assert(Smart::manager() === $manager);
 Smart::forgetResolver();
 

@@ -31,6 +31,8 @@
     "modal:after-hide": {"kind": "custom", "backend_handler_binding": false},
     "modal:before-show": {"kind": "custom", "backend_handler_binding": false},
     "modal:after-show": {"kind": "custom", "backend_handler_binding": false},
+    "modal:before-content-upload": {"kind": "custom", "backend_handler_binding": false},
+    "modal:after-content-upload": {"kind": "custom", "backend_handler_binding": false},
     "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
     "sf-before-render": {"kind": "lifecycle", "backend_handler_binding": false},
     "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
