@@ -135,19 +135,23 @@ final readonly class FrontendRuntimeLock
 
     private function assertValid(): void
     {
+        $publicationProfile = $this->data['publication_profile'] ?? null;
+        $stableTag = '/^v\d+\.\d+\.\d+$/';
+        $candidateTag = '/^v\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:\.[0-9A-Za-z]+)*)?$/';
+        $tagPattern = $publicationProfile === 'exact-git-tree-v2' ? $candidateTag : $stableTag;
         if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v3'
             || ($this->data['runtime'] ?? null) !== 'simai-framework'
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['pair_id'] ?? ''))
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['bundle_id'] ?? ''))
-            || ($this->data['publication_profile'] ?? null) !== 'verified-release-artifact-v1'
-            || !preg_match('/^v\d+\.\d+\.\d+$/', (string) ($this->data['tag'] ?? ''))
+            || !in_array($publicationProfile, ['verified-release-artifact-v1', 'exact-git-tree-v2'], true)
+            || !preg_match($tagPattern, (string) ($this->data['tag'] ?? ''))
         ) {
             throw new RuntimeException('ui_frontend_runtime_lock_invalid');
         }
         foreach (['ui', 'ui_smart'] as $source) {
             $value = $this->data[$source] ?? null;
             if (!is_array($value)
-                || !preg_match('/^v\d+\.\d+\.\d+$/', (string) ($value['tag'] ?? ''))
+                || !preg_match($candidateTag, (string) ($value['tag'] ?? ''))
                 || !$this->validPublicationSource($value)
             ) {
                 throw new RuntimeException('ui_frontend_runtime_source_invalid:' . $source);

@@ -7,9 +7,9 @@ require_once __DIR__ . '/../bootstrap.php';
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->pairId() === 'sf-v5.3.2-7e836d8a-dd786bba');
-assert($lock->bundleId() === 'sf-v5.3.2-7e836d8a-dd786bba-registry-2c596327-verified-release-artifact-v1');
-assert($lock->publicationProfile() === 'verified-release-artifact-v1');
+assert($lock->pairId() === 'sf-v5.4.0-rc.1-256b6fce-dd786bba');
+assert($lock->bundleId() === 'sf-v5.4.0-rc.1-256b6fce-dd786bba-registry-2c596327-exact-git-tree-v2');
+assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->pairId());
@@ -22,11 +22,11 @@ assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());
 assert($expectation['sources'] === [
     [
-        'commit' => '7e836d8a9414d5da553fb1ab0404721e5b48769a',
+        'commit' => '256b6fce9d392e5c9f25fba53d281ff4a6f8b918',
         'tree' => 'distr',
         'mount' => 'ui',
-        'archive_sha256' => '481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7',
-        'files' => 2596,
+        'archive_sha256' => 'c0a6dd69eee7c3a1a072696dba99e52ec083c7e75de0b17a76a19bd369219078',
+        'files' => 2671,
     ],
     [
         'commit' => 'dd786bbae98391fb21df9b4e1e6cd402ead0614c',
@@ -84,7 +84,7 @@ foreach ([
     static function (array &$data): void { $data['bundle_id'] = $data['pair_id']; },
     static function (array &$data): void { $data['publication_profile'] = 'unverified-copy'; },
     static function (array &$data): void { $data['schema'] = 'larena.ui.frontend_runtime_lock.v2'; },
-    static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.3.2-wrong-wrong'; },
+    static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.4.0-rc.1-wrong-wrong'; },
     static function (array &$data): void { $data['framework_registry']['relative_path'] = '../registry.json'; },
     static function (array &$data): void { $data['framework_registry']['source']['commit'] = str_repeat('0', 39); },
     static function (array &$data): void { $data['ui']['tree'] = 'smart'; },
@@ -92,7 +92,7 @@ foreach ([
     static function (array &$data): void { $data['ui']['mount'] = 'runtime'; },
     static function (array &$data): void { $data['ui']['mount'] = '../ui'; },
     static function (array &$data): void { $data['ui']['files'] = 0; },
-    static function (array &$data): void { $data['ui']['files'] = '2596'; },
+    static function (array &$data): void { $data['ui']['files'] = '2671'; },
     static function (array &$data): void { $data['ui_smart']['tree'] = 'distr'; },
     static function (array &$data): void { $data['ui_smart']['mount'] = 'ui'; },
     static function (array &$data): void { unset($data['ui_smart']); },
