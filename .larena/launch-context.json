@@ -239,7 +239,8 @@
     "release-artifacts/sf-v5.4.0-rc.1-256b6fce-dd786bba-registry-2c596327-exact-git-tree-v2/manifest.json",
     "release-artifacts/sf-v5.4.0-rc.1-256b6fce-dd786bba-registry-2c596327-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/sf-v5.4.0-rc.1-256b6fce-dd786bba-registry-2c596327-exact-git-tree-v2/sources/smart.tar.gz",
-    "release-artifacts/sf-v5.4.0-rc.1-256b6fce-dd786bba-registry-2c596327-exact-git-tree-v2/sources/ui.tar.gz"
+    "release-artifacts/sf-v5.4.0-rc.1-256b6fce-dd786bba-registry-2c596327-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/sf5-typography-54-runtime/README.md"
   ],
   "forbidden_files": [
     "config/*",
