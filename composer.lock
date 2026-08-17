@@ -1989,80 +1989,6 @@
             }
         },
         {
-            "name": "larena/layout",
-            "version": "dev-main",
-            "dist": {
-                "type": "path",
-                "url": "../layout",
-                "reference": "ae2b2bb8e5c58c78bc07d5fa4b31c744b988af2d"
-            },
-            "require": {
-                "larena/core": "dev-main",
-                "php": "^8.3"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "^2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Larena\\Layout\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Larena\\Layout\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
-                    "@php tests/Unit/MinimalCmsDependencyContractTest.php"
-                ],
-                "test:unit": [
-                    "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
-                    "@php tests/Unit/MinimalCmsDependencyContractTest.php"
-                ],
-                "lint": [
-                    "@php scripts/lint.php"
-                ],
-                "analyse": [
-                    "@php scripts/analyse.php"
-                ],
-                "validate:larena": [
-                    "@php scripts/validate-larena-package.php"
-                ],
-                "evidence:check": [
-                    "@php scripts/check-evidence.php"
-                ],
-                "scope:check": [
-                    "@php tools/larena-scope-check.php"
-                ],
-                "quality:gate": [
-                    "@validate:larena",
-                    "@lint",
-                    "@analyse",
-                    "@test",
-                    "@evidence:check",
-                    "@scope:check"
-                ]
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Rim Zabarov",
-                    "homepage": "https://github.com/zabarov"
-                }
-            ],
-            "description": "Larena Layout: Universal layout and page composition engine for public pages, admin pages, dashboards, forms, lists, detail pages, documentation pages and widgets in Larena.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "larena/property",
             "version": "dev-main",
             "dist": {
@@ -5076,6 +5002,80 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "larena/layout",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../layout",
+                "reference": "ae928aa9f2accebf7b443f0bc3f77d60ef7f7258"
+            },
+            "require": {
+                "larena/core": "dev-main",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Larena\\Layout\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Larena\\Layout\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
+                    "@php tests/Unit/MinimalCmsDependencyContractTest.php"
+                ],
+                "test:unit": [
+                    "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
+                    "@php tests/Unit/MinimalCmsDependencyContractTest.php"
+                ],
+                "lint": [
+                    "@php scripts/lint.php"
+                ],
+                "analyse": [
+                    "@php scripts/analyse.php"
+                ],
+                "validate:larena": [
+                    "@php scripts/validate-larena-package.php"
+                ],
+                "evidence:check": [
+                    "@php scripts/check-evidence.php"
+                ],
+                "scope:check": [
+                    "@php tools/larena-scope-check.php"
+                ],
+                "quality:gate": [
+                    "@validate:larena",
+                    "@lint",
+                    "@analyse",
+                    "@test",
+                    "@evidence:check",
+                    "@scope:check"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Rim Zabarov",
+                    "homepage": "https://github.com/zabarov"
+                }
+            ],
+            "description": "Larena Layout: Universal layout and page composition engine for public pages, admin pages, dashboards, forms, lists, detail pages, documentation pages and widgets in Larena.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
         {
             "name": "phpstan/phpstan",
             "version": "2.2.1",
