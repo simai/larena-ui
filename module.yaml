@@ -2,7 +2,7 @@ package: larena/ui
 title: Larena UI
 status: review_completed
 cluster: frontend-composition
-batch: larena-minimal-cms-v1-b3
+batch: larena-minimal-cms-v1-b11
 features:
   - ui.backend_first_rendering
   - ui.component_playground_coverage
@@ -24,10 +24,11 @@ features:
   - ui.smart_ai_catalog_projection
   - ui.smart_component_archetype_library
   - ui.source_backed_smart_event_projection
+  - ui.minimal_cms_smart_component_safety
 runtime:
   php: "^8.3"
   laravel: "^13.0"
 assets:
   path: assets.yaml
 evidence:
-  path: docs/project-management/evidence/larena-minimal-cms-v1-b3
+  path: docs/project-management/evidence/larena-minimal-cms-v1-b11

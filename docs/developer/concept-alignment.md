@@ -16,9 +16,9 @@ Accepted Target State: `larena.target.minimal_cms_v1` at semantic digest `sha256
 
 The existing registry and reference contracts are retained. B3 removes the Layout edge and adds Core; B11 completes manifest/allowlist/asset safety without introducing server-side frontend build requirements.
 
-## Current alignment gap
+## Current alignment
 
-B3 declares only Core and Dataview as mandatory Larena dependencies and keeps Layout as a development-only compatibility surface. Safe renderer behavior requires B11 capability verification.
+B11 verifies that the existing manifest registry is the component allowlist, renderer IDs resolve only through the registered renderer map, props are schema-bounded and asset requirements fail closed. No Layout runtime dependency was introduced.
 
 ## Install and rollback baseline
 
