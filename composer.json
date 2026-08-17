@@ -11,12 +11,14 @@
   ],
   "require": {
     "php": "^8.3",
-    "larena/dataview": "dev-main",
-    "larena/layout": "dev-main"
+    "larena/core": "dev-main",
+    "larena/dataview": "dev-main"
   },
   "repositories": [
     {"type": "path", "url": "../dataview", "options": {"symlink": true}},
-    {"type": "path", "url": "../layout", "options": {"symlink": true}}
+    {"type": "path", "url": "../core", "options": {"symlink": true}},
+    {"type": "path", "url": "../layout", "options": {"symlink": true}},
+    {"type": "path", "url": "../property", "options": {"symlink": true}}
   ],
   "autoload": {
     "psr-4": {
@@ -29,11 +31,13 @@
     }
   },
   "require-dev": {
+    "larena/layout": "dev-main",
     "phpstan/phpstan": "^2.0"
   },
   "scripts": {
     "test": ["@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminDataviewRendererTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminUiLabReferenceBehaviorTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedComponentRegistryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkContractRegistryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeLockTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedAssetProvenanceLockTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartManagerTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartFacadeTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentReferenceTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartCatalogProjectionTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartAiCatalogProjectionTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentLibraryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SfActionLinkTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeAssetResolverTest.php"],
     "test:unit": "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
+    "test:dependency": "@php tests/Unit/MinimalCmsDependencyContractTest.php",
     "lint": "@php scripts/lint.php",
     "analyse": "@php scripts/analyse.php",
     "validate:larena": "@php scripts/validate-larena-package.php",
@@ -44,14 +48,16 @@
       "@lint",
       "@analyse",
       "@test",
+      "@test:dependency",
       "@evidence:check",
       "@scope:check"
     ]
   },
   "config": {
     "sort-packages": true,
-    "allow-plugins": {}
+    "allow-plugins": {},
+    "platform":{"php":"8.3.31"}
   },
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "prefer-stable": true
 }

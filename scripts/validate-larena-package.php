@@ -64,6 +64,7 @@ if ($codingStarted) {
         '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-simai-framework-canonical-naming-migration.json',
         '/Users/rim/Documents/GitHub/larena/docs/project-management/launch-records/larena-smart-ui-foundation-v1.json',
         'docs/project-management/launch-records/canonical-developer-alpha-integration.json',
+        'docs/project-management/launch-records/larena-minimal-cms-v1-b3.json',
     ], true)) {
         $errors[] = 'coding_started requires the current ui batch 1 launch record.';
     }

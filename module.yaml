@@ -1,8 +1,8 @@
 package: larena/ui
 title: Larena UI
-status: coding_started
+status: review_completed
 cluster: frontend-composition
-batch: larena-smart-ui-foundation-v1
+batch: larena-minimal-cms-v1-b3
 features:
   - ui.backend_first_rendering
   - ui.component_playground_coverage
@@ -30,4 +30,4 @@ runtime:
 assets:
   path: assets.yaml
 evidence:
-  path: docs/project-management/evidence/larena-smart-ui-foundation-v1/
+  path: docs/project-management/evidence/larena-minimal-cms-v1-b3
