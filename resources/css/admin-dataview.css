@@ -9,7 +9,9 @@
 /* Product collection geometry: the backend query toolbar owns search and
    filtering, while the Framework table contributes only the data surface. */
 [data-larena-dataview-query],[data-larena-page-assembly],.larena-dataview,.larena-dataview-table{width:100%;max-width:100%;min-width:0}
-.larena-dataview-toolbar{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr) minmax(124px,auto) auto;gap:.5rem}
+.larena-dataview-toolbar{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
+.larena-dataview-toolbar>[data-larena-slot=search]{grid-column:1/-1}
+.larena-dataview-toolbar>[data-larena-slot=options]{justify-content:flex-start}
 .larena-dataview-toolbar>[data-larena-slot=search]{display:grid;grid-template-columns:minmax(150px,180px) minmax(120px,1fr);gap:.5rem}
 .larena-dataview-toolbar>[data-larena-slot=search]>sf-dropdown,
 .larena-dataview-toolbar>[data-larena-slot=search]>sf-input{display:block!important;width:100%;min-width:0}
@@ -17,5 +19,4 @@
 .larena-dataview-table__content>sf-table{display:block!important;width:100%;min-width:0}
 .larena-dataview-table__content .sf-table-toolbar{display:none!important}
 .larena-dataview-table__content .table-wrap>div{margin-bottom:0!important}
-@media(max-width:980px){.larena-dataview-toolbar{grid-template-columns:minmax(0,1fr) auto}.larena-dataview-toolbar>[data-larena-slot=search]{grid-column:1/-1}.larena-dataview-toolbar>[data-larena-slot=options]{justify-content:flex-start}}
 @media(max-width:680px){.larena-dataview-toolbar{grid-template-columns:1fr auto}.larena-dataview-toolbar>[data-larena-slot=search]{grid-column:1/-1;grid-template-columns:1fr}.larena-dataview-table__content{min-height:0}.larena-dataview-table__content>sf-table{min-width:42rem}}
