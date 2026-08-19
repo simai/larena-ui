@@ -7,7 +7,7 @@ namespace Larena\Ui\Assets;
 final class AdminDataviewAssetManifest
 {
     public const ASSET_KEY = 'ui.admin.dataview.css';
-    public const ASSET_REVISION = '20260819-10';
+    public const ASSET_REVISION = '20260819-11';
 
     /** @return array<string, mixed> */
     public static function publicationAsset(): array
