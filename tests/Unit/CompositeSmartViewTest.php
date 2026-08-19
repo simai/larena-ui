@@ -39,9 +39,11 @@ assert(count($artifact->assetGraph->requirements) > 0);
 $table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'], $activation, [], null, [], [
     'toolbar' => ['_children' => [
         'search' => ['value' => 'Welcome'],
-        'sort_direction' => ['value' => 'desc', 'options' => [
-            ['text' => 'Ascending', 'value' => 'asc', 'type' => 'text', 'size' => '1', 'selected' => false, 'disabled' => false, 'aria-label' => 'Ascending'],
-            ['text' => 'Descending', 'value' => 'desc', 'type' => 'text', 'size' => '1', 'selected' => true, 'disabled' => false, 'aria-label' => 'Descending'],
+        'query_options' => ['_children' => [
+            'sort_direction' => ['value' => 'desc', 'options' => [
+                ['text' => 'Ascending', 'value' => 'asc', 'type' => 'text', 'size' => '1', 'selected' => false, 'disabled' => false, 'aria-label' => 'Ascending'],
+                ['text' => 'Descending', 'value' => 'desc', 'type' => 'text', 'size' => '1', 'selected' => true, 'disabled' => false, 'aria-label' => 'Descending'],
+            ]],
         ]],
         'submit' => ['text' => 'Find', 'aria-label' => 'Find records'],
     ]],

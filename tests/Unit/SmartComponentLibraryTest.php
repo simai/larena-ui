@@ -28,7 +28,8 @@ $components = [
     'ui.modal' => ['directory' => 'ui-modal', 'tag' => 'sf-modal'],
 ];
 $expectedKeys = array_keys($components);
-$compositeKeys = ['admin.collection', 'admin.record_editor', 'dataview.table', 'dataview.toolbar'];
+$internalSmartKeys = ['ui.admin_menu', 'ui.breadcrumbs', 'ui.icon_button', 'ui.avatar', 'ui.tag', 'ui.toggle'];
+$compositeKeys = ['admin.collection', 'admin.record_editor', 'dataview.table', 'dataview.toolbar', 'dataview.query_options'];
 $expectedReadiness = [
     'safe_to_suggest' => true,
     'safe_to_render' => true,
@@ -106,7 +107,10 @@ assert(array_map(
     static fn ($entry): string => $entry->key,
     $catalog->components('en'),
 ) === $expectedKeys);
-assert(count($registry->manifests()) === count($components) + count($compositeKeys));
+assert(count($registry->manifests()) === count($components) + count($internalSmartKeys) + count($compositeKeys));
+foreach ($internalSmartKeys as $internalSmartKey) {
+    assert($registry->manifest($internalSmartKey)->frontendRuntime === 'simai-framework');
+}
 foreach ($compositeKeys as $compositeKey) {
     assert($registry->manifest($compositeKey)->rendererId === SmartComponentManifest::COMPOSITE_RENDERER_ID);
 }

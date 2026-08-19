@@ -272,7 +272,9 @@ final readonly class FrontendRuntimeLock
 
             $css = $component['css'];
             if ($css !== null
-                && (!$this->safeRelativePath($css) || !$this->insideMount((string) $css, $smartMount))
+                && (!$this->safeRelativePath($css)
+                    || (!$this->insideMount((string) $css, $smartMount)
+                        && !$this->insideMount((string) $css, $uiMount)))
             ) {
                 throw new RuntimeException('ui_frontend_runtime_component_css_invalid:' . $tag);
             }

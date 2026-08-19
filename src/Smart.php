@@ -49,6 +49,14 @@ final class Smart
                 $paginationNextHref = $value;
                 continue;
             }
+            if ($key === 'items' && $tag === 'sf-admin-menu') {
+                $children = self::adminMenuItems($value);
+                continue;
+            }
+            if ($key === 'items' && $tag === 'sf-breadcrumbs') {
+                $attributes['items'] = self::breadcrumbsItems($value);
+                continue;
+            }
             if (is_bool($value)) {
                 if ($value) {
                     $attributes[$key] = '';
@@ -165,7 +173,9 @@ final class Smart
     {
         return ($tag === 'sf-table'
                 && in_array($attribute, ['selectable', 'settings', 'actions'], true))
-            || ($tag === 'sf-dropdown' && $attribute === 'search');
+            || ($tag === 'sf-dropdown' && $attribute === 'search')
+            || ($tag === 'sf-admin-menu' && $attribute === 'settings')
+            || ($tag === 'sf-tag' && $attribute === 'closable');
     }
 
     private static function dropdownOptions(mixed $options): string
@@ -202,5 +212,120 @@ final class Smart
         }
 
         return $html;
+    }
+
+    private static function adminMenuItems(mixed $items, int $depth = 0): string
+    {
+        if (!is_array($items) || !array_is_list($items) || count($items) > 40 || $depth > 2) {
+            throw new \InvalidArgumentException('ui_smart_admin_menu_items_invalid');
+        }
+
+        $html = '';
+        $allowed = ['label', 'href', 'left-icon', 'badge', 'active', 'disabled', 'slot', 'type', 'children'];
+        foreach ($items as $item) {
+            if (!is_array($item) || array_is_list($item)) {
+                throw new \InvalidArgumentException('ui_smart_admin_menu_item_invalid');
+            }
+            foreach (array_keys($item) as $key) {
+                if (!in_array($key, $allowed, true)) {
+                    throw new \InvalidArgumentException('ui_smart_admin_menu_item_prop_unknown:' . (string) $key);
+                }
+            }
+            $type = $item['type'] ?? 'item';
+            if (!is_string($type) || !in_array($type, ['item', 'divider'], true)) {
+                throw new \InvalidArgumentException('ui_smart_admin_menu_item_type_invalid');
+            }
+            $attributes = [];
+            if ($type === 'divider') {
+                $attributes['type'] = 'divider';
+            } else {
+                $label = $item['label'] ?? null;
+                if (!is_string($label) || trim($label) === '' || mb_strlen($label) > 100) {
+                    throw new \InvalidArgumentException('ui_smart_admin_menu_item_label_invalid');
+                }
+                $attributes['label'] = $label;
+                foreach (['left-icon', 'badge'] as $key) {
+                    $value = $item[$key] ?? null;
+                    if ($value !== null) {
+                        if (!is_string($value) || trim($value) === '' || strlen($value) > 80
+                            || preg_match('/^[A-Za-z0-9 _.-]+$/', $value) !== 1) {
+                            throw new \InvalidArgumentException('ui_smart_admin_menu_item_value_invalid:' . $key);
+                        }
+                        $attributes[$key] = $value;
+                    }
+                }
+                $href = $item['href'] ?? null;
+                if ($href !== null) {
+                    if (!is_string($href) || preg_match('#^/[A-Za-z0-9_./?=&%:+-]{0,2047}$#', $href) !== 1) {
+                        throw new \InvalidArgumentException('ui_smart_admin_menu_item_href_invalid');
+                    }
+                    $attributes['href'] = $href;
+                }
+                foreach (['active', 'disabled'] as $key) {
+                    if (array_key_exists($key, $item)) {
+                        if (!is_bool($item[$key])) {
+                            throw new \InvalidArgumentException('ui_smart_admin_menu_item_boolean_invalid:' . $key);
+                        }
+                        if ($item[$key]) {
+                            $attributes[$key] = '';
+                        }
+                    }
+                }
+                if (isset($item['slot'])) {
+                    if (!is_string($item['slot']) || !in_array($item['slot'], ['main', 'bottom'], true)) {
+                        throw new \InvalidArgumentException('ui_smart_admin_menu_item_slot_invalid');
+                    }
+                    $attributes['slot'] = $item['slot'];
+                }
+            }
+            $children = isset($item['children']) ? self::adminMenuItems($item['children'], $depth + 1) : '';
+            $html .= '<sf-admin-menu-item' . self::attributes($attributes) . '>' . $children . '</sf-admin-menu-item>';
+        }
+
+        return $html;
+    }
+
+    private static function breadcrumbsItems(mixed $items): string
+    {
+        if (!is_array($items) || !array_is_list($items) || $items === [] || count($items) > 12) {
+            throw new \InvalidArgumentException('ui_smart_breadcrumb_items_invalid');
+        }
+        $safe = [];
+        foreach ($items as $item) {
+            if (!is_array($item) || array_is_list($item)) {
+                throw new \InvalidArgumentException('ui_smart_breadcrumb_item_invalid');
+            }
+            foreach (array_keys($item) as $key) {
+                if (!in_array($key, ['label', 'href', 'icon', 'current'], true)) {
+                    throw new \InvalidArgumentException('ui_smart_breadcrumb_item_prop_unknown:' . (string) $key);
+                }
+            }
+            $label = $item['label'] ?? null;
+            if (!is_string($label) || trim($label) === '' || mb_strlen($label) > 100) {
+                throw new \InvalidArgumentException('ui_smart_breadcrumb_item_label_invalid');
+            }
+            $entry = ['label' => $label];
+            if (isset($item['href'])) {
+                if (!is_string($item['href']) || preg_match('#^/[A-Za-z0-9_./?=&%:+-]{0,2047}$#', $item['href']) !== 1) {
+                    throw new \InvalidArgumentException('ui_smart_breadcrumb_item_href_invalid');
+                }
+                $entry['href'] = $item['href'];
+            }
+            if (isset($item['icon'])) {
+                if (!is_string($item['icon']) || preg_match('/^[A-Za-z0-9_.-]{1,80}$/', $item['icon']) !== 1) {
+                    throw new \InvalidArgumentException('ui_smart_breadcrumb_item_icon_invalid');
+                }
+                $entry['icon'] = $item['icon'];
+            }
+            if (isset($item['current'])) {
+                if (!is_bool($item['current'])) {
+                    throw new \InvalidArgumentException('ui_smart_breadcrumb_item_current_invalid');
+                }
+                $entry['current'] = $item['current'];
+            }
+            $safe[] = $entry;
+        }
+
+        return json_encode($safe, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

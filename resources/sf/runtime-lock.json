@@ -110,6 +110,47 @@
       "javascript": "smart/smart/checkbox/js/checkbox.js",
       "css": "smart/smart/checkbox/css/checkbox.css",
       "attributes": ["size", "label", "description", "help", "position", "root-class", "checked", "disabled", "indeterminate", "name", "value", "error", "id", "class"]
+    },
+    "sf-admin-menu": {
+      "source": "smart/admin-menu",
+      "javascript": "smart/smart/admin-menu/js/admin-menu.js",
+      "css": "ui/distr/component/admin-menu/css/admin-menu.css",
+      "requires": ["sf-icon", "sf-badge", "sf-icon-button"],
+      "attributes": ["template", "brand", "logo", "logo-href", "aria-label", "searchable", "collapsible", "settings", "settings-title", "compact", "search-placeholder", "count", "toggle-label", "panel-class", "root-class", "id", "class"]
+    },
+    "sf-breadcrumbs": {
+      "source": "smart/breadcrumbs",
+      "javascript": "smart/smart/breadcrumbs/js/breadcrumbs.js",
+      "css": "ui/distr/component/breadcrumbs/css/breadcrumbs.css",
+      "requires": ["sf-icon"],
+      "attributes": ["template", "separator-icon", "home-icon", "home-label", "root-class", "item-class", "link-class", "current-class", "separator-class", "container-class", "aria-label", "expand-on-ellipsis", "max-items", "id", "class"]
+    },
+    "sf-icon-button": {
+      "source": "smart/icon-buttons",
+      "javascript": "smart/smart/icon-buttons/js/icon-buttons.js",
+      "css": "smart/smart/icon-buttons/css/icon-buttons.css",
+      "requires": ["sf-icon"],
+      "attributes": ["template", "variant", "size", "type", "scheme", "icon", "filled", "tightness", "radius", "segment", "root-class", "loading", "disabled", "native-type", "aria-label", "id", "class"]
+    },
+    "sf-avatar": {
+      "source": "smart/avatar",
+      "javascript": "smart/smart/avatar/js/avatar.js",
+      "css": "ui/distr/component/avatars/css/avatars.css",
+      "attributes": ["template", "size", "image-url", "image-alt", "no-wrap", "text", "status", "aria-label", "title", "description", "meta", "meta-icon", "card-variant", "disabled", "inactive", "id", "class"]
+    },
+    "sf-tag": {
+      "source": "smart/tags",
+      "javascript": "smart/smart/tags/js/tags.js",
+      "css": "smart/smart/tags/css/tags.css",
+      "requires": ["sf-avatar", "sf-icon"],
+      "attributes": ["template", "type", "size", "text", "count", "icon", "color-class", "avatar-image-url", "avatar-text", "avatar-status", "root-class", "active", "disabled", "closable", "aria-label", "id", "class"]
+    },
+    "sf-toggle": {
+      "source": "smart/toggle",
+      "javascript": "smart/smart/toggle/js/toggle.js",
+      "css": "ui/distr/component/toggle/css/toggle.css",
+      "requires": ["sf-icon"],
+      "attributes": ["template", "size", "type", "label", "icon", "checked", "disabled", "name", "value", "aria-label", "id", "class"]
     }
   }
 }

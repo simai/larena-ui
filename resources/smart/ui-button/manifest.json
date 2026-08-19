@@ -15,7 +15,8 @@
       "loading": {"type": "boolean"},
       "disabled": {"type": "boolean"},
       "native-type": {"type": "string", "enum": ["button", "submit", "reset"]},
-      "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"}
+      "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
     "required": ["text", "size", "type", "scheme", "loading", "disabled", "native-type", "aria-label"],
     "additionalProperties": false

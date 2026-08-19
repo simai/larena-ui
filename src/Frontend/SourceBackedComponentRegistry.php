@@ -50,6 +50,9 @@ final readonly class SourceBackedComponentRegistry
         if ($tag === 'sf-pagination') {
             $allowed = [...$allowed, 'next-href'];
         }
+        if (in_array($tag, ['sf-admin-menu', 'sf-breadcrumbs'], true)) {
+            $allowed = [...$allowed, 'items'];
+        }
         foreach (array_keys($props) as $key) {
             if (!in_array($key, $allowed, true)) {
                 throw new InvalidArgumentException('ui_smart_prop_unknown:' . $tag . ':' . (string) $key);

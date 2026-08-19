@@ -1,0 +1,18 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "dataview.query_options",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "composite",
+  "props": {"type": "object", "properties": {
+    "title": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+    "expanded": {"type": "boolean"}
+  }, "required": ["title", "expanded"], "additionalProperties": false},
+  "slots": {"filters": {}, "sorting": {}, "pagination": {}},
+  "events": {}, "views": {"default": {}}, "presets": {},
+  "constraints": {"container": "details", "css_class": "larena-dataview-query-options", "slot_order": ["filters", "sorting", "pagination"], "modifiers": []},
+  "render": {"strategy": "native", "renderer": "ui.composite.template"}, "frontend": {},
+  "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}],
+  "atlas": {"visible": false, "title": "Dataview query options", "description": "Progressively disclosed filter, sort and page-size controls.", "category": "collections", "order": 119},
+  "provenance": {"source": "larena/ui", "reference_status": "backend_composite"}
+}

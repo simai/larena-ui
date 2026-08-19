@@ -1,0 +1,15 @@
+{
+  "schema": "larena.ui.smart_manifest.v1", "key": "ui.tag", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
+  "props": {"type": "object", "properties": {
+    "type": {"type": "string", "enum": ["checkbox", "icon", "quantity", "color", "avatar", "success", "error", "warning", "primary"]}, "size": {"type": "string", "enum": ["1/2", "1"]},
+    "text": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"}, "count": {"type": "integer"},
+    "active": {"type": "boolean"}, "disabled": {"type": "boolean"}, "closable": {"type": "boolean"},
+    "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"}, "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+    "class": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9 _-]*$"}
+  }, "required": ["type", "size", "text", "active", "disabled", "closable", "aria-label"], "additionalProperties": false},
+  "slots": {}, "events": {"click": {"kind": "dom", "backend_handler_binding": false}}, "views": {"default": {}}, "presets": {}, "constraints": {},
+  "render": {"strategy": "host", "renderer": "ui.sf.element"}, "frontend": {"runtime": "simai-framework", "tag": "sf-tag"},
+  "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}, {"key": "simai.framework.core.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_avatar.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_avatar.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_tag.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_tag.js", "kind": "javascript", "critical": true}],
+  "atlas": {"visible": false, "title": "Tag", "description": "Compact collection metadata.", "category": "status", "order": 9},
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/tags", "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c", "reference_status": "source_backed"}
+}

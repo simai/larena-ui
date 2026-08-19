@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Register the source-backed Admin Menu, Breadcrumbs, Icon Button, Avatar,
+  Tag and Toggle primitives required by the backend-composed Admin shell.
+- Move advanced Dataview query controls behind a reusable progressive
+  disclosure while keeping filtering, sorting and pagination server-owned.
+- Render bounded structured Admin Menu and Breadcrumb item data through the
+  Smart allowlist without accepting arbitrary HTML.
 - Pin the local Developer Preview to the reproducible Framework rule-registry
   candidate that removes merge markers, duplicate rule names and the phantom
   `cl-alert` stylesheet request.
