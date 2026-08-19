@@ -4,4 +4,4 @@
 
 @media(max-width:1180px){.larena-dataview-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.larena-dataview-toolbar>[data-larena-slot=actions]{justify-content:flex-end}}
 @media(max-width:680px){.larena-dataview-toolbar{grid-template-columns:1fr}.larena-dataview-toolbar>[data-larena-slot]{display:grid;grid-template-columns:1fr}.larena-admin-record-editor__fields{grid-template-columns:1fr}}
-@media(max-width:390px){.larena-dataview{padding:.75rem}.larena-dataview-table{min-width:42rem}}
+@media(max-width:390px){.larena-dataview{padding:.75rem}.larena-dataview-table{min-width:0!important;width:100%!important}.larena-dataview-table__content{max-width:100%;overflow-x:auto}.larena-dataview-table__content>sf-table{display:block;min-width:42rem}}
