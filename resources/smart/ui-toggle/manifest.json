@@ -11,5 +11,5 @@
   "render": {"strategy": "host", "renderer": "ui.sf.element"}, "frontend": {"runtime": "simai-framework", "tag": "sf-toggle"},
   "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}, {"key": "simai.framework.core.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_toggle.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_toggle.js", "kind": "javascript", "critical": true}],
   "atlas": {"visible": false, "title": "Toggle", "description": "Compact boolean preference.", "category": "inputs", "order": 10},
-  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/toggle", "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c", "reference_status": "source_backed"}
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/toggle", "upstream_revision": "c843857cf52408724404768814e9443d4a89e4eb", "reference_status": "source_backed"}
 }

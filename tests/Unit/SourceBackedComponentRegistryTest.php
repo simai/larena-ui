@@ -8,11 +8,11 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->tag() === 'v5.4.0-local.2');
-assert($lock->pairId() === 'sf-v5.4.0-local.2-fba98aca-dd786bba');
+assert($lock->tag() === 'v5.4.0-local.3');
+assert($lock->pairId() === 'sf-v5.4.0-local.3-d1daa951-c843857c');
 assert(str_starts_with($lock->pairId(), 'sf-v'));
-assert($lock->toArray()['ui']['commit'] === 'fba98acad7a0225cd949fd8d4652176b49ac41ac');
-assert($lock->toArray()['ui_smart']['commit'] === 'dd786bbae98391fb21df9b4e1e6cd402ead0614c');
+assert($lock->toArray()['ui']['commit'] === 'd1daa951dd08b94a9f209fd9f31a78d2b3779563');
+assert($lock->toArray()['ui_smart']['commit'] === 'c843857cf52408724404768814e9443d4a89e4eb');
 
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'smart/buttons');

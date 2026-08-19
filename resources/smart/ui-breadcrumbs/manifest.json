@@ -23,5 +23,5 @@
     {"key": "simai.framework.sf_breadcrumbs.js", "kind": "javascript", "critical": true}
   ],
   "atlas": {"visible": false, "title": "Breadcrumbs", "description": "Source-backed location context.", "category": "navigation", "order": 6},
-  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/breadcrumbs", "upstream_revision": "dd786bbae98391fb21df9b4e1e6cd402ead0614c", "reference_status": "source_backed"}
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/breadcrumbs", "upstream_revision": "c843857cf52408724404768814e9443d4a89e4eb", "reference_status": "source_backed"}
 }
