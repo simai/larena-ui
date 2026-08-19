@@ -10,6 +10,8 @@ Implemented surfaces:
 - exact child asset aggregation;
 - Admin collection, table Dataview and toolbar composite views;
 - safe runtime child-prop overrides for declared child identifiers only.
+- fail-closed nested child overrides plus replaceable input and button views for
+  the table toolbar.
 
 Checks on PHP 8.4.20:
 

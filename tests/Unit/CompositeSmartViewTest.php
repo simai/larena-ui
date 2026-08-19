@@ -28,16 +28,23 @@ assert(str_contains($artifact->html(), 'data-larena-composite="admin.collection"
 assert(str_contains($artifact->html(), 'data-larena-composite="dataview.table"'));
 assert(str_contains($artifact->html(), 'data-larena-composite="dataview.toolbar"'));
 assert(str_contains($artifact->html(), '<sf-input'));
+assert(str_contains($artifact->html(), '<sf-button'));
 assert(str_contains($artifact->html(), '<sf-table'));
 assert(str_contains($artifact->html(), '<sf-pagination'));
 assert(($artifact->diagnostics['composite_child_count'] ?? null) === 1);
 assert(count($artifact->assetGraph->requirements) > 0);
 
 $table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'], $activation, [], null, [], [
+    'toolbar' => ['_children' => [
+        'search' => ['value' => 'Welcome'],
+        'submit' => ['text' => 'Find', 'aria-label' => 'Find records'],
+    ]],
     'grid' => ['data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Welcome']]]],
     'pagination' => ['current' => 2, 'total' => 4],
 ]);
 assert(str_contains($table->html(), 'Welcome'));
+assert(str_contains($table->html(), 'value="Welcome"'));
+assert(str_contains($table->html(), 'text="Find"'));
 assert(str_contains($table->html(), 'current="2"'));
 
 $unknownChildRejected = false;
@@ -47,5 +54,15 @@ try {
     $unknownChildRejected = str_starts_with($exception->getMessage(), 'ui_smart_view_child_props_invalid:');
 }
 assert($unknownChildRejected);
+
+$unknownNestedChildRejected = false;
+try {
+    $manager->renderView('dataview.table', 'default', ['title' => 'Pages'], $activation, [], null, [], [
+        'toolbar' => ['_children' => ['unknown' => []]],
+    ]);
+} catch (InvalidArgumentException $exception) {
+    $unknownNestedChildRejected = str_starts_with($exception->getMessage(), 'ui_smart_view_child_props_invalid:dataview.toolbar:default:');
+}
+assert($unknownNestedChildRejected);
 
 echo "CompositeSmartViewTest passed.\n";

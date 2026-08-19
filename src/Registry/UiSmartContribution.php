@@ -47,6 +47,7 @@ final class UiSmartContribution implements SmartContributionProvider
             ));
         }
         foreach ([
+            'ui-button',
             'ui-dataview',
             'ui-input',
             'ui-pagination',

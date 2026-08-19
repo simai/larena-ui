@@ -122,15 +122,16 @@ final readonly class SmartManager
 
         $childArtifacts = [];
         foreach ($resolved['children'] as $childId => $child) {
+            [$overrideProps, $nestedChildProps] = self::splitChildProps($childProps[$childId] ?? []);
             $artifact = $this->renderViewAtDepth(
                 $child['component'],
                 $child['view'],
-                array_replace_recursive($child['props'], $childProps[$childId] ?? []),
+                array_replace_recursive($child['props'], $overrideProps),
                 $assetActivation,
                 [],
                 $child['preset'],
                 $child['modifiers'],
-                [],
+                $nestedChildProps,
                 $depth + 1,
                 $stack,
             );
@@ -181,7 +182,38 @@ final readonly class SmartManager
 
     private static function isChildPropsEntry(mixed $childId, mixed $override): bool
     {
-        return is_string($childId) && is_array($override) && !array_is_list($override);
+        if (!is_string($childId) || !is_array($override) || array_is_list($override)) {
+            return false;
+        }
+        if (!array_key_exists('_props', $override) && !array_key_exists('_children', $override)) {
+            return true;
+        }
+        foreach (array_keys($override) as $key) {
+            if (!in_array($key, ['_props', '_children'], true)) {
+                return false;
+            }
+        }
+        if (isset($override['_props']) && (!is_array($override['_props']) || array_is_list($override['_props']))) {
+            return false;
+        }
+        if (isset($override['_children']) && (!is_array($override['_children']) || array_is_list($override['_children']))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /** @return array{array<string, mixed>, array<string, array<string, mixed>>} */
+    private static function splitChildProps(array $override): array
+    {
+        if (!array_key_exists('_props', $override) && !array_key_exists('_children', $override)) {
+            return [$override, []];
+        }
+
+        return [
+            is_array($override['_props'] ?? null) ? $override['_props'] : [],
+            is_array($override['_children'] ?? null) ? $override['_children'] : [],
+        ];
     }
 
     private function assertSlots(SmartComponentManifest $manifest, array $slots): void

@@ -15,6 +15,15 @@
       "slot": "search",
       "props": {"id": "dataview-search", "name": "search", "label": "Search", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
       "children": {}
+    },
+    "submit": {
+      "component": "ui.button",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "actions",
+      "props": {"text": "Apply", "size": "1", "type": "default", "scheme": "primary", "loading": false, "disabled": false, "native-type": "submit", "aria-label": "Apply table query"},
+      "children": {}
     }
   },
   "constraints": {"server_composed": true}

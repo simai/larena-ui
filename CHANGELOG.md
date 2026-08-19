@@ -7,6 +7,7 @@
 - Verify the Minimal CMS Smart Component allowlist, renderer, props and asset safety contract.
 - Add the validated Smart View v1 descriptor, registered view resolution and public `Smart::renderView()` path.
 - Add bounded recursive composite rendering for Admin collection, table Dataview and toolbar views with exact child asset aggregation.
+- Allow fail-closed nested child-prop overrides and compose the Dataview toolbar from replaceable input and submit-button views.
 
 ### Documentation
 

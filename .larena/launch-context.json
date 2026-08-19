@@ -20,7 +20,7 @@
     "resources/smart/admin-collection/manifest.json", "resources/smart/admin-collection/view/default.json",
     "resources/smart/dataview-table/manifest.json", "resources/smart/dataview-table/view/default.json",
     "resources/smart/dataview-toolbar/manifest.json", "resources/smart/dataview-toolbar/view/default.json",
-    "resources/smart/ui-dataview/view/default.json", "resources/smart/ui-input/view/default.json", "resources/smart/ui-pagination/view/default.json",
+    "resources/smart/ui-button/view/default.json", "resources/smart/ui-dataview/view/default.json", "resources/smart/ui-input/view/default.json", "resources/smart/ui-pagination/view/default.json",
     "tests/Unit/CompositeSmartViewTest.php", "tests/Unit/SmartComponentLibraryTest.php", "tests/Unit/SmartFacadeTest.php",
     "tests/Unit/SmartManagerTest.php", "tests/Unit/SmartViewDescriptorTest.php"
   ],

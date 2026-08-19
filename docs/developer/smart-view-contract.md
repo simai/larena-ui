@@ -19,6 +19,13 @@ keys and slots. Resolved props still pass `SmartPropsValidator`; rendered
 components still use `Larena\Ui\Facades\Smart` and the container-owned
 `SmartManager`.
 
+Runtime overrides may address deeper declared children with the reserved
+`_props` and `_children` keys. Every level is checked against the registered
+view before rendering; unknown nested children and mixed reserved/plain keys
+fail closed. This lets a page or future visual constructor configure, for
+example, `dataview.table → toolbar → search` without embedding template HTML or
+giving stored descriptors arbitrary renderer access.
+
 Pages reference only stable component/view/preset/modifier keys. Therefore a
 compatible template or renderer can change without rewriting page data. A
 breaking prop or event contract requires a new manifest version and an

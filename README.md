@@ -54,9 +54,11 @@ and asset path as `Smart::render(...)`.
 
 Composite views are rendered recursively with a bounded cycle/depth guard.
 Each child remains a registered Smart View and contributes its verified assets;
-runtime data may override props only for declared child identifiers. The first
+runtime data may override props only for declared child identifiers, including
+bounded nested overrides through `_props` and `_children`. The first
 composition is `admin.collection → dataview.table → dataview.toolbar +
-ui.dataview + ui.pagination`.
+ui.dataview + ui.pagination`; the toolbar itself composes `ui.input` and
+`ui.button` views.
 
 Reference controls, presets and examples are derived from the same manifest.
 `SmartComponentReference` normalizes allowlisted controls, while

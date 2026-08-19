@@ -22,6 +22,7 @@
     "resources/smart/dataview-toolbar/view/default.json",
     "resources/schemas/smart-view.schema.json",
     "resources/examples/dataview-table.smart-view.json",
+    "resources/smart/ui-button/view/default.json",
     "resources/smart/ui-dataview/view/default.json",
     "resources/smart/ui-input/view/default.json",
     "resources/smart/ui-pagination/view/default.json",
