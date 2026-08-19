@@ -8,6 +8,7 @@
 
 /* Product collection geometry: the backend query toolbar owns search and
    filtering, while the Framework table contributes only the data surface. */
+[data-larena-dataview-query],[data-larena-page-assembly],.larena-dataview,.larena-dataview-table{width:100%;max-width:100%;min-width:0}
 .larena-dataview-toolbar{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr) minmax(124px,auto) auto;gap:.5rem}
 .larena-dataview-toolbar>[data-larena-slot=search]{display:grid;grid-template-columns:minmax(150px,180px) minmax(120px,1fr);gap:.5rem}
 .larena-dataview-toolbar>[data-larena-slot=search]>sf-dropdown,
