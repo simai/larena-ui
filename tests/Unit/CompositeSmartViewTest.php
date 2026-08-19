@@ -29,7 +29,8 @@ assert(str_contains($artifact->html(), 'data-larena-composite="dataview.table"')
 assert(str_contains($artifact->html(), 'data-larena-composite="dataview.toolbar"'));
 assert(str_contains($artifact->html(), '<sf-input'));
 assert(str_contains($artifact->html(), '<sf-button'));
-assert(substr_count($artifact->html(), '<sf-dropdown') === 4);
+assert(substr_count($artifact->html(), '<sf-dropdown') === 5);
+assert(str_contains($artifact->html(), 'name="saved_view_id"'));
 assert(str_contains($artifact->html(), '<sf-table'));
 assert(str_contains($artifact->html(), '<sf-pagination'));
 assert(($artifact->diagnostics['composite_child_count'] ?? null) === 1);

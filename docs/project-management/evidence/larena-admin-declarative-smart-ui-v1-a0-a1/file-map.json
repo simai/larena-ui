@@ -1,5 +1,5 @@
 {
   "schema": "larena.evidence_file_map.v1",
   "launch_record": "docs/project-management/launch-records/larena-admin-declarative-smart-ui-v1-a0-a1.json",
-  "surfaces": ["src/Contracts", "src/Registry", "src/Runtime", "src/Facades", "resources/smart", "resources/schemas", "tests/Unit"]
+  "surfaces": ["resources/smart/dataview-toolbar/view/default.json", "tests/Unit/CompositeSmartViewTest.php"]
 }

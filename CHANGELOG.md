@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Render optional same-origin continuation links inside `ui.pagination` without exposing opaque paging state to sibling components.
+- Compose the saved Dataview selector as a replaceable `ui.dropdown` child of the JSON-defined toolbar.
 
 ### Verified
 

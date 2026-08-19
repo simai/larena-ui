@@ -7,6 +7,15 @@
   "presets": {},
   "modifiers": {},
   "children": {
+    "saved_view": {
+      "component": "ui.dropdown",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "search",
+      "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "current-query", "name": "saved_view_id", "label": "Saved view", "required": false, "placeholder": "Saved view", "search-placeholder": "Find saved view", "search": false, "disabled": false, "aria-label": "Saved view", "id": "dataview-saved-view", "options": [{"text": "Current query", "value": "current-query", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Current query"}]},
+      "children": {}
+    },
     "search": {
       "component": "ui.input",
       "view": "default",

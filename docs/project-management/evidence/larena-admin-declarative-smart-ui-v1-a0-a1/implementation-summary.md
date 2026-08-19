@@ -8,3 +8,5 @@ pagination children.
 Nested `_props` and `_children` overrides keep deeper controls configurable
 without exposing template paths. The toolbar now composes registered
 `ui.input` and `ui.button` views, so both remain independently replaceable.
+The same JSON composition now includes a replaceable saved-view dropdown;
+selection semantics and persistence remain outside UI in Admin, Root and Setting.
