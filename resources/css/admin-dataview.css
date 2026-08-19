@@ -5,3 +5,15 @@
 @media(max-width:1180px){.larena-dataview-toolbar{grid-template-columns:minmax(18rem,1fr) auto auto}.larena-dataview-query-options[open]{right:5rem;width:min(680px,calc(100vw - 330px))}}
 @media(max-width:680px){.larena-dataview-toolbar{grid-template-columns:1fr auto}.larena-dataview-toolbar>[data-larena-slot=search]{grid-column:1/-1}.larena-dataview-query-options[open]{position:fixed;inset:auto 12px 12px;width:auto;max-height:70vh;overflow:auto}.larena-dataview-query-options>[data-larena-slot]{grid-template-columns:1fr}.larena-admin-record-editor__fields{grid-template-columns:1fr}}
 @media(max-width:390px){.larena-dataview{padding:.75rem}.larena-dataview-table{min-width:0!important;width:100%!important}.larena-dataview-table__content{max-width:100%;overflow-x:auto}.larena-dataview-table__content>sf-table{display:block;min-width:42rem}}
+
+/* Product collection geometry: the backend query toolbar owns search and
+   filtering, while the Framework table contributes only the data surface. */
+.larena-dataview-toolbar{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr) auto auto}
+.larena-dataview-toolbar>[data-larena-slot=search]{display:grid;grid-template-columns:minmax(180px,240px) minmax(180px,1fr)}
+.larena-dataview-toolbar>[data-larena-slot=search]>sf-dropdown,
+.larena-dataview-toolbar>[data-larena-slot=search]>sf-input{display:block!important;width:100%;min-width:0}
+.larena-dataview-table__content{max-width:100%;overflow-x:auto;overflow-y:hidden}
+.larena-dataview-table__content>sf-table{display:block!important;width:100%;min-width:0}
+.larena-dataview-table__content .sf-table-toolbar{display:none!important}
+.larena-dataview-table__content .table-wrap>div{margin-bottom:0!important}
+@media(max-width:680px){.larena-dataview-toolbar{grid-template-columns:1fr auto}.larena-dataview-toolbar>[data-larena-slot=search]{grid-column:1/-1;grid-template-columns:1fr}.larena-dataview-table__content>sf-table{min-width:42rem}}
