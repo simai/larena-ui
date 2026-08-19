@@ -44,5 +44,5 @@
     {"key": "simai.framework.sf_admin_menu.js", "kind": "javascript", "critical": true}
   ],
   "atlas": {"visible": false, "title": "Admin menu", "description": "Source-backed product navigation.", "category": "admin", "order": 5},
-  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/admin-menu", "upstream_revision": "c843857cf52408724404768814e9443d4a89e4eb", "reference_status": "source_backed"}
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/admin-menu", "upstream_revision": "eb291eaf2e9cafa6bb19d3374f46e9998ba6b742", "reference_status": "source_backed"}
 }

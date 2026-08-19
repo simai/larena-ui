@@ -11,5 +11,5 @@
   "render": {"strategy": "host", "renderer": "ui.sf.element"}, "frontend": {"runtime": "simai-framework", "tag": "sf-icon-button"},
   "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}, {"key": "simai.framework.core.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_icon_button.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_icon_button.js", "kind": "javascript", "critical": true}],
   "atlas": {"visible": false, "title": "Icon button", "description": "Compact named action.", "category": "actions", "order": 7},
-  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/icon-buttons", "upstream_revision": "c843857cf52408724404768814e9443d4a89e4eb", "reference_status": "source_backed"}
+  "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/icon-buttons", "upstream_revision": "eb291eaf2e9cafa6bb19d3374f46e9998ba6b742", "reference_status": "source_backed"}
 }

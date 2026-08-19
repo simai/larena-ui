@@ -125,7 +125,7 @@ foreach ($components as $key => $definition) {
     assert($manifest->frontendRuntime === 'simai-framework');
     assert($manifest->frontendTag === $definition['tag']);
     assert(($manifest->provenance['runtime_lock'] ?? null) === 'resources/sf/runtime-lock.json');
-    assert(($manifest->provenance['upstream_revision'] ?? null) === 'c843857cf52408724404768814e9443d4a89e4eb');
+    assert(($manifest->provenance['upstream_revision'] ?? null) === 'eb291eaf2e9cafa6bb19d3374f46e9998ba6b742');
     assert(($manifest->provenance['reference_status'] ?? null) === 'source_backed');
     foreach ($manifest->eventSchema as $event) {
         assert(is_array($event));
