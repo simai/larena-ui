@@ -47,6 +47,9 @@ final readonly class SourceBackedComponentRegistry
         if ($tag === 'sf-dropdown') {
             $allowed = [...$allowed, 'options'];
         }
+        if ($tag === 'sf-pagination') {
+            $allowed = [...$allowed, 'next-href'];
+        }
         foreach (array_keys($props) as $key) {
             if (!in_array($key, $allowed, true)) {
                 throw new InvalidArgumentException('ui_smart_prop_unknown:' . $tag . ':' . (string) $key);

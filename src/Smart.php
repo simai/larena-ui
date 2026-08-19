@@ -25,6 +25,7 @@ final class Smart
         $hash = hash('sha256', json_encode($props, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $payload = null;
         $children = '';
+        $paginationNextHref = null;
         $id = isset($props['id']) && is_string($props['id']) && preg_match('/^[A-Za-z][A-Za-z0-9_-]*$/', $props['id'])
             ? $props['id']
             : ($tag === 'sf-table' ? 'larena-smart-' . substr($hash, 0, 12) : null);
@@ -41,6 +42,13 @@ final class Smart
                 $children = self::dropdownOptions($value);
                 continue;
             }
+            if ($key === 'next-href' && $tag === 'sf-pagination') {
+                if (!is_string($value) || preg_match('#^/[A-Za-z0-9_./?=&%:+-]{1,2047}$#', $value) !== 1) {
+                    throw new \InvalidArgumentException('ui_smart_pagination_next_href_invalid');
+                }
+                $paginationNextHref = $value;
+                continue;
+            }
             if (is_bool($value)) {
                 if ($value) {
                     $attributes[$key] = '';
@@ -53,6 +61,15 @@ final class Smart
                 throw new \InvalidArgumentException('ui_smart_attribute_must_be_scalar:' . $tag . ':' . $key);
             }
             $attributes[$key] = (string) $value;
+        }
+
+        if ($tag === 'sf-pagination' && $paginationNextHref !== null) {
+            $label = $props['show-more-text'] ?? 'Show more';
+            if (!is_string($label) || trim($label) === '') {
+                throw new \InvalidArgumentException('ui_smart_pagination_next_label_invalid');
+            }
+            $children = '<a class="larena-pagination-next" data-larena-pagination-next href="'
+                . self::escape($paginationNextHref) . '">' . self::escape($label) . '</a>';
         }
 
         $html = '<' . $tag . self::attributes($attributes) . '>' . $children . '</' . $tag . '>';

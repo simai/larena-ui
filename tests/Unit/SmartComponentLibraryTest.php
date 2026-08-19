@@ -136,6 +136,9 @@ foreach ($components as $key => $definition) {
     if ($definition['tag'] === 'sf-dropdown') {
         $allowedProps[] = 'options';
     }
+    if ($definition['tag'] === 'sf-pagination') {
+        $allowedProps[] = 'next-href';
+    }
     $manifestProps = array_keys($manifest->propsSchema['properties'] ?? []);
     assert(array_values(array_diff($manifestProps, $allowedProps)) === []);
 

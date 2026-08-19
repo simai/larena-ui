@@ -14,6 +14,8 @@ Implemented surfaces:
   the table toolbar;
 - replaceable dropdown views and declared filter, sorting and pagination slots
   for a backend-configured table query toolbar.
+- safe same-origin continuation links rendered inside the registered
+  pagination Smart Component, with the opaque token remaining backend-owned.
 
 Checks on PHP 8.4.20:
 

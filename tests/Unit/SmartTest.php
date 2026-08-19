@@ -65,4 +65,15 @@ assert($dropdown->isSafe());
 $dropdownWithoutSearch = Smart::render('sf-dropdown', ['name' => 'size', 'label' => 'Size', 'search' => false]);
 assert(str_contains($dropdownWithoutSearch->html, 'search="false"'));
 
+$pagination = Smart::render('sf-pagination', [
+    'current' => 1,
+    'total' => 2,
+    'show-more-text' => 'Next page',
+    'next-href' => '/admin/cms?continuation=opaque_token&per_page=20',
+]);
+assert(str_contains($pagination->html, 'data-larena-pagination-next'));
+assert(str_contains($pagination->html, 'href="/admin/cms?continuation=opaque_token&amp;per_page=20"'));
+assert(str_contains($pagination->html, '>Next page</a>'));
+assert(!str_contains($pagination->html, 'next-href='));
+
 echo "SmartTest passed\n";

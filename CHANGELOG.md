@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Render optional same-origin continuation links inside `ui.pagination` without exposing opaque paging state to sibling components.
+
 ### Verified
 
 - Verify the Minimal CMS Smart Component allowlist, renderer, props and asset safety contract.

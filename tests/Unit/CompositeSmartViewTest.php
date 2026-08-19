@@ -45,7 +45,7 @@ $table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'],
         'submit' => ['text' => 'Find', 'aria-label' => 'Find records'],
     ]],
     'grid' => ['data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Welcome']]]],
-    'pagination' => ['current' => 2, 'total' => 4],
+    'pagination' => ['current' => 2, 'total' => 4, 'next-href' => '/admin/cms?continuation=next_token'],
 ]);
 assert(str_contains($table->html(), 'Welcome'));
 assert(str_contains($table->html(), 'value="Welcome"'));
@@ -53,6 +53,8 @@ assert(str_contains($table->html(), 'text="Find"'));
 assert(str_contains($table->html(), 'name="sort_direction"'));
 assert(str_contains($table->html(), 'value="desc"'));
 assert(str_contains($table->html(), 'current="2"'));
+assert(str_contains($table->html(), 'data-larena-pagination-next'));
+assert(str_contains($table->html(), 'continuation=next_token'));
 
 $unknownChildRejected = false;
 try {
