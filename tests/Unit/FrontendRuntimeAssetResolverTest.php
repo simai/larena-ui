@@ -33,12 +33,12 @@ assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
 $baseline = FrontendRuntimeLock::bundled()->toArray();
 $switched = $baseline;
 $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-$switched['pair_id'] = 'sf-v5.4.0-local.1-aaaaaaaa-dd786bba';
-$switched['bundle_id'] = 'sf-v5.4.0-local.1-aaaaaaaa-dd786bba-registry-2c596327-exact-git-tree-v2';
+$switched['pair_id'] = 'sf-v5.4.0-local.2-aaaaaaaa-dd786bba';
+$switched['bundle_id'] = 'sf-v5.4.0-local.2-aaaaaaaa-dd786bba-registry-2c596327-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = $switched['pair_id'];
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'sf-v5.4.0-local.1-c606f612-dd786bba');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'sf-v5.4.0-local.2-fba98aca-dd786bba');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];

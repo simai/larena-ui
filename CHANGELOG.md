@@ -5,6 +5,8 @@
 - Pin the local Developer Preview to the reproducible Framework rule-registry
   candidate that removes merge markers, duplicate rule names and the phantom
   `cl-alert` stylesheet request.
+- Advance the local candidate to a reproducible full-core regeneration with
+  valid rule JavaScript and all referenced font assets present.
 - Render optional same-origin continuation links inside `ui.pagination` without exposing opaque paging state to sibling components.
 - Compose the saved Dataview selector as a replaceable `ui.dropdown` child of the JSON-defined toolbar.
 - Add the replaceable `admin.record_editor` Smart View shell with server-composed field and action slots.

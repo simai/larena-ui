@@ -7,8 +7,8 @@ require_once __DIR__ . '/../bootstrap.php';
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->pairId() === 'sf-v5.4.0-local.1-c606f612-dd786bba');
-assert($lock->bundleId() === 'sf-v5.4.0-local.1-c606f612-dd786bba-registry-2c596327-exact-git-tree-v2');
+assert($lock->pairId() === 'sf-v5.4.0-local.2-fba98aca-dd786bba');
+assert($lock->bundleId() === 'sf-v5.4.0-local.2-fba98aca-dd786bba-registry-2c596327-exact-git-tree-v2');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
@@ -22,10 +22,10 @@ assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());
 assert($expectation['sources'] === [
     [
-        'commit' => 'c606f6125993ad310be5ef64bab97c6db1052328',
+        'commit' => 'fba98acad7a0225cd949fd8d4652176b49ac41ac',
         'tree' => 'distr',
         'mount' => 'ui',
-        'archive_sha256' => '1481478fd128d808657541b6f6d7746c2724c4b89a020ddac196d7c30e4bc429',
+        'archive_sha256' => '5956f54bf45b46fb7bcc9943805adc7319622a510518469f6e3789cca41968fc',
         'files' => 2671,
     ],
     [
@@ -84,7 +84,7 @@ foreach ([
     static function (array &$data): void { $data['bundle_id'] = $data['pair_id']; },
     static function (array &$data): void { $data['publication_profile'] = 'unverified-copy'; },
     static function (array &$data): void { $data['schema'] = 'larena.ui.frontend_runtime_lock.v2'; },
-    static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.4.0-local.1-wrong-wrong'; },
+    static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.4.0-local.2-wrong-wrong'; },
     static function (array &$data): void { $data['framework_registry']['relative_path'] = '../registry.json'; },
     static function (array &$data): void { $data['framework_registry']['source']['commit'] = str_repeat('0', 39); },
     static function (array &$data): void { $data['ui']['tree'] = 'smart'; },
