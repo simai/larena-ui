@@ -1,0 +1,11 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "admin.record_editor",
+  "view": "default",
+  "template": "default",
+  "props": {"title": "Record", "mode": "create"},
+  "presets": {},
+  "modifiers": {},
+  "children": {},
+  "constraints": {"server_composed": true, "dynamic_fields": true}
+}

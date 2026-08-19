@@ -39,6 +39,7 @@ final class UiSmartContribution implements SmartContributionProvider
             'ui-alert',
             'ui-modal',
             'admin-collection',
+            'admin-record-editor',
             'dataview-table',
             'dataview-toolbar',
         ] as $directory) {
@@ -55,6 +56,7 @@ final class UiSmartContribution implements SmartContributionProvider
             'dataview-toolbar',
             'dataview-table',
             'admin-collection',
+            'admin-record-editor',
         ] as $directory) {
             $registry->registerView(SmartViewDescriptor::fromJsonFile(
                 __DIR__ . '/../../resources/smart/' . $directory . '/view/default.json',

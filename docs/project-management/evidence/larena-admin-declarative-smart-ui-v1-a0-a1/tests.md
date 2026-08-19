@@ -6,3 +6,4 @@
 - Negative view, preset, child, unsafe-value and collision cases: pass.
 - Composite toolbar regression proves five independently rendered dropdowns,
   including the saved-view selector: pass.
+- Replaceable Admin record editor shell with ordered dynamic slots: pass.

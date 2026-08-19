@@ -28,7 +28,7 @@ $components = [
     'ui.modal' => ['directory' => 'ui-modal', 'tag' => 'sf-modal'],
 ];
 $expectedKeys = array_keys($components);
-$compositeKeys = ['admin.collection', 'dataview.table', 'dataview.toolbar'];
+$compositeKeys = ['admin.collection', 'admin.record_editor', 'dataview.table', 'dataview.toolbar'];
 $expectedReadiness = [
     'safe_to_suggest' => true,
     'safe_to_render' => true,

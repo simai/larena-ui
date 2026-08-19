@@ -1,0 +1,26 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "admin.record_editor",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "composite",
+  "props": {
+    "type": "object",
+    "properties": {
+      "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "mode": {"type": "string", "enum": ["create", "update"]}
+    },
+    "required": ["title", "mode"],
+    "additionalProperties": false
+  },
+  "slots": {"fields": {}, "actions": {}},
+  "events": {},
+  "views": {"default": {}},
+  "presets": {},
+  "constraints": {"container": "section", "css_class": "larena-admin-record-editor", "slot_order": ["fields", "actions"], "modifiers": []},
+  "render": {"strategy": "native", "renderer": "ui.composite.template"},
+  "frontend": {},
+  "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}],
+  "atlas": {"visible": false, "title": "Admin record editor", "description": "Backend-composed replaceable editor shell for Storage records.", "category": "admin", "order": 110},
+  "provenance": {"source": "larena/ui", "reference_status": "backend_composite"}
+}
