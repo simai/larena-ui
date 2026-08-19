@@ -1,0 +1,11 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "ui.pagination",
+  "view": "default",
+  "template": "default",
+  "props": {"current": 1, "total": 1, "top": false, "bottom": true, "show-more-text": "Show more", "page-size-label": "Items per page", "aria-label": "Page navigation", "id": "smart-pagination"},
+  "presets": {},
+  "modifiers": {},
+  "children": {},
+  "constraints": {}
+}

@@ -7,6 +7,8 @@ $tests = [
     __DIR__ . '/../tests/Unit/UiFailsClosedTest.php',
     __DIR__ . '/../tests/Unit/InMemoryUiRuntimeTest.php',
     __DIR__ . '/../tests/Unit/FrontendRenderArtifactTest.php',
+    __DIR__ . '/../tests/Unit/SmartViewDescriptorTest.php',
+    __DIR__ . '/../tests/Unit/CompositeSmartViewTest.php',
 ];
 
 foreach ($tests as $test) {

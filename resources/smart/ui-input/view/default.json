@@ -1,0 +1,11 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "ui.input",
+  "view": "default",
+  "template": "default",
+  "props": {"id": "smart-input", "name": "value", "label": "Value", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
+  "presets": {},
+  "modifiers": {},
+  "children": {},
+  "constraints": {}
+}

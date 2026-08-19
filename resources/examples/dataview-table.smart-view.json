@@ -1,0 +1,45 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "dataview.table",
+  "view": "default",
+  "template": "default",
+  "props": {},
+  "presets": {
+    "comfortable": {"props": {"density": "comfortable"}},
+    "compact": {"props": {"density": "compact"}}
+  },
+  "modifiers": {
+    "searchable": {"props": {"searchable": true}},
+    "filterable": {"props": {"filterable": true}}
+  },
+  "children": {
+    "toolbar": {
+      "component": "dataview.toolbar",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "toolbar",
+      "props": {},
+      "children": {}
+    },
+    "grid": {
+      "component": "dataview.table_grid",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "content",
+      "props": {},
+      "children": {}
+    },
+    "pagination": {
+      "component": "dataview.pagination",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "pagination",
+      "props": {},
+      "children": {}
+    }
+  },
+  "constraints": {"server_composed": true, "data_owner": "larena/dataview"}
+}

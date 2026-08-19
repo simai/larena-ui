@@ -1,0 +1,21 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "admin.collection",
+  "view": "default",
+  "template": "default",
+  "props": {"title": "Content"},
+  "presets": {},
+  "modifiers": {},
+  "children": {
+    "table": {
+      "component": "dataview.table",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "content",
+      "props": {"title": "Records"},
+      "children": {}
+    }
+  },
+  "constraints": {"server_composed": true}
+}

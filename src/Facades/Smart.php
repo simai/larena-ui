@@ -45,6 +45,35 @@ final class Smart
         return self::manager()->render($componentKey, $props, $assetActivation, $slots);
     }
 
+    /**
+     * @param array<string, mixed> $props
+     * @param array<string, mixed> $assetActivation
+     * @param array<string, string> $slots
+     * @param list<string> $modifiers
+     * @param array<string, array<string, mixed>> $childProps
+     */
+    public static function renderView(
+        string $componentKey,
+        string $viewKey,
+        array $props = [],
+        array $assetActivation = [],
+        array $slots = [],
+        ?string $preset = null,
+        array $modifiers = [],
+        array $childProps = [],
+    ): FrontendRenderArtifact {
+        return self::manager()->renderView(
+            $componentKey,
+            $viewKey,
+            $props,
+            $assetActivation,
+            $slots,
+            $preset,
+            $modifiers,
+            $childProps,
+        );
+    }
+
     public static function manager(): SmartManager
     {
         if (self::$managerResolver === null) {

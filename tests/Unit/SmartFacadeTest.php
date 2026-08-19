@@ -69,6 +69,16 @@ $modalArtifact = Smart::render('ui.modal', [
 assert($modalArtifact->isRenderable());
 assert(str_contains($modalArtifact->html(), '<sf-modal'));
 assert(str_contains($modalArtifact->html(), 'aria-label="Profile details"'));
+
+$viewArtifact = Smart::renderView('ui.dataview', 'default', [
+    'aria-label' => 'Pages',
+    'selectable' => false,
+    'settings' => false,
+    'actions' => false,
+    'data' => ['columns' => [], 'rows' => []],
+], $activation);
+assert($viewArtifact->isRenderable());
+assert(str_contains($viewArtifact->html(), '<sf-table'));
 assert(Smart::manager() === $manager);
 Smart::forgetResolver();
 

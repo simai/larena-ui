@@ -45,6 +45,19 @@ container-owned `SmartManager`; the manager remains the DI-first implementation
 and testing boundary. The legacy `Larena\Ui\Smart::render('sf-*')` adapter stays
 available for existing low-level frontend-tag callers.
 
+JSON Smart View descriptors select a registered component view, safe defaults,
+an optional preset and allowlisted modifiers without exposing PHP classes or
+template paths. Applications render them through `Smart::renderView(...)`.
+Layout stores only stable component/view/preset/modifier identifiers; UI owns
+their templates and validates the resolved props before using the same renderer
+and asset path as `Smart::render(...)`.
+
+Composite views are rendered recursively with a bounded cycle/depth guard.
+Each child remains a registered Smart View and contributes its verified assets;
+runtime data may override props only for declared child identifiers. The first
+composition is `admin.collection → dataview.table → dataview.toolbar +
+ui.dataview + ui.pagination`.
+
 Reference controls, presets and examples are derived from the same manifest.
 `SmartComponentReference` normalizes allowlisted controls, while
 `SmartInvocationExampleBuilder` produces inert PHP and frontend examples. It

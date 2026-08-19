@@ -1,0 +1,23 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "dataview.table",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "composite",
+  "props": {
+    "type": "object",
+    "properties": {"title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"}},
+    "required": ["title"],
+    "additionalProperties": false
+  },
+  "slots": {"toolbar": {}, "content": {}, "pagination": {}},
+  "events": {},
+  "views": {"default": {}},
+  "presets": {"comfortable": {"props": {}}, "compact": {"props": {}}},
+  "constraints": {"container": "section", "css_class": "larena-dataview-table", "slot_order": ["toolbar", "content", "pagination"], "modifiers": ["searchable", "filterable"]},
+  "render": {"strategy": "native", "renderer": "ui.composite.template"},
+  "frontend": {},
+  "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}],
+  "atlas": {"visible": false, "title": "Table Dataview", "description": "Table presentation assembled by the backend.", "category": "collections", "order": 110},
+  "provenance": {"source": "larena/ui", "reference_status": "backend_composite"}
+}

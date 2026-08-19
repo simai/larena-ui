@@ -1,0 +1,39 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "dataview.table",
+  "view": "default",
+  "template": "default",
+  "props": {"title": "Records"},
+  "presets": {"comfortable": {"props": {}}, "compact": {"props": {}}},
+  "modifiers": {"searchable": {"props": {}}, "filterable": {"props": {}}},
+  "children": {
+    "toolbar": {
+      "component": "dataview.toolbar",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "toolbar",
+      "props": {},
+      "children": {}
+    },
+    "grid": {
+      "component": "ui.dataview",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "content",
+      "props": {"aria-label": "Records", "selectable": false, "settings": false, "actions": false, "data": {"columns": [], "rows": []}},
+      "children": {}
+    },
+    "pagination": {
+      "component": "ui.pagination",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "pagination",
+      "props": {"current": 1, "total": 1, "top": false, "bottom": true, "show-more-text": "Show more", "page-size-label": "Items per page", "aria-label": "Page navigation", "id": "dataview-pagination"},
+      "children": {}
+    }
+  },
+  "constraints": {"server_composed": true, "data_owner": "larena/dataview"}
+}

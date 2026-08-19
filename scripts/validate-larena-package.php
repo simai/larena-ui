@@ -66,6 +66,7 @@ if ($codingStarted) {
         'docs/project-management/launch-records/canonical-developer-alpha-integration.json',
         'docs/project-management/launch-records/larena-minimal-cms-v1-b3.json',
         'docs/project-management/launch-records/larena-minimal-cms-v1-b11.json',
+        'docs/project-management/launch-records/larena-admin-declarative-smart-ui-v1-a0-a1.json',
     ], true)) {
         $errors[] = 'coding_started requires the current ui batch 1 launch record.';
     }

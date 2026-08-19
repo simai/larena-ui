@@ -11,6 +11,7 @@ use Larena\Ui\Enums\UiAssetKind;
 final readonly class SmartComponentManifest
 {
     public const SIMAI_FRAMEWORK_RENDERER_ID = 'ui.sf.element';
+    public const COMPOSITE_RENDERER_ID = 'ui.composite.template';
 
     /** @var list<string> */
     private const SAFE_PROVENANCE_KEYS = [

@@ -19,6 +19,12 @@ features:
   - ui.frontend_render_artifact
   - ui.source_backed_component_registry
   - ui.laravel_smart_facade
+  - ui.smart_view_descriptor_v1
+  - ui.smart_view_registry
+  - ui.smart_facade_view_render
+  - ui.composite_smart_view_renderer
+  - ui.admin_collection_composite
+  - ui.dataview_table_composite
   - ui.pinned_simai_framework_runtime
   - ui.smart_registry_catalog_projection
   - ui.smart_ai_catalog_projection

@@ -50,6 +50,24 @@ assert(($payload['diagnostics']['frontend_tag'] ?? null) === 'sf-input');
 assert(($payload['diagnostics']['asset_contract_mode'] ?? null) === 'manifest_verified');
 assert(($payload['diagnostics']['production_ready'] ?? null) === false);
 
+$viewArtifact = (new SmartManager($registry))->renderView('ui.dataview', 'default', [
+    'aria-label' => 'Pages',
+    'selectable' => false,
+    'settings' => false,
+    'actions' => false,
+    'data' => ['columns' => [], 'rows' => []],
+], $activation);
+assert($viewArtifact->isRenderable());
+assert(str_contains($viewArtifact->html(), '<sf-table'));
+
+$unknownViewRejected = false;
+try {
+    (new SmartManager($registry))->renderView('ui.dataview', 'unknown', [], $activation);
+} catch (InvalidArgumentException $exception) {
+    $unknownViewRejected = $exception->getMessage() === 'ui_smart_view_unknown:ui.dataview:unknown';
+}
+assert($unknownViewRejected);
+
 $unknownPropRejected = false;
 try {
     (new SmartManager($registry))->render('ui.input', [

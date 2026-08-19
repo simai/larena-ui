@@ -1,0 +1,5 @@
+{
+  "schema": "larena.evidence_deviations.v1",
+  "deviations": [],
+  "remaining": ["localized constructor authoring metadata is A5", "browser parity is A6"]
+}

@@ -6,6 +6,7 @@ namespace Larena\Ui\Runtime;
 
 use InvalidArgumentException;
 use Larena\Ui\Contracts\FrontendRenderArtifact;
+use Larena\Ui\Contracts\BackendRenderResult;
 use Larena\Ui\Contracts\SmartComponentManifest;
 use Larena\Ui\Contracts\UiAssetGraph;
 use Larena\Ui\Contracts\UiAssetRequirement;
@@ -61,6 +62,126 @@ final readonly class SmartManager
             'production_ready' => false,
             'all_41_packages_ready' => false,
         ]);
+    }
+
+    /**
+     * @param array<string, mixed> $props
+     * @param array<string, mixed> $assetActivation
+     * @param array<string, string> $slots
+     * @param list<string> $modifiers
+     * @param array<string, array<string, mixed>> $childProps
+     */
+    public function renderView(
+        string $key,
+        string $viewKey,
+        array $props,
+        array $assetActivation,
+        array $slots = [],
+        ?string $preset = null,
+        array $modifiers = [],
+        array $childProps = [],
+    ): FrontendRenderArtifact {
+        return $this->renderViewAtDepth($key, $viewKey, $props, $assetActivation, $slots, $preset, $modifiers, $childProps, 0, []);
+    }
+
+    /**
+     * @param array<string, mixed> $props
+     * @param array<string, mixed> $assetActivation
+     * @param array<string, string> $slots
+     * @param list<string> $modifiers
+     * @param array<string, array<string, mixed>> $childProps
+     * @param list<string> $stack
+     */
+    private function renderViewAtDepth(
+        string $key,
+        string $viewKey,
+        array $props,
+        array $assetActivation,
+        array $slots,
+        ?string $preset,
+        array $modifiers,
+        array $childProps,
+        int $depth,
+        array $stack,
+    ): FrontendRenderArtifact {
+        if ($depth > 6) {
+            throw new InvalidArgumentException('ui_smart_view_composition_depth_exceeded');
+        }
+        $viewIdentity = $key . ':' . $viewKey;
+        if (in_array($viewIdentity, $stack, true)) {
+            throw new InvalidArgumentException('ui_smart_view_composition_cycle:' . $viewIdentity);
+        }
+        $stack[] = $viewIdentity;
+        $view = $this->registry->view($key, $viewKey);
+        $resolved = $view->resolve($props, $preset, $modifiers);
+        foreach ($childProps as $childId => $override) {
+            if (!self::isChildPropsEntry($childId, $override) || !isset($resolved['children'][$childId])) {
+                throw new InvalidArgumentException('ui_smart_view_child_props_invalid:' . $viewIdentity . ':' . (string) $childId);
+            }
+        }
+
+        $childArtifacts = [];
+        foreach ($resolved['children'] as $childId => $child) {
+            $artifact = $this->renderViewAtDepth(
+                $child['component'],
+                $child['view'],
+                array_replace_recursive($child['props'], $childProps[$childId] ?? []),
+                $assetActivation,
+                [],
+                $child['preset'],
+                $child['modifiers'],
+                [],
+                $depth + 1,
+                $stack,
+            );
+            $childArtifacts[$childId] = $artifact;
+            $slot = $child['slot'];
+            $slots[$slot] = ($slots[$slot] ?? '') . $artifact->html();
+        }
+
+        $parent = $this->render($key, $resolved['props'], $assetActivation, $slots);
+        if ($childArtifacts === []) {
+            return $parent;
+        }
+
+        $requirements = $parent->render->assetRequirements;
+        $seen = [];
+        foreach ($requirements as $requirement) {
+            $seen[$requirement->assetKey . ':' . $requirement->kind->value] = true;
+        }
+        foreach ($childArtifacts as $artifact) {
+            foreach ($artifact->render->assetRequirements as $requirement) {
+                $assetIdentity = $requirement->assetKey . ':' . $requirement->kind->value;
+                if (!isset($seen[$assetIdentity])) {
+                    $requirements[] = $requirement;
+                    $seen[$assetIdentity] = true;
+                }
+            }
+        }
+        $render = new BackendRenderResult(
+            $parent->render->html,
+            $parent->render->strategy,
+            $parent->render->hydration,
+            $requirements,
+            $parent->render->copiedFrontendSource,
+        );
+        $graph = new UiAssetGraph($requirements, [
+            ...$parent->assetGraph->explain,
+            'smart-view:' . $viewIdentity,
+            'composite-children:' . count($childArtifacts),
+        ]);
+
+        return new FrontendRenderArtifact($render, $graph, $assetActivation, [
+            ...$parent->diagnostics,
+            'view_key' => $viewKey,
+            'view_template' => $resolved['template'],
+            'composite_child_count' => count($childArtifacts),
+        ]);
+    }
+
+    private static function isChildPropsEntry(mixed $childId, mixed $override): bool
+    {
+        return is_string($childId) && is_array($override) && !array_is_list($override);
     }
 
     private function assertSlots(SmartComponentManifest $manifest, array $slots): void

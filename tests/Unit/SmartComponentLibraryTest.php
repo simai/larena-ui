@@ -28,6 +28,7 @@ $components = [
     'ui.modal' => ['directory' => 'ui-modal', 'tag' => 'sf-modal'],
 ];
 $expectedKeys = array_keys($components);
+$compositeKeys = ['admin.collection', 'dataview.table', 'dataview.toolbar'];
 $expectedReadiness = [
     'safe_to_suggest' => true,
     'safe_to_render' => true,
@@ -105,7 +106,10 @@ assert(array_map(
     static fn ($entry): string => $entry->key,
     $catalog->components('en'),
 ) === $expectedKeys);
-assert(count($registry->manifests()) === count($components));
+assert(count($registry->manifests()) === count($components) + count($compositeKeys));
+foreach ($compositeKeys as $compositeKey) {
+    assert($registry->manifest($compositeKey)->rendererId === SmartComponentManifest::COMPOSITE_RENDERER_ID);
+}
 
 foreach ($components as $key => $definition) {
     $path = dirname(__DIR__, 2) . '/resources/smart/' . $definition['directory'] . '/manifest.json';

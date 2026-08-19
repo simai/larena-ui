@@ -1,0 +1,23 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "admin.collection",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "composite",
+  "props": {
+    "type": "object",
+    "properties": {"title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"}},
+    "required": ["title"],
+    "additionalProperties": false
+  },
+  "slots": {"content": {}},
+  "events": {},
+  "views": {"default": {}},
+  "presets": {},
+  "constraints": {"container": "section", "css_class": "larena-admin-collection", "slot_order": ["content"], "modifiers": []},
+  "render": {"strategy": "native", "renderer": "ui.composite.template"},
+  "frontend": {},
+  "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}],
+  "atlas": {"visible": false, "title": "Admin collection", "description": "Backend-composed collection screen.", "category": "admin", "order": 100},
+  "provenance": {"source": "larena/ui", "reference_status": "backend_composite"}
+}

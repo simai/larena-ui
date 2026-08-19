@@ -1,0 +1,11 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "ui.dataview",
+  "view": "default",
+  "template": "default",
+  "props": {},
+  "presets": {},
+  "modifiers": {},
+  "children": {},
+  "constraints": {"server_data_required": true, "read_only_first_slice": true}
+}

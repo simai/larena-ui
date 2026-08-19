@@ -1,0 +1,21 @@
+{
+  "schema": "larena.ui.smart_view.v1",
+  "component": "dataview.toolbar",
+  "view": "default",
+  "template": "default",
+  "props": {},
+  "presets": {},
+  "modifiers": {},
+  "children": {
+    "search": {
+      "component": "ui.input",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "search",
+      "props": {"id": "dataview-search", "name": "search", "label": "Search", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
+      "children": {}
+    }
+  },
+  "constraints": {"server_composed": true}
+}

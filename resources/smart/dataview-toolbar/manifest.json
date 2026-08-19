@@ -1,0 +1,18 @@
+{
+  "schema": "larena.ui.smart_manifest.v1",
+  "key": "dataview.toolbar",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "composite",
+  "props": {"type": "object", "properties": {}, "additionalProperties": false},
+  "slots": {"search": {}},
+  "events": {},
+  "views": {"default": {}},
+  "presets": {},
+  "constraints": {"container": "div", "css_class": "larena-dataview-toolbar", "slot_order": ["search"], "modifiers": []},
+  "render": {"strategy": "native", "renderer": "ui.composite.template"},
+  "frontend": {},
+  "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}],
+  "atlas": {"visible": false, "title": "Dataview toolbar", "description": "Search and filter controls for a data view.", "category": "collections", "order": 120},
+  "provenance": {"source": "larena/ui", "reference_status": "backend_composite"}
+}

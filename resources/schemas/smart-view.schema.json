@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://larena.dev/schemas/ui/smart-view.v1.json",
+  "title": "Larena Smart View Descriptor v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "component", "view", "template", "props", "presets", "modifiers", "children", "constraints"],
+  "properties": {
+    "schema": {"const": "larena.ui.smart_view.v1"},
+    "component": {"$ref": "#/$defs/componentKey"},
+    "view": {"$ref": "#/$defs/variantKey"},
+    "template": {"$ref": "#/$defs/variantKey"},
+    "props": {"$ref": "#/$defs/props"},
+    "presets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["props"],
+        "properties": {"props": {"$ref": "#/$defs/props"}}
+      }
+    },
+    "modifiers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["props"],
+        "properties": {"props": {"$ref": "#/$defs/props"}}
+      }
+    },
+    "children": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/child"}
+    },
+    "constraints": {"$ref": "#/$defs/props"}
+  },
+  "$defs": {
+    "componentKey": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"},
+    "variantKey": {"type": "string", "pattern": "^[a-z][a-z0-9_.-]{0,79}$"},
+    "safeValue": {
+      "oneOf": [
+        {"type": ["string", "number", "integer", "boolean", "null"]},
+        {"type": "array", "maxItems": 100, "items": {"$ref": "#/$defs/safeValue"}},
+        {"type": "object", "maxProperties": 100, "additionalProperties": {"$ref": "#/$defs/safeValue"}}
+      ]
+    },
+    "props": {"type": "object", "maxProperties": 100, "additionalProperties": {"$ref": "#/$defs/safeValue"}},
+    "child": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "view", "preset", "modifiers", "slot", "props", "children"],
+      "properties": {
+        "component": {"$ref": "#/$defs/componentKey"},
+        "view": {"$ref": "#/$defs/variantKey"},
+        "preset": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/variantKey"}]},
+        "modifiers": {"type": "array", "uniqueItems": true, "maxItems": 20, "items": {"$ref": "#/$defs/variantKey"}},
+        "slot": {"$ref": "#/$defs/variantKey"},
+        "props": {"$ref": "#/$defs/props"},
+        "children": {"type": "object", "additionalProperties": {"$ref": "#/$defs/child"}}
+      }
+    }
+  }
+}
