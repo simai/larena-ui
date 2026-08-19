@@ -38,7 +38,7 @@ $switched['bundle_id'] = 'sf-v5.4.0-local.3-aaaaaaaa-c843857c-registry-2c596327-
 $switched['framework_registry']['compatibility_id'] = $switched['pair_id'];
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'sf-v5.4.0-local.3-d1daa951-c843857c');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'sf-v5.4.0-local.3-812cc5e9-c843857c');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];
