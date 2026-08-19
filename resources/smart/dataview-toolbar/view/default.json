@@ -16,6 +16,51 @@
       "props": {"id": "dataview-search", "name": "search", "label": "Search", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
       "children": {}
     },
+    "filter_field": {
+      "component": "ui.dropdown",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "filters",
+      "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "title", "name": "filter_field", "label": "Filter field", "required": true, "placeholder": "Field", "search-placeholder": "Find field", "search": false, "disabled": false, "aria-label": "Filter field", "id": "dataview-filter-field", "options": [{"text": "Title", "value": "title", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Title"}]},
+      "children": {}
+    },
+    "filter_value": {
+      "component": "ui.input",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "filters",
+      "props": {"id": "dataview-filter-value", "name": "filter_value", "label": "Exact value", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
+      "children": {}
+    },
+    "sort_field": {
+      "component": "ui.dropdown",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "sorting",
+      "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "_record_id", "name": "sort_field", "label": "Sort field", "required": true, "placeholder": "Field", "search-placeholder": "Find field", "search": false, "disabled": false, "aria-label": "Sort field", "id": "dataview-sort-field", "options": [{"text": "Record", "value": "_record_id", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Record"}]},
+      "children": {}
+    },
+    "sort_direction": {
+      "component": "ui.dropdown",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "sorting",
+      "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "asc", "name": "sort_direction", "label": "Direction", "required": true, "placeholder": "Direction", "search-placeholder": "Find direction", "search": false, "disabled": false, "aria-label": "Sort direction", "id": "dataview-sort-direction", "options": [{"text": "Ascending", "value": "asc", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Ascending"}, {"text": "Descending", "value": "desc", "type": "text", "size": "1", "selected": false, "disabled": false, "aria-label": "Descending"}]},
+      "children": {}
+    },
+    "per_page": {
+      "component": "ui.dropdown",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "pagination",
+      "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "20", "name": "per_page", "label": "Items per page", "required": true, "placeholder": "Items", "search-placeholder": "Find size", "search": false, "disabled": false, "aria-label": "Items per page", "id": "dataview-per-page", "options": [{"text": "10", "value": "10", "type": "text", "size": "1", "selected": false, "disabled": false, "aria-label": "10 items"}, {"text": "20", "value": "20", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "20 items"}, {"text": "50", "value": "50", "type": "text", "size": "1", "selected": false, "disabled": false, "aria-label": "50 items"}, {"text": "100", "value": "100", "type": "text", "size": "1", "selected": false, "disabled": false, "aria-label": "100 items"}]},
+      "children": {}
+    },
     "submit": {
       "component": "ui.button",
       "view": "default",

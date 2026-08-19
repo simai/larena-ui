@@ -57,8 +57,9 @@ Each child remains a registered Smart View and contributes its verified assets;
 runtime data may override props only for declared child identifiers, including
 bounded nested overrides through `_props` and `_children`. The first
 composition is `admin.collection → dataview.table → dataview.toolbar +
-ui.dataview + ui.pagination`; the toolbar itself composes `ui.input` and
-`ui.button` views.
+ui.dataview + ui.pagination`; the toolbar itself composes replaceable
+`ui.input`, `ui.dropdown` and `ui.button` views for search, filtering, sorting,
+page size and submission.
 
 Reference controls, presets and examples are derived from the same manifest.
 `SmartComponentReference` normalizes allowlisted controls, while

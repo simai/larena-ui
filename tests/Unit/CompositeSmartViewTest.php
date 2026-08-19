@@ -29,6 +29,7 @@ assert(str_contains($artifact->html(), 'data-larena-composite="dataview.table"')
 assert(str_contains($artifact->html(), 'data-larena-composite="dataview.toolbar"'));
 assert(str_contains($artifact->html(), '<sf-input'));
 assert(str_contains($artifact->html(), '<sf-button'));
+assert(substr_count($artifact->html(), '<sf-dropdown') === 4);
 assert(str_contains($artifact->html(), '<sf-table'));
 assert(str_contains($artifact->html(), '<sf-pagination'));
 assert(($artifact->diagnostics['composite_child_count'] ?? null) === 1);
@@ -37,6 +38,10 @@ assert(count($artifact->assetGraph->requirements) > 0);
 $table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'], $activation, [], null, [], [
     'toolbar' => ['_children' => [
         'search' => ['value' => 'Welcome'],
+        'sort_direction' => ['value' => 'desc', 'options' => [
+            ['text' => 'Ascending', 'value' => 'asc', 'type' => 'text', 'size' => '1', 'selected' => false, 'disabled' => false, 'aria-label' => 'Ascending'],
+            ['text' => 'Descending', 'value' => 'desc', 'type' => 'text', 'size' => '1', 'selected' => true, 'disabled' => false, 'aria-label' => 'Descending'],
+        ]],
         'submit' => ['text' => 'Find', 'aria-label' => 'Find records'],
     ]],
     'grid' => ['data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Welcome']]]],
@@ -45,6 +50,8 @@ $table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'],
 assert(str_contains($table->html(), 'Welcome'));
 assert(str_contains($table->html(), 'value="Welcome"'));
 assert(str_contains($table->html(), 'text="Find"'));
+assert(str_contains($table->html(), 'name="sort_direction"'));
+assert(str_contains($table->html(), 'value="desc"'));
 assert(str_contains($table->html(), 'current="2"'));
 
 $unknownChildRejected = false;

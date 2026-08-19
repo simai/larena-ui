@@ -24,6 +24,7 @@
     "resources/examples/dataview-table.smart-view.json",
     "resources/smart/ui-button/view/default.json",
     "resources/smart/ui-dataview/view/default.json",
+    "resources/smart/ui-dropdown/view/default.json",
     "resources/smart/ui-input/view/default.json",
     "resources/smart/ui-pagination/view/default.json",
     "tests/Unit/SmartViewDescriptorTest.php",

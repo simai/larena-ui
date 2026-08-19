@@ -26,6 +26,10 @@ fail closed. This lets a page or future visual constructor configure, for
 example, `dataview.table → toolbar → search` without embedding template HTML or
 giving stored descriptors arbitrary renderer access.
 
+The default Dataview toolbar declares independent search, filter, sorting,
+pagination and action slots. Its input, dropdown and button children may be
+replaced or configured without replacing the table Dataview contract.
+
 Pages reference only stable component/view/preset/modifier keys. Therefore a
 compatible template or renderer can change without rewriting page data. A
 breaking prop or event contract requires a new manifest version and an

@@ -9,9 +9,11 @@ Implemented surfaces:
 - bounded recursive composite renderer with cycle/depth guards;
 - exact child asset aggregation;
 - Admin collection, table Dataview and toolbar composite views;
-- safe runtime child-prop overrides for declared child identifiers only.
+- safe runtime child-prop overrides for declared child identifiers only;
 - fail-closed nested child overrides plus replaceable input and button views for
-  the table toolbar.
+  the table toolbar;
+- replaceable dropdown views and declared filter, sorting and pagination slots
+  for a backend-configured table query toolbar.
 
 Checks on PHP 8.4.20:
 

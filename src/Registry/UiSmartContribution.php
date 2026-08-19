@@ -49,6 +49,7 @@ final class UiSmartContribution implements SmartContributionProvider
         foreach ([
             'ui-button',
             'ui-dataview',
+            'ui-dropdown',
             'ui-input',
             'ui-pagination',
             'dataview-toolbar',
