@@ -8,7 +8,8 @@
     "type": "object",
     "properties": {
       "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
-      "mode": {"type": "string", "enum": ["create", "update"]}
+      "mode": {"type": "string", "enum": ["create", "update"]},
+      "expanded": {"type": "boolean"}
     },
     "required": ["title", "mode"],
     "additionalProperties": false
@@ -17,7 +18,7 @@
   "events": {},
   "views": {"default": {}},
   "presets": {},
-  "constraints": {"container": "section", "css_class": "larena-admin-record-editor", "slot_order": ["fields", "actions"], "modifiers": []},
+  "constraints": {"container": "details", "css_class": "larena-admin-record-editor", "slot_order": ["fields", "actions"], "modifiers": []},
   "render": {"strategy": "native", "renderer": "ui.composite.template"},
   "frontend": {},
   "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}],

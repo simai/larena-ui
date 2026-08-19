@@ -3,7 +3,7 @@
   "component": "admin.record_editor",
   "view": "default",
   "template": "default",
-  "props": {"title": "Record", "mode": "create"},
+  "props": {"title": "Record", "mode": "create", "expanded": false},
   "presets": {},
   "modifiers": {},
   "children": {},

@@ -18,7 +18,7 @@ final class CompositeBackendRenderer implements SmartBackendRenderer
         $container = $manifest->constraints['container'] ?? null;
         $cssClass = $manifest->constraints['css_class'] ?? null;
         $slotOrder = $manifest->constraints['slot_order'] ?? null;
-        if (!is_string($container) || !in_array($container, ['div', 'section', 'nav'], true)
+        if (!is_string($container) || !in_array($container, ['details', 'div', 'section', 'nav'], true)
             || !is_string($cssClass) || preg_match('/^[a-z][a-z0-9_-]{0,79}$/', $cssClass) !== 1
             || !is_array($slotOrder) || !array_is_list($slotOrder)) {
             throw new InvalidArgumentException('ui_smart_composite_template_invalid:' . $manifest->componentKey);
@@ -35,11 +35,13 @@ final class CompositeBackendRenderer implements SmartBackendRenderer
             throw new InvalidArgumentException('ui_smart_composite_slot_order_incomplete:' . $manifest->componentKey);
         }
 
+        $expanded = $container === 'details' && ($props['expanded'] ?? false) === true;
         $html = '<' . $container . ' class="' . self::escape($cssClass) . '" data-larena-composite="'
-            . self::escape($manifest->componentKey) . '">';
+            . self::escape($manifest->componentKey) . '"' . ($expanded ? ' open' : '') . '>';
         $title = $props['title'] ?? null;
         if (is_string($title) && trim($title) !== '') {
-            $html .= '<h1 class="' . self::escape($cssClass . '__title') . '">' . self::escape($title) . '</h1>';
+            $titleTag = $container === 'details' ? 'summary' : 'h1';
+            $html .= '<' . $titleTag . ' class="' . self::escape($cssClass . '__title') . '">' . self::escape($title) . '</' . $titleTag . '>';
         }
         foreach (array_keys($ordered) as $slot) {
             $html .= '<div class="' . self::escape($cssClass . '__' . str_replace('.', '-', $slot))

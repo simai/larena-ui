@@ -29,10 +29,22 @@ $artifact = SmartManager::withDefaults()->renderView(
 );
 
 assert($artifact->isRenderable());
+assert(str_starts_with($artifact->html(), '<details class="larena-admin-record-editor"'));
+assert(str_contains($artifact->html(), '<summary class="larena-admin-record-editor__title">Edit record</summary>'));
+assert(!str_contains($artifact->html(), 'data-larena-composite="admin.record_editor" open'));
 assert(str_contains($artifact->html(), 'data-larena-composite="admin.record_editor"'));
 assert(str_contains($artifact->html(), 'data-larena-slot="fields"'));
 assert(str_contains($artifact->html(), '<sf-input></sf-input>'));
 assert(str_contains($artifact->html(), 'data-larena-slot="actions"'));
 assert(($artifact->diagnostics['component_key'] ?? null) === 'admin.record_editor');
+
+$expanded = SmartManager::withDefaults()->renderView(
+    'admin.record_editor',
+    'default',
+    ['title' => 'Edit record', 'mode' => 'update', 'expanded' => true],
+    $activation,
+    ['fields' => '', 'actions' => ''],
+);
+assert(str_contains($expanded->html(), 'data-larena-composite="admin.record_editor" open'));
 
 echo "AdminRecordEditorSmartViewTest passed.\n";
