@@ -30,6 +30,17 @@ final readonly class FrontendRuntimeAssetResolver
         ]);
     }
 
+    public static function smartRuntimeGraph(): UiAssetGraph
+    {
+        return new UiAssetGraph([
+            new UiAssetRequirement('simai.framework.smart_base.js', UiAssetKind::JavaScript, true),
+        ], [
+            'runtime:simai-framework',
+            'delivery:smart-runtime',
+            'delivery:pinned-immutable-pair',
+        ]);
+    }
+
     /**
      * @return list<array{asset_key:string,kind:string,relative_path:string,critical:bool}>
      */

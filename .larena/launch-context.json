@@ -14,7 +14,7 @@
     ".larena/launch-context.json", "CHANGELOG.md", "README.md", "composer.json", "module.yaml", "scripts/run-unit-tests.php", "scripts/validate-larena-package.php",
     "docs/developer/smart-view-contract.md",
     "docs/project-management/launch-records/larena-admin-declarative-smart-ui-v1-a0-a1.json",
-    "src/Contracts/SmartComponentManifest.php", "src/Contracts/SmartViewDescriptor.php", "src/Facades/Smart.php", "src/Smart.php", "src/Frontend/SourceBackedComponentRegistry.php",
+    "src/Contracts/SmartComponentManifest.php", "src/Contracts/SmartViewDescriptor.php", "src/Facades/Smart.php", "src/Smart.php", "src/Frontend/FrontendRuntimeAssetResolver.php", "src/Frontend/SourceBackedComponentRegistry.php",
     "src/Assets/AdminDataviewAssetManifest.php", "src/Registry/SmartRegistry.php", "src/Registry/UiSmartContribution.php", "src/Runtime/CompositeBackendRenderer.php", "src/Runtime/SmartManager.php",
     "resources/css/admin-dataview.css",
     "resources/sf/runtime-lock.json",

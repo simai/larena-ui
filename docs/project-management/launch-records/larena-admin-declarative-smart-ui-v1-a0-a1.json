@@ -17,6 +17,7 @@
     "src/Facades/Smart.php",
     "src/Smart.php",
     "src/Frontend/SourceBackedComponentRegistry.php",
+    "src/Frontend/FrontendRuntimeAssetResolver.php",
     "resources/smart/admin-collection/manifest.json",
     "resources/smart/admin-collection/view/default.json",
     "resources/smart/admin-record-editor/manifest.json",

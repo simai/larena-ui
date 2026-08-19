@@ -10,6 +10,7 @@ use Larena\Ui\Smart;
 
 $resolver = FrontendRuntimeAssetResolver::bundled();
 $core = $resolver->resolve(FrontendRuntimeAssetResolver::coreGraph());
+$smartRuntime = $resolver->resolve(FrontendRuntimeAssetResolver::smartRuntimeGraph());
 $assets = $resolver->resolve(Smart::assetGraph('sf-table'));
 $keys = array_column($assets, 'asset_key');
 
@@ -24,6 +25,9 @@ assert($keys === [
 assert(array_column($core, 'relative_path') === [
     'ui/distr/core/css/core.css',
     'ui/distr/core/js/core.js',
+]);
+assert(array_column($smartRuntime, 'relative_path') === [
+    'ui/distr/core/js/smart-base.js',
 ]);
 assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
     'ui/distr/core/css/core.css',
