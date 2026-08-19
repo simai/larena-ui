@@ -12,6 +12,7 @@
 .larena-dataview-toolbar{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
 .larena-dataview-toolbar>[data-larena-slot=search]{grid-column:1/-1}
 .larena-dataview-toolbar>[data-larena-slot=options]{justify-content:flex-start}
+.larena-dataview-toolbar>[data-larena-slot=actions]{justify-content:flex-start}
 .larena-dataview-toolbar>[data-larena-slot=search]{display:grid;grid-template-columns:minmax(150px,180px) minmax(120px,1fr);gap:.5rem}
 .larena-dataview-toolbar>[data-larena-slot=search]>sf-dropdown,
 .larena-dataview-toolbar>[data-larena-slot=search]>sf-input{display:block!important;width:100%;min-width:0}
