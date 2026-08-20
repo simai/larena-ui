@@ -161,6 +161,35 @@
 .larena-dataview-table__content .sf-table-toolbar { display: none !important; }
 .larena-dataview-table__content .table-wrap > div { margin-bottom: 0 !important; }
 
+/* The pinned SF table build currently paints its fallback `add` glyph for
+   settings and row-action controls. Keep the presentation correction in the
+   UI owner without changing the component's events or record semantics. */
+.larena-dataview-table__content .sf-table thead th:nth-child(2) button i.sf-icon,
+.larena-dataview-table__content .sf-table tbody td:nth-child(2) button i.sf-icon,
+.larena-dataview-table__content .sf-table tbody td:last-child button i.sf-icon {
+    position: relative;
+    color: transparent;
+}
+
+.larena-dataview-table__content .sf-table thead th:nth-child(2) button i.sf-icon::after,
+.larena-dataview-table__content .sf-table tbody td:nth-child(2) button i.sf-icon::after,
+.larena-dataview-table__content .sf-table tbody td:last-child button i.sf-icon::after {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--sf-on-surface);
+    font-family: "Material Symbols Outlined", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.larena-dataview-table__content .sf-table thead th:nth-child(2) button i.sf-icon::after { content: "settings"; }
+.larena-dataview-table__content .sf-table tbody td:nth-child(2) button i.sf-icon::after { content: "more_horiz"; }
+.larena-dataview-table__content .sf-table tbody td:last-child button:nth-of-type(1) i.sf-icon::after { content: "edit"; }
+.larena-dataview-table__content .sf-table tbody td:last-child button:nth-of-type(2) i.sf-icon::after { content: "visibility"; }
+.larena-dataview-table__content .sf-table tbody td:last-child button:nth-of-type(3) i.sf-icon::after { content: "delete"; }
+
 .larena-dataview-table__pagination {
     display: flex;
     min-width: 0;
@@ -219,18 +248,22 @@
 }
 
 @media (max-width: 680px) {
-    .larena-dataview-toolbar { grid-template-columns: 1fr auto; align-items: stretch; }
-    .larena-dataview-toolbar > [data-larena-slot="search"] { grid-template-columns: 1fr; }
-    .larena-dataview-toolbar > [data-larena-slot="actions"] { align-items: stretch; }
+    .larena-dataview-toolbar { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+    .larena-dataview-toolbar > [data-larena-slot] { grid-column: 1; width: 100%; }
+    .larena-dataview-toolbar > [data-larena-slot="search"] { grid-template-columns: minmax(0, 1fr); }
+    .larena-dataview-toolbar > [data-larena-slot="options"] { justify-content: stretch; }
+    .larena-dataview-toolbar > [data-larena-slot="options"] > * { width: 100%; }
+    .larena-dataview-toolbar > [data-larena-slot="actions"] {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+    }
+    .larena-dataview-toolbar > [data-larena-slot="actions"] > * { width: 100%; min-width: 0; }
+    .larena-dataview-query-options__title { justify-content: center; }
     .larena-dataview-query-options[open] { position: fixed; inset: auto 12px 12px; width: auto; max-height: 70vh; overflow: auto; }
     .larena-dataview-query-options > [data-larena-slot] { grid-template-columns: 1fr; }
     .larena-dataview-table__content > sf-table { width: 760px; min-width: 760px; }
     .larena-dataview-table__pagination { overflow-x: auto; padding-bottom: 4px; }
     .larena-dataview-table__pagination > sf-pagination { min-width: 620px; }
     .larena-admin-record-editor__fields { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 390px) {
-    .larena-dataview-toolbar > [data-larena-slot="options"],
-    .larena-dataview-toolbar > [data-larena-slot="actions"] { min-width: 0; }
 }
