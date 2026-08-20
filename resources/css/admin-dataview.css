@@ -85,7 +85,7 @@
 
 .larena-dataview-query-options[open] {
     position: absolute;
-    z-index: 30;
+    z-index: 300;
     inset-inline-end: 0;
     width: min(720px, calc(100vw - 340px));
     border: 1px solid var(--sf-outline-variant);
