@@ -79,6 +79,17 @@ $viewArtifact = Smart::renderView('ui.dataview', 'default', [
 ], $activation);
 assert($viewArtifact->isRenderable());
 assert(str_contains($viewArtifact->html(), '<sf-table'));
+$collectionArtifact = Smart::renderView('ui.dataview', 'default', [
+    'aria-label' => 'Project items',
+    'selectable' => true,
+    'settings' => true,
+    'actions' => true,
+    'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['id' => 'item-1', 'title' => 'Welcome']]],
+], $activation);
+assert($collectionArtifact->isRenderable());
+assert(str_contains($collectionArtifact->html(), ' selectable'));
+assert(str_contains($collectionArtifact->html(), ' settings'));
+assert(str_contains($collectionArtifact->html(), ' actions'));
 assert(Smart::manager() === $manager);
 Smart::forgetResolver();
 

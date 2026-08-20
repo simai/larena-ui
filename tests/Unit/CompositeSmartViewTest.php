@@ -29,6 +29,7 @@ assert(str_contains($artifact->html(), 'data-larena-composite="dataview.table"')
 assert(str_contains($artifact->html(), 'data-larena-composite="dataview.toolbar"'));
 assert(str_contains($artifact->html(), '<sf-input'));
 assert(str_contains($artifact->html(), '<sf-button'));
+assert(str_contains($artifact->html(), 'id="dataview-create-item"'));
 assert(substr_count($artifact->html(), '<sf-dropdown') === 5);
 assert(str_contains($artifact->html(), 'name="saved_view_id"'));
 assert(str_contains($artifact->html(), '<sf-table'));
@@ -36,7 +37,7 @@ assert(str_contains($artifact->html(), '<sf-pagination'));
 assert(($artifact->diagnostics['composite_child_count'] ?? null) === 1);
 assert(count($artifact->assetGraph->requirements) > 0);
 
-$table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'], $activation, [], null, [], [
+$table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'], $activation, [], 'compact', ['searchable', 'filterable'], [
     'toolbar' => ['_children' => [
         'search' => ['value' => 'Welcome'],
         'query_options' => ['_children' => [
@@ -47,7 +48,7 @@ $table = $manager->renderView('dataview.table', 'default', ['title' => 'Pages'],
         ]],
         'submit' => ['text' => 'Find', 'aria-label' => 'Find records'],
     ]],
-    'grid' => ['data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Welcome']]]],
+    'grid' => ['selectable' => true, 'settings' => true, 'actions' => true, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['id' => 'welcome', 'title' => 'Welcome']]]],
     'pagination' => ['current' => 2, 'total' => 4, 'next-href' => '/admin/cms?continuation=next_token'],
 ]);
 assert(str_contains($table->html(), 'Welcome'));
@@ -58,6 +59,9 @@ assert(str_contains($table->html(), 'value="desc"'));
 assert(str_contains($table->html(), 'current="2"'));
 assert(str_contains($table->html(), 'data-larena-pagination-next'));
 assert(str_contains($table->html(), 'continuation=next_token'));
+assert(str_contains($table->html(), ' selectable'));
+assert(str_contains($table->html(), ' settings'));
+assert(str_contains($table->html(), ' actions'));
 
 $unknownChildRejected = false;
 try {

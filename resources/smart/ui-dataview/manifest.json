@@ -8,9 +8,9 @@
     "type": "object",
     "properties": {
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "selectable": {"type": "boolean", "enum": [false]},
-      "settings": {"type": "boolean", "enum": [false]},
-      "actions": {"type": "boolean", "enum": [false]},
+      "selectable": {"type": "boolean"},
+      "settings": {"type": "boolean"},
+      "actions": {"type": "boolean"},
       "data": {"type": "object"}
     },
     "required": ["aria-label", "selectable", "settings", "actions", "data"],
@@ -20,7 +20,7 @@
   "events": {},
   "views": {"default": {}, "admin": {}},
   "presets": {},
-  "constraints": {"read_only_first_slice": true},
+  "constraints": {"presentation_controls_only": true, "backend_effect_binding": false},
   "render": {"strategy": "host", "renderer": "ui.sf.element"},
   "frontend": {"runtime": "simai-framework", "tag": "sf-table"},
   "assets": [

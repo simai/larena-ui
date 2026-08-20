@@ -7,5 +7,5 @@
   "presets": {},
   "modifiers": {},
   "children": {},
-  "constraints": {"server_data_required": true, "read_only_first_slice": true}
+  "constraints": {"server_data_required": true, "presentation_controls_only": true, "backend_effect_binding": false}
 }

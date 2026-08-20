@@ -42,6 +42,15 @@
       "slot": "actions",
       "props": {"text": "Apply", "size": "1", "type": "default", "scheme": "primary", "loading": false, "disabled": false, "native-type": "submit", "aria-label": "Apply table query"},
       "children": {}
+    },
+    "create": {
+      "component": "ui.button",
+      "view": "default",
+      "preset": null,
+      "modifiers": [],
+      "slot": "actions",
+      "props": {"text": "Create item", "size": "1", "type": "default", "scheme": "primary", "loading": false, "disabled": true, "native-type": "button", "aria-label": "Create item", "id": "dataview-create-item"},
+      "children": {}
     }
   },
   "constraints": {"server_composed": true}
