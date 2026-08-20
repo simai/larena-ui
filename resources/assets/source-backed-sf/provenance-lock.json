@@ -17,6 +17,11 @@
       "revision": "36d5f50667c572db513e1fc36d4e23145bb05333",
       "environment": "LARENA_SIMAI_FRAMEWORK_UI_SMART_ROOT"
     },
+    "ui_smart_pagination": {
+      "repository": "https://github.com/simai/ui-smart.git",
+      "revision": "b3e4be6dae614406f6031acb902bce23038402f6",
+      "environment": "LARENA_SIMAI_FRAMEWORK_UI_SMART_ROOT"
+    },
     "ui_play": {
       "repository": "https://github.com/simai/ui-play.git",
       "revision": "9bea3fcbf26119cd638863c9fa6c41e48408824f",
@@ -160,9 +165,9 @@
       "surface": "smart_component",
       "asset_id": "smart_js",
       "package_resource_path": "resources/assets/source-backed-sf/catalog/pagination/smart/js/pagination.js",
-      "source": "ui_smart",
-      "source_path": "smart/pagination/js/pagination.js",
-      "sha256": "3aae162c4c9e067a842e8d1f4e19d71e02a70066f96d04f08ca340374f8719a1"
+      "source": "ui_smart_pagination",
+      "source_path": "smart/pagination/js/pagination.min.js",
+      "sha256": "0007e66ae7cfe5067507dd9c04ff8822b1cbb193b91162c71be80572abd45631"
     }
   },
   "examples": {

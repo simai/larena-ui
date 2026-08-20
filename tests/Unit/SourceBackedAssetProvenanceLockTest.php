@@ -12,7 +12,7 @@ $data = $lock->toArray();
 
 assert($data['schema'] === 'larena.ui.source_backed_asset_provenance_lock.v1');
 assert($data['runtime'] === 'simai-framework');
-assert(array_keys($data['sources']) === ['ui', 'ui_smart', 'ui_play']);
+assert(array_keys($data['sources']) === ['ui', 'ui_smart', 'ui_smart_pagination', 'ui_play']);
 assert(count($lock->assets()) === 14);
 assert(count($lock->assets('button_proof')) === 4);
 assert(count($lock->assets('catalog')) === 10);
@@ -48,6 +48,7 @@ $tmp = sys_get_temp_dir() . '/larena-ui-provenance-' . bin2hex(random_bytes(8));
 $roots = [
     'ui' => $tmp . '/ui',
     'ui_smart' => $tmp . '/ui-smart',
+    'ui_smart_pagination' => $tmp . '/ui-smart-pagination',
     'ui_play' => $tmp . '/ui-play',
 ];
 

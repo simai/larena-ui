@@ -261,7 +261,7 @@ final readonly class SourceBackedAssetProvenanceLock
         }
 
         $sources = $this->data['sources'] ?? null;
-        if (!is_array($sources) || array_keys($sources) !== ['ui', 'ui_smart', 'ui_play']) {
+        if (!is_array($sources) || array_keys($sources) !== ['ui', 'ui_smart', 'ui_smart_pagination', 'ui_play']) {
             throw new RuntimeException('ui_source_backed_asset_provenance_sources_invalid');
         }
         foreach ($sources as $key => $source) {

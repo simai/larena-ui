@@ -31,7 +31,7 @@
       "preset": null,
       "modifiers": [],
       "slot": "pagination",
-      "props": {"current": 1, "total": 1, "top": false, "bottom": true, "show-more-text": "Show more", "page-size-label": "Items per page", "aria-label": "Page navigation", "id": "dataview-pagination"},
+      "props": {"current": 1, "total": 1, "top": false, "bottom": true, "show-more-text": "Show more", "selected-label": "Selected:", "total-label": "Total:", "show-total-text": "Show total", "pages-label": "Pages:", "previous-page-label": "Previous page", "page-label": "Page", "go-to-page-label": "Go to page", "next-page-label": "Next page", "last-page-text": "Last", "page-size-label": "Items per page", "aria-label": "Page navigation", "id": "dataview-pagination"},
       "children": {}
     }
   },

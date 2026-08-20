@@ -79,7 +79,7 @@
       "source": "smart/pagination",
       "javascript": "smart/smart/pagination/js/pagination.js",
       "css": null,
-      "attributes": ["current", "total", "top", "main", "bottom", "top-class", "main-class", "bottom-class", "show-more-text", "page-sizes", "page-size-label", "actions", "action", "action-apply-text", "action-for-all-label", "aria-label", "id", "class"]
+      "attributes": ["current", "total", "top", "main", "bottom", "top-class", "main-class", "bottom-class", "show-more-text", "selected-label", "total-label", "show-total-text", "pages-label", "previous-page-label", "page-label", "go-to-page-label", "next-page-label", "last-page-text", "page-sizes", "page-size-label", "actions", "action", "action-apply-text", "action-for-all-label", "aria-label", "id", "class"]
     },
     "sf-input": {
       "source": "smart/inputs",
