@@ -24,12 +24,20 @@ $manager = SmartManager::withDefaults();
 $menu = $manager->render('ui.admin_menu', [
     'brand' => 'Larena', 'logo-href' => '/admin', 'aria-label' => 'Admin navigation',
     'searchable' => true, 'collapsible' => true, 'settings' => false, 'compact' => false,
+    'persistence-mode' => 'external', 'settings-mode' => 'user',
+    'settings-revision' => 0, 'system-settings-revision' => 0,
+    'settings-state-endpoint' => '/admin/navigation/state',
+    'settings-endpoint' => '/admin/navigation/preferences/me',
+    'settings-reset-endpoint' => '/admin/navigation/preferences/me',
+    'system-settings-endpoint' => '/admin/navigation/defaults',
+    'system-settings-reset-endpoint' => '/admin/navigation/defaults',
+    'allow-system-settings' => false,
     'search-placeholder' => 'Search sections', 'toggle-label' => 'Menu',
     'items' => [
         ['item-id' => 'larena.cms.content', 'label' => 'Content', 'href' => '/admin/cms', 'left-icon' => 'database', 'active' => true, 'order' => 10],
         ['item-id' => 'larena.admin.settings', 'label' => 'Settings', 'href' => '/admin/settings', 'left-icon' => 'settings', 'active' => false, 'order' => 20],
     ],
-    'id' => 'admin-menu', 'class' => 'admin-menu',
+    'id' => 'admin-menu',
 ], $activation);
 assert($menu->isRenderable());
 assert(str_contains($menu->html(), '<sf-admin-menu'));
