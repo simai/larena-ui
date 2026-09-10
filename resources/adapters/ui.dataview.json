@@ -1,0 +1,72 @@
+{
+  "schema": "larena.ui.smart_adapter.v1",
+  "id": "ui.dataview",
+  "component_key": "ui.dataview",
+  "source_contract": {"id": "smart.data-view", "version": "1.0.0"},
+  "owner_package": "larena/ui",
+  "recommended_view": "dataview.table",
+  "accepted_props": {
+    "source": "resources/smart/ui-dataview/manifest.json",
+    "backend_owned": [
+      "data.columns",
+      "data.rows",
+      "filter_fields",
+      "sort_fields",
+      "actions",
+      "pagination.total"
+    ],
+    "host_owned": [
+      "aria-label",
+      "table-settings-key",
+      "filter-text",
+      "clear-text",
+      "search-placeholder",
+      "create-text",
+      "selectable",
+      "settings",
+      "actions"
+    ],
+    "preference_delta_only": [
+      "column_settings",
+      "saved_views",
+      "page_size"
+    ]
+  },
+  "allowed_events": {
+    "sf-data-view-query-change": "validate query through larena/dataview and return a fresh projection",
+    "sf-data-view-template-save": "persist an allowlisted saved-view delta",
+    "sf-data-view-column-settings-save": "persist column preference deltas",
+    "sf-data-view-page-change": "request an exact result page",
+    "sf-data-view-page-size-change": "request a bounded page size",
+    "sf-data-view-show-more": "request and append the next result page",
+    "sf-data-view-row-action": "dispatch one allowlisted domain action",
+    "sf-data-view-bulk-action": "dispatch one allowlisted bulk action"
+  },
+  "transport": {
+    "bridge": "application-owned semantic Smart event bridge",
+    "csrf": "host supplied",
+    "query_validation": "larena/dataview",
+    "record_access": "domain package plus larena/access",
+    "component_http_allowed": false
+  },
+  "ownership": {
+    "query_and_projection": "larena/dataview",
+    "record_source_and_actions": "contributing domain package",
+    "permissions": "larena/access and domain policy",
+    "preference_persistence": "larena/dataview descriptor store or larena/setting adapter",
+    "rendering": "larena/ui Smart renderer",
+    "interaction": "simai/ui-smart sf-table and sf-pagination"
+  },
+  "forbidden": [
+    "direct SF tags in Admin views",
+    "client-owned fields, operators, access or record semantics",
+    "route-specific JavaScript",
+    "arbitrary action IDs or URLs from the browser",
+    "localStorage as Larena data source of truth"
+  ],
+  "examples": {
+    "php": "Smart::renderView('dataview.table', ['props' => ['title' => $title], 'children' => $resolvedChildren]);",
+    "catalog": "/admin/ui/components/ui.dataview",
+    "neutral_catalog": "https://ui-admin.test/smart-component-catalog.html?component=smart.data-view"
+  }
+}

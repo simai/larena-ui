@@ -85,4 +85,26 @@ content hashes and pinned source revisions.
 The current implementation is developer-testable and does not claim
 production readiness or readiness of all Larena packages.
 
+## Canonical Smart source contracts
+
+The complete Admin Menu and Data View are reused as whole composite components.
+Their editable, frontend-neutral contracts live with the canonical SF5 source in
+`ui-loader/src/smart/*/smart.manifest.json`; Larena does not redefine that public
+ABI. Run `composer contracts:materialize` from a workspace containing the
+adjacent `ui-loader` checkout (or set `SIMAI_UI_LOADER_REPO`) to refresh the
+verified snapshot in `resources/contracts/`.
+
+`resources/adapters/*.json` is the Larena host projection. It declares backend
+ownership, accepted server props, semantic-event transport and the exact source
+contract version. `SourceSmartContractCatalog` fails closed when the snapshot
+hash, schema, version, custom element, backend adapter mapping or event set
+drifts. `InstalledSmartAdapterCatalog` exposes the verified public ABI together
+with this host projection for both developers and AI consumers.
+
+To change frontend behavior or the shared ABI, edit and test `ui-loader` first,
+increment the contract version or add a compatibility migration, rebuild its
+registry, then materialize the consumers. Larena-only access, persistence,
+query and rendering rules belong in the Larena manifest/adapter and must remain
+compatible with the source contract.
+
 Canonical specifications are in `simai/larena-specs`.

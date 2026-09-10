@@ -17,7 +17,16 @@
     "additionalProperties": false
   },
   "slots": {},
-  "events": {},
+  "events": {
+    "sf-data-view-query-change": {"kind": "custom", "backend_handler_binding": true},
+    "sf-data-view-template-save": {"kind": "custom", "backend_handler_binding": true},
+    "sf-data-view-column-settings-save": {"kind": "custom", "backend_handler_binding": true},
+    "sf-data-view-page-change": {"kind": "custom", "backend_handler_binding": true},
+    "sf-data-view-page-size-change": {"kind": "custom", "backend_handler_binding": true},
+    "sf-data-view-show-more": {"kind": "custom", "backend_handler_binding": false},
+    "sf-data-view-row-action": {"kind": "custom", "backend_handler_binding": false},
+    "sf-data-view-bulk-action": {"kind": "custom", "backend_handler_binding": false}
+  },
   "views": {"default": {}, "admin": {}},
   "presets": {},
   "constraints": {"presentation_controls_only": true, "backend_effect_binding": false},
@@ -34,14 +43,14 @@
   "atlas": {
     "visible": true,
     "title": "Data view",
-    "description": "Shows structured data in a table.",
+    "description": "Provides the table engine inside the whole Data View composition with search, filters, preferences, actions and pagination.",
     "category": "collections",
     "order": 60,
     "status": "developer_testable",
     "readiness": {
       "safe_to_suggest": true,
       "safe_to_render": true,
-      "safe_to_bind_data": false,
+      "safe_to_bind_data": true,
       "safe_to_execute_effect": false
     },
     "states": ["default", "loading", "empty", "error"],
@@ -71,13 +80,13 @@
     "i18n": {
       "en": {
         "title": "Data view",
-        "description": "Shows structured data in a table.",
+        "description": "Anchors the whole Data View composition.",
         "controls": {"aria-label": "Accessible name"},
         "options": {}
       },
       "ru": {
         "title": "Представление данных",
-        "description": "Показывает структурированные данные в таблице.",
+        "description": "Является основой комплексного представления данных.",
         "controls": {"aria-label": "Доступное название"},
         "options": {}
       }

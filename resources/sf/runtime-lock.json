@@ -1,38 +1,38 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "sf-v5.4.0-local.3-812cc5e9-b3e4be6d",
-  "bundle_id": "sf-v5.4.0-local.3-812cc5e9-b3e4be6d-registry-2c596327-exact-git-tree-v2",
+  "pair_id": "sf-v5.4.0-local.28-3db5af38-0b891dfb",
+  "bundle_id": "sf-v5.4.0-local.28-3db5af38-0b891dfb-registry-d6977db7-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
-  "tag": "v5.4.0-local.3",
+  "tag": "v5.4.0-local.28",
   "ui": {
-    "tag": "v5.4.0-local.3",
-    "commit": "812cc5e9b84003c195288fa2b86e73c12bae1489",
+    "tag": "v5.4.0-local.28",
+    "commit": "3db5af388d4c7165432b15b90e7b3987f85f8b6f",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "99158db5fa514dabccd727b57d62a4495b5a6d6aaf5a1ace88d37c81c74585e5",
+    "sha256": "03f32e12d19a0b046f7b286f5569224c42ebcd1bc5788f103a3b89fb7b03d68e",
     "files": 6238
   },
   "ui_smart": {
-    "tag": "v5.4.0-local.3",
-    "commit": "b3e4be6dae614406f6031acb902bce23038402f6",
+    "tag": "v5.4.0-local.28",
+    "commit": "0b891dfbc698fbfaa38181b3c2a835f07f85cab9",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "a275706819d329b49b0ece296629963348f0bc84390ff591a56b9a3077217f37",
+    "sha256": "875ac01030d11e721f5930f92d60480d207c6fac68abd4650bffec8894989f8c",
     "files": 364
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "sf-v5.4.0-local.3-812cc5e9-b3e4be6d",
+    "compatibility_id": "sf-v5.4.0-local.28-3db5af38-0b891dfb",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "2c5963276d31af09770fe41cad04826c04b634f7b2d798d9b0e32864517346b7",
+    "file_sha256": "d6977db7b4da559b8afc6ef11cf2ea8ac2df2f1cb72b03f8b35f3aecdba00e12",
     "source": {
-      "commit": "b7e8a2e810c0d49e31cb749a7ab34c373dd48bc6",
+      "commit": "2228262ad3588227b20045f66ca43556fcd27974",
       "tree": "contracts/generated",
-      "tree_oid": "ed200af53182334542b48fb7402e219068091bd4",
+      "tree_oid": "9aa7daf8895e14f0424c778ae6e3864f0622fab5",
       "mount": "contract",
-      "sha256": "0f915061c3664571f8ce522793ed7192889b8eb19e4c62490440926449a13f9b",
+      "sha256": "e2f9ff3fc24f850c4f1679e98ec4d4b6106d4412b98cff55f324197d5e2a464f",
       "files": 1
     }
   },
@@ -79,7 +79,7 @@
       "source": "smart/pagination",
       "javascript": "smart/smart/pagination/js/pagination.js",
       "css": null,
-      "attributes": ["current", "total", "top", "main", "bottom", "top-class", "main-class", "bottom-class", "show-more-text", "selected-label", "total-label", "show-total-text", "pages-label", "previous-page-label", "page-label", "go-to-page-label", "next-page-label", "last-page-text", "page-sizes", "page-size-label", "actions", "action", "action-apply-text", "action-for-all-label", "aria-label", "id", "class"]
+      "attributes": ["current", "total", "page-size", "top", "main", "bottom", "top-class", "main-class", "bottom-class", "show-more-text", "selected-label", "total-label", "show-total-text", "pages-label", "previous-page-label", "page-label", "go-to-page-label", "next-page-label", "last-page-text", "page-sizes", "page-size-label", "actions", "action", "action-apply-text", "action-for-all-label", "aria-label", "id", "class"]
     },
     "sf-input": {
       "source": "smart/inputs",
@@ -116,7 +116,7 @@
       "javascript": "smart/smart/admin-menu/js/admin-menu.js",
       "css": "ui/distr/component/admin-menu/css/admin-menu.css",
       "requires": ["sf-icon", "sf-badge", "sf-icon-button"],
-      "attributes": ["template", "brand", "logo", "logo-href", "aria-label", "searchable", "collapsible", "settings", "settings-title", "compact", "search-placeholder", "count", "toggle-label", "panel-class", "root-class", "id", "class"]
+      "attributes": ["template", "brand", "logo", "logo-href", "aria-label", "searchable", "collapsible", "settings", "settings-title", "compact", "persistence-mode", "settings-mode", "settings-revision", "system-settings-revision", "allow-system-settings", "settings-state-endpoint", "settings-endpoint", "settings-reset-endpoint", "system-settings-endpoint", "system-settings-reset-endpoint", "search-placeholder", "count", "toggle-label", "panel-class", "root-class", "id", "class"]
     },
     "sf-breadcrumbs": {
       "source": "smart/breadcrumbs",

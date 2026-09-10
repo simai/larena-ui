@@ -1,0 +1,41 @@
+{
+  "schema": "larena.ui.smart_adapter.v1",
+  "id": "ui.admin_menu",
+  "component_key": "ui.admin_menu",
+  "source_contract": {"id": "smart.admin-menu", "version": "1.0.0"},
+  "owner_package": "larena/ui",
+  "accepted_props": {
+    "source": "resources/smart/ui-admin-menu/manifest.json",
+    "package_owned": ["brand", "logo", "logo-href", "items"],
+    "host_owned": ["aria-label", "search-placeholder", "toggle-label", "persistence-mode", "settings-mode", "settings-revision", "system-settings-revision", "allow-system-settings"],
+    "user_draft_only": ["compact"]
+  },
+  "allowed_events": {
+    "sf-admin-menu-settings-save": "persist selected user or system delta",
+    "sf-admin-menu-settings-reset": "reset selected user or system delta",
+    "sf-admin-menu-settings-cancel": "discard draft without transport",
+    "sf-admin-menu-settings-mode-change": "load another settings level",
+    "sf-admin-menu-settings-refresh": "refresh state after conflict",
+    "sf-admin-menu-compact-change": "update host shell layout"
+  },
+  "transport": {
+    "bridge": "larena.ui.admin_smart_event_bridge.v1",
+    "csrf": "host supplied",
+    "concurrency": "base_revision compare-and-set",
+    "errors": ["validation", "forbidden", "revision_conflict", "transport"],
+    "component_http_allowed": false
+  },
+  "ownership": {
+    "data": "larena/admin navigation registry and resolver",
+    "permissions": "larena/access",
+    "persistence": "larena/setting through larena/admin",
+    "rendering": "larena/ui Smart renderer",
+    "interaction": "simai/ui-smart sf-admin-menu"
+  },
+  "forbidden": ["direct SF tags in Admin views", "client-owned access decisions", "route-specific JavaScript", "localStorage as Larena source of truth"],
+  "examples": {
+    "php": "Smart::render('ui.admin_menu', ['brand' => 'Larena', 'logo-href' => '/admin', 'aria-label' => 'Admin navigation', 'searchable' => true, 'collapsible' => true, 'settings' => true, 'compact' => false, 'persistence-mode' => 'external', 'search-placeholder' => 'Search sections', 'toggle-label' => 'Menu', 'items' => $resolvedTree], $assetActivation);",
+    "catalog": "/admin/ui/components/ui.admin_menu",
+    "neutral_catalog": "https://ui-admin.test/smart-component-catalog.html"
+  }
+}

@@ -9,6 +9,7 @@
     "properties": {
       "current": {"type": "integer"},
       "total": {"type": "integer"},
+      "page-size": {"type": "integer", "minimum": 1, "maximum": 100},
       "top": {"type": "boolean"},
       "bottom": {"type": "boolean"},
       "show-more-text": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},

@@ -26,9 +26,10 @@ $components = [
     'ui.badge' => ['directory' => 'ui-badge', 'tag' => 'sf-badge'],
     'ui.alert' => ['directory' => 'ui-alert', 'tag' => 'sf-alert'],
     'ui.modal' => ['directory' => 'ui-modal', 'tag' => 'sf-modal'],
+    'ui.admin_menu' => ['directory' => 'ui-admin-menu', 'tag' => 'sf-admin-menu'],
 ];
 $expectedKeys = array_keys($components);
-$internalSmartKeys = ['ui.admin_menu', 'ui.breadcrumbs', 'ui.icon_button', 'ui.avatar', 'ui.tag', 'ui.toggle'];
+$internalSmartKeys = ['ui.breadcrumbs', 'ui.icon_button', 'ui.avatar', 'ui.tag', 'ui.toggle'];
 $compositeKeys = ['admin.collection', 'admin.record_editor', 'dataview.table', 'dataview.toolbar', 'dataview.query_options'];
 $expectedReadiness = [
     'safe_to_suggest' => true,
@@ -60,6 +61,7 @@ $manager = new SmartManager($registry);
 $catalog = new SmartCatalogProjection($registry, new SmartInvocationExampleBuilder());
 $ai = new SmartAiCatalogProjection($catalog);
 $alternateRenderCount = 0;
+$expectedAlternateRenderCount = 0;
 $legacyRendererId = implode('.', ['ui', 'sf_element']);
 
 assert(SmartComponentManifest::isStableKey('ui'));
@@ -132,7 +134,10 @@ foreach ($components as $key => $definition) {
     assert(($manifest->provenance['reference_status'] ?? null) === 'source_backed');
     foreach ($manifest->eventSchema as $event) {
         assert(is_array($event));
-        assert(($event['backend_handler_binding'] ?? null) === false);
+        assert(is_bool($event['backend_handler_binding'] ?? null));
+        if (!in_array($key, ['ui.admin_menu', 'ui.dataview'], true)) {
+            assert($event['backend_handler_binding'] === false);
+        }
     }
 
     $runtimeDefinition = $sourceRegistry->get($definition['tag']);
@@ -146,6 +151,9 @@ foreach ($components as $key => $definition) {
     if ($definition['tag'] === 'sf-pagination') {
         $allowedProps[] = 'next-href';
     }
+    if ($definition['tag'] === 'sf-admin-menu') {
+        $allowedProps[] = 'items';
+    }
     $manifestProps = array_keys($manifest->propsSchema['properties'] ?? []);
     assert(array_values(array_diff($manifestProps, $allowedProps)) === []);
 
@@ -154,6 +162,7 @@ foreach ($components as $key => $definition) {
     assert($manifestAssets === $runtimeAssets);
 
     $reference = new SmartComponentReference($manifest);
+    $expectedAlternateRenderCount += count($reference->controls());
     $resolved = $reference->resolve();
     $sourceRegistry->assertPropsAllowed($definition['tag'], $resolved['props']);
     $artifact = $manager->render($key, $resolved['props'], $activation);
@@ -187,7 +196,11 @@ foreach ($components as $key => $definition) {
         $entry = $catalog->component($key, $locale);
         assert($entry->title !== '');
         assert($entry->description !== '');
-        assert($entry->readiness === $expectedReadiness);
+        $componentReadiness = $expectedReadiness;
+        if ($key === 'ui.dataview') {
+            $componentReadiness['safe_to_bind_data'] = true;
+        }
+        assert($entry->readiness === $componentReadiness);
         assert(array_map(
             static fn (array $control): string => (string) $control['key'],
             $entry->controls,
@@ -200,7 +213,7 @@ foreach ($components as $key => $definition) {
         }
     }
 }
-assert($alternateRenderCount === 48);
+assert($alternateRenderCount === $expectedAlternateRenderCount);
 
 $expectedSizes = ['1/3', '1/2', '1', '2', '3'];
 assert(($registry->manifest('ui.input')->propsSchema['properties']['size']['enum'] ?? null) === $expectedSizes);

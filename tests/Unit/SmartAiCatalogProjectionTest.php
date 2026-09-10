@@ -22,6 +22,7 @@ $expectedKeys = [
     'ui.badge',
     'ui.alert',
     'ui.modal',
+    'ui.admin_menu',
 ];
 
 $first = $ai->toArray('en');
@@ -41,7 +42,7 @@ foreach ($first['components'] as $component) {
     assert($component['readiness'] === [
         'safe_to_suggest' => true,
         'safe_to_render' => true,
-        'safe_to_bind_data' => false,
+        'safe_to_bind_data' => $component['key'] === 'ui.dataview',
         'safe_to_execute_effect' => false,
     ]);
 }
@@ -64,6 +65,7 @@ assert(!str_contains($firstJson, '"templates"'));
 assert(!str_contains($firstJson, '"raw_html"'));
 assert(str_contains($firstJson, 'resources/smart/ui-button/manifest.json'));
 assert(str_contains($firstJson, 'resources/smart/ui-dataview/manifest.json'));
+assert(str_contains($firstJson, 'sf-data-view-template-save'));
 assert(str_contains($firstJson, 'Simai Framework'));
 assert(str_contains($firstJson, '<sf-button'));
 assert(str_contains($firstJson, 'Smart::render'));

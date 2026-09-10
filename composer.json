@@ -10,6 +10,7 @@
     }
   ],
   "require": {
+    "illuminate/console": "^13.0",
     "php": "^8.3",
     "larena/core": "dev-main",
     "larena/dataview": "dev-main"
@@ -35,6 +36,9 @@
     "phpstan/phpstan": "^2.0"
   },
   "scripts": {
+    "contracts:materialize": "@php scripts/materialize-smart-contracts.php",
+    "contracts:materialize:b0": "@php scripts/materialize-smart-contracts.php",
+    "contracts:verify": "@php scripts/verify-smart-contracts-with-studio.php",
     "test": ["@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminRecordEditorSmartViewTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminDataviewRendererTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminUiLabReferenceBehaviorTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedComponentRegistryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkContractRegistryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeLockTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedAssetProvenanceLockTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartManagerTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartFacadeTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentReferenceTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartCatalogProjectionTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartAiCatalogProjectionTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentLibraryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SfActionLinkTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeAssetResolverTest.php"],
     "test:unit": "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
     "test:dependency": "@php tests/Unit/MinimalCmsDependencyContractTest.php",

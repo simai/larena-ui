@@ -1,0 +1,19 @@
+{
+    "schema": "larena.ui.source_contract_materialization.v1",
+    "contracts": [
+        {
+            "id": "smart.admin-menu",
+            "version": "1.0.0",
+            "file": "smart.admin-menu.json",
+            "manifest_sha256": "b8f7389a4c17ff64696f07479fc9bdb2a941eae79f009241d7ecacdfa75c4a6b"
+        },
+        {
+            "id": "smart.data-view",
+            "version": "1.0.0",
+            "file": "smart.data-view.json",
+            "manifest_sha256": "3a7bfc96ab160a5b8c9ffec2c54dce5b48e289fafbd11632faf1cdd8c70cd48e"
+        }
+    ],
+    "registry_sha256": "6aebe85984320170b90e7d2ffe36db36cbb6d48f76b0f197ef50dd048c7000a6",
+    "registry_schema_sha256": "7ce1d77cbe16efb4700504d0695a9185e6cb151c52d8fc549d3b8ff0df8196f3"
+}

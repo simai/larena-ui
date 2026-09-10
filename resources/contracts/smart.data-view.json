@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "id": "smart.data-view",
+  "version": "1.0.0",
+  "title": "Data view",
+  "summary": "Complete server-backed collection view with search, filters, table preferences, row and bulk actions, and pagination.",
+  "kind": "composite",
+  "reuse_mode": "whole",
+  "lifecycle": "experimental",
+  "tags": ["admin", "collection", "data", "filter", "table"],
+  "capabilities": ["data-view", "search", "filtering", "sorting", "selection", "preferences", "pagination", "responsive"],
+  "custom_element": "sf-table",
+  "templates": ["default"],
+  "exported_parts": [],
+  "composition": {
+    "uses": [
+      "smart.table",
+      "smart.pagination",
+      "smart.context-menu",
+      "smart.checkbox",
+      "smart.inputs",
+      "smart.dropdown",
+      "smart.datepicker",
+      "smart.tags",
+      "smart.icon-buttons"
+    ],
+    "public_parts": []
+  },
+  "inputs": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["aria-label", "table-settings-key"],
+    "properties": {
+      "template": {"type": "string", "const": "default", "default": "default"},
+      "aria-label": {"type": "string", "minLength": 1, "default": "Data table"},
+      "selectable": {"type": "boolean", "default": true},
+      "settings": {"type": "boolean", "default": true},
+      "actions": {"type": "boolean", "default": true},
+      "pagin": {"type": "boolean", "default": false},
+      "filter-text": {"type": "string", "default": "Filter"},
+      "clear-text": {"type": "string", "default": "Clear"},
+      "search-placeholder": {"type": "string", "default": "Search"},
+      "create-text": {"type": "string", "default": "Create"},
+      "pagination-total": {"type": "integer", "minimum": 0, "default": 0},
+      "pagination-page-size": {"type": "integer", "minimum": 1, "maximum": 100, "default": 10},
+      "page-sizes": {"type": "string", "default": "10,20,30,40"},
+      "context-menu-columns": {"type": "integer", "minimum": 1, "maximum": 4, "default": 2},
+      "table-settings-key": {"type": "string", "minLength": 1, "default": "admin.collection"}
+    }
+  },
+  "item_contract": {
+    "stable_id_attribute": "row.id",
+    "package_owned": ["columns[].key", "columns[].label", "filter_fields[].key", "filter_fields[].operators", "actions[].id"],
+    "preference_fields": ["column_settings.*.order", "column_settings.*.width", "column_settings.*.visible", "column_settings.*.pinned", "query.page_size"],
+    "supports": ["structured-cells", "row-selection", "bulk-selection", "column-resize", "column-reorder", "column-visibility", "filter-templates", "row-actions"]
+  },
+  "methods": {
+    "setTableData": {"summary": "Patch columns, rows or related table state supplied by the host.", "arguments": [{"name": "patch", "schema": {"type": "object"}}], "returns": {"type": "object"}},
+    "setColumns": {"summary": "Replace canonical backend-provided columns.", "arguments": [{"name": "columns", "schema": {"type": "array"}}], "returns": {"type": "object"}},
+    "setRows": {"summary": "Replace the current backend result rows.", "arguments": [{"name": "rows", "schema": {"type": "array"}}], "returns": {"type": "object"}},
+    "addRows": {"summary": "Append another backend page for show-more mode.", "arguments": [{"name": "rows", "schema": {"type": "array"}}], "returns": {"type": "object"}},
+    "setFilterFields": {"summary": "Register backend-allowlisted filter fields and controls.", "arguments": [{"name": "fields", "schema": {"type": "array"}}], "returns": {"type": "object"}},
+    "setTemplates": {"summary": "Apply saved filter/view templates.", "arguments": [{"name": "templates", "schema": {"type": "array"}}], "returns": {"type": "object"}},
+    "setTableSettings": {"summary": "Apply a column-preference delta without emitting a save request.", "arguments": [{"name": "settings", "schema": {"type": "object"}}], "returns": {"type": "object"}},
+    "getFilterPayload": {"summary": "Read the current filter draft for host-side query validation.", "arguments": [], "returns": {"type": "object"}},
+    "getColumnSettings": {"summary": "Read the current column-preference delta.", "arguments": [], "returns": {"type": "object"}}
+  },
+  "events": {
+    "sf-data-view-query-change": {"summary": "Request a backend query after search, filter or sort changes.", "payload": {"$ref": "#/contracts/query_intent"}},
+    "sf-data-view-template-save": {"summary": "Request persistence of an allowlisted saved-view delta.", "payload": {"type": "object", "required": ["templates"], "properties": {"templates": {"type": "array"}}}},
+    "sf-data-view-column-settings-save": {"summary": "Request persistence of column preference deltas.", "payload": {"type": "object", "required": ["table_settings_key", "column_settings"], "properties": {"table_settings_key": {"type": "string"}, "column_settings": {"$ref": "#/contracts/column_settings"}}}},
+    "sf-data-view-page-change": {"summary": "Request an exact result page.", "payload": {"type": "object", "required": ["page"], "properties": {"page": {"type": "integer", "minimum": 1}}}},
+    "sf-data-view-page-size-change": {"summary": "Request a new bounded page size and reset to page one.", "payload": {"type": "object", "required": ["page_size"], "properties": {"page_size": {"type": "integer", "minimum": 1, "maximum": 100}}}},
+    "sf-data-view-show-more": {"summary": "Request the next result page for append mode.", "payload": {"type": "object", "required": ["page"], "properties": {"page": {"type": "integer", "minimum": 2}}}},
+    "sf-data-view-row-action": {"summary": "Emit an allowlisted action intent for one stable record ID.", "payload": {"$ref": "#/contracts/action_intent"}},
+    "sf-data-view-bulk-action": {"summary": "Emit an allowlisted action intent for selected stable record IDs.", "payload": {"$ref": "#/contracts/action_intent"}}
+  },
+  "contracts": {
+    "query_intent": {
+      "type": "object",
+      "required": ["search", "filters", "sort", "page", "page_size"],
+      "properties": {
+        "search": {"type": "string"},
+        "filters": {"type": "object"},
+        "sort": {"type": "array"},
+        "page": {"type": "integer", "minimum": 1},
+        "page_size": {"type": "integer", "minimum": 1, "maximum": 100}
+      },
+      "additionalProperties": false
+    },
+    "column_settings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "order": {"type": "number"},
+          "width": {"type": "string"},
+          "visible": {"type": "boolean"},
+          "pinned": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "action_intent": {
+      "type": "object",
+      "required": ["action_id", "record_ids"],
+      "properties": {
+        "action_id": {"type": "string"},
+        "record_ids": {"type": "array", "items": {"type": ["string", "integer"]}, "minItems": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "state": {
+    "machine": {
+      "data": ["idle", "loading", "populated", "empty", "error"],
+      "query": ["clean", "searching", "filtered", "sorting", "paging"],
+      "preferences": ["idle", "editing", "saving", "success", "error", "conflict"]
+    },
+    "visual_states": ["loading", "populated", "empty", "error", "selected", "filtered", "settings-open", "context-menu", "wide-overflow", "mobile"]
+  },
+  "persistence": {
+    "modes": {"external": "The component holds drafts and emits semantic intents; the authenticated host owns all persistence."},
+    "source_of_truth": {"external": "backend Dataview projection and preference store"},
+    "external_rule": "The component never invents endpoints, executes domain queries or persists Larena data directly.",
+    "revision_field": "base_revision"
+  },
+  "ownership": {
+    "data": "Backend Dataview source, query validator, projection and access resolver.",
+    "side_effects": "Domain package handlers behind an allowlisted host event bridge.",
+    "forbidden_client_responsibilities": ["query authorization", "field/operator invention", "record access decisions", "domain mutations", "cross-user preference selection", "HTTP endpoint invention"]
+  },
+  "backend": {
+    "adapters": ["larena:ui.dataview"],
+    "integration_examples": {
+      "larena_php": "Smart::renderView('dataview.table', ['props' => ['title' => $title], 'children' => $resolvedChildren]);",
+      "event_bridge": "Normalize SF runtime events to Data View intents, validate them in larena/dataview, then return a fresh access-filtered projection."
+    }
+  },
+  "security": {
+    "permissions": ["Backend filters rows and actions last", "Only registered fields and operators enter a query", "Preference scope comes from the authenticated identity"],
+    "untrusted_input": ["Reject unknown columns, filters, sorts and action IDs", "Treat every row and structured cell as untrusted render data", "Never accept record ownership or access flags from the browser"]
+  },
+  "accessibility": {
+    "landmark": "region",
+    "required_label": "aria-label",
+    "keyboard": ["Tab", "Shift+Tab", "Enter", "Space", "Escape", "Arrow keys"],
+    "focus": "Filter, settings and row-action overlays stay viewport-bounded and restore focus to their trigger."
+  },
+  "presentation": {
+    "themes": ["light", "dark"],
+    "locales": ["en", "ru"],
+    "responsive": ["desktop-wide", "desktop-local-scroll", "mobile-stacked-toolbar", "mobile-horizontal-table-scroll", "viewport-bounded-overlays"]
+  },
+  "scenarios": [
+    {"id": "desktop-populated", "fixture": "data-view-reference", "viewport": "desktop", "assertions": ["search-filter-toolbar", "wide-columns-local-scroll", "sticky-header", "row-and-bulk-actions"]},
+    {"id": "server-query", "fixture": "data-view-reference", "viewport": "desktop", "assertions": ["search-intent", "filter-intent", "sort-intent", "access-filtered-response"]},
+    {"id": "preferences", "fixture": "data-view-reference", "viewport": "desktop", "assertions": ["column-resize", "column-reorder", "column-visibility", "delta-save", "conflict-retains-draft"]},
+    {"id": "pagination", "fixture": "data-view-reference", "viewport": "desktop", "assertions": ["page-change", "page-size-change", "show-more-append", "query-state-preserved"]},
+    {"id": "empty-error", "fixture": "data-view-reference", "viewport": "desktop", "assertions": ["loading", "empty", "error", "retry-intent"]},
+    {"id": "mobile-geometry", "fixture": "data-view-reference", "viewport": "mobile", "assertions": ["stacked-controls", "local-horizontal-scroll", "overlay-inside-viewport", "actions-reachable"]},
+    {"id": "theme-locale", "fixture": "data-view-reference", "viewport": "desktop", "assertions": ["light-dark", "ru-en", "accessible-labels"]}
+  ],
+  "compatibility": {
+    "contract_schema": {"id": "https://simai.io/contracts/smart-component-manifest.v1.schema.json", "version": 1},
+    "runtime_pair": {"ui_revision": "2228262ad3588227b20045f66ca43556fcd27974", "ui_smart_revision": "211cee6d4294f4407ed6e96fe01f6e9feaadd472"},
+    "aliases": ["smart.table"],
+    "deprecations": [],
+    "replacement": null,
+    "migrations": []
+  },
+  "provenance": {
+    "source_repository": "simai/ui-loader",
+    "source_revision": "1ab1915d9194594b3bebf14fbd1bd3bc9d11ff9f",
+    "source_artifacts": [
+      {"path": "src/smart/table/index.js", "sha256": "aff0681a178d017735ffba8b8054df9dbeb29cee8e11acc8ea0a68849936deeb"},
+      {"path": "src/smart/table/js/templates/default.js", "sha256": "3c59a85787b11cfcf895bdd0e9c45f0f599e0fb8d40ef7caf0e3a8d04c0a399b"},
+      {"path": "src/smart/table/js/templates/default.css", "sha256": "fc6bedca74105d5a879796644eb0499c62d23045a865a4ce6b541dcde5cbe6be"},
+      {"path": "src/smart/table/docs/smart-table-guide.md", "sha256": "fd9f40994d20f24fdaa316f93613cba9ba7da9799722360bea84082719f99028"},
+      {"path": "src/smart/pagination/index.js", "sha256": "b8409c9eec2bbef2c5ea837abeca59392daed4fdfe6099142411fca085aeb3ec"}
+    ],
+    "generated_runtime": [
+      {"repository": "simai/ui-smart", "revision": "211cee6d4294f4407ed6e96fe01f6e9feaadd472", "path": "smart/table/js/table.js", "sha256": "5d22480bf404e3a7114b89a074848710161badade052859334622e8deec99a79"},
+      {"repository": "simai/ui-smart", "revision": "211cee6d4294f4407ed6e96fe01f6e9feaadd472", "path": "smart/table/css/table.css", "sha256": "dbc753889da58032ec6e663160a4de13657d7278680e6f5f892f91be29c204c9"},
+      {"repository": "simai/ui-smart", "revision": "211cee6d4294f4407ed6e96fe01f6e9feaadd472", "path": "smart/pagination/js/pagination.js", "sha256": "8c62f67cc7979f42c59b4b2d3c4334c65eea57bffb2cfb923b486bee8a1cb04e"}
+    ]
+  },
+  "ai_guidance": {
+    "use_when": "Use the whole Data View for an admin collection that needs server search, filters, table preferences, actions or pagination.",
+    "do_not": ["Do not rebuild the toolbar, table and pagination from unrelated primitives", "Do not let the browser own query or access semantics", "Do not send arbitrary field, operator, route or action identifiers to the backend"],
+    "required_reads": ["contracts", "events", "persistence", "ownership", "backend", "scenarios"],
+    "minimal_example": "<sf-table aria-label=\"Records\" table-settings-key=\"package.records\"></sf-table><sf-pagination current=\"1\" total=\"1\"></sf-pagination>"
+  }
+}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3293015774ccd94fea394f335a78ba88",
+    "content-hash": "28df6a9ddcb435171ec076cbc975c279",
     "packages": [
         {
             "name": "brick/math",
@@ -1779,7 +1779,7 @@
             "dist": {
                 "type": "path",
                 "url": "../core",
-                "reference": "4c46725962d730f7ba8fa871f9bd1d57d9151391"
+                "reference": "47123f2e79fd8852c91af7eafb4b03754425ac4a"
             },
             "require": {
                 "illuminate/console": "^13.0",
@@ -1838,7 +1838,8 @@
                     "@php tests/Unit/FirstRunPreflightServiceTest.php",
                     "@php tests/Unit/WebInstallStateStoreTest.php",
                     "@php tests/Unit/WebInstallCoordinatorRecoveryTest.php",
-                    "@php tests/Unit/MinimalCmsDependencyContractTest.php"
+                    "@php tests/Unit/MinimalCmsDependencyContractTest.php",
+                    "@php tests/Unit/MinimalCmsCoreBoundaryTest.php"
                 ],
                 "test:unit": [
                     "@php tests/Unit/OperationRuntimeContractTest.php",
@@ -1866,7 +1867,8 @@
                     "@php tests/Unit/FirstRunPreflightServiceTest.php",
                     "@php tests/Unit/WebInstallStateStoreTest.php",
                     "@php tests/Unit/WebInstallCoordinatorRecoveryTest.php",
-                    "@php tests/Unit/MinimalCmsDependencyContractTest.php"
+                    "@php tests/Unit/MinimalCmsDependencyContractTest.php",
+                    "@php tests/Unit/MinimalCmsCoreBoundaryTest.php"
                 ],
                 "lint": [
                     "@php scripts/lint.php"
@@ -1917,7 +1919,7 @@
             "dist": {
                 "type": "path",
                 "url": "../dataview",
-                "reference": "b9c5f9456c5b773d730484f6e9d201e87c378bfd"
+                "reference": "685919570a7a57654528c4577bd119e436189e23"
             },
             "require": {
                 "larena/core": "dev-main",
@@ -1944,6 +1946,10 @@
                     "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/DataviewFailsClosedTest.php",
                     "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/ReadOnlyDataviewTableAdapterTest.php",
                     "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/DataviewTableRuntimeTest.php",
+                    "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/DataviewSixViewRuntimeTest.php",
+                    "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/DataviewWorkbenchFixtureTest.php",
+                    "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/DataviewDescriptorNormalizerTest.php",
+                    "@php -d zend.assertions=1 -d assert.exception=1 tests/Integration/DataviewDescriptorPersistenceTest.php",
                     "@php tests/Unit/MinimalCmsDependencyContractTest.php"
                 ],
                 "test:unit": [
@@ -1994,7 +2000,7 @@
             "dist": {
                 "type": "path",
                 "url": "../property",
-                "reference": "9650efe6a49ffc02a4cf2f6301b4a2e78752259b"
+                "reference": "b0253f5f2546ea8bcb8e52b47f31f9f71ae627c7"
             },
             "require": {
                 "illuminate/console": "^13.0",
@@ -2034,6 +2040,7 @@
                     "php -d zend.assertions=1 -d assert.exception=1 tests/Unit/PropertyFailsClosedTest.php",
                     "php -d zend.assertions=1 -d assert.exception=1 tests/Unit/PropertyTypeRegistryTest.php",
                     "php -d zend.assertions=1 -d assert.exception=1 tests/Unit/PropertyNormalizationValidationTest.php",
+                    "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/MinimalCmsPropertyStorageContractTest.php",
                     "php -d zend.assertions=1 -d assert.exception=1 tests/Unit/InMemoryPropertyRuntimeTest.php",
                     "php -d zend.assertions=1 -d assert.exception=1 tests/Unit/InMemoryPropertyRuntimeFailsClosedTest.php",
                     "php -d zend.assertions=1 -d assert.exception=1 tests/Feature/PropertyCommandProviderMigrationTest.php",
@@ -5008,7 +5015,7 @@
             "dist": {
                 "type": "path",
                 "url": "../layout",
-                "reference": "ae928aa9f2accebf7b443f0bc3f77d60ef7f7258"
+                "reference": "30c4ab5f452584d7c95d6186ed4d4b9ab999a5f5"
             },
             "require": {
                 "larena/core": "dev-main",
@@ -5036,6 +5043,9 @@
                 "test:unit": [
                     "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
                     "@php tests/Unit/MinimalCmsDependencyContractTest.php"
+                ],
+                "test:minimal-cms-layout": [
+                    "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/MinimalCmsRenderPlanTest.php"
                 ],
                 "lint": [
                     "@php scripts/lint.php"

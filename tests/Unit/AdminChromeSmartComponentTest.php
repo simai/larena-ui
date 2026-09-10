@@ -26,8 +26,8 @@ $menu = $manager->render('ui.admin_menu', [
     'searchable' => true, 'collapsible' => true, 'settings' => false, 'compact' => false,
     'search-placeholder' => 'Search sections', 'toggle-label' => 'Menu',
     'items' => [
-        ['label' => 'Content', 'href' => '/admin/cms', 'left-icon' => 'database', 'active' => true],
-        ['label' => 'Settings', 'href' => '/admin/settings', 'left-icon' => 'settings', 'active' => false],
+        ['item-id' => 'larena.cms.content', 'label' => 'Content', 'href' => '/admin/cms', 'left-icon' => 'database', 'active' => true, 'order' => 10],
+        ['item-id' => 'larena.admin.settings', 'label' => 'Settings', 'href' => '/admin/settings', 'left-icon' => 'settings', 'active' => false, 'order' => 20],
     ],
     'id' => 'admin-menu', 'class' => 'admin-menu',
 ], $activation);
@@ -62,7 +62,7 @@ try {
         'brand' => 'Larena', 'logo-href' => '/admin', 'aria-label' => 'Admin navigation',
         'searchable' => true, 'collapsible' => true, 'settings' => false, 'compact' => false,
         'search-placeholder' => 'Search', 'toggle-label' => 'Menu',
-        'items' => [['label' => 'Unsafe', 'href' => 'javascript:alert(1)']],
+        'items' => [['item-id' => 'larena.test.unsafe', 'label' => 'Unsafe', 'href' => 'javascript:alert(1)']],
     ], $activation);
 } catch (InvalidArgumentException $exception) {
     $unsafeRejected = $exception->getMessage() === 'ui_smart_admin_menu_item_href_invalid';

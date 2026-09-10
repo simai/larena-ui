@@ -1,0 +1,106 @@
+{
+  "entries": [
+    {
+      "backend_adapters": [
+        "larena:ui.admin_menu"
+      ],
+      "capabilities": [
+        "navigation",
+        "search",
+        "nested-panels",
+        "preferences",
+        "responsive"
+      ],
+      "composition": {
+        "public_parts": [],
+        "uses": [
+          "component.admin-menu",
+          "component.badges",
+          "component.icons",
+          "component.inputs",
+          "smart.context-menu"
+        ]
+      },
+      "contract_schema": {
+        "id": "https://simai.io/contracts/smart-component-manifest.v1.schema.json",
+        "version": 1
+      },
+      "custom_element": "sf-admin-menu",
+      "id": "smart.admin-menu",
+      "kind": "composite",
+      "lifecycle": "experimental",
+      "manifest_path": "src/smart/admin-menu/smart.manifest.json",
+      "manifest_sha256": "b8f7389a4c17ff64696f07479fc9bdb2a941eae79f009241d7ecacdfa75c4a6b",
+      "reuse_mode": "whole",
+      "runtime_pair": {
+        "ui_revision": "2228262ad3588227b20045f66ca43556fcd27974",
+        "ui_smart_revision": "211cee6d4294f4407ed6e96fe01f6e9feaadd472"
+      },
+      "summary": "Searchable nested admin navigation with compact mode and editable personal or system preferences.",
+      "tags": [
+        "admin",
+        "menu",
+        "navigation",
+        "settings"
+      ],
+      "title": "Admin menu"
+    },
+    {
+      "backend_adapters": [
+        "larena:ui.dataview"
+      ],
+      "capabilities": [
+        "data-view",
+        "search",
+        "filtering",
+        "sorting",
+        "selection",
+        "preferences",
+        "pagination",
+        "responsive"
+      ],
+      "composition": {
+        "public_parts": [],
+        "uses": [
+          "smart.table",
+          "smart.pagination",
+          "smart.context-menu",
+          "smart.checkbox",
+          "smart.inputs",
+          "smart.dropdown",
+          "smart.datepicker",
+          "smart.tags",
+          "smart.icon-buttons"
+        ]
+      },
+      "contract_schema": {
+        "id": "https://simai.io/contracts/smart-component-manifest.v1.schema.json",
+        "version": 1
+      },
+      "custom_element": "sf-table",
+      "id": "smart.data-view",
+      "kind": "composite",
+      "lifecycle": "experimental",
+      "manifest_path": "src/smart/table/smart.manifest.json",
+      "manifest_sha256": "3a7bfc96ab160a5b8c9ffec2c54dce5b48e289fafbd11632faf1cdd8c70cd48e",
+      "reuse_mode": "whole",
+      "runtime_pair": {
+        "ui_revision": "2228262ad3588227b20045f66ca43556fcd27974",
+        "ui_smart_revision": "211cee6d4294f4407ed6e96fe01f6e9feaadd472"
+      },
+      "summary": "Complete server-backed collection view with search, filters, table preferences, row and bulk actions, and pagination.",
+      "tags": [
+        "admin",
+        "collection",
+        "data",
+        "filter",
+        "table"
+      ],
+      "title": "Data view"
+    }
+  ],
+  "schema": "simai.smart-component-contract-registry.v1",
+  "schema_id": "https://simai.io/contracts/smart-component-manifest.v1.schema.json",
+  "schema_path": "contracts/schema/smart-component-manifest.schema.json",
+  "schema_sha256": "7ce1d77cbe16efb4700504d0695a9185e6cb151c52d8fc549d3b8ff0df8196f3"
+}

@@ -221,7 +221,7 @@ final class Smart
         }
 
         $html = '';
-        $allowed = ['label', 'href', 'left-icon', 'badge', 'active', 'disabled', 'slot', 'type', 'children'];
+        $allowed = ['item-id', 'label', 'href', 'left-icon', 'right-icon', 'badge', 'active', 'current', 'disabled', 'hidden', 'order', 'slot', 'type', 'children'];
         foreach ($items as $item) {
             if (!is_array($item) || array_is_list($item)) {
                 throw new \InvalidArgumentException('ui_smart_admin_menu_item_invalid');
@@ -244,7 +244,12 @@ final class Smart
                     throw new \InvalidArgumentException('ui_smart_admin_menu_item_label_invalid');
                 }
                 $attributes['label'] = $label;
-                foreach (['left-icon', 'badge'] as $key) {
+                $itemId = $item['item-id'] ?? null;
+                if (!is_string($itemId) || preg_match('/^[a-z][a-z0-9_.-]{2,159}$/', $itemId) !== 1) {
+                    throw new \InvalidArgumentException('ui_smart_admin_menu_item_id_invalid');
+                }
+                $attributes['item-id'] = $itemId;
+                foreach (['left-icon', 'right-icon', 'badge'] as $key) {
                     $value = $item[$key] ?? null;
                     if ($value !== null) {
                         if (!is_string($value) || trim($value) === '' || strlen($value) > 80
@@ -261,7 +266,7 @@ final class Smart
                     }
                     $attributes['href'] = $href;
                 }
-                foreach (['active', 'disabled'] as $key) {
+                foreach (['active', 'current', 'disabled', 'hidden'] as $key) {
                     if (array_key_exists($key, $item)) {
                         if (!is_bool($item[$key])) {
                             throw new \InvalidArgumentException('ui_smart_admin_menu_item_boolean_invalid:' . $key);
@@ -270,6 +275,12 @@ final class Smart
                             $attributes[$key] = '';
                         }
                     }
+                }
+                if (isset($item['order'])) {
+                    if (!is_int($item['order']) || $item['order'] < 0 || $item['order'] > 10000) {
+                        throw new \InvalidArgumentException('ui_smart_admin_menu_item_order_invalid');
+                    }
+                    $attributes['order'] = (string) $item['order'];
                 }
                 if (isset($item['slot'])) {
                     if (!is_string($item['slot']) || !in_array($item['slot'], ['main', 'bottom'], true)) {

@@ -15,17 +15,29 @@
       "collapsible": {"type": "boolean"},
       "settings": {"type": "boolean"},
       "compact": {"type": "boolean"},
+      "persistence-mode": {"type": "string", "enum": ["local", "external"]},
+      "settings-mode": {"type": "string", "enum": ["user", "system"]},
+      "settings-revision": {"type": "integer", "minimum": 0},
+      "system-settings-revision": {"type": "integer", "minimum": 0},
+      "allow-system-settings": {"type": "boolean"},
       "search-placeholder": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
       "toggle-label": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
       "items": {"type": "array"},
-      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
-      "class": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9 _-]*$"}
+      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
     "required": ["brand", "logo-href", "aria-label", "searchable", "collapsible", "settings", "compact", "search-placeholder", "toggle-label", "items"],
     "additionalProperties": false
   },
   "slots": {},
-  "events": {"sf-connected": {"kind": "lifecycle", "backend_handler_binding": false}},
+  "events": {
+    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
+    "sf-admin-menu-settings-save": {"kind": "semantic", "backend_handler_binding": true},
+    "sf-admin-menu-settings-reset": {"kind": "semantic", "backend_handler_binding": true},
+    "sf-admin-menu-settings-cancel": {"kind": "semantic", "backend_handler_binding": false},
+    "sf-admin-menu-settings-mode-change": {"kind": "semantic", "backend_handler_binding": true},
+    "sf-admin-menu-settings-refresh": {"kind": "semantic", "backend_handler_binding": true},
+    "sf-admin-menu-compact-change": {"kind": "semantic", "backend_handler_binding": false}
+  },
   "views": {"default": {}},
   "presets": {},
   "constraints": {},
@@ -43,6 +55,69 @@
     {"key": "simai.framework.sf_admin_menu.css", "kind": "css", "critical": true},
     {"key": "simai.framework.sf_admin_menu.js", "kind": "javascript", "critical": true}
   ],
-  "atlas": {"visible": false, "title": "Admin menu", "description": "Source-backed product navigation.", "category": "admin", "order": 5},
+  "atlas": {
+    "visible": true,
+    "title": "Admin menu",
+    "description": "Complete source-backed admin navigation with search, nesting, compact mode and external settings events.",
+    "category": "navigation",
+    "order": 110,
+    "status": "developer_testable",
+    "readiness": {
+      "safe_to_suggest": true,
+      "safe_to_render": true,
+      "safe_to_bind_data": false,
+      "safe_to_execute_effect": false
+    },
+    "states": ["expanded", "compact", "searching", "nested", "saving", "success", "error", "conflict"],
+    "accessibility": ["navigation_landmark", "accessible_name", "keyboard_navigation", "visible_focus"],
+    "product_href": "/admin/cms",
+    "example_props": {
+      "brand": "Larena",
+      "logo-href": "/admin",
+      "aria-label": "Admin navigation",
+      "searchable": true,
+      "collapsible": true,
+      "settings": true,
+      "compact": false,
+      "persistence-mode": "external",
+      "settings-mode": "user",
+      "settings-revision": 0,
+      "system-settings-revision": 0,
+      "allow-system-settings": false,
+      "search-placeholder": "Search sections",
+      "toggle-label": "Menu",
+      "items": [
+        {"item-id": "demo.dashboard", "label": "Dashboard", "left-icon": "home", "href": "/admin", "active": true},
+        {"item-id": "demo.content", "label": "Content", "left-icon": "description", "badge": "12", "children": [
+          {"item-id": "demo.content.pages", "label": "Pages", "href": "/admin/cms"},
+          {"item-id": "demo.content.media", "label": "Media", "badge": "new"}
+        ]}
+      ]
+    },
+    "controls": [
+      {"key": "brand", "source": "prop", "widget": "text", "min_length": 1, "max_length": 80},
+      {"key": "searchable", "source": "prop", "widget": "boolean"},
+      {"key": "collapsible", "source": "prop", "widget": "boolean"},
+      {"key": "settings", "source": "prop", "widget": "boolean"},
+      {"key": "compact", "source": "prop", "widget": "boolean"},
+      {"key": "persistence-mode", "source": "prop", "widget": "select"},
+      {"key": "settings-mode", "source": "prop", "widget": "select"}
+    ],
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "i18n": {
+      "en": {
+        "title": "Admin menu",
+        "description": "Complete source-backed admin navigation with search, nesting, compact mode and external settings events.",
+        "controls": {"brand": "Brand", "searchable": "Search", "collapsible": "Compact mode", "settings": "Settings", "compact": "Compact", "persistence-mode": "Persistence", "settings-mode": "Settings level"},
+        "options": {"persistence-mode": {"local": "Local demo", "external": "Backend-owned"}, "settings-mode": {"user": "Personal", "system": "For everyone"}}
+      },
+      "ru": {
+        "title": "Меню администратора",
+        "description": "Полное меню администратора с поиском, вложенностью, компактным режимом и внешним сохранением настроек.",
+        "controls": {"brand": "Бренд", "searchable": "Поиск", "collapsible": "Сворачивание", "settings": "Настройки", "compact": "Компактный режим", "persistence-mode": "Хранение", "settings-mode": "Уровень настроек"},
+        "options": {"persistence-mode": {"local": "Локальное демо", "external": "Хранит backend"}, "settings-mode": {"user": "Личные", "system": "Для всех"}}
+      }
+    }
+  },
   "provenance": {"source": "larena/ui", "runtime_lock": "resources/sf/runtime-lock.json", "upstream_component": "simai/ui-smart:smart/admin-menu", "upstream_revision": "eb291eaf2e9cafa6bb19d3374f46e9998ba6b742", "reference_status": "source_backed"}
 }

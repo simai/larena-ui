@@ -1,0 +1,26 @@
+{
+  "schema": "larena.package_launch_record.v1",
+  "id": "larena-dataview-developer-workbench-v1-ui",
+  "goal": "larena-dataview-developer-workbench-v1",
+  "package": "larena/ui",
+  "branch": "main",
+  "base_commit": "dbb545e6ea48be452f5ff8697d3e5ac0bfc0f4b1",
+  "scope": "Bind the existing ui.dataview Smart component and pagination to generic backend events, external preference persistence and full-width responsive workbench presentation.",
+  "allowed_files": [
+    "resources/js/admin-smart-event-bridge.js",
+    "resources/css/admin-ui-lab.css",
+    "resources/smart/ui-dataview/manifest.json",
+    "src/Assets/AdminUiLabAssetManifest.php",
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php",
+    "tests/Unit/AdminSmartEventBridgeContractTest.php",
+    "docs/project-management/launch-records/larena-dataview-developer-workbench-v1.json"
+  ],
+  "forbidden": ["localStorage state", "frontend-owned access or record semantics", "copied table markup", "production deployment", "public release"],
+  "runtime_boundary": "local package tests and authenticated larena.test developer workbench only",
+  "target_id": "larena.target.dataview_developer_workbench_v1",
+  "semantic_digest": "sha256:679476f524c6734e435e0b9b4003ba0e350e1f6746248ce9aa1bb5928c04c897",
+  "evidence": "source/workflow/2026-08-22-larena-dataview-developer-workbench-v1.md",
+  "rollback": "Remove the generic bridge additions, workbench CSS, manifest bindings and this launch record.",
+  "production_ready": false,
+  "status": "browser_acceptance_pending"
+}

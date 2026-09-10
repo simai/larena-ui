@@ -22,6 +22,7 @@ $expectedKeys = [
     'ui.badge',
     'ui.alert',
     'ui.modal',
+    'ui.admin_menu',
 ];
 
 $english = $projection->components('en');

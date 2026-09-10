@@ -136,6 +136,8 @@ final readonly class FrontendRuntimeLock
     private function assertValid(): void
     {
         $publicationProfile = $this->data['publication_profile'] ?? null;
+        $revisionPair = $publicationProfile === 'exact-git-tree-v2'
+            && preg_match('/^ui-[a-f0-9]{12}-smart-[a-f0-9]{12}$/', (string) ($this->data['pair_id'] ?? '')) === 1;
         $stableTag = '/^v\d+\.\d+\.\d+$/';
         $candidateTag = '/^v\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:\.[0-9A-Za-z]+)*)?$/';
         $tagPattern = $publicationProfile === 'exact-git-tree-v2' ? $candidateTag : $stableTag;
@@ -144,14 +146,16 @@ final readonly class FrontendRuntimeLock
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['pair_id'] ?? ''))
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['bundle_id'] ?? ''))
             || !in_array($publicationProfile, ['verified-release-artifact-v1', 'exact-git-tree-v2'], true)
-            || !preg_match($tagPattern, (string) ($this->data['tag'] ?? ''))
+            || (!($revisionPair && array_key_exists('tag', $this->data) && $this->data['tag'] === null)
+                && !preg_match($tagPattern, (string) ($this->data['tag'] ?? '')))
         ) {
             throw new RuntimeException('ui_frontend_runtime_lock_invalid');
         }
         foreach (['ui', 'ui_smart'] as $source) {
             $value = $this->data[$source] ?? null;
             if (!is_array($value)
-                || !preg_match($candidateTag, (string) ($value['tag'] ?? ''))
+                || (!($revisionPair && array_key_exists('tag', $value) && $value['tag'] === null)
+                    && !preg_match($candidateTag, (string) ($value['tag'] ?? '')))
                 || !$this->validPublicationSource($value)
             ) {
                 throw new RuntimeException('ui_frontend_runtime_source_invalid:' . $source);
@@ -166,7 +170,11 @@ final readonly class FrontendRuntimeLock
             throw new RuntimeException('ui_frontend_runtime_source_layout_invalid');
         }
 
-        $expectedPairId = sprintf(
+        $expectedPairId = $revisionPair ? sprintf(
+            'ui-%s-smart-%s',
+            substr((string) $this->data['ui']['commit'], 0, 12),
+            substr((string) $this->data['ui_smart']['commit'], 0, 12),
+        ) : sprintf(
             'sf-%s-%s-%s',
             (string) $this->data['tag'],
             substr((string) $this->data['ui']['commit'], 0, 8),
@@ -192,7 +200,7 @@ final readonly class FrontendRuntimeLock
             || ($source['tree'] ?? null) !== 'contracts/generated'
             || !preg_match('/^[a-f0-9]{40}$/', (string) ($source['tree_oid'] ?? ''))
             || ($source['mount'] ?? null) !== 'contract'
-            || ($source['files'] ?? null) !== 1
+            || (!$revisionPair && ($source['files'] ?? null) !== 1)
         ) {
             throw new RuntimeException('ui_frontend_framework_registry_lock_invalid');
         }

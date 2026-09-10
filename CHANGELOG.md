@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Render table action icons from their Smart descriptors instead of positional CSS glyph substitutions.
+
+- Connect native pagination to applied backend queries and append backend-projected rows with one Show more control, preserving row actions and selection counts.
+
+- Keep expanded collection filters in document flow so Search and Apply remain reachable.
+
+- Hydrate native table column settings and serialize server saves; show save failures and protect pending changes on navigation.
+
 - Register the source-backed Admin Menu, Breadcrumbs, Icon Button, Avatar,
   Tag and Toggle primitives required by the backend-composed Admin shell.
 - Move advanced Dataview query controls behind a reusable progressive

@@ -410,7 +410,8 @@ final readonly class FrameworkContractRegistry
 
     private static function isCompatibilityId(string $id): bool
     {
-        return preg_match('/^sf-v\d+\.\d+\.\d+-[a-f0-9]{8}-[a-f0-9]{8}$/', $id) === 1;
+        return preg_match('/^ui-[a-f0-9]{12}-smart-[a-f0-9]{12}$/', $id) === 1
+            || preg_match('/^sf-v\d+\.\d+\.\d+-[a-f0-9]{8}-[a-f0-9]{8}$/', $id) === 1;
     }
 
     private static function isEntryId(string $id): bool

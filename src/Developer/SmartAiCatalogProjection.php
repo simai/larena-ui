@@ -69,7 +69,8 @@ final readonly class SmartAiCatalogProjection
         foreach ($value as $key => $child) {
             $keyString = (string) $key;
             $normalizedKey = strtolower(str_replace('-', '_', $keyString));
-            if (preg_match('/(^|_)(callback|callbacks|callable|class|classes|method|methods|template|templates|raw_html|php_callable|javascript_handler)($|_)/', $normalizedKey) === 1) {
+            $isEventIdentifier = str_ends_with($path, '.events');
+            if (!$isEventIdentifier && preg_match('/(^|_)(callback|callbacks|callable|class|classes|method|methods|template|templates|raw_html|php_callable|javascript_handler)($|_)/', $normalizedKey) === 1) {
                 throw new InvalidArgumentException('ui_smart_ai_catalog_executable_key:' . $path . '.' . $keyString);
             }
             $this->assertSafe($child, $path . '.' . $keyString);
