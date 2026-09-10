@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Publish the immutable Framework runtime artifact for the pinned
+  `sf-v5.4.0-local.28-3db5af38-0b891dfb` UI/Smart revision pair.
+
 - Render table action icons from their Smart descriptors instead of positional CSS glyph substitutions.
 
 - Connect native pagination to applied backend queries and append backend-projected rows with one Show more control, preserving row actions and selection counts.
