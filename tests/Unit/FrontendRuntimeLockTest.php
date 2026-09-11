@@ -7,8 +7,8 @@ require_once __DIR__ . '/../bootstrap.php';
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->pairId() === 'sf-v5.4.0-local.28-3db5af38-0b891dfb');
-assert($lock->bundleId() === 'sf-v5.4.0-local.28-3db5af38-0b891dfb-registry-d6977db7-exact-git-tree-v2');
+assert($lock->pairId() === 'ui-2228262ad358-smart-8b0e0482f78a');
+assert($lock->bundleId() === 'ui-2228262ad358-smart-8b0e0482f78a-registry-d6977db7-exact-git-tree-v2');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
@@ -22,18 +22,18 @@ assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());
 assert($expectation['sources'] === [
     [
-        'commit' => '3db5af388d4c7165432b15b90e7b3987f85f8b6f',
+        'commit' => '2228262ad3588227b20045f66ca43556fcd27974',
         'tree' => 'distr',
         'mount' => 'ui',
-        'archive_sha256' => '03f32e12d19a0b046f7b286f5569224c42ebcd1bc5788f103a3b89fb7b03d68e',
+        'archive_sha256' => 'f2cd7917b46d9993b38598f45b23b8a88df8b53c6d7e795fb062431647bde1ab',
         'files' => 6238,
     ],
     [
-        'commit' => '0b891dfbc698fbfaa38181b3c2a835f07f85cab9',
+        'commit' => '8b0e0482f78a19aa6af2483d61fe9fe3b79a8e1b',
         'tree' => 'smart',
         'mount' => 'smart',
-        'archive_sha256' => '875ac01030d11e721f5930f92d60480d207c6fac68abd4650bffec8894989f8c',
-        'files' => 364,
+        'archive_sha256' => 'f46d4993c80967197f1eaaed76132a428609d6d8398fd6b409711088623653c1',
+        'files' => 608,
     ],
     [
         'commit' => '2228262ad3588227b20045f66ca43556fcd27974',
@@ -96,7 +96,7 @@ foreach ([
     static function (array &$data): void { $data['ui_smart']['tree'] = 'distr'; },
     static function (array &$data): void { $data['ui_smart']['mount'] = 'ui'; },
     static function (array &$data): void { unset($data['ui_smart']); },
-    static function (array &$data): void { $data['framework_registry']['source']['files'] = 2; },
+    static function (array &$data): void { $data['framework_registry']['source']['files'] = 0; },
     static function (array &$data): void { $data['framework_registry']['source']['mount'] = 'smart'; },
     static function (array &$data): void { unset($data['framework_registry']['source']); },
     static function (array &$data): void { $data['framework_registry']['relative_path'] = '/contract/registry.json'; },

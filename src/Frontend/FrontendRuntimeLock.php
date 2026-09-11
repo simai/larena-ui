@@ -35,7 +35,12 @@ final readonly class FrontendRuntimeLock
     public function pairId(): string { return (string) $this->data['pair_id']; }
     public function bundleId(): string { return (string) $this->data['bundle_id']; }
     public function publicationProfile(): string { return (string) $this->data['publication_profile']; }
-    public function tag(): string { return (string) $this->data['tag']; }
+    public function tag(): ?string
+    {
+        $tag = $this->data['tag'] ?? null;
+
+        return is_string($tag) ? $tag : null;
+    }
 
     /** @return array<string, mixed> */
     public function frameworkRegistry(): array { return $this->data['framework_registry']; }
