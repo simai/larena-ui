@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Present compact Dataview View and Search controls without visible field
+  labels while retaining their programmatic labels for assistive technology.
+
 - Publish the immutable Framework runtime artifact for the pinned
   `sf-v5.4.0-local.28-3db5af38-0b891dfb` UI/Smart revision pair.
 

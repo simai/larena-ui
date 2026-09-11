@@ -22,6 +22,12 @@ $activation = [
 ];
 
 $manager = new SmartManager(SmartRegistry::withDefaults());
+$dataviewCss = (string) file_get_contents(__DIR__ . '/../../resources/css/admin-dataview.css');
+assert(str_contains($dataviewCss, '[data-larena-slot="search"] .sf-input-label'));
+assert(str_contains($dataviewCss, '[data-larena-slot="options"] > sf-dropdown .sf-dropdown-label'));
+assert(str_contains($dataviewCss, 'clip-path: inset(50%)'));
+assert(!str_contains($dataviewCss, '.larena-dataview-query-options .sf-dropdown-label'));
+
 $artifact = $manager->renderView('admin.collection', 'default', ['title' => 'Team members'], $activation);
 assert($artifact->isRenderable());
 assert(str_contains($artifact->html(), 'data-larena-composite="admin.collection"'));

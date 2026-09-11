@@ -53,6 +53,19 @@
     min-width: 0;
 }
 
+/* Compact toolbar controls keep their label text in the accessibility tree,
+   while the editable form variants continue to show labels visually. */
+.larena-dataview-toolbar > [data-larena-slot="search"] .sf-input-label,
+.larena-dataview-toolbar > [data-larena-slot="options"] > sf-dropdown .sf-dropdown-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 .larena-dataview-toolbar > [data-larena-slot="options"] { order: 1; justify-content: flex-start; }
 .larena-dataview-toolbar > [data-larena-slot="actions"] { order: 3; justify-content: flex-end; }
 
