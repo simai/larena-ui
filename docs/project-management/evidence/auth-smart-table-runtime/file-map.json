@@ -1,0 +1,13 @@
+{
+  "package": "larena/ui",
+  "files": [
+    "resources/sf/runtime-lock.json",
+    "release-artifacts/ui-2228262ad358-smart-e7f46bc52cde-registry-d6977db7-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-2228262ad358-smart-e7f46bc52cde-registry-d6977db7-exact-git-tree-v2/sources/ui.tar.gz",
+    "release-artifacts/ui-2228262ad358-smart-e7f46bc52cde-registry-d6977db7-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-2228262ad358-smart-e7f46bc52cde-registry-d6977db7-exact-git-tree-v2/sources/contract.tar.gz",
+    "tests/Unit/FrontendRuntimeLockTest.php",
+    "tests/Unit/FrontendRuntimeAssetResolverTest.php",
+    "tests/Unit/SourceBackedComponentRegistryTest.php"
+  ]
+}

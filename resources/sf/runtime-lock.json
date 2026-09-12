@@ -1,8 +1,8 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-2228262ad358-smart-8b0e0482f78a",
-  "bundle_id": "ui-2228262ad358-smart-8b0e0482f78a-registry-d6977db7-exact-git-tree-v2",
+  "pair_id": "ui-2228262ad358-smart-e7f46bc52cde",
+  "bundle_id": "ui-2228262ad358-smart-e7f46bc52cde-registry-d6977db7-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -15,15 +15,15 @@
   },
   "ui_smart": {
     "tag": null,
-    "commit": "8b0e0482f78a19aa6af2483d61fe9fe3b79a8e1b",
+    "commit": "e7f46bc52cdeedc4c0a7330d71003a2e3e11567d",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "f46d4993c80967197f1eaaed76132a428609d6d8398fd6b409711088623653c1",
-    "files": 608
+    "sha256": "b0044f76c58a77753af915d1ad944f56855950a2f6138437ed97ef9b9480e04f",
+    "files": 647
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-2228262ad358-smart-8b0e0482f78a",
+    "compatibility_id": "ui-2228262ad358-smart-e7f46bc52cde",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
     "file_sha256": "d6977db7b4da559b8afc6ef11cf2ea8ac2df2f1cb72b03f8b35f3aecdba00e12",

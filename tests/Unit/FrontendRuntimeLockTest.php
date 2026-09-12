@@ -7,8 +7,8 @@ require_once __DIR__ . '/../bootstrap.php';
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->pairId() === 'ui-2228262ad358-smart-8b0e0482f78a');
-assert($lock->bundleId() === 'ui-2228262ad358-smart-8b0e0482f78a-registry-d6977db7-exact-git-tree-v2');
+assert($lock->pairId() === 'ui-2228262ad358-smart-e7f46bc52cde');
+assert($lock->bundleId() === 'ui-2228262ad358-smart-e7f46bc52cde-registry-d6977db7-exact-git-tree-v2');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
@@ -29,11 +29,11 @@ assert($expectation['sources'] === [
         'files' => 6238,
     ],
     [
-        'commit' => '8b0e0482f78a19aa6af2483d61fe9fe3b79a8e1b',
+        'commit' => 'e7f46bc52cdeedc4c0a7330d71003a2e3e11567d',
         'tree' => 'smart',
         'mount' => 'smart',
-        'archive_sha256' => 'f46d4993c80967197f1eaaed76132a428609d6d8398fd6b409711088623653c1',
-        'files' => 608,
+        'archive_sha256' => 'b0044f76c58a77753af915d1ad944f56855950a2f6138437ed97ef9b9480e04f',
+        'files' => 647,
     ],
     [
         'commit' => '2228262ad3588227b20045f66ca43556fcd27974',
