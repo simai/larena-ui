@@ -171,7 +171,12 @@ final class AdminDataviewRenderer
             return $cell;
         }
         if (isset($cell['href'])) {
-            return ['href' => (string) $cell['href'], 'text' => (string) ($cell['text'] ?? '')];
+            $link = ['href' => (string) $cell['href'], 'text' => (string) ($cell['text'] ?? '')];
+            if (array_key_exists('subtext', $cell) && $cell['subtext'] !== null) {
+                $link['subtext'] = (string) $cell['subtext'];
+            }
+
+            return $link;
         }
         return (string) ($cell['text'] ?? '');
     }

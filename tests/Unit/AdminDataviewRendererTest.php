@@ -18,7 +18,7 @@ $source = new DataviewSourceDescriptor('auth.users', 'larena/auth', true);
 $provider = new class($source) implements DataviewSourceProvider {
     public function __construct(private DataviewSourceDescriptor $source) {}
     public function descriptor(): DataviewSourceDescriptor { return $this->source; }
-    public function rows(): array { return [['name' => ['text' => '<Admin>', 'href' => '/admin/users/1'], 'status' => ['type' => 'badge', 'tone' => 'enabled', 'text' => 'Enabled']]]; }
+    public function rows(): array { return [['name' => ['text' => '<Admin>', 'subtext' => 'admin+<owner>@example.test', 'href' => '/admin/users/1'], 'status' => ['type' => 'badge', 'tone' => 'enabled', 'text' => 'Enabled']]]; }
 };
 $view = new DataviewViewDescriptor('auth.users.table', $source, DataviewViewType::Table, [
     new DataviewFieldDescriptor('name', 'link', 'lang:auth.name'),
@@ -42,6 +42,8 @@ assert(str_contains($artifact->html(), 'settings="false"'));
 assert(str_contains($artifact->html(), 'actions="false"'));
 assert(str_contains($artifact->html(), '\\u003CAdmin\\u003E'));
 assert(!str_contains($artifact->html(), '<Admin>'));
+assert(str_contains($artifact->html(), 'admin+\\u003Cowner\\u003E@example.test'));
+assert(!str_contains($artifact->html(), '<owner>'));
 assert(str_contains($artifact->html(), 'type="application/json"'));
 assert(($artifact->toArray()['diagnostics']['smart_manager']['component_key'] ?? null) === 'ui.dataview');
 assert(($artifact->toArray()['diagnostics']['row_count'] ?? null) === 1);
