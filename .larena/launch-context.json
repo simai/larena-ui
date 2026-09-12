@@ -29,7 +29,8 @@
         "docs/project-management/evidence/auth-smart-table-runtime/file-map.json",
         "docs/project-management/evidence/auth-smart-table-runtime/deviations.json",
         "docs/project-management/evidence/auth-smart-table-runtime/graph-sync-proposal.json",
-        "tests/Unit/SourceBackedComponentRegistryTest.php"
+        "tests/Unit/SourceBackedComponentRegistryTest.php",
+        "CHANGELOG.md"
     ],
     "forbidden_files": [
         "config/*",

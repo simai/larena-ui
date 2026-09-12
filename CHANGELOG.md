@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Pin the Auth-ready generated Smart runtime that renders safe structured
+  table links while preserving the separately identified immutable carrier.
+
 - Preserve the selected record operation when a hydrated table action opens
   the Minimal CMS viewer, editor, delete confirmation or restore form.
 
