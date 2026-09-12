@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Preserve the selected record operation when a hydrated table action opens
+  the Minimal CMS viewer, editor, delete confirmation or restore form.
+
 - Present compact Dataview View and Search controls without visible field
   labels while retaining their programmatic labels for assistive technology.
 

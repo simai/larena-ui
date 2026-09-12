@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 $bridge = (string) file_get_contents(__DIR__ . '/../../resources/js/admin-smart-event-bridge.js');
+$runtimeBridge = (string) file_get_contents(__DIR__ . '/../../resources/js/sf-runtime-bridge.js');
 $manifest = json_decode(
     (string) file_get_contents(__DIR__ . '/../../resources/smart/ui-admin-menu/manifest.json'),
     true,
@@ -26,5 +27,9 @@ assert(str_contains($bridge, "'sf-data-view-create-request'"));
 assert(str_contains($bridge, "'sf-data-view-row-action'"));
 assert(str_contains($bridge, "'sf-data-view-bulk-action'"));
 assert(str_contains($bridge, 'base_revision'));
+assert(str_contains($runtimeBridge, "intent !== 'larena.record.delete'"));
+assert(str_contains($runtimeBridge, "intent !== 'larena.record.restore'"));
+assert(str_contains($runtimeBridge, "var mode = operation === 'restore' ? 'delete' : operation"));
+assert(str_contains($runtimeBridge, "url.searchParams.set('record_mode', mode)"));
 
 echo "AdminSmartEventBridgeContractTest passed.\n";

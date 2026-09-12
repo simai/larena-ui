@@ -120,14 +120,18 @@
     return (rows || []).map(function (row) {
         var actions = (row.actions || []).map(function (action) {
           var intent = action.component?.props?.value;
-          if (intent !== 'larena.record.edit' && intent !== 'larena.record.view') return action;
+          if (intent !== 'larena.record.edit' && intent !== 'larena.record.view'
+            && intent !== 'larena.record.delete' && intent !== 'larena.record.restore') return action;
           return Object.assign({}, action, {component: Object.assign({}, action.component, {
             props: Object.assign({}, action.component.props, {'@click': function (event) {
               event.preventDefault();
               event.stopPropagation();
               var url = new URL(window.location.href);
               url.searchParams.set('record_id', String(row.id));
-              url.hash = intent === 'larena.record.view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
+              var operation = intent.replace('larena.record.', '');
+              var mode = operation === 'restore' ? 'delete' : operation;
+              url.searchParams.set('record_mode', mode);
+              url.hash = mode === 'view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
               window.location.assign(url.href);
             }})
           })});
