@@ -6,3 +6,5 @@
 - Preserved optional `subtext` while the Larena UI adapter projects structured
   link cells into Smart Table input, so Auth user names retain their email
   secondary text through hydration.
+- Advanced Smart runtime to `v5.4.3`; hydrated `sf-input` now preserves native
+  password, autocomplete and validation attributes in Auth forms.
