@@ -14,6 +14,7 @@
     ],
     "allowed_files": [
         ".larena/launch-context.json",
+        ".github/workflows/larena-package-ci.yml",
         "resources/sf/runtime-lock.json",
         "tests/Unit/FrontendRuntimeLockTest.php",
         "tests/Unit/FrontendRuntimeAssetResolverTest.php",

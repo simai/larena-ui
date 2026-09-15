@@ -9,10 +9,50 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: packages/ui
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check private companion access
+        env:
+          LARENA_PROPERTY_READ_DEPLOY_KEY: ${{ secrets.LARENA_PROPERTY_READ_DEPLOY_KEY }}
+        run: |
+          if [ -z "$LARENA_PROPERTY_READ_DEPLOY_KEY" ]; then
+            echo 'Larena UI CI needs a read-only deploy key for simai/larena-property.' >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          repository: simai/larena-core
+          ref: 47123f2e79fd8852c91af7eafb4b03754425ac4a
+          path: packages/core
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: simai/larena-dataview
+          ref: 685919570a7a57654528c4577bd119e436189e23
+          path: packages/dataview
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: simai/larena-layout
+          ref: 30c4ab5f452584d7c95d6186ed4d4b9ab999a5f5
+          path: packages/layout
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: simai/larena-property
+          ref: b0253f5f2546ea8bcb8e52b47f31f9f71ae627c7
+          path: packages/property
+          ssh-key: ${{ secrets.LARENA_PROPERTY_READ_DEPLOY_KEY }}
+          persist-credentials: false
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
           coverage: none
       - run: composer validate --strict
+        working-directory: packages/ui
       - run: composer install --no-interaction --prefer-dist
+        working-directory: packages/ui
       - run: composer run quality:gate
+        working-directory: packages/ui
