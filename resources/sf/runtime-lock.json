@@ -1,39 +1,44 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-2228262ad358-smart-6dea505e3930",
-  "bundle_id": "ui-2228262ad358-smart-6dea505e3930-registry-d6977db7-exact-git-tree-v2",
+  "pair_id": "ui-8c22fe2b80bb-smart-400d80e501ca",
+  "bundle_id": "ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
     "tag": null,
-    "commit": "2228262ad3588227b20045f66ca43556fcd27974",
+    "commit": "8c22fe2b80bb3bb88ec40dd34bbcddffb65f27d2",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "f2cd7917b46d9993b38598f45b23b8a88df8b53c6d7e795fb062431647bde1ab",
-    "files": 6238
+    "sha256": "300b752341b7075eda26815a729e598f6e5b3ae53213d3225db431a8b1b08c81",
+    "files": 5087
   },
   "ui_smart": {
     "tag": null,
-    "commit": "6dea505e39308cfe64ba6fbcf8ee78e56efed22a",
+    "commit": "400d80e501ca5e6816ba8f96b0ca18f01c0626c9",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "01728436f011ec77be2c784b621042fe5b43b3a5f6a10b71bfa07484dcc4d3bc",
-    "files": 647
+    "sha256": "085f08503472b7d05214decd65d01e6d2abb004c1a2d7a0b556ea6e9acf8e4a5",
+    "files": 642
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-2228262ad358-smart-6dea505e3930",
+    "compatibility_id": "ui-8c22fe2b80bb-smart-400d80e501ca",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "d6977db7b4da559b8afc6ef11cf2ea8ac2df2f1cb72b03f8b35f3aecdba00e12",
+    "file_sha256": "1e5dcbf84fd7188f22f68b93cb7f1f400f881275fe3bff2609fc6f844a7fc7b5",
     "source": {
-      "commit": "2228262ad3588227b20045f66ca43556fcd27974",
+      "commit": "4665ecb607b009eae88e77d41cfb46d05d8e4af0",
       "tree": "contracts/generated",
-      "tree_oid": "9aa7daf8895e14f0424c778ae6e3864f0622fab5",
+      "tree_oid": "7719fc4107f5943e89e8b3f13ea02e3cea563a0e",
       "mount": "contract",
-      "sha256": "e2f9ff3fc24f850c4f1679e98ec4d4b6106d4412b98cff55f324197d5e2a464f",
-      "files": 1
+      "sha256": "08e20b711995cb9b2bd53cf41905fe30385ece15250edb390cbe6bacb3ac29a6",
+      "files": 2
+    },
+    "documentation_source": {
+      "schema": "docara.documentation_source.v1",
+      "relative_path": "contract/contracts/generated/documentation-source.json",
+      "file_sha256": "6c63d8b8e47c67114311486cfdcfa78d9d0617fce88f3f3b2c66d8dbc85cf211"
     }
   },
   "boot": {
@@ -48,109 +53,432 @@
       "source": "smart/icons",
       "javascript": "smart/smart/icons/js/icons.js",
       "css": null,
-      "attributes": ["icon", "size", "scheme", "aria-label", "id", "class"]
+      "attributes": [
+        "icon",
+        "size",
+        "scheme",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-button": {
       "source": "smart/buttons",
       "javascript": "smart/smart/buttons/js/buttons.js",
       "css": null,
-      "attributes": ["template", "size", "type", "scheme", "text", "icon", "icon-left", "icon-right", "icon-position", "text-position", "tightness", "radius", "root-class", "loading", "disabled", "native-type", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "size",
+        "type",
+        "scheme",
+        "text",
+        "icon",
+        "icon-left",
+        "icon-right",
+        "icon-position",
+        "text-position",
+        "tightness",
+        "radius",
+        "root-class",
+        "loading",
+        "disabled",
+        "native-type",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-table": {
       "source": "smart/table",
       "javascript": "smart/smart/table/js/table.js",
       "css": "smart/smart/table/css/table.css",
-      "attributes": ["template", "root-class", "selectable", "settings", "actions", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "root-class",
+        "selectable",
+        "settings",
+        "actions",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-badge": {
       "source": "smart/badges",
       "javascript": "smart/smart/badges/js/badges.js",
       "css": null,
-      "attributes": ["template", "size", "type", "scheme", "text", "icon", "icon-left", "icon-right", "icon-position", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "size",
+        "type",
+        "scheme",
+        "text",
+        "icon",
+        "icon-left",
+        "icon-right",
+        "icon-position",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-alert": {
       "source": "smart/alert",
       "javascript": "smart/smart/alert/js/alert.js",
       "css": null,
-      "requires": ["sf-icon"],
-      "attributes": ["type", "variant", "icon", "title", "supporting-text", "action-text", "action", "secondary-action-text", "secondary-action", "closable", "aria-label", "id", "class"]
+      "requires": [
+        "sf-icon"
+      ],
+      "attributes": [
+        "type",
+        "variant",
+        "icon",
+        "title",
+        "supporting-text",
+        "action-text",
+        "action",
+        "secondary-action-text",
+        "secondary-action",
+        "closable",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-pagination": {
       "source": "smart/pagination",
       "javascript": "smart/smart/pagination/js/pagination.js",
       "css": null,
-      "attributes": ["current", "total", "page-size", "top", "main", "bottom", "top-class", "main-class", "bottom-class", "show-more-text", "selected-label", "total-label", "show-total-text", "pages-label", "previous-page-label", "page-label", "go-to-page-label", "next-page-label", "last-page-text", "page-sizes", "page-size-label", "actions", "action", "action-apply-text", "action-for-all-label", "aria-label", "id", "class"]
+      "attributes": [
+        "current",
+        "total",
+        "page-size",
+        "top",
+        "main",
+        "bottom",
+        "top-class",
+        "main-class",
+        "bottom-class",
+        "show-more-text",
+        "selected-label",
+        "total-label",
+        "show-total-text",
+        "pages-label",
+        "previous-page-label",
+        "page-label",
+        "go-to-page-label",
+        "next-page-label",
+        "last-page-text",
+        "page-sizes",
+        "page-size-label",
+        "actions",
+        "action",
+        "action-apply-text",
+        "action-for-all-label",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-input": {
       "source": "smart/inputs",
       "javascript": "smart/smart/inputs/js/inputs.js",
       "css": "smart/smart/inputs/css/inputs.css",
-      "attributes": ["template", "size", "type", "label", "required", "placeholder", "hint", "name", "value", "default-value", "input-type", "autocomplete", "inputmode", "minlength", "maxlength", "pattern", "readonly", "invalid", "error-message", "left-icon", "right-text", "hint-icon", "disabled", "error", "min", "max", "step", "mask", "mask-pattern", "mask-options", "mask-placeholder-char", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "size",
+        "type",
+        "label",
+        "required",
+        "placeholder",
+        "hint",
+        "name",
+        "value",
+        "default-value",
+        "input-type",
+        "autocomplete",
+        "inputmode",
+        "minlength",
+        "maxlength",
+        "pattern",
+        "readonly",
+        "invalid",
+        "error-message",
+        "left-icon",
+        "right-text",
+        "hint-icon",
+        "disabled",
+        "error",
+        "min",
+        "max",
+        "step",
+        "mask",
+        "mask-pattern",
+        "mask-options",
+        "mask-placeholder-char",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-modal": {
       "source": "smart/modal",
       "javascript": "smart/smart/modal/js/modal.js",
       "css": null,
-      "attributes": ["template", "modal-id", "title", "text", "open", "overlay", "display", "width", "height", "blur", "blur-type", "surface-padding", "src", "slot", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "modal-id",
+        "title",
+        "text",
+        "open",
+        "overlay",
+        "display",
+        "width",
+        "height",
+        "blur",
+        "blur-type",
+        "surface-padding",
+        "src",
+        "slot",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-textarea": {
       "source": "smart/textarea",
       "javascript": "smart/smart/textarea/js/textarea.js",
       "css": null,
-      "attributes": ["template", "size", "type", "label", "required", "rows", "placeholder", "hint", "name", "value", "disabled", "error", "mask", "mask-pattern", "mask-options", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "size",
+        "type",
+        "label",
+        "required",
+        "rows",
+        "placeholder",
+        "hint",
+        "name",
+        "value",
+        "disabled",
+        "error",
+        "mask",
+        "mask-pattern",
+        "mask-options",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-dropdown": {
       "source": "smart/dropdown",
       "javascript": "smart/smart/dropdown/js/dropdown.js",
       "css": null,
-      "attributes": ["template", "size", "type", "mode", "multiple", "portal", "value", "name", "label", "required", "placeholder", "search-placeholder", "search", "disabled", "aria-label", "id", "class"]
+      "attributes": [
+        "template",
+        "size",
+        "type",
+        "mode",
+        "multiple",
+        "portal",
+        "value",
+        "name",
+        "label",
+        "required",
+        "placeholder",
+        "search-placeholder",
+        "search",
+        "disabled",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-checkbox": {
       "source": "smart/checkbox",
       "javascript": "smart/smart/checkbox/js/checkbox.js",
       "css": "smart/smart/checkbox/css/checkbox.css",
-      "attributes": ["size", "label", "description", "help", "position", "root-class", "checked", "disabled", "indeterminate", "name", "value", "error", "id", "class"]
+      "attributes": [
+        "size",
+        "label",
+        "description",
+        "help",
+        "position",
+        "root-class",
+        "checked",
+        "disabled",
+        "indeterminate",
+        "name",
+        "value",
+        "error",
+        "id",
+        "class"
+      ]
     },
     "sf-admin-menu": {
       "source": "smart/admin-menu",
       "javascript": "smart/smart/admin-menu/js/admin-menu.js",
       "css": "ui/distr/component/admin-menu/css/admin-menu.css",
-      "requires": ["sf-icon", "sf-badge", "sf-icon-button"],
-      "attributes": ["template", "brand", "logo", "logo-href", "aria-label", "searchable", "collapsible", "settings", "settings-title", "compact", "persistence-mode", "settings-mode", "settings-revision", "system-settings-revision", "allow-system-settings", "settings-state-endpoint", "settings-endpoint", "settings-reset-endpoint", "system-settings-endpoint", "system-settings-reset-endpoint", "search-placeholder", "count", "toggle-label", "panel-class", "root-class", "id", "class"]
+      "requires": [
+        "sf-icon",
+        "sf-badge",
+        "sf-icon-button"
+      ],
+      "attributes": [
+        "template",
+        "brand",
+        "logo",
+        "logo-href",
+        "aria-label",
+        "searchable",
+        "collapsible",
+        "settings",
+        "settings-title",
+        "compact",
+        "persistence-mode",
+        "settings-mode",
+        "settings-revision",
+        "system-settings-revision",
+        "allow-system-settings",
+        "settings-state-endpoint",
+        "settings-endpoint",
+        "settings-reset-endpoint",
+        "system-settings-endpoint",
+        "system-settings-reset-endpoint",
+        "search-placeholder",
+        "count",
+        "toggle-label",
+        "panel-class",
+        "root-class",
+        "id",
+        "class"
+      ]
     },
     "sf-breadcrumbs": {
       "source": "smart/breadcrumbs",
       "javascript": "smart/smart/breadcrumbs/js/breadcrumbs.js",
       "css": "ui/distr/component/breadcrumbs/css/breadcrumbs.css",
-      "requires": ["sf-icon"],
-      "attributes": ["template", "separator-icon", "home-icon", "home-label", "root-class", "item-class", "link-class", "current-class", "separator-class", "container-class", "aria-label", "expand-on-ellipsis", "max-items", "id", "class"]
+      "requires": [
+        "sf-icon"
+      ],
+      "attributes": [
+        "template",
+        "separator-icon",
+        "home-icon",
+        "home-label",
+        "root-class",
+        "item-class",
+        "link-class",
+        "current-class",
+        "separator-class",
+        "container-class",
+        "aria-label",
+        "expand-on-ellipsis",
+        "max-items",
+        "id",
+        "class"
+      ]
     },
     "sf-icon-button": {
       "source": "smart/icon-buttons",
       "javascript": "smart/smart/icon-buttons/js/icon-buttons.js",
       "css": "smart/smart/icon-buttons/css/icon-buttons.css",
-      "requires": ["sf-icon"],
-      "attributes": ["template", "variant", "size", "type", "scheme", "icon", "filled", "tightness", "radius", "segment", "root-class", "loading", "disabled", "native-type", "aria-label", "id", "class"]
+      "requires": [
+        "sf-icon"
+      ],
+      "attributes": [
+        "template",
+        "variant",
+        "size",
+        "type",
+        "scheme",
+        "icon",
+        "filled",
+        "tightness",
+        "radius",
+        "segment",
+        "root-class",
+        "loading",
+        "disabled",
+        "native-type",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-avatar": {
       "source": "smart/avatar",
       "javascript": "smart/smart/avatar/js/avatar.js",
       "css": "ui/distr/component/avatars/css/avatars.css",
-      "attributes": ["template", "size", "image-url", "image-alt", "no-wrap", "text", "status", "aria-label", "title", "description", "meta", "meta-icon", "card-variant", "disabled", "inactive", "id", "class"]
+      "attributes": [
+        "template",
+        "size",
+        "image-url",
+        "image-alt",
+        "no-wrap",
+        "text",
+        "status",
+        "aria-label",
+        "title",
+        "description",
+        "meta",
+        "meta-icon",
+        "card-variant",
+        "disabled",
+        "inactive",
+        "id",
+        "class"
+      ]
     },
     "sf-tag": {
       "source": "smart/tags",
       "javascript": "smart/smart/tags/js/tags.js",
       "css": "smart/smart/tags/css/tags.css",
-      "requires": ["sf-avatar", "sf-icon"],
-      "attributes": ["template", "type", "size", "text", "count", "icon", "color-class", "avatar-image-url", "avatar-text", "avatar-status", "root-class", "active", "disabled", "closable", "aria-label", "id", "class"]
+      "requires": [
+        "sf-avatar",
+        "sf-icon"
+      ],
+      "attributes": [
+        "template",
+        "type",
+        "size",
+        "text",
+        "count",
+        "icon",
+        "color-class",
+        "avatar-image-url",
+        "avatar-text",
+        "avatar-status",
+        "root-class",
+        "active",
+        "disabled",
+        "closable",
+        "aria-label",
+        "id",
+        "class"
+      ]
     },
     "sf-toggle": {
       "source": "smart/toggle",
       "javascript": "smart/smart/toggle/js/toggle.js",
       "css": "ui/distr/component/toggle/css/toggle.css",
-      "requires": ["sf-icon"],
-      "attributes": ["template", "size", "type", "label", "icon", "checked", "disabled", "name", "value", "aria-label", "id", "class"]
+      "requires": [
+        "sf-icon"
+      ],
+      "attributes": [
+        "template",
+        "size",
+        "type",
+        "label",
+        "icon",
+        "checked",
+        "disabled",
+        "name",
+        "value",
+        "aria-label",
+        "id",
+        "class"
+      ]
     }
   }
 }
