@@ -4,6 +4,10 @@
     "src/Contracts/FrontendRenderArtifact.php",
     "src/Contracts/UiAssetGraph.php",
     "src/Runtime/SmartManager.php",
-    "tests/Unit/SmartManagerTest.php"
+    "tests/Unit/SmartManagerTest.php",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/ui.tar.gz",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/contract.tar.gz"
   ]
 }
