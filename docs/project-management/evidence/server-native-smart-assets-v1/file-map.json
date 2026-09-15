@@ -1,0 +1,9 @@
+{
+  "package": "larena/ui",
+  "files": [
+    "src/Contracts/FrontendRenderArtifact.php",
+    "src/Contracts/UiAssetGraph.php",
+    "src/Runtime/SmartManager.php",
+    "tests/Unit/SmartManagerTest.php"
+  ]
+}

@@ -44,7 +44,12 @@ final readonly class FrontendRenderArtifact
     {
         return $this->render->isSafe()
             && $this->assetGraph->isValid()
-            && ($this->assetActivation['activation_owner'] ?? null) === 'larena/core:core.assets'
+            && ($this->assetGraph->requirements === [] || $this->hasSafeAssetActivation());
+    }
+
+    private function hasSafeAssetActivation(): bool
+    {
+        return ($this->assetActivation['activation_owner'] ?? null) === 'larena/core:core.assets'
             && ($this->assetActivation['physical_publication_ready'] ?? null) === true
             && ($this->assetActivation['writes_database'] ?? null) === false
             && ($this->assetActivation['copies_to_root'] ?? null) === false

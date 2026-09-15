@@ -228,18 +228,18 @@ final readonly class SmartManager
     /** @param array<string, mixed> $assetActivation */
     private function assertAssetContract(SmartComponentManifest $manifest, UiAssetGraph $graph, array $assetActivation): bool
     {
-        if (!$graph->isValid()) {
-            throw new InvalidArgumentException('ui_smart_asset_graph_invalid:' . $manifest->componentKey);
-        }
-        if ($manifest->assetRequirements === []) {
-            return false;
-        }
         $manifestKeys = array_map(static fn (UiAssetRequirement $asset): string => $asset->assetKey, $manifest->assetRequirements);
         $renderKeys = array_map(static fn (UiAssetRequirement $asset): string => $asset->assetKey, $graph->requirements);
         sort($manifestKeys);
         sort($renderKeys);
         if ($manifestKeys !== $renderKeys) {
             throw new InvalidArgumentException('ui_smart_asset_manifest_mismatch:' . $manifest->componentKey);
+        }
+        if ($manifest->assetRequirements === []) {
+            return true;
+        }
+        if (!$graph->isValid()) {
+            throw new InvalidArgumentException('ui_smart_asset_graph_invalid:' . $manifest->componentKey);
         }
         $runtimeRequirements = array_filter(
             $graph->requirements,

@@ -1,0 +1,7 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "status": "proposal_only",
+  "canonical_update_allowed": false,
+  "capabilities": ["server_native_smart_asset_free_rendering"],
+  "apply": false
+}

@@ -18,7 +18,7 @@ final readonly class UiAssetGraph
 
     public function isValid(): bool
     {
-        if ($this->requirements === [] || $this->explain === []) {
+        if ($this->explain === []) {
             return false;
         }
 

@@ -5,6 +5,10 @@ declare(strict_types=1);
 require dirname(__DIR__) . '/bootstrap.php';
 
 use Larena\Ui\Contracts\SmartComponentManifest;
+use Larena\Ui\Contracts\BackendRenderResult;
+use Larena\Ui\Contracts\HydrationContract;
+use Larena\Ui\Contracts\SmartBackendRenderer;
+use Larena\Ui\Enums\RenderStrategy;
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 use Larena\Ui\Registry\SmartRegistry;
 use Larena\Ui\Runtime\SmartManager;
@@ -49,6 +53,29 @@ assert(($payload['diagnostics']['manifest_version'] ?? null) === '1.0.0');
 assert(($payload['diagnostics']['frontend_tag'] ?? null) === 'sf-input');
 assert(($payload['diagnostics']['asset_contract_mode'] ?? null) === 'manifest_verified');
 assert(($payload['diagnostics']['production_ready'] ?? null) === false);
+
+$nativeRegistry = new SmartRegistry();
+$nativeRegistry->registerRenderer('vendor.native.renderer', new class implements SmartBackendRenderer {
+    public function render(SmartComponentManifest $manifest, array $props, array $slots = []): BackendRenderResult
+    {
+        return new BackendRenderResult('<p>Server only</p>', RenderStrategy::Native, HydrationContract::none());
+    }
+});
+$nativeRegistry->registerManifest(SmartComponentManifest::fromArray([
+    'schema' => 'larena.ui.smart_manifest.v1',
+    'key' => 'vendor.server_only',
+    'version' => '1.0.0',
+    'owner_package' => 'vendor/package',
+    'kind' => 'smart',
+    'props' => ['type' => 'object', 'properties' => [], 'additionalProperties' => false],
+    'slots' => [], 'events' => [], 'views' => [], 'presets' => [], 'constraints' => [],
+    'render' => ['strategy' => 'native', 'renderer' => 'vendor.native.renderer'],
+    'frontend' => [], 'assets' => [], 'atlas' => [], 'provenance' => [],
+]));
+$nativeArtifact = (new SmartManager($nativeRegistry))->render('vendor.server_only', [], []);
+assert($nativeArtifact->isRenderable());
+assert($nativeArtifact->assetTags() === []);
+assert(($nativeArtifact->toArray()['diagnostics']['asset_contract_mode'] ?? null) === 'manifest_verified');
 
 $viewArtifact = (new SmartManager($registry))->renderView('ui.dataview', 'default', [
     'aria-label' => 'Pages',
