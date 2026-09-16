@@ -22,7 +22,12 @@
     "composer.json",
     "CHANGELOG.md",
     "docs/developer/dataview-host-lifecycle.md",
-    "src/Assets/AdminSmartEventBridgeAssetManifest.php"
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php",
+    "src/Runtime/RegisteredListRenderer.php",
+    "tests/Unit/RegisteredListRendererTest.php",
+    "resources/smart/ui-dataview/manifest.json",
+    "src/Runtime/SmartManager.php",
+    "tests/bootstrap.php"
   ],
   "forbidden_files": [
     "config/*",

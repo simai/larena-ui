@@ -4,7 +4,7 @@
   "goal": "dataview-host-lifecycle",
   "status": "coding_started",
   "base_commit": "e13fd4dd1871a06936410ffed2b8ecae93f35ff4",
-  "scope": "Owned subscription/request lifetime only; no Framework grammar, route, DB or live changes",
+  "scope": "Owned Dataview host lifecycle and registered composite presentation; no Framework grammar, route, DB or live changes",
   "allowed_files": [
     ".larena/launch-context.json",
     "docs/project-management/launch-records/dataview-host-lifecycle-v1.json",
@@ -15,7 +15,12 @@
     "composer.json",
     "CHANGELOG.md",
     "docs/developer/dataview-host-lifecycle.md",
-    "src/Assets/AdminSmartEventBridgeAssetManifest.php"
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php",
+    "src/Runtime/RegisteredListRenderer.php",
+    "tests/Unit/RegisteredListRendererTest.php",
+    "resources/smart/ui-dataview/manifest.json",
+    "src/Runtime/SmartManager.php",
+    "tests/bootstrap.php"
   ],
   "evidence": "docs/project-management/evidence/dataview-host-lifecycle-v1",
   "approval_basis": "Active user goal authorizes isolated implementation; accepted bounded Dataview integration assignment in Specs c97a2ffe",

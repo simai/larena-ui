@@ -18,6 +18,10 @@ if (is_string($entryAppRoot) && $entryAppRoot !== '') {
 foreach (array_unique($candidates) as $autoload) {
     if (is_file($autoload)) {
         require_once $autoload;
+        // A shared optimized vendor classmap must not substitute another worktree.
+        $localLoader = new Composer\Autoload\ClassLoader();
+        $localLoader->addPsr4('Larena\\Ui\\', $packageRoot.'/src');
+        $localLoader->register(true);
 
         return;
     }

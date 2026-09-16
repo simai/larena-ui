@@ -7,38 +7,126 @@
   "props": {
     "type": "object",
     "properties": {
-      "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "selectable": {"type": "boolean"},
-      "settings": {"type": "boolean"},
-      "actions": {"type": "boolean"},
-      "data": {"type": "object"}
+      "aria-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "selectable": {
+        "type": "boolean"
+      },
+      "settings": {
+        "type": "boolean"
+      },
+      "actions": {
+        "type": "boolean"
+      },
+      "data": {
+        "type": "object"
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100,
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      }
     },
-    "required": ["aria-label", "selectable", "settings", "actions", "data"],
+    "required": [
+      "aria-label",
+      "selectable",
+      "settings",
+      "actions",
+      "data"
+    ],
     "additionalProperties": false
   },
   "slots": {},
   "events": {
-    "sf-data-view-query-change": {"kind": "custom", "backend_handler_binding": true},
-    "sf-data-view-template-save": {"kind": "custom", "backend_handler_binding": true},
-    "sf-data-view-column-settings-save": {"kind": "custom", "backend_handler_binding": true},
-    "sf-data-view-page-change": {"kind": "custom", "backend_handler_binding": true},
-    "sf-data-view-page-size-change": {"kind": "custom", "backend_handler_binding": true},
-    "sf-data-view-show-more": {"kind": "custom", "backend_handler_binding": false},
-    "sf-data-view-row-action": {"kind": "custom", "backend_handler_binding": false},
-    "sf-data-view-bulk-action": {"kind": "custom", "backend_handler_binding": false}
+    "sf-data-view-query-change": {
+      "kind": "custom",
+      "backend_handler_binding": true
+    },
+    "sf-data-view-template-save": {
+      "kind": "custom",
+      "backend_handler_binding": true
+    },
+    "sf-data-view-column-settings-save": {
+      "kind": "custom",
+      "backend_handler_binding": true
+    },
+    "sf-data-view-page-change": {
+      "kind": "custom",
+      "backend_handler_binding": true
+    },
+    "sf-data-view-page-size-change": {
+      "kind": "custom",
+      "backend_handler_binding": true
+    },
+    "sf-data-view-show-more": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-data-view-row-action": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-data-view-bulk-action": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    }
   },
-  "views": {"default": {}, "admin": {}},
+  "views": {
+    "default": {},
+    "admin": {}
+  },
   "presets": {},
-  "constraints": {"presentation_controls_only": true, "backend_effect_binding": false},
-  "render": {"strategy": "host", "renderer": "ui.sf.element"},
-  "frontend": {"runtime": "simai-framework", "tag": "sf-table"},
+  "constraints": {
+    "presentation_controls_only": true,
+    "backend_effect_binding": false,
+    "request_bound_properties": [
+      "data"
+    ]
+  },
+  "render": {
+    "strategy": "host",
+    "renderer": "ui.sf.element"
+  },
+  "frontend": {
+    "runtime": "simai-framework",
+    "tag": "sf-table"
+  },
   "assets": [
-    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
-    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.sf_table.css", "kind": "css", "critical": true},
-    {"key": "simai.framework.sf_table.js", "kind": "javascript", "critical": true}
+    {
+      "key": "simai.framework.core.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.core.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.smart_base.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.bridge.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_table.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_table.js",
+      "kind": "javascript",
+      "critical": true
+    }
   ],
   "atlas": {
     "visible": true,
@@ -53,8 +141,17 @@
       "safe_to_bind_data": true,
       "safe_to_execute_effect": false
     },
-    "states": ["default", "loading", "empty", "error"],
-    "accessibility": ["labelled_region", "table_headers", "keyboard_scroll_region"],
+    "states": [
+      "default",
+      "loading",
+      "empty",
+      "error"
+    ],
+    "accessibility": [
+      "labelled_region",
+      "table_headers",
+      "keyboard_scroll_region"
+    ],
     "product_href": "/admin/docara/pages",
     "example_props": {
       "aria-label": "Pages",
@@ -63,31 +160,60 @@
       "actions": false,
       "data": {
         "columns": [
-          {"key": "title", "label": "Title"},
-          {"key": "status", "label": "Status"}
+          {
+            "key": "title",
+            "label": "Title"
+          },
+          {
+            "key": "status",
+            "label": "Status"
+          }
         ],
         "rows": [
-          {"title": "Welcome", "status": "Published"},
-          {"title": "About", "status": "Draft"}
+          {
+            "title": "Welcome",
+            "status": "Published"
+          },
+          {
+            "title": "About",
+            "status": "Draft"
+          }
         ],
-        "pagination": {"page": 1, "pageSize": 10, "total": 2}
+        "pagination": {
+          "page": 1,
+          "pageSize": 10,
+          "total": 2
+        }
       }
     },
     "controls": [
-      {"key": "aria-label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 120}
+      {
+        "key": "aria-label",
+        "source": "prop",
+        "widget": "text",
+        "min_length": 1,
+        "max_length": 120
+      }
     ],
-    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "code_preview": {
+      "adapter": "smart_manager_php_v1",
+      "omit_defaults": false
+    },
     "i18n": {
       "en": {
         "title": "Data view",
         "description": "Anchors the whole Data View composition.",
-        "controls": {"aria-label": "Accessible name"},
+        "controls": {
+          "aria-label": "Accessible name"
+        },
         "options": {}
       },
       "ru": {
         "title": "Представление данных",
         "description": "Является основой комплексного представления данных.",
-        "controls": {"aria-label": "Доступное название"},
+        "controls": {
+          "aria-label": "Доступное название"
+        },
         "options": {}
       }
     }

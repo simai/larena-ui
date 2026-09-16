@@ -70,6 +70,7 @@ final readonly class SmartManager
      * @param array<string, string> $slots
      * @param list<string> $modifiers
      * @param array<string, array<string, mixed>> $childProps
+     * @param array<string,array<string,mixed>> $requestDataBindings Trusted server data; never populated from composition JSON.
      */
     public function renderView(
         string $key,
@@ -80,8 +81,9 @@ final readonly class SmartManager
         ?string $preset = null,
         array $modifiers = [],
         array $childProps = [],
+        array $requestDataBindings = [],
     ): FrontendRenderArtifact {
-        return $this->renderViewAtDepth($key, $viewKey, $props, $assetActivation, $slots, $preset, $modifiers, $childProps, 0, []);
+        return $this->renderViewAtDepth($key, $viewKey, $props, $assetActivation, $slots, $preset, $modifiers, $childProps, 0, [], [], $requestDataBindings);
     }
 
     /**
@@ -90,6 +92,8 @@ final readonly class SmartManager
      * @param array<string, string> $slots
      * @param list<string> $modifiers
      * @param array<string, array<string, mixed>> $childProps
+     * @param array<string,mixed> $dataProps Request-only authorized data, separate from structural view props.
+     * @param array<string,array<string,mixed>> $requestDataBindings
      * @param list<string> $stack
      */
     private function renderViewAtDepth(
@@ -103,6 +107,8 @@ final readonly class SmartManager
         array $childProps,
         int $depth,
         array $stack,
+        array $dataProps = [],
+        array $requestDataBindings = [],
     ): FrontendRenderArtifact {
         if ($depth > 6) {
             throw new InvalidArgumentException('ui_smart_view_composition_depth_exceeded');
@@ -120,9 +126,20 @@ final readonly class SmartManager
             }
         }
 
+        foreach ($requestDataBindings as $childId => $binding) {
+            if (!self::isChildPropsEntry($childId, $binding) || !isset($resolved['children'][$childId])) {
+                throw new InvalidArgumentException('ui_smart_view_request_binding_invalid');
+            }
+        }
+        $manifest = $this->registry->manifest($key);
+        $allowedData = $manifest->constraints['request_bound_properties'] ?? [];
+        if (!is_array($allowedData) || array_diff(array_keys($dataProps), $allowedData) !== []) {
+            throw new InvalidArgumentException('ui_smart_view_request_property_invalid');
+        }
         $childArtifacts = [];
         foreach ($resolved['children'] as $childId => $child) {
             [$overrideProps, $nestedChildProps] = self::splitChildProps($childProps[$childId] ?? []);
+            [$boundProps, $nestedDataBindings] = self::splitChildProps($requestDataBindings[$childId] ?? []);
             $artifact = $this->renderViewAtDepth(
                 $child['component'],
                 $child['view'],
@@ -134,13 +151,15 @@ final readonly class SmartManager
                 $nestedChildProps,
                 $depth + 1,
                 $stack,
+                $boundProps,
+                $nestedDataBindings,
             );
             $childArtifacts[$childId] = $artifact;
             $slot = $child['slot'];
             $slots[$slot] = ($slots[$slot] ?? '') . $artifact->html();
         }
 
-        $parent = $this->render($key, $resolved['props'], $assetActivation, $slots);
+        $parent = $this->render($key, array_replace($resolved['props'], $dataProps), $assetActivation, $slots);
         if ($childArtifacts === []) {
             return $parent;
         }
