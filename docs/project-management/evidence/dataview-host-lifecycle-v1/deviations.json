@@ -1,5 +1,6 @@
 {
-  "browser_acceptance": "pending",
+  "focused_browser_lifecycle": "passed",
+  "full_browser_acceptance": "pending",
   "main_publication": "not accepted",
   "live_changed": false
 }

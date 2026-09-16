@@ -1,0 +1,33 @@
+{
+  "candidate_commit": "e3775f9",
+  "browser": "Chrome via native browser tooling",
+  "probe_url": "http://127.0.0.1:5294/",
+  "bridge_sha256": "59e27f70219c23c59af066a4289b4fafc76d9b2034c0c8f629c0af73b6212127",
+  "observed_checks": [
+    "single mount and independent subscriptions",
+    "latest result and independent views",
+    "unmount aborts request",
+    "unmount removes subscriptions",
+    "late result cannot write",
+    "remount binds once",
+    "remounted result applies"
+  ],
+  "result": "all checks passed",
+  "depth": "actual production bridge with real browser DOM and controlled component/transport ports",
+  "limitations": [
+    "Not complete Smart Table hydration",
+    "Not authenticated Root two-source workflow",
+    "Not direct HTTP access proof",
+    "Wide/narrow full-page acceptance pending"
+  ],
+  "phpstan": {
+    "version": "2.2.1",
+    "result": "passed",
+    "errors": 0,
+    "configuration": "phpstan.neon.dist",
+    "runtime": "PHP 8.4",
+    "external_isolated_vendor": true
+  },
+  "release_accepted": false,
+  "live_changed": false
+}
