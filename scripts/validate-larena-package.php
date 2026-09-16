@@ -68,6 +68,7 @@ if ($codingStarted) {
         'docs/project-management/launch-records/larena-minimal-cms-v1-b11.json',
         'docs/project-management/launch-records/larena-admin-declarative-smart-ui-v1-a0-a1.json',
         'docs/project-management/launch-records/composition-owner-bound-slice-v1.json',
+        'docs/project-management/launch-records/dataview-host-lifecycle-v1.json',
     ], true)) {
         $errors[] = 'coding_started requires the current ui batch 1 launch record.';
     }
@@ -75,6 +76,16 @@ if ($codingStarted) {
         $record = json_decode((string) file_get_contents($launchContext['launch_record_ref']), true, 512, JSON_THROW_ON_ERROR);
         if (($record['package'] ?? null) !== 'larena/ui' || ($record['goal'] ?? null) !== 'owner-bound-composition-slice') {
             $errors[] = 'composition launch record owner or scope is invalid';
+        }
+    }
+    if (($launchContext['launch_record_ref'] ?? null) === 'docs/project-management/launch-records/dataview-host-lifecycle-v1.json') {
+        $record = json_decode((string) file_get_contents($launchContext['launch_record_ref']), true, 512, JSON_THROW_ON_ERROR);
+        if (($record['package'] ?? null) !== 'larena/ui'
+            || ($record['goal'] ?? null) !== 'dataview-host-lifecycle'
+            || ($record['status'] ?? null) !== 'coding_started'
+            || ($record['base_commit'] ?? null) !== ($launchContext['base_commit'] ?? null)
+            || ($record['allowed_files'] ?? null) !== ($launchContext['allowed_files'] ?? null)) {
+            $errors[] = 'Dataview lifecycle launch owner, baseline or scope is invalid';
         }
     }
     $requiredContractFiles = [

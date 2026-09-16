@@ -130,19 +130,33 @@
         return result;
     };
 
-    const initDataviewWorkbench = async (workbench) => {
+    const dataviewInstances = new Map();
+
+    const initDataviewWorkbench = (workbench) => {
+        if (dataviewInstances.has(workbench)) return;
         const stateNode = workbench.querySelector('[data-larena-dataview-state]');
         const table = workbench.querySelector('sf-table');
         const pagination = workbench.querySelector('sf-pagination');
         const status = workbench.querySelector('[data-larena-dataview-status]');
-        if (!stateNode || !table || !pagination) return;
+        if (!stateNode || !table || !pagination || !status) return;
         const state = JSON.parse(stateNode.textContent || '{}');
+        const controller = new AbortController();
+        let disposed = false;
+        const listen = (target, name, handler, options = {}) => {
+            target?.addEventListener(name, handler, {...(typeof options === 'boolean' ? {capture: options} : options), signal: controller.signal});
+        };
+        dataviewInstances.set(workbench, {table, pagination, stateNode, dispose: () => {
+            disposed = true;
+            querySequence++;
+            controller.abort();
+        }});
         let mode = 'user';
         let profiles = state.profiles || {};
         let queryState = state.query || {search: '', filters: {}, page: 1, page_size: 10};
         let querySequence = 0;
 
         const setStatus = (text, kind = 'ready') => {
+            if (disposed) return;
             status.textContent = text;
             status.dataset.state = kind;
             workbench.dataset.larenaDataviewState = kind;
@@ -189,41 +203,46 @@
             pagination.setAttribute('page-size', String(page.pageSize));
         };
         const runQuery = async (patch = {}) => {
+            if (disposed) return;
             queryState = {...queryState, ...patch};
             const sequence = ++querySequence;
             setStatus('Загрузка…', 'loading');
             try {
-                const payload = await request(state.query_endpoint, {method: 'POST', body: JSON.stringify({query: queryState})});
-                if (sequence !== querySequence) return;
+                const payload = await request(state.query_endpoint, {method: 'POST', body: JSON.stringify({query: queryState}), signal: controller.signal});
+                if (disposed || sequence !== querySequence) return;
                 queryState = payload.query;
                 table.setRows?.(payload.rows || [], 'larena-query');
                 updatePagination(payload.pagination);
                 setStatus(payload.pagination.total ? `Найдено: ${payload.pagination.total}` : 'Ничего не найдено', payload.pagination.total ? 'success' : 'empty');
             } catch (error) {
-                if (sequence !== querySequence) return;
+                if (disposed || sequence !== querySequence) return;
                 setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Ошибка загрузки. Черновик сохранён.', 'error');
             }
         };
         const saveProfile = async (profile) => {
+            if (disposed) return;
             const target = mode === 'system' ? profiles.system : profiles.user;
             const endpointUrl = mode === 'system' ? state.system_endpoint : state.user_endpoint;
             setStatus('Сохранение…', 'saving');
             try {
                 const payload = await request(endpointUrl, {
                     method: 'PUT',
+                    signal: controller.signal,
                     body: JSON.stringify({base_revision: target?.revision || 0, profile}),
                 });
+                if (disposed) return;
                 applyResponseProfiles(payload);
                 setStatus('Настройки сохранены', 'success');
             } catch (error) {
+                if (disposed) return;
                 setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Не удалось сохранить. Черновик оставлен.', 'error');
             }
         };
         const currentProfile = () => JSON.parse(JSON.stringify(profileForMode()));
 
-        table.addEventListener('onSearchEnd', (event) => runQuery({search: String(event.detail || ''), page: 1}));
-        table.addEventListener('onFilterUpdate', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
-        table.addEventListener('onTemplateSave', (event) => {
+        listen(table, 'onSearchEnd', (event) => runQuery({search: String(event.detail || ''), page: 1}));
+        listen(table, 'onFilterUpdate', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
+        listen(table, 'onTemplateSave', (event) => {
             const profile = currentProfile();
             const incoming = Array.isArray(event.detail) ? event.detail : [event.detail];
             const byKey = new Map((profile.filters?.templates || []).map((item) => [item.key, item]));
@@ -236,20 +255,20 @@
                 runQuery({filters: selectedTemplate.data.values, page: 1});
             }
         });
-        table.addEventListener('onColumnSettingsChange', (event) => {
+        listen(table, 'onColumnSettingsChange', (event) => {
             const profile = currentProfile();
             profile.columns = event.detail?.columnSettings || {};
             saveProfile(profile);
         });
-        pagination.addEventListener('sf-page-change', (event) => runQuery({page: event.detail?.current || 1}));
-        pagination.addEventListener('sf-page-size-change', (event) => {
+        listen(pagination, 'sf-page-change', (event) => runQuery({page: event.detail?.current || 1}));
+        listen(pagination, 'sf-page-size-change', (event) => {
             const profile = currentProfile();
             profile.pagination = {page_size: event.detail?.pageSize || 10};
             saveProfile(profile);
             runQuery({page: 1, page_size: event.detail?.pageSize || 10});
         });
-        pagination.addEventListener('sf-show-more', (event) => runQuery({page: Math.min((event.detail?.current || 1) + 1, event.detail?.pageCount || 1)}));
-        pagination.addEventListener('sf-action-apply', (event) => {
+        listen(pagination, 'sf-show-more', (event) => runQuery({page: Math.min((event.detail?.current || 1) + 1, event.detail?.pageCount || 1)}));
+        listen(pagination, 'sf-action-apply', (event) => {
             table.dispatchEvent(new CustomEvent('sf-data-view-bulk-action', {
                 bubbles: true,
                 composed: true,
@@ -262,7 +281,7 @@
             const targetMode = button.dataset.larenaDataviewModeButton;
             const allowed = targetMode !== 'system' || state.capabilities?.save_system === true;
             button.disabled = !allowed;
-            button.addEventListener('click', () => {
+            listen(button, 'click', () => {
                 mode = targetMode;
                 workbench.dataset.larenaDataviewMode = mode;
                 workbench.querySelectorAll('[data-larena-dataview-mode-button]').forEach((candidate) => candidate.classList.toggle('larena-button-primary', candidate === button));
@@ -270,20 +289,22 @@
                 setStatus(mode === 'system' ? 'Режим настроек для всех' : 'Режим личных настроек');
             });
         });
-        workbench.querySelector('[data-larena-dataview-reset]')?.addEventListener('click', async () => {
+        listen(workbench.querySelector('[data-larena-dataview-reset]'), 'click', async () => {
             const target = mode === 'system' ? profiles.system : profiles.user;
             const endpointUrl = mode === 'system' ? state.system_endpoint : state.user_endpoint;
             setStatus('Сброс…', 'saving');
             try {
-                const payload = await request(endpointUrl, {method: 'DELETE', body: JSON.stringify({base_revision: target?.revision || 0})});
+                const payload = await request(endpointUrl, {method: 'DELETE', body: JSON.stringify({base_revision: target?.revision || 0}), signal: controller.signal});
+                if (disposed) return;
                 applyResponseProfiles(payload);
                 setStatus('Настройки сброшены', 'success');
             } catch (error) {
+                if (disposed) return;
                 setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Не удалось сбросить настройки', 'error');
             }
         });
 
-        table.addEventListener('click', (event) => {
+        listen(table, 'click', (event) => {
             const path = event.composedPath();
             const createControl = path.find((node) => node?.matches?.('sf-button[text="Создать"], sf-icon-button[icon="keyboard_arrow_down"]'));
             if (createControl) {
@@ -313,10 +334,23 @@
     };
 
     const bootDataview = async () => {
-        const workbenches = document.querySelectorAll(workbenchSelector);
-        if (!workbenches.length) return;
         await Promise.all([customElements.whenDefined('sf-table'), customElements.whenDefined('sf-pagination')]);
-        workbenches.forEach((workbench) => initDataviewWorkbench(workbench));
+        const reconcile = () => {
+            const workbenches = new Set(document.querySelectorAll(workbenchSelector));
+            dataviewInstances.forEach((instance, workbench) => {
+                if (!workbenches.has(workbench)
+                    || instance.table !== workbench.querySelector('sf-table')
+                    || instance.pagination !== workbench.querySelector('sf-pagination')
+                    || instance.stateNode !== workbench.querySelector('[data-larena-dataview-state]')) {
+                    instance.dispose();
+                    dataviewInstances.delete(workbench);
+                }
+            });
+            workbenches.forEach((workbench) => initDataviewWorkbench(workbench));
+        };
+        reconcile();
+        const observer = new MutationObserver(reconcile);
+        observer.observe(document.documentElement, {childList: true, subtree: true});
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootDataview, {once: true});
     else bootDataview();

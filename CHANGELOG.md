@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Dispose Dataview host listeners and abort pending requests on removal or child replacement; reconnect inserted instances once and ignore detached responses.
+
 - Pin the Auth-ready generated Smart runtime that renders safe structured
   table links while preserving the separately identified immutable carrier.
 

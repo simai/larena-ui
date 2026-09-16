@@ -41,6 +41,7 @@
     "contracts:verify": "@php scripts/verify-smart-contracts-with-studio.php",
     "test": ["@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminRecordEditorSmartViewTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminDataviewRendererTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AdminUiLabReferenceBehaviorTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedComponentRegistryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkContractRegistryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeLockTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedAssetProvenanceLockTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartManagerTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartFacadeTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentReferenceTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartCatalogProjectionTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartAiCatalogProjectionTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentLibraryTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SfActionLinkTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeAssetResolverTest.php"],
     "test:unit": "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
+    "test:dataview-host": "node --test tests/JavaScript/dataview-host-lifecycle.test.mjs",
     "test:dependency": "@php tests/Unit/MinimalCmsDependencyContractTest.php",
     "test:minimal-cms-ui": ["@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/InMemoryUiRuntimeTest.php", "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartManagerTest.php"],
     "lint": "@php scripts/lint.php",
@@ -53,6 +54,7 @@
       "@lint",
       "@analyse",
       "@test",
+      "@test:dataview-host",
       "@test:dependency",
       "@evidence:check",
       "@scope:check"
