@@ -81,7 +81,9 @@
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentLibraryTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SfActionLinkTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeAssetResolverTest.php",
-      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListRendererTest.php"
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListRendererTest.php",
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredDocumentRendererTest.php",
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListDocumentNodeRendererTest.php"
     ],
     "test:unit": "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
     "test:dataview-host": "node --test tests/JavaScript/dataview-host-lifecycle.test.mjs",
@@ -104,7 +106,8 @@
       "@test:dependency",
       "@evidence:check",
       "@scope:check"
-    ]
+    ],
+    "test:composition-list": "node --test tests/JavaScript/registered-list-composition.test.mjs"
   },
   "config": {
     "sort-packages": true,

@@ -4,7 +4,7 @@
   "goal": "dataview-host-lifecycle",
   "status": "coding_started",
   "base_commit": "e13fd4dd1871a06936410ffed2b8ecae93f35ff4",
-  "scope": "Owned Dataview host lifecycle and registered composite presentation; no Framework grammar, route, DB or live changes",
+  "scope": "Owned Dataview host lifecycle, registered composite presentation and PHP rendering adapter with trusted product type; no Framework grammar, route, DB or live changes",
   "allowed_files": [
     ".larena/launch-context.json",
     "docs/project-management/launch-records/dataview-host-lifecycle-v1.json",
@@ -20,7 +20,15 @@
     "tests/Unit/RegisteredListRendererTest.php",
     "resources/smart/ui-dataview/manifest.json",
     "src/Runtime/SmartManager.php",
-    "tests/bootstrap.php"
+    "tests/bootstrap.php",
+    "src/Runtime/RegisteredDocumentRenderer.php",
+    "tests/Unit/RegisteredDocumentRendererTest.php",
+    "resources/composition/registered-list.type-manifest.json",
+    "resources/composition/larena-registry.mjs",
+    "tests/JavaScript/registered-list-composition.test.mjs",
+    "tests/Unit/logical-file-composition-registry.mjs",
+    "src/Runtime/RegisteredListDocumentNodeRenderer.php",
+    "tests/Unit/RegisteredListDocumentNodeRendererTest.php"
   ],
   "evidence": "docs/project-management/evidence/dataview-host-lifecycle-v1",
   "approval_basis": "Active user goal authorizes isolated implementation; accepted bounded Dataview integration assignment in Specs c97a2ffe",

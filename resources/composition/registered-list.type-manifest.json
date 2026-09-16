@@ -1,0 +1,57 @@
+{
+  "schema": "simai.composition.type-manifest.v1",
+  "type": "larena.registered-list",
+  "version": "1.0.0",
+  "category": "content",
+  "mode": "leaf",
+  "profiles": [
+    "ui-layout"
+  ],
+  "data_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  },
+  "props_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "source_key",
+      "column_preset",
+      "title"
+    ],
+    "properties": {
+      "source_key": {
+        "type": "string",
+        "maxLength": 120,
+        "pattern": "^[a-z][a-z0-9-]*(?:\\.[a-z][a-z0-9-]*)+$"
+      },
+      "column_preset": {
+        "type": "string",
+        "maxLength": 80,
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    }
+  },
+  "presentation": {
+    "views": [
+      "default"
+    ],
+    "presets": [],
+    "modifiers": []
+  },
+  "slots": {},
+  "renderer": {
+    "kind": "builtin",
+    "name": "larena.registered-list"
+  },
+  "assets": [],
+  "capabilities": [
+    "html"
+  ]
+}

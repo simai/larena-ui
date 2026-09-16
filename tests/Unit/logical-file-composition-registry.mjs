@@ -5,7 +5,8 @@ const registry = createRegistry({createRegistry(types, renderers) {
   if (!types) return {types:new Map([['builtin',{type:'layout.section'}]])};
   registered={types,renderers}; return registered;
 }});
-assert.equal(registry.types.at(-1).type,'larena.logical-file-image');
+assert.equal(registry.types.filter(type => type.type === 'larena.logical-file-image').length, 1);
+assert.equal(registry.types.filter(type => type.type === 'larena.registered-list').length, 1);
 const image = registry.renderers['larena.logical-file-image'];
 const html=image({node:{id:'instance-1',props:{public_id:'file-id',extension:'png',alt:'" <tag> &'}}});
 assert.match(html,/src="\/media\/file-id\/image.png"/);

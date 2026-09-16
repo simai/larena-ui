@@ -27,7 +27,15 @@
     "tests/Unit/RegisteredListRendererTest.php",
     "resources/smart/ui-dataview/manifest.json",
     "src/Runtime/SmartManager.php",
-    "tests/bootstrap.php"
+    "tests/bootstrap.php",
+    "src/Runtime/RegisteredDocumentRenderer.php",
+    "tests/Unit/RegisteredDocumentRendererTest.php",
+    "resources/composition/registered-list.type-manifest.json",
+    "resources/composition/larena-registry.mjs",
+    "tests/JavaScript/registered-list-composition.test.mjs",
+    "tests/Unit/logical-file-composition-registry.mjs",
+    "src/Runtime/RegisteredListDocumentNodeRenderer.php",
+    "tests/Unit/RegisteredListDocumentNodeRendererTest.php"
   ],
   "forbidden_files": [
     "config/*",

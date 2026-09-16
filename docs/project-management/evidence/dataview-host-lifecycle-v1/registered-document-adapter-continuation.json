@@ -1,0 +1,43 @@
+{
+  "status": "local_implementation_candidate",
+  "role": "PHP rendering adapter after upstream normalization; not a Recipe compiler",
+  "checks": {
+    "native_boundary_test": "passed",
+    "phpstan_level_5_errors": 0,
+    "list_document_node_boundary_test": "passed",
+    "framework_document_and_recipe_checks": {
+      "passed": 5,
+      "failed": 0,
+      "configured_core_revision": "8c22fe2b80bb3bb88ec40dd34bbcddffb65f27d2",
+      "contract_version": "1.0.0",
+      "accepted_1_0_1_conformance": false
+    }
+  },
+  "coverage": [
+    "mandatory validator invocation and refusal",
+    "registered recursive rendering",
+    "whole-tree preflight before render callbacks",
+    "unknown later sibling rejected before callbacks",
+    "duplicate IDs rejected before callbacks",
+    "literal HTML escaped by registered text renderer",
+    "two list nodes retain separate Smart IDs",
+    "invalid later source/preset rejected before any owner data read",
+    "Framework Recipe resolves static registered list host without row data"
+  ],
+  "limits": [
+    "Exact PHP Framework conformance validator is not yet wired; boundary test validator is a spy, not schema proof",
+    "Project list manifest is registered and tested against bundled Recipe 1.0.0, not accepted 1.0.1 delivery",
+    "No isolated Root Document route yet",
+    "No browser or release acceptance",
+    "No canonical site change"
+  ],
+  "files": {
+    "src/Runtime/RegisteredDocumentRenderer.php": "0cf9cd02383c9458cac2d9ceeec3a740cc971ffcb52ce77f1cb38746e603ddd9",
+    "src/Runtime/RegisteredListDocumentNodeRenderer.php": "848513c2e8294284a1e1bb557de207df28a921d8d6dca57bc3758a4dc77daabf",
+    "tests/Unit/RegisteredDocumentRendererTest.php": "34e47bfd3bf06e1951d38d831a080ee6f98b7929442f4869109939eb12c5b9f1",
+    "tests/Unit/RegisteredListDocumentNodeRendererTest.php": "d6c10f162130037acbb3d471603e7bce08ed8634e4cc68dfbfa9c5cdba09ea18",
+    "resources/composition/registered-list.type-manifest.json": "33ffc8d91c5a62d8d9a270a246825a1fd58f2b4561601b6ee5ebc232b86b15a8",
+    "resources/composition/larena-registry.mjs": "45de0c6e4f438a07ad765a188bd2c80b6351c6e781563a3f4b94872922b76005",
+    "tests/JavaScript/registered-list-composition.test.mjs": "9c2590cb7a784e1e6ca636d4854097f8e871c0883c6028c32e3a15da54869832"
+  }
+}

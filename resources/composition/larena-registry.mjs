@@ -1,3 +1,5 @@
+import registeredListManifest from './registered-list.type-manifest.json' with { type: 'json' };
+
 /** Trusted product type projection. No renderer code comes from Recipe or database JSON. */
 export function createRegistry(framework) {
   const builtin = [...framework.createRegistry().types.values()];
@@ -14,8 +16,10 @@ export function createRegistry(framework) {
     renderer: { kind: 'builtin', name: 'larena.logical-file-image' }, assets: [], capabilities: ['html'],
   };
   const escape = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[character]);
-  return framework.createRegistry([...builtin, manifest], {
+  return framework.createRegistry([...builtin, manifest, registeredListManifest], {
     'layout.section': ({ node, slots }) => `<section data-sf-composition-id="${escape(node.id)}" data-composition-preset="${escape(node.presentation?.preset || 'surface')}">${slots.default || ''}</section>`,
+    // Static publication contains the host only; authorized rows are rendered per HTTP request in PHP.
+    'larena.registered-list': ({ node }) => `<div data-larena-request-list="${escape(node.id)}" data-source-key="${escape(node.props.source_key)}" data-column-preset="${escape(node.props.column_preset)}"></div>`,
     'larena.logical-file-image': ({ node }) => {
       const { public_id: id, extension, alt } = node.props;
       if (!/^[a-zA-Z0-9-]{1,100}$/.test(id) || !['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(extension)) throw new Error('larena_logical_image_metadata_invalid');
