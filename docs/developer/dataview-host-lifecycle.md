@@ -30,3 +30,12 @@ Tests use the package's own source even when vendor has an optimized classmap po
 This remains an isolated candidate. The boundary tests use validator spies and prove ordering, source/preset refusal and safe rendering; they do not prove complete Framework PHP conformance. Production wiring requires the exact pinned schema/type validator, isolated Root route and Chrome acceptance. Recipe checks currently use the exact bundled 1.0.0 pair and must be repeated on the accepted 1.0.1 delivery. No request-local rows or personalized HTML may be activated as a shared compiled snapshot.
 
 Run `composer test:composition-list` with an exact `SIMAI_UI_ROOT`. The command fails when unconfigured rather than treating missing conformance input as a passing check.
+
+
+### Pinned schema shape gate
+
+`FrameworkDocumentSchemaValidator::fromPinnedSchema(path, digest)` reads the owner-provided Framework Document schema and checks its exact bytes and identity. It implements only the keywords used by that schema; an encountered unsupported keyword or external reference fails closed. This is a Document shape adapter, not an independent normative schema or complete Framework semantic validator.
+
+`document(rawJson)` validates JSON objects before conversion to associative PHP arrays, retaining the distinction between `{}` and `[]` during checks. `binding(rawJson)` creates a request-local validation closure that accepts only the exact PHP document decoded from those checked bytes. Use this closure in `RegisteredDocumentRenderer`; a changed source key or node after validation is refused. The raw JSON must be the normalized compiled Document from trusted publication, not arbitrary browser JSON.
+
+Manifest checks still own registered type/profile/slot/presentation semantics and supported extensions. Complete conformance, exact 1.0.1 delivery, persisted snapshot wiring and browser acceptance remain pending. `composer test:composition-schema` requires the exact `SIMAI_UI_ROOT` and the independently recorded schema digest; it does not silently skip absent input.

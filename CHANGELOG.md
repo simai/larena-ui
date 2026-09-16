@@ -55,3 +55,9 @@
 ### Non-claims
 
 - No runtime behavior, public contract or package version changes are introduced by the B0 preparation.
+
+
+### Declarative Document schema candidate
+
+- Added a pinned Framework Document schema shape gate and a binding that refuses changes after validation. JSON object/array identity is checked before PHP conversion.
+- Added required configured schema and registered-list Recipe checks to the UI quality gate. Type semantics, Root adoption, exact Recipe 1.0.1 and Chrome acceptance remain pending; this is not a release readiness claim.

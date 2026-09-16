@@ -35,7 +35,9 @@
     "tests/JavaScript/registered-list-composition.test.mjs",
     "tests/Unit/logical-file-composition-registry.mjs",
     "src/Runtime/RegisteredListDocumentNodeRenderer.php",
-    "tests/Unit/RegisteredListDocumentNodeRendererTest.php"
+    "tests/Unit/RegisteredListDocumentNodeRendererTest.php",
+    "src/Runtime/FrameworkDocumentSchemaValidator.php",
+    "tests/Unit/FrameworkDocumentSchemaValidatorTest.php"
   ],
   "forbidden_files": [
     "config/*",

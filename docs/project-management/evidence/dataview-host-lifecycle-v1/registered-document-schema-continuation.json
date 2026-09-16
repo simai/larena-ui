@@ -1,0 +1,30 @@
+{
+  "status": "local_implementation_candidate",
+  "schema_relative_path": "distr/core/contracts/composition-document.v1.schema.json",
+  "schema_digest": "sha256:a3eb3e2d2dc6505a9848174da60e0afab812b38b809e45a1fb583d2b6c2e6d80",
+  "tested_core_revision": "8c22fe2b80bb3bb88ec40dd34bbcddffb65f27d2",
+  "coverage": [
+    "JSON object versus array before PHP conversion",
+    "nine invalid document shape/portable field cases",
+    "changed document refused by bound validator",
+    "schema digest mismatch refusal",
+    "byte limit refusal",
+    "registered PHP adapter accepts exact checked document",
+    "Unsupported schema keyword and external reference refusal using isolated temporary fixture"
+  ],
+  "checks": {
+    "direct_test": "passed",
+    "phpstan_level_5_errors": 0,
+    "configured_native_quality_gate": "passed; final commit hook rechecks current bytes"
+  },
+  "limits": [
+    "Shape validator and registered type semantics remain distinct; not complete upstream semantic conformance",
+    "Exact Recipe 1.0.1 delivery still pending",
+    "Root route, persisted receipt wiring and Chrome acceptance pending",
+    "No release or live adoption"
+  ],
+  "files": {
+    "src/Runtime/FrameworkDocumentSchemaValidator.php": "d565dc696e7787e334ea1d194effe92c225423a9497ab826dcfdce7eccdc7163",
+    "tests/Unit/FrameworkDocumentSchemaValidatorTest.php": "e1112eb3085bbec3b817e13ab42c451b63503565ff6f924f6c519f5bc2172af8"
+  }
+}
