@@ -21,7 +21,8 @@
     "tests/Unit/AdminSmartEventBridgeContractTest.php",
     "composer.json",
     "CHANGELOG.md",
-    "docs/developer/dataview-host-lifecycle.md"
+    "docs/developer/dataview-host-lifecycle.md",
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php"
   ],
   "forbidden_files": [
     "config/*",

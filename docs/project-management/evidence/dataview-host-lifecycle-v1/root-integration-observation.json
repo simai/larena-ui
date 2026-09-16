@@ -1,0 +1,47 @@
+{
+  "schema": "larena.dataview.integration_observation.v1",
+  "environment": "isolated full-profile Root at 127.0.0.1:5212",
+  "live_site_changed": false,
+  "runtime_pair": "ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2",
+  "bridge_sha256": "59e27f70219c23c59af066a4289b4fafc76d9b2034c0c8f629c0af73b6212127",
+  "observations": [
+    {
+      "check": "old Admin expectation refuses changed bridge",
+      "status": "confirmed",
+      "result": "route_resource_sha256_mismatch:ui.admin.smart_event_bridge.js"
+    },
+    {
+      "check": "matching Admin expectation",
+      "status": "confirmed",
+      "result": "immutable_bundle_publication_verified; physical_publication_ready true; no missing route resources"
+    },
+    {
+      "check": "real Smart hydration in Chrome",
+      "status": "confirmed",
+      "result": "table renders 10 initial rows from 48 fixtures; pagination renders"
+    },
+    {
+      "check": "search",
+      "status": "confirmed",
+      "input": "Руководство администратора 02",
+      "result": "found 1; row 12002 displayed; pagination total 1"
+    },
+    {
+      "check": "console errors during search",
+      "status": "confirmed",
+      "result": "none captured"
+    },
+    {
+      "check": "row view action",
+      "status": "partial",
+      "result": "click had no visible card or navigation; operation is not accepted"
+    }
+  ],
+  "limits": [
+    "local path dependencies; not a clean distribution",
+    "no two-source universal list acceptance",
+    "no complete action/ACL cycle",
+    "wide browser only; responsive acceptance pending",
+    "visual editor not implemented"
+  ]
+}
