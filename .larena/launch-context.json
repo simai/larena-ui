@@ -3,12 +3,12 @@
   "package": "larena/ui",
   "repository_class": "continuation_repository",
   "repository_contains_prior_implementation": true,
-  "launch_record_ref": "docs/project-management/launch-records/larena-admin-declarative-smart-ui-v1-a0-a1.json",
+  "launch_record_ref": "docs/project-management/launch-records/composition-owner-bound-slice-v1.json",
   "specs_repo": "simai/larena-specs",
   "specs_commit": "d2efbf0b5100a57b6503654d2e49b7222d94b43c",
   "target_id": "larena.target.server_native_smart_asset_contract_v1",
   "semantic_digest": "sha256:bbf755329dbf66a24a2c2a2ba63c3cd5b5459a3e220cda7b664703d555b027ed",
-  "base_commit": "f03fb10cebdbfa08747b59c39ece78f1eeb273e0",
+  "base_commit": "2ca895ab26f08bdbcf5bd779ac664495740e2c25",
   "selected_features": [
     "server_native_smart_asset_free_rendering"
   ],
@@ -21,7 +21,16 @@
     "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/manifest.json",
     "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/ui.tar.gz",
     "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/smart.tar.gz",
-    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/contract.tar.gz"
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/contract.tar.gz",
+    "resources/composition/larena-registry.mjs",
+    "tests/Unit/LogicalFileCompositionRegistryTest.php",
+    "docs/project-management/launch-records/composition-owner-bound-slice-v1.json",
+    "resources/composition/larena-composition.css",
+    "scripts/run-unit-tests.php",
+    "tests/Unit/logical-file-composition-registry.mjs",
+    "README.md",
+    "CHANGELOG.md",
+    "scripts/validate-larena-package.php"
   ],
   "forbidden_files": [
     "config/*",
@@ -45,13 +54,13 @@
     "deviations.json",
     "graph-sync-proposal.json"
   ],
-  "evidence_path": "docs/project-management/evidence/server-native-smart-assets-v1",
-  "graph_sync_proposal_path": "docs/project-management/evidence/server-native-smart-assets-v1/graph-sync-proposal.json",
-  "status": "review_completed",
+  "evidence_path": "docs/project-management/evidence/composition-owner-bound-slice-v1",
+  "graph_sync_proposal_path": "docs/project-management/evidence/composition-owner-bound-slice-v1/graph-sync-proposal.json",
+  "status": "coding_started",
   "coding_allowed": true,
   "coding_started": true,
   "repository_enforcement_installed": true,
-  "review_completed": true,
-  "next_transition": "admin_login_composition_acceptance",
-  "coding_branch": "main"
+  "review_completed": false,
+  "next_transition": "isolated_slice_review",
+  "coding_branch": "codex/composition-owner-bound-slice"
 }

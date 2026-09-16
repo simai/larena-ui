@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 $tests = [
+    __DIR__ . '/../tests/Unit/LogicalFileCompositionRegistryTest.php',
     __DIR__ . '/../tests/Unit/UiContractTest.php',
     __DIR__ . '/../tests/Unit/UiFailsClosedTest.php',
     __DIR__ . '/../tests/Unit/InMemoryUiRuntimeTest.php',

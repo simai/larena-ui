@@ -1,0 +1,12 @@
+{
+  "package": "ui",
+  "files": [
+    ".larena/launch-context.json",
+    "scripts/run-unit-tests.php",
+    "docs/project-management/launch-records/composition-owner-bound-slice-v1.json",
+    "resources/composition/larena-composition.css",
+    "resources/composition/larena-registry.mjs",
+    "tests/Unit/LogicalFileCompositionRegistryTest.php",
+    "tests/Unit/logical-file-composition-registry.mjs"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "larena.package_launch_record.v1",
+  "package": "larena/ui",
+  "status": "coding_started",
+  "scope": "Trusted Larena logical file image type and renderer projection; reuse Framework builtins; no Framework source or generated distribution edits",
+  "allowed_files": [
+    ".larena/launch-context.json",
+    "src/Contracts/FrontendRenderArtifact.php",
+    "src/Contracts/UiAssetGraph.php",
+    "src/Runtime/SmartManager.php",
+    "tests/Unit/SmartManagerTest.php",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/ui.tar.gz",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-8c22fe2b80bb-smart-400d80e501ca-registry-1e5dcbf8-exact-git-tree-v2/sources/contract.tar.gz",
+    "resources/composition/larena-registry.mjs",
+    "tests/Unit/LogicalFileCompositionRegistryTest.php",
+    "docs/project-management/launch-records/composition-owner-bound-slice-v1.json",
+    "resources/composition/larena-composition.css",
+    "scripts/run-unit-tests.php",
+    "tests/Unit/logical-file-composition-registry.mjs",
+    "README.md",
+    "CHANGELOG.md",
+    "scripts/validate-larena-package.php"
+  ],
+  "evidence": "docs/project-management/evidence/composition-owner-bound-slice-v1",
+  "goal": "owner-bound-composition-slice"
+}
