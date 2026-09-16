@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-$node = getenv('SIMAI_NODE_BINARY');
-if (!is_string($node) || !is_executable($node)) {
+$node = getenv('SIMAI_NODE_BINARY') ?: 'node';
+if ($node !== 'node' && !is_executable($node)) {
     throw new RuntimeException('SIMAI_NODE_BINARY must identify the managed Node runtime for composition registry acceptance.');
 }
 passthru(escapeshellarg($node).' '.escapeshellarg(__DIR__.'/logical-file-composition-registry.mjs'), $exit);
-assert($exit === 0, 'Trusted composition registry rejected its safety tests.');
+if ($exit !== 0) throw new RuntimeException('Trusted composition registry failed; install Node or set SIMAI_NODE_BINARY to the pinned runtime.');
