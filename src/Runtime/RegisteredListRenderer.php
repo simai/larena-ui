@@ -43,9 +43,29 @@ final readonly class RegisteredListRenderer
         $data = ['columns' => $columns, 'rows' => $rows,
             'pagination' => ['page' => $page->pagination->page, 'pageSize' => $page->pagination->perPage, 'total' => $page->pagination->total]];
         return $this->smart->renderView('dataview.table', 'default', ['title' => $title], $assetActivation,
+            slots: ['content' => $this->noScriptTable($rows, $columns, $title)],
             childProps: ['grid' => ['id' => $instanceId.'-table', 'aria-label' => $title,
                 'selectable' => false, 'settings' => false, 'actions' => false],
                 'pagination' => ['id' => $instanceId.'-pagination', 'current' => $page->pagination->page, 'total' => $page->pagination->total]],
             requestDataBindings: ['grid' => ['data' => $data]]);
     }
+    /** @param list<array<string,mixed>> $rows @param array<array-key,mixed> $columns */
+    private function noScriptTable(array $rows, array $columns, string $title): string
+    {
+        $escape = static fn (string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html = '<noscript><table data-larena-list-ssr="true"><caption>'.$escape($title).'</caption><thead><tr>';
+        foreach ($columns as $column) $html .= '<th scope="col">'.$escape($column['label']).'</th>';
+        $html .= '</tr></thead><tbody>';
+        foreach ($rows as $row) {
+            $html .= '<tr>';
+            foreach ($columns as $column) {
+                $value = $row[$column['key']];
+                $text = is_bool($value) ? ($value ? 'true' : 'false') : (string) $value;
+                $html .= '<td>'.$escape($text).'</td>';
+            }
+            $html .= '</tr>';
+        }
+        return $html.'</tbody></table></noscript>';
+    }
+
 }

@@ -8,3 +8,8 @@ Chrome native-DOM lifecycle probe: seven observed checks passed. Uses controlled
 ## Registered composite presentation — 2026-09-17
 
 Full native package quality gate passed after ensuring tests load this package's source: 89 PHP files linted, all existing unit/contract suites, JavaScript lifecycle suites, Minimal CMS dependency, evidence and scope checks. Independent PHPStan 2.2.1 level 5 of RegisteredListRenderer and modified SmartManager returned zero errors. The new unit test proves distinct table/pagination IDs for two placements of the same dataset, projection excludes a private field, HTML-looking text is safely serialized in the request hydration JSON, and invalid columns/bindings fail. Structural HTML-looking props still fail. This is not Chrome/XSS-after-hydration, SSR content or interactive list acceptance.
+
+
+## Request-bound list SSR continuation
+
+The same registered composite now receives a trusted UI-generated content-slot fragment containing a semantic noscript table with caption, scoped headers and escaped scalar cells. No HTML is added to stored definitions, Recipe or dataset values. JavaScript-enabled browsers use the Smart table; disabled-JavaScript browsers receive readable current-page content. Unit checks inspect the actual HTML and verify literal script-looking text is escaped. Full native gate and independent PHPStan level 5 passed again. Browser-disabled-JS behavior is not claimed from string assertions. Root integration proves both authorized datasets use this renderer; protected HTTP behavior remains unchanged.

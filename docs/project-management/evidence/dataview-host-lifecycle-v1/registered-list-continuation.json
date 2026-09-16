@@ -7,14 +7,16 @@
     "errors": 0
   },
   "files": {
-    "src/Runtime/RegisteredListRenderer.php": "sha256:1fefe70aa447198408834eb595f977ce2dfd2fcc064185fa6149334715cd0b6b",
+    "src/Runtime/RegisteredListRenderer.php": "sha256:db155b09d33e08375de1aed3be766f6e48fc0c2e58fd0b41702fd1dd23946407",
     "src/Runtime/SmartManager.php": "sha256:ad411e3c8c7f1b8c0c3a753533a93abd2d61d1d6ae74643d9f68286c992f1fc1",
     "resources/smart/ui-dataview/manifest.json": "sha256:b5bf6face34ef0f5fa9ce03f42a47eb086e38346d0fc741d60f1d792f76505ab",
     "tests/bootstrap.php": "sha256:cd29903ed234bca61393e13fc99a57421e53cf1a56ee72f4fa5e7d5a3ab32ce5",
-    "tests/Unit/RegisteredListRendererTest.php": "sha256:6fd499ecc3052b2818f5fcaab13b92bc69b46bcdbfce798cbef4249058dff563"
+    "tests/Unit/RegisteredListRendererTest.php": "sha256:dbc4ef6cac7b185ca31df72d1706b28620c8891fa607e10c130303445a94a4ed"
   },
   "chromeAccepted": false,
   "meaningfulListSsrAccepted": false,
   "frameworkRecipe101Adopted": false,
-  "liveUpdated": false
+  "liveUpdated": false,
+  "noScriptHtmlGenerated": true,
+  "browserDisabledJsAccepted": false
 }

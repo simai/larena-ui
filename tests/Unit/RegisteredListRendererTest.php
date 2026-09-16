@@ -28,7 +28,9 @@ $page = new DataviewDatasetSnapshot('sha256:'.str_repeat('a',64), new DataviewSo
 $columns = [['key' => 'title', 'label' => 'Название']];
 $a = $renderer->render($page, 'list-alpha', 'Records', $columns, $activation);
 $b = $renderer->render($page, 'list-beta', 'Records', $columns, $activation);
-assert($a->isRenderable()); assert(str_contains($a->html(), 'id="list-alpha-table"'));
+assert($a->isRenderable());
+assert(str_contains($a->html(), '<noscript><table'));
+assert(str_contains($a->html(), '&lt;script&gt;unsafe&lt;/script&gt;')); assert(str_contains($a->html(), 'id="list-alpha-table"'));
 assert(str_contains($b->html(), 'id="list-beta-table"'));
 assert(str_contains($a->html(), 'id="list-alpha-pagination"'));
 assert(!str_contains($a->html(), 'not projected'));
