@@ -7,56 +7,228 @@
   "props": {
     "type": "object",
     "properties": {
-      "current": {"type": "integer"},
-      "total": {"type": "integer"},
-      "page-size": {"type": "integer", "minimum": 1, "maximum": 100},
-      "top": {"type": "boolean"},
-      "bottom": {"type": "boolean"},
-      "show-more-text": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "selected-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "total-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "show-total-text": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "pages-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "previous-page-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "page-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "go-to-page-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "next-page-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "last-page-text": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "page-size-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
-      "next-href": {"type": "string", "minLength": 2, "maxLength": 2048, "pattern": "^/[A-Za-z0-9_./?=&%:+-]+$"},
-      "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
+      "current": {
+        "type": "integer"
+      },
+      "total": {
+        "type": "integer"
+      },
+      "page-size": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100
+      },
+      "top": {
+        "type": "boolean"
+      },
+      "bottom": {
+        "type": "boolean"
+      },
+      "show-more-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "selected-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "total-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "show-total-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "pages-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "previous-page-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "page-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "go-to-page-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "next-page-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "last-page-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "page-size-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
+      },
+      "aria-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160,
+        "pattern": "\\S"
+      },
+      "next-href": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 2048,
+        "pattern": "^/[A-Za-z0-9_./?=&%:+-]+$"
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80,
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      },
+      "page-sizes": {
+        "type": "string",
+        "pattern": "^10,20,50,100$"
+      }
     },
-    "required": ["current", "total", "top", "bottom", "show-more-text", "selected-label", "total-label", "show-total-text", "pages-label", "previous-page-label", "page-label", "go-to-page-label", "next-page-label", "last-page-text", "page-size-label", "aria-label", "id"],
+    "required": [
+      "current",
+      "total",
+      "top",
+      "bottom",
+      "show-more-text",
+      "selected-label",
+      "total-label",
+      "show-total-text",
+      "pages-label",
+      "previous-page-label",
+      "page-label",
+      "go-to-page-label",
+      "next-page-label",
+      "last-page-text",
+      "page-size-label",
+      "aria-label",
+      "id"
+    ],
     "additionalProperties": false
   },
   "slots": {},
   "events": {
-    "sf-page-change": {"kind": "custom", "backend_handler_binding": false},
-    "sf-show-more": {"kind": "custom", "backend_handler_binding": false},
-    "sf-page-size-change": {"kind": "custom", "backend_handler_binding": false},
-    "sf-action-change": {"kind": "custom", "backend_handler_binding": false},
-    "sf-action-apply": {"kind": "custom", "backend_handler_binding": false},
-    "sf-action-for-all-change": {"kind": "custom", "backend_handler_binding": false},
-    "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
-    "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
-    "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}
+    "sf-page-change": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-show-more": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-page-size-change": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-action-change": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-action-apply": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-action-for-all-change": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-connected": {
+      "kind": "lifecycle",
+      "backend_handler_binding": false
+    },
+    "sf-after-render": {
+      "kind": "lifecycle",
+      "backend_handler_binding": false
+    },
+    "sf-disconnected": {
+      "kind": "lifecycle",
+      "backend_handler_binding": false
+    }
   },
-  "views": {"default": {}, "admin": {}},
+  "views": {
+    "default": {},
+    "admin": {}
+  },
   "presets": {
-    "first_page": {"props": {"current": 1}},
-    "middle_page": {"props": {"current": 2}},
-    "last_page": {"props": {"current": 4}}
+    "first_page": {
+      "props": {
+        "current": 1
+      }
+    },
+    "middle_page": {
+      "props": {
+        "current": 2
+      }
+    },
+    "last_page": {
+      "props": {
+        "current": 4
+      }
+    }
   },
   "constraints": {},
-  "render": {"strategy": "host", "renderer": "ui.sf.element"},
-  "frontend": {"runtime": "simai-framework", "tag": "sf-pagination"},
+  "render": {
+    "strategy": "host",
+    "renderer": "ui.sf.element"
+  },
+  "frontend": {
+    "runtime": "simai-framework",
+    "tag": "sf-pagination"
+  },
   "assets": [
-    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
-    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.sf_pagination.js", "kind": "javascript", "critical": true}
+    {
+      "key": "simai.framework.core.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.core.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.smart_base.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.bridge.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_pagination.js",
+      "kind": "javascript",
+      "critical": true
+    }
   ],
   "atlas": {
     "visible": true,
@@ -71,8 +243,19 @@
       "safe_to_bind_data": false,
       "safe_to_execute_effect": false
     },
-    "states": ["default", "first_page", "middle_page", "last_page", "show_more_available"],
-    "accessibility": ["labelled_page_buttons", "current_page_state", "keyboard_controls", "bounded_page_state"],
+    "states": [
+      "default",
+      "first_page",
+      "middle_page",
+      "last_page",
+      "show_more_available"
+    ],
+    "accessibility": [
+      "labelled_page_buttons",
+      "current_page_state",
+      "keyboard_controls",
+      "bounded_page_state"
+    ],
     "product_href": "/admin/ui/components/ui.pagination",
     "example_props": {
       "current": 2,
@@ -94,22 +277,54 @@
       "id": "ui-pagination-reference"
     },
     "controls": [
-      {"key": "page", "source": "preset", "widget": "select", "default": "middle_page"},
-      {"key": "show-more-text", "source": "prop", "widget": "text", "min_length": 1, "max_length": 120}
+      {
+        "key": "page",
+        "source": "preset",
+        "widget": "select",
+        "default": "middle_page"
+      },
+      {
+        "key": "show-more-text",
+        "source": "prop",
+        "widget": "text",
+        "min_length": 1,
+        "max_length": 120
+      }
     ],
-    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
+    "code_preview": {
+      "adapter": "smart_manager_php_v1",
+      "omit_defaults": false
+    },
     "i18n": {
       "en": {
         "title": "Pagination",
         "description": "Moves through pages in a long list.",
-        "controls": {"page": "Current page", "show-more-text": "Show-more text"},
-        "options": {"page": {"first_page": "First page", "middle_page": "Middle page", "last_page": "Last page"}}
+        "controls": {
+          "page": "Current page",
+          "show-more-text": "Show-more text"
+        },
+        "options": {
+          "page": {
+            "first_page": "First page",
+            "middle_page": "Middle page",
+            "last_page": "Last page"
+          }
+        }
       },
       "ru": {
         "title": "Постраничная навигация",
         "description": "Переключает страницы длинного списка.",
-        "controls": {"page": "Текущая страница", "show-more-text": "Текст кнопки «Показать ещё»"},
-        "options": {"page": {"first_page": "Первая страница", "middle_page": "Средняя страница", "last_page": "Последняя страница"}}
+        "controls": {
+          "page": "Текущая страница",
+          "show-more-text": "Текст кнопки «Показать ещё»"
+        },
+        "options": {
+          "page": {
+            "first_page": "Первая страница",
+            "middle_page": "Средняя страница",
+            "last_page": "Последняя страница"
+          }
+        }
       }
     }
   },

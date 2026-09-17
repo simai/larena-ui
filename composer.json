@@ -83,7 +83,8 @@
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeAssetResolverTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListRendererTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredDocumentRendererTest.php",
-      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListDocumentNodeRendererTest.php"
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListDocumentNodeRendererTest.php",
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkLayoutDocumentTypesTest.php"
     ],
     "test:unit": "@php -d zend.assertions=1 -d assert.exception=1 scripts/run-unit-tests.php",
     "test:dataview-host": "node --test tests/JavaScript/dataview-host-lifecycle.test.mjs",

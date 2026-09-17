@@ -120,6 +120,11 @@
     }
 
     const workbenchSelector = '[data-larena-dataview-workbench]';
+    const ownNode = (host, selector) => {
+        const first = host.querySelector(selector);
+        if (!first?.closest || first.closest(workbenchSelector) === host) return first;
+        return [...host.querySelectorAll(selector)].find(node => node.closest(workbenchSelector) === host) || null;
+    };
     const deepMerge = (base, patch) => {
         const result = {...(base || {})};
         Object.entries(patch || {}).forEach(([key, value]) => {
@@ -130,14 +135,63 @@
         return result;
     };
 
+    // Trusted product code registers closures by exact table instance, never JSON or DOM IDs.
+    const actionRegistrations = new WeakMap();
+    const explicitHosts = new Map();
+    let reconcileDataview = () => {};
+    const actionPort = Object.freeze({
+        refresh(table) {
+            const registration = actionRegistrations.get(table);
+            if (!registration || registration.controller.signal.aborted) return Promise.resolve(false);
+            const instance = [...dataviewInstances.values()].find(item => item.table === table);
+            return instance?.refresh?.() ?? Promise.resolve(false);
+        },
+        registerHost(host, table, handlers) {
+            if (!host?.isConnected || ownNode(host, 'sf-table') !== table
+                || !ownNode(host, '[data-larena-dataview-state]')
+                || !ownNode(host, 'sf-pagination') || !ownNode(host, '[data-larena-dataview-status]')) {
+                throw new TypeError('Expected connected owner host with exact table and complete state');
+            }
+            explicitHosts.get(host)?.release();
+            const unregister = actionPort.register(table, handlers);
+            const observer = new MutationObserver(() => reconcileDataview());
+            const registration = {table, release: () => {
+                observer.disconnect();
+                unregister();
+                if (explicitHosts.get(host) !== registration) return;
+                explicitHosts.delete(host);
+                dataviewInstances.get(host)?.dispose();
+                dataviewInstances.delete(host);
+            }};
+            explicitHosts.set(host, registration);
+            observer.observe(host.getRootNode(), {childList: true, subtree: true});
+            Promise.resolve().then(() => reconcileDataview());
+            return registration.release;
+        },
+        register(table, handlers) {
+            if (!table?.addEventListener || !(handlers instanceof Map)
+                || [...handlers].some(([id, handler]) => typeof id !== 'string' || !id.trim() || typeof handler !== 'function')) {
+                throw new TypeError('Expected table instance and registered action handlers');
+            }
+            actionRegistrations.get(table)?.controller.abort();
+            const registration = {handlers: new Map(handlers), controller: new AbortController()};
+            actionRegistrations.set(table, registration);
+            return () => {
+                registration.controller.abort();
+                if (actionRegistrations.get(table) === registration) actionRegistrations.delete(table);
+            };
+        },
+    });
+    Object.defineProperty(globalThis, 'LarenaDataviewActions', {value: actionPort});
+
     const dataviewInstances = new Map();
 
     const initDataviewWorkbench = (workbench) => {
         if (dataviewInstances.has(workbench)) return;
-        const stateNode = workbench.querySelector('[data-larena-dataview-state]');
-        const table = workbench.querySelector('sf-table');
-        const pagination = workbench.querySelector('sf-pagination');
-        const status = workbench.querySelector('[data-larena-dataview-status]');
+        const stateNode = ownNode(workbench, '[data-larena-dataview-state]');
+        const table = ownNode(workbench, 'sf-table');
+        const pagination = ownNode(workbench, 'sf-pagination');
+        const status = ownNode(workbench, '[data-larena-dataview-status]');
         if (!stateNode || !table || !pagination || !status) return;
         const state = JSON.parse(stateNode.textContent || '{}');
         const controller = new AbortController();
@@ -145,10 +199,12 @@
         const listen = (target, name, handler, options = {}) => {
             target?.addEventListener(name, handler, {...(typeof options === 'boolean' ? {capture: options} : options), signal: controller.signal});
         };
-        dataviewInstances.set(workbench, {table, pagination, stateNode, dispose: () => {
+        dataviewInstances.set(workbench, {table, pagination, stateNode, refresh: () => runQuery(), dispose: () => {
             disposed = true;
             querySequence++;
             controller.abort();
+            actionRegistrations.get(table)?.controller.abort();
+            actionRegistrations.delete(table);
         }});
         let mode = 'user';
         let profiles = state.profiles || {};
@@ -214,15 +270,21 @@
                 table.setRows?.(payload.rows || [], 'larena-query');
                 updatePagination(payload.pagination);
                 setStatus(payload.pagination.total ? `Найдено: ${payload.pagination.total}` : 'Ничего не найдено', payload.pagination.total ? 'success' : 'empty');
+                return true;
             } catch (error) {
                 if (disposed || sequence !== querySequence) return;
-                setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Ошибка загрузки. Черновик сохранён.', 'error');
+                setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Не удалось загрузить данные. Попробуйте снова.', 'error');
+                return false;
             }
         };
         const saveProfile = async (profile) => {
             if (disposed) return;
             const target = mode === 'system' ? profiles.system : profiles.user;
             const endpointUrl = mode === 'system' ? state.system_endpoint : state.user_endpoint;
+            if (!endpointUrl) {
+                setStatus('Сохранение настроек не подключено', 'unavailable');
+                return;
+            }
             setStatus('Сохранение…', 'saving');
             try {
                 const payload = await request(endpointUrl, {
@@ -240,6 +302,107 @@
         };
         const currentProfile = () => JSON.parse(JSON.stringify(profileForMode()));
 
+        let actionPending = false;
+        let activeOperation = null;
+        const ownedEvent = (event, component) => {
+            const origin = event.composedPath?.()[0] || event.target;
+            return origin === component;
+        };
+        listen(table, 'sf-table-action-intent', async (event) => {
+            if (!ownedEvent(event, table) || disposed) return;
+            const detail = event.detail;
+            const valid = detail && typeof detail === 'object' && !Array.isArray(detail)
+                && Object.keys(detail).length === 2
+                && Object.hasOwn(detail, 'action_id') && Object.hasOwn(detail, 'record_ids')
+                && typeof detail.action_id === 'string' && detail.action_id.trim()
+                && Array.isArray(detail.record_ids) && detail.record_ids.length > 0
+                && Array.from(detail.record_ids).every(id => typeof id === 'string' && id.length > 0 || Number.isSafeInteger(id));
+            if (!valid) { setStatus('Некорректный запрос действия', 'error'); return; }
+            const registration = actionRegistrations.get(table);
+            const handler = registration?.handlers.get(detail.action_id);
+            if (!handler || registration.controller.signal.aborted) {
+                setStatus('Действие не подключено', 'unavailable'); return;
+            }
+            if (actionPending) return;
+            actionPending = true;
+            const operation = new AbortController();
+            activeOperation = operation;
+            const abort = () => {
+                operation.abort();
+                if (activeOperation === operation) {
+                    activeOperation = null;
+                    actionPending = false;
+                    setStatus('Действие отменено', 'cancelled');
+                }
+            };
+            controller.signal.addEventListener('abort', abort, {once: true});
+            registration.controller.signal.addEventListener('abort', abort, {once: true});
+            setStatus('Выполняется действие…', 'pending');
+            try {
+                const result = await handler(Object.freeze({
+                    action_id: detail.action_id,
+                    record_ids: Object.freeze([...detail.record_ids]),
+                    signal: operation.signal,
+                    table,
+                    refresh: () => disposed || operation.signal.aborted ? Promise.resolve(false) : runQuery(),
+                }));
+                if (disposed || actionRegistrations.get(table) !== registration || activeOperation !== operation) return;
+                if (operation.signal.aborted || result?.state === 'cancelled') setStatus('Действие отменено', 'cancelled');
+                else if (result?.state === 'completed') setStatus('Действие завершено', 'success');
+                else setStatus('Результат действия не подтверждён', 'unavailable');
+            } catch (error) {
+                if (disposed || actionRegistrations.get(table) !== registration || activeOperation !== operation) return;
+                const message = operation.signal.aborted ? 'Действие отменено'
+                    : error?.status === 409 ? 'Конфликт версии — обновите запись перед повторным редактированием'
+                    : error?.status === 403 ? 'Недостаточно прав для действия'
+                    : 'Не удалось выполнить действие';
+                setStatus(message, operation.signal.aborted ? 'cancelled' : 'error');
+            } finally {
+                controller.signal.removeEventListener('abort', abort);
+                registration.controller.signal.removeEventListener('abort', abort);
+                if (activeOperation === operation) {
+                    activeOperation = null;
+                    actionPending = false;
+                }
+            }
+        });
+
+        // The registered toolbar is a sibling of the grid, not its event parent.
+        // Delegate through the owning host so hydration can replace native controls.
+        const toolbarSearch = (includeOptions = false) => {
+            const input = ownNode(workbench, '.larena-dataview-toolbar input[name="search"]');
+            if (!input || typeof input.value !== 'string') return;
+            const patch = {search: input.value, page: 1};
+            if (includeOptions) {
+                const value = name => ownNode(workbench, `.larena-dataview-toolbar input[name="${name}"]`)?.value;
+                const field = value('filter_field'), filter = value('filter_value');
+                if (typeof field === 'string' && field !== '__unavailable' && typeof filter === 'string') {
+                    patch.filters = filter === '' ? {} : {[field]: {operator: 'eq', value: filter}};
+                }
+                const sort = value('sort_field'), direction = value('sort_direction');
+                if (typeof sort === 'string' && sort !== '__unavailable' && ['asc', 'desc'].includes(direction)) {
+                    patch.sort = [{field: sort, direction}];
+                }
+                const size = value('per_page');
+                if (typeof size === 'string' && /^(10|20|50|100)$/.test(size)) patch.page_size = Number(size);
+            }
+            runQuery(patch);
+        };
+        listen(workbench, 'click', (event) => {
+            if (event.target?.closest?.(workbenchSelector) !== workbench
+                || !event.target.closest('.larena-dataview-toolbar')
+                || !event.target.closest('button[aria-label="Apply table query"]')) return;
+            event.preventDefault();
+            toolbarSearch(true);
+        });
+        listen(workbench, 'keydown', (event) => {
+            if (event.key !== 'Enter' || event.isComposing
+                || event.target?.closest?.(workbenchSelector) !== workbench
+                || !event.target.closest('.larena-dataview-toolbar')
+                || !event.target.matches?.('input[name="search"]')) return;
+            event.preventDefault();
+            toolbarSearch();
+        });
         listen(table, 'onSearchEnd', (event) => runQuery({search: String(event.detail || ''), page: 1}));
         listen(table, 'onFilterUpdate', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
         listen(table, 'onTemplateSave', (event) => {
@@ -264,17 +427,25 @@
         listen(pagination, 'sf-page-size-change', (event) => {
             const profile = currentProfile();
             profile.pagination = {page_size: event.detail?.pageSize || 10};
-            saveProfile(profile);
+            if (mode === 'system' ? state.system_endpoint : state.user_endpoint) saveProfile(profile);
             runQuery({page: 1, page_size: event.detail?.pageSize || 10});
         });
         listen(pagination, 'sf-show-more', (event) => runQuery({page: Math.min((event.detail?.current || 1) + 1, event.detail?.pageCount || 1)}));
         listen(pagination, 'sf-action-apply', (event) => {
-            table.dispatchEvent(new CustomEvent('sf-data-view-bulk-action', {
-                bubbles: true,
-                composed: true,
-                detail: event.detail || {},
-            }));
-            setStatus('Групповое демо-действие передано backend-хосту', 'success');
+            if (!ownedEvent(event, pagination)) return;
+            const actionId = event.detail?.action;
+            if (event.detail?.actionForAll === true) {
+                setStatus('Действие для всех записей не подключено', 'unavailable'); return;
+            }
+            if (typeof actionId !== 'string' || !actionRegistrations.get(table)?.handlers.has(actionId)
+                || typeof table.requestActionIntent !== 'function' || typeof table.getSelectedRecordIds !== 'function') {
+                setStatus('Действие не подключено', 'unavailable'); return;
+            }
+            try {
+                const ids = table.getSelectedRecordIds();
+                if (!ids.length) { setStatus('Выберите записи', 'unavailable'); return; }
+                table.requestActionIntent(actionId, ids);
+            } catch { setStatus('Некорректный запрос действия', 'error'); }
         });
 
         workbench.querySelectorAll('[data-larena-dataview-mode-button]').forEach((button) => {
@@ -289,15 +460,20 @@
                 setStatus(mode === 'system' ? 'Режим настроек для всех' : 'Режим личных настроек');
             });
         });
-        listen(workbench.querySelector('[data-larena-dataview-reset]'), 'click', async () => {
+        listen(ownNode(workbench, '[data-larena-dataview-reset]'), 'click', async () => {
             const target = mode === 'system' ? profiles.system : profiles.user;
             const endpointUrl = mode === 'system' ? state.system_endpoint : state.user_endpoint;
+            if (!endpointUrl) {
+                setStatus('Сброс настроек не подключён', 'unavailable');
+                return;
+            }
             setStatus('Сброс…', 'saving');
             try {
                 const payload = await request(endpointUrl, {method: 'DELETE', body: JSON.stringify({base_revision: target?.revision || 0}), signal: controller.signal});
                 if (disposed) return;
                 applyResponseProfiles(payload);
-                setStatus('Настройки сброшены', 'success');
+                const pageSize = profileForMode().pagination?.page_size || 10;
+                await runQuery({page: 1, page_size: pageSize});
             } catch (error) {
                 if (disposed) return;
                 setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Не удалось сбросить настройки', 'error');
@@ -306,6 +482,7 @@
 
         listen(table, 'click', (event) => {
             const path = event.composedPath();
+            if (path.find(node => node?.matches?.('sf-table')) !== table) return;
             const createControl = path.find((node) => node?.matches?.('sf-button[text="Создать"], sf-icon-button[icon="keyboard_arrow_down"]'));
             if (createControl) {
                 const kind = createControl.matches('sf-button') ? 'create' : 'create-menu';
@@ -314,20 +491,10 @@
                     composed: true,
                     detail: {kind, view_key: state.view_key},
                 }));
-                setStatus(kind === 'create' ? 'Запрос создания передан backend-хосту' : 'Запрос вариантов создания передан backend-хосту', 'success');
+                setStatus(kind === 'create' ? 'Запрос создания передан backend-хосту' : 'Запрос вариантов создания передан backend-хосту', 'pending');
                 return;
             }
-            const rowControl = path.find((node) => node?.matches?.('sf-icon-button[value="edit"], sf-icon-button[value="view"], sf-icon-button[value="delete"]'));
-            if (!rowControl) return;
-            const cell = path.find((node) => node?.matches?.('td[data-item]'));
-            const rowId = String(cell?.dataset?.item || '').split('_')[0] || null;
-            const action = rowControl.getAttribute('value') || '';
-            table.dispatchEvent(new CustomEvent('sf-data-view-row-action', {
-                bubbles: true,
-                composed: true,
-                detail: {action, row_id: rowId, view_key: state.view_key},
-            }));
-            setStatus(`Демо-действие «${action}» передано backend-хосту${rowId ? ` для #${rowId}` : ''}`, 'success');
+
         }, true);
         updatePagination(state.pagination || data.pagination || {page: 1, total: 0, pageSize: 10});
         setStatus(`Найдено: ${(state.pagination || data.pagination || {}).total || 0}`, 'success');
@@ -336,18 +503,22 @@
     const bootDataview = async () => {
         await Promise.all([customElements.whenDefined('sf-table'), customElements.whenDefined('sf-pagination')]);
         const reconcile = () => {
-            const workbenches = new Set(document.querySelectorAll(workbenchSelector));
+            explicitHosts.forEach((registration, host) => {
+                if (!host.isConnected || ownNode(host, 'sf-table') !== registration.table) registration.release();
+            });
+            const workbenches = new Set([...document.querySelectorAll(workbenchSelector), ...explicitHosts.keys()]);
             dataviewInstances.forEach((instance, workbench) => {
                 if (!workbenches.has(workbench)
-                    || instance.table !== workbench.querySelector('sf-table')
-                    || instance.pagination !== workbench.querySelector('sf-pagination')
-                    || instance.stateNode !== workbench.querySelector('[data-larena-dataview-state]')) {
+                    || instance.table !== ownNode(workbench, 'sf-table')
+                    || instance.pagination !== ownNode(workbench, 'sf-pagination')
+                    || instance.stateNode !== ownNode(workbench, '[data-larena-dataview-state]')) {
                     instance.dispose();
                     dataviewInstances.delete(workbench);
                 }
             });
             workbenches.forEach((workbench) => initDataviewWorkbench(workbench));
         };
+        reconcileDataview = reconcile;
         reconcile();
         const observer = new MutationObserver(reconcile);
         observer.observe(document.documentElement, {childList: true, subtree: true});

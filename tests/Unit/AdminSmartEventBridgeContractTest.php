@@ -24,8 +24,14 @@ assert(str_contains($bridge, "listen(table, 'onColumnSettingsChange'"));
 assert(str_contains($bridge, "listen(pagination, 'sf-page-change'"));
 assert(str_contains($bridge, "listen(pagination, 'sf-action-apply'"));
 assert(str_contains($bridge, "'sf-data-view-create-request'"));
-assert(str_contains($bridge, "'sf-data-view-row-action'"));
-assert(str_contains($bridge, "'sf-data-view-bulk-action'"));
+// Framework row/bulk operations use the immutable typed port, not legacy data-view events.
+assert(str_contains($bridge, "listen(table, 'sf-table-action-intent'"));
+assert(str_contains($bridge, "Object.defineProperty(globalThis, 'LarenaDataviewActions'"));
+assert(str_contains($bridge, 'const actionRegistrations = new WeakMap()'));
+assert(str_contains($bridge, 'registration?.handlers.get(detail.action_id)'));
+assert(str_contains($bridge, 'table.requestActionIntent(actionId, ids)'));
+assert(!str_contains($bridge, "listen(table, 'sf-data-view-row-action'"));
+assert(!str_contains($bridge, "listen(table, 'sf-data-view-bulk-action'"));
 assert(str_contains($bridge, 'base_revision'));
 assert(str_contains($runtimeBridge, "intent !== 'larena.record.delete'"));
 assert(str_contains($runtimeBridge, "intent !== 'larena.record.restore'"));

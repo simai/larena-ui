@@ -10,6 +10,7 @@
     "docs/project-management/launch-records/dataview-host-lifecycle-v1.json",
     "scripts/validate-larena-package.php",
     "resources/js/admin-smart-event-bridge.js",
+    "resources/composition/larena-composition.css",
     "tests/JavaScript/dataview-host-lifecycle.test.mjs",
     "tests/Unit/AdminSmartEventBridgeContractTest.php",
     "composer.json",
@@ -30,9 +31,48 @@
     "src/Runtime/RegisteredListDocumentNodeRenderer.php",
     "tests/Unit/RegisteredListDocumentNodeRendererTest.php",
     "src/Runtime/FrameworkDocumentSchemaValidator.php",
-    "tests/Unit/FrameworkDocumentSchemaValidatorTest.php"
+    "tests/Unit/FrameworkDocumentSchemaValidatorTest.php",
+    "src/Runtime/FrameworkLayoutDocumentTypes.php",
+    "tests/Unit/FrameworkLayoutDocumentTypesTest.php",
+    "composer.lock",
+    "resources/sf/runtime-lock.json",
+    "resources/smart/ui-pagination/manifest.json",
+    "tests/Unit/FrontendRuntimeAssetResolverTest.php",
+    "tests/Unit/FrontendRuntimeLockTest.php",
+    "tests/Unit/SourceBackedComponentRegistryTest.php",
+    "docs/developer/registered-table-action-bridge.md",
+    "scripts/package-frontend-runtime-artifact.py",
+    "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/ui.tar.gz",
+    "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/contract.tar.gz"
   ],
   "evidence": "docs/project-management/evidence/dataview-host-lifecycle-v1",
   "approval_basis": "Active user goal authorizes isolated implementation; accepted bounded Dataview integration assignment in Specs c97a2ffe",
-  "gate_change_plan": "Register this exact launch path; require correct package/goal/base/status and exact allowed_files matching context. Retain all existing enforcement, forbidden paths and evidence requirements."
+  "gate_change_plan": "Register this exact launch path; require correct package/goal/base/status and exact allowed_files matching context. Retain all existing enforcement, forbidden paths and evidence requirements.",
+  "isolated_acceptance_scope_extension": {
+    "authorization": "User confirmation for isolated Framework pair acceptance + registered list product integration",
+    "workflow_ref": "/Users/rim/Git/.worktrees/larena-framework-pair-acceptance/source/workflow/2026-09-17-isolated-product-composition-integration.md",
+    "files": [
+      "composer.lock",
+      "resources/sf/runtime-lock.json",
+      "resources/smart/ui-pagination/manifest.json",
+      "resources/composition/larena-composition.css",
+      "tests/Unit/FrontendRuntimeAssetResolverTest.php",
+      "tests/Unit/FrontendRuntimeLockTest.php",
+      "tests/Unit/SourceBackedComponentRegistryTest.php",
+      "docs/developer/registered-table-action-bridge.md",
+      "scripts/package-frontend-runtime-artifact.py",
+      "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/manifest.json",
+      "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/ui.tar.gz",
+      "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/smart.tar.gz",
+      "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/contract.tar.gz"
+    ],
+    "restrictions": [
+      "No Framework source/generated edits",
+      "No consumer main/push/pin adoption of newly delivered Smart68",
+      "No live site or real database changes",
+      "Absolute Composer test paths are local acceptance configuration, not release packaging"
+    ]
+  }
 }

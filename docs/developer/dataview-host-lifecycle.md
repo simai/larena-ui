@@ -39,3 +39,27 @@ Run `composer test:composition-list` with an exact `SIMAI_UI_ROOT`. The command 
 `document(rawJson)` validates JSON objects before conversion to associative PHP arrays, retaining the distinction between `{}` and `[]` during checks. `binding(rawJson)` creates a request-local validation closure that accepts only the exact PHP document decoded from those checked bytes. Use this closure in `RegisteredDocumentRenderer`; a changed source key or node after validation is refused. The raw JSON must be the normalized compiled Document from trusted publication, not arbitrary browser JSON.
 
 Manifest checks still own registered type/profile/slot/presentation semantics and supported extensions. Complete conformance, exact 1.0.1 delivery, persisted snapshot wiring and browser acceptance remain pending. `composer test:composition-schema` requires the exact `SIMAI_UI_ROOT` and the independently recorded schema digest; it does not silently skip absent input.
+
+## Registered list filter projection continuation
+
+`RegisteredListRenderer::render` accepts an optional server-owned `queryFields` registration. Only visible registered string columns are projected into the existing Smart Table `filterFields` contract. The currently supported controls are text with `eq` and `contains`, intersected with the domain's permitted operators. Private fields, identifier/numeric controls and unsupported operators are not presented; they are not silently emulated. Backend validation remains authoritative on every query.
+
+`RegisteredListDocumentNodeRenderer` receives source contracts and query routes from the trusted application registry, outside Recipe/Document JSON. Each host has separate request-local query state. This is a local integration candidate, not complete dynamic-list acceptance: Chrome filter behaviour, preferences, actions and exact Framework delivery remain pending. No schema migration or shared snapshot of authenticated request state is introduced.
+
+Query endpoints are application-owned relative paths, not hard-coded Admin routes in UI. The adapter refuses external/protocol-relative URLs, path traversal, query strings, fragments, encoded path bytes and control characters before reading owner data. Route registration and endpoint authentication remain the application's responsibility; accepting a path does not grant access.
+
+## Optional preferences transport and action acknowledgement
+
+A query-only host may omit `user_endpoint` and `system_endpoint`. Changing page size still requests data, but does not attempt persistence to an absent URL. An explicit save reports that storage is unavailable, without claiming success. Existing hosts with a registered preferences endpoint keep their PUT transport. This does not implement a generic preferences store: its domain registration, ACL, revisions and restart acceptance remain separate work.
+
+Forwarding a bulk intent reports `pending`, not backend success. Only a verified owner response may justify success. Query failures do not claim the draft was durably saved. The bridge's source digest and UI resource revision are updated together with Admin's expected digest; existing Framework distribution bytes are unchanged.
+
+## Registration preflight before owner reads
+
+`RegisteredListRenderer::registeredFilterFields` is the pure validation/projection boundary for server-owned columns and filter metadata. The registered Document node invokes it during whole-tree preflight, before its dataset callback. Duplicate columns, malformed labels and malformed visible query fields therefore fail without touching Auth/Storage rows. The render path reuses the same validation; no alternate schema or data authority is introduced. This does not replace domain access checks, which remain mandatory on every read.
+
+### Registered Document request-state callback
+
+`RegisteredListDocumentNodeRenderer` accepts an optional trusted `requestState` callback after the query registration arguments. It is invoked during rendering after whole-tree preflight. It may return only `profiles`, `capabilities`, and a safe relative `user_endpoint`; these values are request-local, never Document props or shared snapshots. A connected personal endpoint enables the existing Smart table settings control. The product owns profile authorization, persistence, revision selection, and initial dataset page size. This does not grant system settings access or enable row actions.
+
+Personal preference reset requires a connected endpoint. After successful DELETE the host reloads page 1 using the restored effective page size. It reports row query failure honestly and does not equate persisted reset with successful dataset loading.

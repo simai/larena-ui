@@ -1919,7 +1919,7 @@
             "dist": {
                 "type": "path",
                 "url": "../dataview",
-                "reference": "685919570a7a57654528c4577bd119e436189e23"
+                "reference": "e62bfb5ab44e9f3fb06a7e3f30864f4c2af669fe"
             },
             "require": {
                 "larena/core": "dev-main",
@@ -5015,7 +5015,7 @@
             "dist": {
                 "type": "path",
                 "url": "../layout",
-                "reference": "30c4ab5f452584d7c95d6186ed4d4b9ab999a5f5"
+                "reference": "92aa5ec16f4520a6424d97e09b0277bf75cfa5c3"
             },
             "require": {
                 "larena/core": "dev-main",
