@@ -186,6 +186,14 @@
           pagination.setAttribute('selected-count', String(selected));
           pagination.setAttribute('selection-total', String(rows.length));
         };
+        var observedSelectionInputs = new WeakSet();
+        var observeSelectionInputs = function () {
+          target.querySelectorAll('tbody td[data-key="select"] input[type="checkbox"][value]').forEach(function (input) {
+            if (observedSelectionInputs.has(input)) return;
+            observedSelectionInputs.add(input);
+            input.addEventListener('change', syncPaginationSelection);
+          });
+        };
         connectPagination(pagination, queryForm, target, function (incoming) {
           var ids = new Set((data.rows || []).map(function (row) { return String(row.id); }));
           data.rows = (data.rows || []).concat(incoming.filter(function (row) {
@@ -194,6 +202,7 @@
           }));
           rows = normalizeTableRows(target, data.rows);
           target.setRows(rows, 'larena-page-append');
+          observeSelectionInputs();
           pagination.setAttribute('selection-total', String(rows.length));
         });
         pagination.setAttribute('selected-count', '0');
@@ -202,11 +211,7 @@
         // not yet publish its documented selection-change event. Keep the
         // pagination projection accurate without using DOM state for the owned
         // business action itself; bulk execution still reads the table port.
-        target.addEventListener('click', function (event) {
-          if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'checkbox') return;
-          if (!event.target.closest('td[data-key="select"]')) return;
-          queueMicrotask(syncPaginationSelection);
-        });
+        observeSelectionInputs();
         target.addEventListener('sf-table-selection-change', function (event) {
           if (event.target !== target) return;
           var detail = event.detail || {};
