@@ -202,10 +202,10 @@
         // not yet publish its documented selection-change event. Keep the
         // pagination projection accurate without using DOM state for the owned
         // business action itself; bulk execution still reads the table port.
-        target.addEventListener('change', function (event) {
+        target.addEventListener('click', function (event) {
           if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'checkbox') return;
           if (!event.target.closest('td[data-key="select"]')) return;
-          syncPaginationSelection();
+          queueMicrotask(syncPaginationSelection);
         });
         target.addEventListener('sf-table-selection-change', function (event) {
           if (event.target !== target) return;
