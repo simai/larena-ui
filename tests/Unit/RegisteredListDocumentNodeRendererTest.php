@@ -62,6 +62,7 @@ assert(str_contains($hostHtml, 'data-larena-dataview-state'));
 assert(preg_match('~data-larena-dataview-state>(.*?)</script>~s', $hostHtml, $stateMatch) === 1);
 $hostState = json_decode($stateMatch[1], true, 64, JSON_THROW_ON_ERROR);
 assert($hostState['query_endpoint'] === '/admin/composition-lists/auth.users/query');
+assert($hostState['query']['search'] === '');
 $alternate = new RegisteredListDocumentNodeRenderer(new RegisteredListRenderer(new SmartManager(SmartRegistry::withDefaults())),
     $dataset, ['auth.users' => ['users' => [['key' => 'display_name', 'label' => 'Name']]]], $activation,
     ['auth.users' => '/product/lists/users/query']);

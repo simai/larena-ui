@@ -112,7 +112,7 @@ final readonly class RegisteredListDocumentNodeRenderer
         $filters = [];
         foreach ($page->query->normalizedFilters() as $filter) $filters[$filter['field']] = ['operator' => $filter['operator'], 'value' => $filter['value']];
         $state = ['query_endpoint' => $this->queryEndpoints[$props['source_key']], 'query' => [
-            'search' => $page->query->search ?? '', 'filters' => (object) $filters, 'sort' => $page->query->normalizedSort(),
+            'search' => '', 'filters' => (object) $filters, 'sort' => $page->query->normalizedSort(),
             'page' => $page->pagination->page, 'page_size' => $page->pagination->perPage]] + $requestState;
         $json = json_encode($state, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         $escape = static fn (string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');

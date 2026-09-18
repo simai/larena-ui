@@ -45,14 +45,18 @@
     "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/manifest.json",
     "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/ui.tar.gz",
     "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/smart.tar.gz",
-    "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/contract.tar.gz"
+    "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/sources/ui.tar.gz",
+    "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/sources/contract.tar.gz"
   ],
   "evidence": "docs/project-management/evidence/dataview-host-lifecycle-v1",
   "approval_basis": "Active user goal authorizes isolated implementation; accepted bounded Dataview integration assignment in Specs c97a2ffe",
   "gate_change_plan": "Register this exact launch path; require correct package/goal/base/status and exact allowed_files matching context. Retain all existing enforcement, forbidden paths and evidence requirements.",
   "isolated_acceptance_scope_extension": {
-    "authorization": "User confirmation for isolated Framework pair acceptance + registered list product integration",
-    "workflow_ref": "/Users/rim/Git/.worktrees/larena-framework-pair-acceptance/source/workflow/2026-09-17-isolated-product-composition-integration.md",
+    "authorization": "Accepted broad composition goal: exact Framework advanced editor supply acceptance and Larena integration",
+    "workflow_ref": "/Users/rim/Documents/GitHub/larena-specs/source/workflow/2026-09-15-larena-frontend-composition-v1.md",
     "files": [
       "composer.lock",
       "resources/sf/runtime-lock.json",
@@ -66,7 +70,13 @@
       "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/manifest.json",
       "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/ui.tar.gz",
       "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/smart.tar.gz",
-      "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/contract.tar.gz"
+      "release-artifacts/ui-ddb249279ff4-smart-dd973536c66f-registry-a91e4055-exact-git-tree-v2/sources/contract.tar.gz",
+      "src/Runtime/RegisteredListDocumentNodeRenderer.php",
+      "tests/Unit/RegisteredListDocumentNodeRendererTest.php",
+      "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/manifest.json",
+      "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/sources/ui.tar.gz",
+      "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/sources/smart.tar.gz",
+      "release-artifacts/ui-4c6c75b1847a-smart-dd973536c66f-registry-6e93bfaf-exact-git-tree-v2/sources/contract.tar.gz"
     ],
     "restrictions": [
       "No Framework source/generated edits",
