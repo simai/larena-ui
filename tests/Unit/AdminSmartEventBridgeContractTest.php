@@ -38,8 +38,13 @@ assert(str_contains($runtimeBridge, "intent !== 'larena.record.restore'"));
 assert(str_contains($runtimeBridge, "var mode = operation === 'restore' ? 'delete' : operation"));
 assert(str_contains($runtimeBridge, "url.searchParams.set('record_mode', mode)"));
 assert(str_contains($runtimeBridge, 'syncPaginationSelection'));
+assert(str_contains($runtimeBridge, "target.closest('[data-larena-dataview-workbench]')"));
+assert(str_contains($runtimeBridge, "workbench && workbench.querySelector('sf-pagination')"));
 assert(str_contains($runtimeBridge, 'td[data-key="select"] input[type="checkbox"][value]:checked'));
-assert(str_contains($runtimeBridge, "target.addEventListener('change', syncPaginationSelection, true)"));
+assert(str_contains($runtimeBridge, 'new MutationObserver(function (mutations)'));
+assert(str_contains($runtimeBridge, "mutation.type === 'childList'"));
+assert(str_contains($runtimeBridge, 'selectionSyncTimer = setTimeout(syncPaginationSelection, 0)'));
+assert(str_contains($runtimeBridge, "attributeFilter: ['checked']"));
 assert(str_contains($runtimeBridge, "target.addEventListener('sf-table-selection-change'"));
 
 echo "AdminSmartEventBridgeContractTest passed.\n";

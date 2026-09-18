@@ -177,9 +177,10 @@
         throw new Error('larena-smart-table-rows-api-unavailable');
       }
       target.setRows(rows, 'larena-backend-hydration');
-      var queryForm = target.closest('[data-larena-dataview-query]');
+      var workbench = target.closest('[data-larena-dataview-workbench]');
+      var queryForm = workbench && workbench.querySelector('[data-larena-dataview-query]');
       connectTablePreferences(target, queryForm);
-      var pagination = queryForm && queryForm.querySelector('sf-pagination');
+      var pagination = workbench && workbench.querySelector('sf-pagination');
       if (pagination) {
         var syncPaginationSelection = function () {
           var selected = target.querySelectorAll('tbody td[data-key="select"] input[type="checkbox"][value]:checked').length;
@@ -198,10 +199,19 @@
         });
         pagination.setAttribute('selected-count', '0');
         pagination.setAttribute('selection-total', String(rows.length));
-        // Smart Table currently stops the checkbox change event while bubbling.
-        // Capture it on the table before that boundary so async-rendered and
-        // appended rows update the pagination projection as well.
-        target.addEventListener('change', syncPaginationSelection, true);
+        // Smart Table owns row checkbox changes internally and rerenders their
+        // checked attributes without publishing a composed selection event.
+        // Observe that rendered projection so async and appended rows remain
+        // reflected in the adjacent pagination component.
+        var selectionSyncTimer = null;
+        new MutationObserver(function (mutations) {
+          if (mutations.some(function (mutation) {
+            return mutation.type === 'childList' || mutation.attributeName === 'checked';
+          })) {
+            clearTimeout(selectionSyncTimer);
+            selectionSyncTimer = setTimeout(syncPaginationSelection, 0);
+          }
+        }).observe(target, {subtree: true, childList: true, attributes: true, attributeFilter: ['checked']});
         target.addEventListener('sf-table-selection-change', function (event) {
           if (event.target !== target) return;
           var detail = event.detail || {};
