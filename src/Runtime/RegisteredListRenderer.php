@@ -40,8 +40,11 @@ final readonly class RegisteredListRenderer
         return $this->smart->renderView('dataview.table', 'default', ['title' => $title], $assetActivation,
             slots: ['content' => $this->noScriptTable($rows, $columns, $title)],
             childProps: ['toolbar' => $this->toolbarInstanceProps($instanceId, $columns, $queryFields, $page->pagination->perPage), 'grid' => ['id' => $instanceId.'-table', 'aria-label' => $title,
-                'selectable' => false, 'settings' => $personalSettings, 'actions' => $recordActions],
-                'pagination' => ['id' => $instanceId.'-pagination', 'current' => $page->pagination->page, 'total' => $page->pagination->total, 'page-size' => $page->pagination->perPage, 'page-sizes' => '10,20,50,100']],
+                'selectable' => $recordActions, 'settings' => $personalSettings, 'actions' => $recordActions],
+                'pagination' => ['id' => $instanceId.'-pagination', 'current' => $page->pagination->page, 'total' => $page->pagination->total,
+                    'page-size' => $page->pagination->perPage, 'page-sizes' => '10,20,50,100',
+                    'actions' => $recordActions ? 'archive:Archive selected' : '', 'action' => $recordActions ? 'archive' : '',
+                    'action-apply-text' => 'Apply']],
             requestDataBindings: ['grid' => ['data' => $data]]);
     }
 

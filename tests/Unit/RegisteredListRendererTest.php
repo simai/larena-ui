@@ -55,6 +55,17 @@ $paginationNode = (new DOMXPath($document))->query('//sf-pagination[@id="list-al
 assert($paginationNode instanceof DOMElement);
 assert($paginationNode->getAttribute('page-sizes') === '10,20,50,100');
 assert($paginationNode->getAttribute('page-size') === '20', 'Pagination must use the same owner page size as table rows');
+assert($paginationNode->getAttribute('actions') === '');
+
+$actionable = $renderer->render($page, 'list-actions', 'Records', $columns, $activation, [], true, true);
+$actionsDom = new DOMDocument();
+@$actionsDom->loadHTML($actionable->html());
+$actionTable = (new DOMXPath($actionsDom))->query('//sf-table[@id="list-actions-table"]')->item(0);
+$actionPagination = (new DOMXPath($actionsDom))->query('//sf-pagination[@id="list-actions-pagination"]')->item(0);
+assert($actionTable instanceof DOMElement && $actionTable->hasAttribute('selectable'));
+assert($actionPagination instanceof DOMElement);
+assert($actionPagination->getAttribute('actions') === 'archive:Archive selected');
+assert($actionPagination->getAttribute('action') === 'archive');
 
 assert(!str_contains($a->html(), 'not projected'));
 assert(!str_contains($a->html(), '<script>unsafe</script>'));

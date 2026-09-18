@@ -111,6 +111,20 @@
       "page-sizes": {
         "type": "string",
         "pattern": "^10,20,50,100$"
+      },
+      "actions": {
+        "type": "string",
+        "maxLength": 500
+      },
+      "action": {
+        "type": "string",
+        "maxLength": 120
+      },
+      "action-apply-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
       }
     },
     "required": [
