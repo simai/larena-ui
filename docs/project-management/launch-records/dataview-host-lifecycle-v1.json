@@ -10,6 +10,7 @@
     "docs/project-management/launch-records/dataview-host-lifecycle-v1.json",
     "scripts/validate-larena-package.php",
     "resources/js/admin-smart-event-bridge.js",
+    "resources/js/sf-runtime-bridge.js",
     "resources/composition/larena-composition.css",
     "tests/JavaScript/dataview-host-lifecycle.test.mjs",
     "tests/Unit/AdminSmartEventBridgeContractTest.php",

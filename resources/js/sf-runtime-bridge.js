@@ -181,6 +181,11 @@
       connectTablePreferences(target, queryForm);
       var pagination = queryForm && queryForm.querySelector('sf-pagination');
       if (pagination) {
+        var syncPaginationSelection = function () {
+          var selected = target.querySelectorAll('tbody td[data-key="select"] input[type="checkbox"][value]:checked').length;
+          pagination.setAttribute('selected-count', String(selected));
+          pagination.setAttribute('selection-total', String(rows.length));
+        };
         connectPagination(pagination, queryForm, target, function (incoming) {
           var ids = new Set((data.rows || []).map(function (row) { return String(row.id); }));
           data.rows = (data.rows || []).concat(incoming.filter(function (row) {
@@ -193,6 +198,15 @@
         });
         pagination.setAttribute('selected-count', '0');
         pagination.setAttribute('selection-total', String(rows.length));
+        // Current Smart Table keeps row selection in rendered checkboxes but does
+        // not yet publish its documented selection-change event. Keep the
+        // pagination projection accurate without using DOM state for the owned
+        // business action itself; bulk execution still reads the table port.
+        target.addEventListener('change', function (event) {
+          if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'checkbox') return;
+          if (!event.target.closest('td[data-key="select"]')) return;
+          syncPaginationSelection();
+        });
         target.addEventListener('sf-table-selection-change', function (event) {
           if (event.target !== target) return;
           var detail = event.detail || {};
