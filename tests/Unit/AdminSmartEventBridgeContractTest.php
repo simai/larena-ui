@@ -39,9 +39,7 @@ assert(str_contains($runtimeBridge, "var mode = operation === 'restore' ? 'delet
 assert(str_contains($runtimeBridge, "url.searchParams.set('record_mode', mode)"));
 assert(str_contains($runtimeBridge, 'syncPaginationSelection'));
 assert(str_contains($runtimeBridge, 'td[data-key="select"] input[type="checkbox"][value]:checked'));
-assert(str_contains($runtimeBridge, 'var observedSelectionInputs = new WeakSet()'));
-assert(str_contains($runtimeBridge, "input.addEventListener('change', syncPaginationSelection)"));
-assert(substr_count($runtimeBridge, 'observeSelectionInputs();') >= 2);
+assert(str_contains($runtimeBridge, "target.addEventListener('change', syncPaginationSelection, true)"));
 assert(str_contains($runtimeBridge, "target.addEventListener('sf-table-selection-change'"));
 
 echo "AdminSmartEventBridgeContractTest passed.\n";

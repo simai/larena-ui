@@ -186,14 +186,6 @@
           pagination.setAttribute('selected-count', String(selected));
           pagination.setAttribute('selection-total', String(rows.length));
         };
-        var observedSelectionInputs = new WeakSet();
-        var observeSelectionInputs = function () {
-          target.querySelectorAll('tbody td[data-key="select"] input[type="checkbox"][value]').forEach(function (input) {
-            if (observedSelectionInputs.has(input)) return;
-            observedSelectionInputs.add(input);
-            input.addEventListener('change', syncPaginationSelection);
-          });
-        };
         connectPagination(pagination, queryForm, target, function (incoming) {
           var ids = new Set((data.rows || []).map(function (row) { return String(row.id); }));
           data.rows = (data.rows || []).concat(incoming.filter(function (row) {
@@ -202,16 +194,14 @@
           }));
           rows = normalizeTableRows(target, data.rows);
           target.setRows(rows, 'larena-page-append');
-          observeSelectionInputs();
           pagination.setAttribute('selection-total', String(rows.length));
         });
         pagination.setAttribute('selected-count', '0');
         pagination.setAttribute('selection-total', String(rows.length));
-        // Current Smart Table keeps row selection in rendered checkboxes but does
-        // not yet publish its documented selection-change event. Keep the
-        // pagination projection accurate without using DOM state for the owned
-        // business action itself; bulk execution still reads the table port.
-        observeSelectionInputs();
+        // Smart Table currently stops the checkbox change event while bubbling.
+        // Capture it on the table before that boundary so async-rendered and
+        // appended rows update the pagination projection as well.
+        target.addEventListener('change', syncPaginationSelection, true);
         target.addEventListener('sf-table-selection-change', function (event) {
           if (event.target !== target) return;
           var detail = event.detail || {};
