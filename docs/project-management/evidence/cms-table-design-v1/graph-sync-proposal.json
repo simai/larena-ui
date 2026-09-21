@@ -1,0 +1,10 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "package": "larena/ui",
+  "scope": "cms table design",
+  "feature_refs": [
+    "ui.dataview_table"
+  ],
+  "canonical_update_allowed": false,
+  "proposal": "Map after Root acceptance."
+}

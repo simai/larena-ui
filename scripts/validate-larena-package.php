@@ -71,6 +71,7 @@ if ($codingStarted) {
         'docs/project-management/launch-records/dataview-host-lifecycle-v1.json',
         'docs/project-management/launch-records/composition-capabilities-v1.json',
         'docs/project-management/launch-records/editor-components-pair-v1.json',
+        'docs/project-management/launch-records/cms-table-design-v1.json',
     ], true)) {
         $errors[] = 'coding_started requires the current ui batch 1 launch record.';
     }
@@ -108,6 +109,16 @@ if ($codingStarted) {
             || ($record['base_commit'] ?? null) !== ($launchContext['base_commit'] ?? null)
             || ($record['allowed_files'] ?? null) !== ($launchContext['allowed_files'] ?? null)) {
             $errors[] = 'Editor components pair launch owner, baseline or scope is invalid';
+        }
+    }
+    if (($launchContext['launch_record_ref'] ?? null) === 'docs/project-management/launch-records/cms-table-design-v1.json') {
+        $record = json_decode((string) file_get_contents($launchContext['launch_record_ref']), true, 512, JSON_THROW_ON_ERROR);
+        if (($record['package'] ?? null) !== 'larena/ui'
+            || ($record['goal'] ?? null) !== 'cms-table-design'
+            || ($record['status'] ?? null) !== 'coding_started'
+            || ($record['base_commit'] ?? null) !== ($launchContext['base_commit'] ?? null)
+            || ($record['allowed_files'] ?? null) !== ($launchContext['allowed_files'] ?? null)) {
+            $errors[] = 'CMS table design launch owner, baseline or scope is invalid';
         }
     }
     $requiredContractFiles = [

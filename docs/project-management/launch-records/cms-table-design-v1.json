@@ -1,0 +1,24 @@
+{
+  "schema": "larena.package_launch_record.v1",
+  "package": "larena/ui",
+  "goal": "cms-table-design",
+  "status": "coding_started",
+  "base_commit": "7bd27039ba804d5d2630083cb756e1823d8d25f4",
+  "scope": "Let the CMS records pagination span the table as in the CMS Admin panel table design; no Framework, route, DB or live changes",
+  "allowed_files": [
+    ".larena/launch-context.json",
+    "CHANGELOG.md",
+    "docs/project-management/launch-records/cms-table-design-v1.json",
+    "resources/css/admin-dataview.css",
+    "scripts/validate-larena-package.php",
+    "src/Assets/AdminDataviewAssetManifest.php",
+    "docs/project-management/evidence/cms-table-design-v1/README.md",
+    "docs/project-management/evidence/cms-table-design-v1/deviations.json",
+    "docs/project-management/evidence/cms-table-design-v1/file-map.json",
+    "docs/project-management/evidence/cms-table-design-v1/graph-sync-proposal.json",
+    "docs/project-management/evidence/cms-table-design-v1/implementation-summary.md",
+    "docs/project-management/evidence/cms-table-design-v1/independent-review.md",
+    "docs/project-management/evidence/cms-table-design-v1/smoke.md",
+    "docs/project-management/evidence/cms-table-design-v1/tests.md"
+  ]
+}
