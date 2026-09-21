@@ -20,7 +20,7 @@ export function createRegistry(framework) {
     'layout.section': ({ node, slots }) => `<section data-sf-composition-id="${escape(node.id)}" data-composition-preset="${escape(node.presentation?.preset || 'surface')}">${slots.default || ''}</section>`,
     // Static publication contains the host only; authorized rows are rendered per HTTP request in PHP.
     // Inside a layout.scope the host wraps exactly one sf-table, so it carries the endpoint name.
-    'larena.registered-list': ({ node, endpoint }) => `<div data-larena-request-list="${escape(node.id)}" data-source-key="${escape(node.props.source_key)}" data-column-preset="${escape(node.props.column_preset)}"${endpoint ? ` data-sf-endpoint="${escape(endpoint)}"` : ''}></div>`,
+    'larena.registered-list': ({ node, endpoint }) => `<div data-larena-request-list="${escape(node.id)}" data-source-key="${escape(node.props.source_key)}" data-column-preset="${escape(node.props.column_preset)}" data-title="${escape(node.props.title)}"${endpoint ? ` data-sf-endpoint="${escape(endpoint)}"` : ''}></div>`,
     'larena.logical-file-image': ({ node }) => {
       const { public_id: id, extension, alt } = node.props;
       if (!/^[a-zA-Z0-9-]{1,100}$/.test(id) || !['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(extension)) throw new Error('larena_logical_image_metadata_invalid');

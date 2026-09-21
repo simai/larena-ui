@@ -104,6 +104,7 @@
       "@analyse",
       "@test",
       "@test:dataview-host",
+      "@test:composition-routing-host",
       "@test:composition-schema",
       "@test:composition-list",
       "@test:dependency",
@@ -111,6 +112,7 @@
       "@scope:check"
     ],
     "test:composition-list": "node --test tests/JavaScript/registered-list-composition.test.mjs",
+    "test:composition-routing-host": "node --test tests/JavaScript/composition-routing-host.test.mjs",
     "test:composition-schema": "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkDocumentSchemaValidatorTest.php"
   },
   "config": {

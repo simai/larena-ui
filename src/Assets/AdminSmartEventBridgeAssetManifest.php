@@ -7,7 +7,7 @@ namespace Larena\Ui\Assets;
 final class AdminSmartEventBridgeAssetManifest
 {
     public const ASSET_KEY = 'ui.admin.smart_event_bridge.js';
-    public const ASSET_REVISION = '20260917-safe-owner-refusals-7f2b82c857a4';
+    public const ASSET_REVISION = '20260921-composition-context-b0ddd75f41da';
 
     /** @return array<string, mixed> */
     public static function publicationAsset(): array

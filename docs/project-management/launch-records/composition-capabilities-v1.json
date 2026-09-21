@@ -18,6 +18,7 @@
     "resources/composition/larena-registry.mjs",
     "resources/composition/registered-list.type-manifest.json",
     "resources/js/admin-smart-event-bridge.js",
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php",
     "resources/sf/runtime-lock.json",
     "scripts/validate-larena-package.php",
     "src/Runtime/FrameworkLayoutDocumentTypes.php",

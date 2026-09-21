@@ -258,21 +258,61 @@
             pagination.setAttribute('total', String(page.total));
             pagination.setAttribute('page-size', String(page.pageSize));
         };
+        // A list that is the target of a composition route shows only the records
+        // its scope delivers. The route is read from the published scope markup.
+        const endpointHost = workbench.closest?.('[data-sf-endpoint]') ?? null;
+        let scopeRoutes = [];
+        try {
+            scopeRoutes = JSON.parse(endpointHost?.closest?.('sf-composition-scope')?.getAttribute('data-sf-routes') || '[]');
+        } catch {
+            scopeRoutes = [];
+        }
+        let contextIds = endpointHost && Array.isArray(scopeRoutes)
+            && scopeRoutes.some((route) => route?.to?.endpoint === endpointHost.getAttribute('data-sf-endpoint')) ? [] : null;
+        let contextSequence = null;
+        const contextQuery = () => {
+            const filters = {...(queryState.filters || {})};
+            delete filters.record_id;
+            if (contextIds?.length) filters.record_id = {operator: 'in', value: contextIds};
+            queryState = {...queryState, filters};
+        };
+        const showRows = (rows) => {
+            // The answer to a pending context request is applied through the table's
+            // sequence check, so a superseded answer never replaces newer rows.
+            if (contextSequence === null) {
+                table.setRows?.(rows, 'larena-query');
+                return true;
+            }
+            const applied = table.applyQueryResult?.(contextSequence, rows) === true;
+            contextSequence = null;
+            return applied;
+        };
         const runQuery = async (patch = {}) => {
             if (disposed) return;
             queryState = {...queryState, ...patch};
             const sequence = ++querySequence;
+            if (contextIds !== null) {
+                contextQuery();
+                if (!contextIds.length) {
+                    queryState = {...queryState, page: 1};
+                    showRows([]);
+                    updatePagination({page: 1, total: 0, pageSize: queryState.page_size || 10});
+                    setStatus('Выберите записи в связанном списке', 'empty');
+                    return true;
+                }
+            }
             setStatus('Загрузка…', 'loading');
             try {
                 const payload = await request(state.query_endpoint, {method: 'POST', body: JSON.stringify({query: queryState}), signal: controller.signal});
                 if (disposed || sequence !== querySequence) return;
                 queryState = payload.query;
-                table.setRows?.(payload.rows || [], 'larena-query');
+                if (!showRows(payload.rows || [])) return;
                 updatePagination(payload.pagination);
                 setStatus(payload.pagination.total ? `Найдено: ${payload.pagination.total}` : 'Ничего не найдено', payload.pagination.total ? 'success' : 'empty');
                 return true;
             } catch (error) {
                 if (disposed || sequence !== querySequence) return;
+                if (contextSequence !== null) showRows([]);
                 setStatus(error.status === 409 ? 'Конфликт версии — обновите состояние' : 'Не удалось загрузить данные. Попробуйте снова.', 'error');
                 return false;
             }
@@ -301,6 +341,23 @@
             }
         };
         const currentProfile = () => JSON.parse(JSON.stringify(profileForMode()));
+
+        listen(table, 'sf-table-query-intent', (event) => {
+            if (!ownedEvent(event, table) || disposed || contextIds === null) return;
+            const detail = event.detail;
+            const ids = detail?.context?.record_ids;
+            if (detail?.reason !== 'context' || !Number.isSafeInteger(detail.sequence) || !Array.isArray(ids)) return;
+            if (ids.length > 100) {
+                contextSequence = detail.sequence;
+                contextIds = [];
+                showRows([]);
+                setStatus('Выбрано слишком много записей: не больше 100', 'error');
+                return;
+            }
+            contextIds = [...ids];
+            contextSequence = detail.sequence;
+            runQuery({page: 1});
+        });
 
         let actionPending = false;
         let activeOperation = null;
@@ -497,7 +554,8 @@
 
         }, true);
         updatePagination(state.pagination || data.pagination || {page: 1, total: 0, pageSize: 10});
-        setStatus(`Найдено: ${(state.pagination || data.pagination || {}).total || 0}`, 'success');
+        if (contextIds !== null && !contextIds.length) setStatus('Выберите записи в связанном списке', 'empty');
+        else setStatus(`Найдено: ${(state.pagination || data.pagination || {}).total || 0}`, 'success');
     };
 
     const bootDataview = async () => {
