@@ -14,7 +14,7 @@
       "checked": {"type": "boolean"},
       "disabled": {"type": "boolean"},
       "indeterminate": {"type": "boolean"},
-      "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"},
+      "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*(\\[\\])?$"},
       "value": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
       "error": {"type": "boolean"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
