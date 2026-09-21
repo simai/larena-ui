@@ -1,0 +1,8 @@
+{
+  "schema": "larena.evidence_file_map.v1",
+  "base_commit": "b3ef4dc0fad1f89cb1a8bcbaf98e83d482cca23e",
+  "changed": [
+    "see launch record allowed_files"
+  ],
+  "product_source_changed": true
+}
