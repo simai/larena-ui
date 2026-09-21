@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin the Framework pair ui-eb212efe40cd-smart-9e8d8e762e03 with the docked sf-drawer, the composition editor overlay, sortable drag and drop and the inline text editor; the previous pair stays available for rollback.
+
 - Pin the Framework pair ui-2b9aa9635ad0-smart-db547bb87b6b with named regions, scope routing and region field kinds; bind registered lists to the published sf-table ports and answer route context queries through the table sequence.
 
 - Dispose Dataview host listeners and abort pending requests on removal or child replacement; reconnect inserted instances once and ignore detached responses.
