@@ -7,7 +7,7 @@ namespace Larena\Ui\Assets;
 final class AdminDataviewAssetManifest
 {
     public const ASSET_KEY = 'ui.admin.dataview.css';
-    public const ASSET_REVISION = '20260911-compact-control-labels-1';
+    public const ASSET_REVISION = '20260922-cms-table-figma-1';
 
     /** @return array<string, mixed> */
     public static function publicationAsset(): array

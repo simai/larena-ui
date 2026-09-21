@@ -186,17 +186,26 @@
 .larena-dataview-table__content .table-wrap > div { margin-bottom: 0 !important; }
 
 .larena-dataview-table__pagination {
-    display: flex;
+    /* sf-pagination renders as display: contents, so its nav is laid out by this box and must span it. */
+    display: block;
     min-width: 0;
-    align-items: center;
     border-top: 1px solid var(--sf-outline-variant);
     padding-top: 10px;
 }
 
-.larena-dataview-table__pagination > sf-pagination {
+.larena-dataview-table__pagination > sf-pagination,
+.larena-dataview-table__pagination nav.sf-pagination {
     display: block;
     width: 100%;
     min-width: 0;
+}
+
+.larena-dataview-table__pagination nav.sf-pagination {
+    display: flex;
+}
+
+.larena-dataview-table__pagination .sf-pagination-main {
+    width: 100%;
 }
 
 .larena-pagination-next {
