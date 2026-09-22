@@ -176,6 +176,10 @@
     height: 48px;
     font-size: 13px;
     white-space: nowrap;
+    /* A long value stays inside its column instead of running over the next one. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 22rem;
 }
 
 .larena-dataview-table__content > sf-table > .sf-table tbody tr:hover {

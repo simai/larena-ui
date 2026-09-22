@@ -178,9 +178,11 @@
       }
       target.setRows(rows, 'larena-backend-hydration');
       var workbench = target.closest('[data-larena-dataview-workbench]');
-      var queryForm = workbench && workbench.querySelector('[data-larena-dataview-query]');
+      // The Dataview workbench holds its query form beside the table; the CMS list wraps the table in it.
+      var queryForm = (workbench && workbench.querySelector('[data-larena-dataview-query]'))
+        || target.closest('form[data-larena-dataview-query]');
       connectTablePreferences(target, queryForm);
-      var pagination = workbench && workbench.querySelector('sf-pagination');
+      var pagination = (workbench || queryForm) && (workbench || queryForm).querySelector('sf-pagination');
       if (pagination) {
         var syncPaginationSelection = function () {
           var selected = target.querySelectorAll('tbody td[data-key="select"] input[type="checkbox"][value]:checked').length;
