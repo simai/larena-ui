@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  function connectTablePreferences(target, form) {
+  function connectTablePreferences(target, form, lifecycle) {
     if (!form?.dataset?.larenaTablePreferences) return;
     var state = JSON.parse(form.dataset.larenaTablePreferences);
     if (!state || !Number.isInteger(state.revision)) return;
@@ -19,9 +19,9 @@
     }
     window.addEventListener('beforeunload', function (event) {
       if (inFlight) { event.preventDefault(); event.returnValue = ''; }
-    });
+    }, {signal: lifecycle.signal});
     target.addEventListener('sf-table:column-settings-change', function (event) {
-      if (event.target !== target || failed) return;
+      if (event.target !== target || failed || lifecycle.signal.aborted) return;
       var columns = JSON.parse(JSON.stringify(event.detail?.columnSettings || {}));
       // Only field columns are personal preferences; the row actions column also reports a width.
       var keys = form.dataset.larenaPreferenceKeys ? JSON.parse(form.dataset.larenaPreferenceKeys) : null;
@@ -57,7 +57,7 @@
     });
   }
 
-  function connectPagination(pagination, form, target, appendRows) {
+  function connectPagination(pagination, form, target, lifecycle, appendRows) {
     if (!form?.dataset?.larenaPaginationQuery) return;
     var query = JSON.parse(form.dataset.larenaPaginationQuery);
     if (!query || !query.structure_id || !query.scope_ref) return;
@@ -77,11 +77,11 @@
     pagination.addEventListener('sf-page-change', function (event) {
       if (event.target !== pagination) return;
       navigate(event.detail?.current, query.per_page || 20);
-    });
+    }, {signal: lifecycle.signal});
     pagination.addEventListener('sf-page-size-change', function (event) {
       if (event.target !== pagination) return;
       navigate(1, event.detail?.pageSize);
-    });
+    }, {signal: lifecycle.signal});
     var fallback = pagination.querySelector('[data-larena-pagination-next]');
     var nextHref = fallback?.getAttribute('href') || null;
     if (fallback) fallback.remove();
@@ -91,12 +91,16 @@
     pagination.addEventListener('sf-show-more', async function (event) {
       if (event.target !== pagination || loading || !nextHref) return;
       loading = true;
+      // Every request of this instance is numbered; a response that is no longer the newest,
+      // or that belongs to a disposed instance, is dropped instead of being applied.
+      var issued = lifecycle.next();
       if (status) { status.hidden = false; status.textContent = ru ? 'Загружаем записи…' : 'Loading records…'; }
       try {
         var url = new URL(nextHref, window.location.href);
         if (url.origin !== window.location.origin) throw new Error('pagination-origin');
-        var response = await fetch(url.href, {credentials: 'same-origin', headers: {Accept: 'text/html'}});
+        var response = await fetch(url.href, {credentials: 'same-origin', headers: {Accept: 'text/html'}, signal: lifecycle.signal});
         if (!response.ok) throw new Error('pagination-response');
+        if (!lifecycle.current(issued)) return;
         var html = await response.text();
         if (html.length > 2097152) throw new Error('pagination-size');
         // Parse the backend's existing JSON hydration contract; never insert its HTML or execute scripts.
@@ -110,15 +114,17 @@
         });
         var descriptor = JSON.parse(node?.textContent || 'null');
         if (!descriptor || !Array.isArray(descriptor.props?.data?.rows)) throw new Error('pagination-data');
+        if (!lifecycle.current(issued)) return;
         appendRows(descriptor.props.data.rows);
         nextHref = nextForm.querySelector('[data-larena-pagination-next]')?.getAttribute('href') || null;
         pagination.setAttribute('current', String(nextQuery.page));
         pagination.setAttribute('total', String(descriptor.props.data.pagination.total));
         if (status) status.textContent = ru ? 'Записи загружены.' : 'Records loaded.';
       } catch (error) {
+        if (lifecycle.signal.aborted) return;
         if (status) status.textContent = ru ? 'Не удалось загрузить записи. Повторите попытку.' : 'Could not load records. Try again.';
       } finally { loading = false; }
-    });
+    }, {signal: lifecycle.signal});
   }
 
   function normalizeTableRows(target, rows) {
@@ -172,11 +178,39 @@
       });
   }
 
+  // One lifecycle per hydrated instance: every listener, observer and request belongs to it, and
+  // disposing the instance releases all of them without touching any other instance on the page.
+  function instanceLifecycle(target) {
+    if (target.larenaLifecycle) return target.larenaLifecycle;
+    var controller = new AbortController();
+    var observers = [];
+    var lifecycle = {
+      signal: controller.signal,
+      sequence: 0,
+      next: function () { lifecycle.sequence += 1; return lifecycle.sequence; },
+      current: function (issued) { return issued === lifecycle.sequence && !controller.signal.aborted; },
+      observe: function (observer) { observers.push(observer); return observer; },
+      dispose: function () {
+        if (controller.signal.aborted) return;
+        controller.abort();
+        observers.forEach(function (observer) { observer.disconnect(); });
+        observers.length = 0;
+        delete target.larenaLifecycle;
+      },
+    };
+    target.larenaLifecycle = lifecycle;
+    lifecycle.observe(new MutationObserver(function () {
+      if (!target.isConnected) lifecycle.dispose();
+    })).observe(document.documentElement, {childList: true, subtree: true});
+    return lifecycle;
+  }
+
   function hydrate(descriptor) {
     var target = document.getElementById(descriptor.target);
     if (!target || descriptor.component !== target.localName) {
       throw new Error('larena-smart-hydration-target-mismatch');
     }
+    var lifecycle = instanceLifecycle(target);
     if (descriptor.component === 'sf-table') {
       if (typeof target.setTableData !== 'function') {
         throw new Error('larena-smart-table-api-unavailable');
@@ -194,7 +228,7 @@
       // The Dataview workbench holds its query form beside the table; the CMS list wraps the table in it.
       var queryForm = (workbench && workbench.querySelector('[data-larena-dataview-query]'))
         || target.closest('form[data-larena-dataview-query]');
-      connectTablePreferences(target, queryForm);
+      connectTablePreferences(target, queryForm, lifecycle);
       var pagination = (workbench || queryForm) && (workbench || queryForm).querySelector('sf-pagination');
       if (pagination) {
         var syncPaginationSelection = function () {
@@ -202,7 +236,7 @@
           pagination.setAttribute('selected-count', String(selected));
           pagination.setAttribute('selection-total', String(rows.length));
         };
-        connectPagination(pagination, queryForm, target, function (incoming) {
+        connectPagination(pagination, queryForm, target, lifecycle, function (incoming) {
           var ids = new Set((data.rows || []).map(function (row) { return String(row.id); }));
           data.rows = (data.rows || []).concat(incoming.filter(function (row) {
             if (ids.has(String(row.id))) return false;
@@ -219,14 +253,14 @@
         // Observe that rendered projection so async and appended rows remain
         // reflected in the adjacent pagination component.
         var selectionSyncTimer = null;
-        new MutationObserver(function (mutations) {
+        lifecycle.observe(new MutationObserver(function (mutations) {
           if (mutations.some(function (mutation) {
             return mutation.type === 'childList' || mutation.attributeName === 'checked';
           })) {
             clearTimeout(selectionSyncTimer);
             selectionSyncTimer = setTimeout(syncPaginationSelection, 0);
           }
-        }).observe(target, {subtree: true, childList: true, attributes: true, attributeFilter: ['checked']});
+        })).observe(target, {subtree: true, childList: true, attributes: true, attributeFilter: ['checked']});
         target.addEventListener('sf-table-selection-change', function (event) {
           if (event.target !== target) return;
           var detail = event.detail || {};
@@ -236,7 +270,7 @@
             || detail.rowCount !== rows.length) return;
           pagination.setAttribute('selected-count', String(detail.selectedCount));
           pagination.setAttribute('selection-total', String(rows.length));
-        });
+        }, {signal: lifecycle.signal});
       }
     }
     target.setAttribute('data-larena-hydrated', 'true');

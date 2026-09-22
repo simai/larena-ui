@@ -42,6 +42,13 @@ assert(str_contains($runtimeBridge, "target.closest('[data-larena-dataview-workb
 assert(str_contains($runtimeBridge, "(workbench || queryForm).querySelector('sf-pagination')"));
 assert(str_contains($runtimeBridge, "target.closest('form[data-larena-dataview-query]')"));
 assert(str_contains($runtimeBridge, 'form.dataset.larenaPreferenceKeys'));
+assert(str_contains($runtimeBridge, 'function instanceLifecycle(target)'));
+assert(str_contains($runtimeBridge, 'var lifecycle = instanceLifecycle(target);'));
+assert(str_contains($runtimeBridge, 'controller.abort();'));
+assert(str_contains($runtimeBridge, 'if (!target.isConnected) lifecycle.dispose();'));
+assert(str_contains($runtimeBridge, 'var issued = lifecycle.next();'));
+assert(str_contains($runtimeBridge, 'if (!lifecycle.current(issued)) return;'));
+assert(substr_count($runtimeBridge, '{signal: lifecycle.signal}') >= 5);
 assert(str_contains($runtimeBridge, 'if (keys.indexOf(key) === -1) delete columns[key];'));
 assert(str_contains($runtimeBridge, 'td[data-key="select"] input[type="checkbox"][value]:checked'));
 assert(str_contains($runtimeBridge, 'new MutationObserver(function (mutations)'));
