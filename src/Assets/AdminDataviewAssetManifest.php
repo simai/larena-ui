@@ -7,7 +7,7 @@ namespace Larena\Ui\Assets;
 final class AdminDataviewAssetManifest
 {
     public const ASSET_KEY = 'ui.admin.dataview.css';
-    public const ASSET_REVISION = '20260922-cms-field-types-2';
+    public const ASSET_REVISION = '20260922-floating-ui-1';
 
     /** @return array<string, mixed> */
     public static function publicationAsset(): array

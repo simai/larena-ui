@@ -123,7 +123,7 @@
 
   function normalizeTableRows(target, rows) {
     return (rows || []).map(function (row) {
-        var actions = (row.actions || []).map(function (action) {
+        var wire = function (action) {
           var intent = action.component?.props?.value;
           if (intent !== 'larena.record.edit' && intent !== 'larena.record.view'
             && intent !== 'larena.record.delete' && intent !== 'larena.record.restore') return action;
@@ -140,8 +140,16 @@
               window.location.assign(url.href);
             }})
           })});
-        });
+        };
+        var actions = (row.actions || []).map(wire);
         var normalized = Object.assign({}, row, {actions: actions});
+        // A cell may carry the same record intent, such as the linked record name.
+        Object.keys(normalized).forEach(function (key) {
+          var cell = normalized[key];
+          if (key !== 'actions' && cell && typeof cell === 'object' && !Array.isArray(cell) && cell.component) {
+            normalized[key] = wire(cell);
+          }
+        });
         if (actions.length && typeof target.getDefaultRowCell === 'function') {
           var settings = target.getDefaultRowCell({key: 'settings'}, normalized);
           settings.component.props['@click'] = function (event) {

@@ -184,6 +184,19 @@
     max-width: 22rem;
 }
 
+/* The linked record name sits flush with the column and shortens with an ellipsis. */
+.larena-dataview-table__content > sf-table > .sf-table tbody td .sf-button--link {
+    max-width: 100%;
+    padding-inline: 0;
+}
+
+.larena-dataview-table__content > sf-table > .sf-table tbody td .sf-button--link .sf-button-text-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: start;
+}
+
 /* A narrow column keeps the "+N" count readable and lets the first badge shorten instead. */
 .larena-dataview-table__content > sf-table > .sf-table tbody td sf-badge + sf-badge > .sf-badge {
     flex-shrink: 0;
