@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Connect the CMS records list pagination and table preferences through its query form; ui.input declares its native input type and ui.checkbox submits as a list.
+
 - Let the CMS records pagination span the list as in the table design.
 
 - Pin the Framework pair ui-eb212efe40cd-smart-9e8d8e762e03 with the docked sf-drawer, the composition editor overlay, sortable drag and drop and the inline text editor; the previous pair stays available for rollback.

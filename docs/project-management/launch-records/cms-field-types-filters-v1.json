@@ -1,0 +1,27 @@
+{
+  "schema": "larena.package_launch_record.v1",
+  "package": "larena/ui",
+  "goal": "cms-field-types-filters",
+  "status": "coding_started",
+  "base_commit": "e28a9c858787256f6359227d527e8daf713521e3",
+  "scope": "Let the CMS records list use typed filters, pagination and table preferences through its query form; ui.input declares its native input type and ui.checkbox submits as a list; no Framework, route, DB or live changes",
+  "allowed_files": [
+    ".larena/launch-context.json",
+    "CHANGELOG.md",
+    "docs/project-management/launch-records/cms-field-types-filters-v1.json",
+    "resources/css/admin-dataview.css",
+    "resources/js/sf-runtime-bridge.js",
+    "resources/smart/ui-checkbox/manifest.json",
+    "resources/smart/ui-input/manifest.json",
+    "scripts/validate-larena-package.php",
+    "tests/Unit/AdminSmartEventBridgeContractTest.php",
+    "docs/project-management/evidence/cms-field-types-filters-v1/README.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/deviations.json",
+    "docs/project-management/evidence/cms-field-types-filters-v1/file-map.json",
+    "docs/project-management/evidence/cms-field-types-filters-v1/graph-sync-proposal.json",
+    "docs/project-management/evidence/cms-field-types-filters-v1/implementation-summary.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/independent-review.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/smoke.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/tests.md"
+  ]
+}

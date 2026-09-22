@@ -3,30 +3,33 @@
   "package": "larena/ui",
   "repository_class": "continuation_repository",
   "repository_contains_prior_implementation": true,
-  "launch_record_ref": "docs/project-management/launch-records/cms-table-design-v1.json",
+  "launch_record_ref": "docs/project-management/launch-records/cms-field-types-filters-v1.json",
   "specs_repo": "simai/larena-specs",
   "specs_commit": "c97a2ffeac0dc65196d3a2ae695204af0ab6ba51",
   "target_id": "larena.target.server_native_smart_asset_contract_v1",
   "semantic_digest": "sha256:bbf755329dbf66a24a2c2a2ba63c3cd5b5459a3e220cda7b664703d555b027ed",
-  "base_commit": "7bd27039ba804d5d2630083cb756e1823d8d25f4",
+  "base_commit": "e28a9c858787256f6359227d527e8daf713521e3",
   "selected_features": [
-    "cms_table_design"
+    "cms_field_types_filters"
   ],
   "allowed_files": [
     ".larena/launch-context.json",
     "CHANGELOG.md",
-    "docs/project-management/launch-records/cms-table-design-v1.json",
+    "docs/project-management/launch-records/cms-field-types-filters-v1.json",
     "resources/css/admin-dataview.css",
+    "resources/js/sf-runtime-bridge.js",
+    "resources/smart/ui-checkbox/manifest.json",
+    "resources/smart/ui-input/manifest.json",
     "scripts/validate-larena-package.php",
-    "src/Assets/AdminDataviewAssetManifest.php",
-    "docs/project-management/evidence/cms-table-design-v1/README.md",
-    "docs/project-management/evidence/cms-table-design-v1/deviations.json",
-    "docs/project-management/evidence/cms-table-design-v1/file-map.json",
-    "docs/project-management/evidence/cms-table-design-v1/graph-sync-proposal.json",
-    "docs/project-management/evidence/cms-table-design-v1/implementation-summary.md",
-    "docs/project-management/evidence/cms-table-design-v1/independent-review.md",
-    "docs/project-management/evidence/cms-table-design-v1/smoke.md",
-    "docs/project-management/evidence/cms-table-design-v1/tests.md"
+    "tests/Unit/AdminSmartEventBridgeContractTest.php",
+    "docs/project-management/evidence/cms-field-types-filters-v1/README.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/deviations.json",
+    "docs/project-management/evidence/cms-field-types-filters-v1/file-map.json",
+    "docs/project-management/evidence/cms-field-types-filters-v1/graph-sync-proposal.json",
+    "docs/project-management/evidence/cms-field-types-filters-v1/implementation-summary.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/independent-review.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/smoke.md",
+    "docs/project-management/evidence/cms-field-types-filters-v1/tests.md"
   ],
   "forbidden_files": [
     "config/*",
@@ -50,13 +53,13 @@
     "deviations.json",
     "graph-sync-proposal.json"
   ],
-  "evidence_path": "docs/project-management/evidence/cms-table-design-v1",
-  "graph_sync_proposal_path": "docs/project-management/evidence/cms-table-design-v1/graph-sync-proposal.json",
+  "evidence_path": "docs/project-management/evidence/cms-field-types-filters-v1",
+  "graph_sync_proposal_path": "docs/project-management/evidence/cms-field-types-filters-v1/graph-sync-proposal.json",
   "status": "coding_started",
   "coding_allowed": true,
   "coding_started": true,
   "repository_enforcement_installed": true,
   "review_completed": false,
   "next_transition": "isolated_slice_review",
-  "coding_branch": "codex/cms-table-figma"
+  "coding_branch": "codex/field-types-filters"
 }

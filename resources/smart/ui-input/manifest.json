@@ -7,151 +7,42 @@
   "props": {
     "type": "object",
     "properties": {
-      "id": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 120,
-        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
-      },
-      "name": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 120,
-        "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$"
-      },
-      "label": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 120,
-        "pattern": "\\S"
-      },
-      "value": {
-        "type": "string",
-        "maxLength": 255
-      },
-      "required": {
-        "type": "boolean"
-      },
-      "type": {
-        "type": "string",
-        "enum": [
-          "bordered",
-          "filled"
-        ]
-      },
-      "size": {
-        "type": "string",
-        "enum": [
-          "1/3",
-          "1/2",
-          "1",
-          "2",
-          "3"
-        ]
-      },
-      "disabled": {
-        "type": "boolean"
-      },
-      "error": {
-        "type": "boolean"
-      },
-      "hint": {
-        "type": "string",
-        "maxLength": 255
-      },
-      "input-type": {
-        "type": "string",
-        "enum": [
-          "text",
-          "date",
-          "datetime-local",
-          "time",
-          "number",
-          "email",
-          "tel",
-          "url"
-        ]
-      }
+      "id": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+      "name": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$"},
+      "label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+      "value": {"type": "string", "maxLength": 255},
+      "required": {"type": "boolean"},
+      "type": {"type": "string", "enum": ["bordered", "filled"]},
+      "input-type": {"type": "string", "enum": ["text", "date", "datetime-local", "time", "number", "email", "tel", "url"]},
+      "size": {"type": "string", "enum": ["1/3", "1/2", "1", "2", "3"]},
+      "disabled": {"type": "boolean"},
+      "error": {"type": "boolean"},
+      "hint": {"type": "string", "maxLength": 255}
     },
-    "required": [
-      "id",
-      "name",
-      "label"
-    ],
+    "required": ["id", "name", "label"],
     "additionalProperties": false
   },
   "slots": {},
   "events": {
-    "input": {
-      "kind": "dom",
-      "backend_handler_binding": false
-    },
-    "change": {
-      "kind": "dom",
-      "backend_handler_binding": false
-    },
-    "keyup": {
-      "kind": "dom",
-      "backend_handler_binding": false
-    },
-    "keydown": {
-      "kind": "dom",
-      "backend_handler_binding": false
-    },
-    "focusin": {
-      "kind": "dom",
-      "backend_handler_binding": false
-    },
-    "focusout": {
-      "kind": "dom",
-      "backend_handler_binding": false
-    }
+    "input": {"kind": "dom", "backend_handler_binding": false},
+    "change": {"kind": "dom", "backend_handler_binding": false},
+    "keyup": {"kind": "dom", "backend_handler_binding": false},
+    "keydown": {"kind": "dom", "backend_handler_binding": false},
+    "focusin": {"kind": "dom", "backend_handler_binding": false},
+    "focusout": {"kind": "dom", "backend_handler_binding": false}
   },
-  "views": {
-    "default": {},
-    "admin": {}
-  },
+  "views": {"default": {}, "admin": {}},
   "presets": {},
   "constraints": {},
-  "render": {
-    "strategy": "host",
-    "renderer": "ui.sf.element"
-  },
-  "frontend": {
-    "runtime": "simai-framework",
-    "tag": "sf-input"
-  },
+  "render": {"strategy": "host", "renderer": "ui.sf.element"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-input"},
   "assets": [
-    {
-      "key": "simai.framework.core.css",
-      "kind": "css",
-      "critical": true
-    },
-    {
-      "key": "simai.framework.core.js",
-      "kind": "javascript",
-      "critical": true
-    },
-    {
-      "key": "simai.framework.smart_base.js",
-      "kind": "javascript",
-      "critical": true
-    },
-    {
-      "key": "simai.framework.bridge.js",
-      "kind": "javascript",
-      "critical": true
-    },
-    {
-      "key": "simai.framework.sf_input.css",
-      "kind": "css",
-      "critical": true
-    },
-    {
-      "key": "simai.framework.sf_input.js",
-      "kind": "javascript",
-      "critical": true
-    }
+    {"key": "simai.framework.core.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_input.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.sf_input.js", "kind": "javascript", "critical": true}
   ],
   "atlas": {
     "visible": true,
@@ -166,21 +57,8 @@
       "safe_to_bind_data": false,
       "safe_to_execute_effect": false
     },
-    "states": [
-      "default",
-      "focus",
-      "required",
-      "filled",
-      "error",
-      "disabled"
-    ],
-    "accessibility": [
-      "explicit_label",
-      "visible_focus",
-      "required_semantics",
-      "error_state",
-      "disabled_semantics"
-    ],
+    "states": ["default", "focus", "required", "filled", "error", "disabled"],
+    "accessibility": ["explicit_label", "visible_focus", "required_semantics", "error_state", "disabled_semantics"],
     "product_href": "/admin/docara/pages/create",
     "example_props": {
       "id": "page-title",
@@ -195,56 +73,16 @@
       "hint": "Shown in the browser title and page heading."
     },
     "controls": [
-      {
-        "key": "label",
-        "source": "prop",
-        "widget": "text",
-        "min_length": 1,
-        "max_length": 120
-      },
-      {
-        "key": "value",
-        "source": "prop",
-        "widget": "text",
-        "max_length": 255
-      },
-      {
-        "key": "size",
-        "source": "prop",
-        "widget": "select"
-      },
-      {
-        "key": "type",
-        "source": "prop",
-        "widget": "select"
-      },
-      {
-        "key": "required",
-        "source": "prop",
-        "widget": "boolean"
-      },
-      {
-        "key": "disabled",
-        "source": "prop",
-        "widget": "boolean"
-      },
-      {
-        "key": "error",
-        "source": "prop",
-        "widget": "boolean"
-      },
-      {
-        "key": "hint",
-        "source": "prop",
-        "widget": "text",
-        "min_length": 1,
-        "max_length": 255
-      }
+      {"key": "label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 120},
+      {"key": "value", "source": "prop", "widget": "text", "max_length": 255},
+      {"key": "size", "source": "prop", "widget": "select"},
+      {"key": "type", "source": "prop", "widget": "select"},
+      {"key": "required", "source": "prop", "widget": "boolean"},
+      {"key": "disabled", "source": "prop", "widget": "boolean"},
+      {"key": "error", "source": "prop", "widget": "boolean"},
+      {"key": "hint", "source": "prop", "widget": "text", "min_length": 1, "max_length": 255}
     ],
-    "code_preview": {
-      "adapter": "smart_manager_php_v1",
-      "omit_defaults": false
-    },
+    "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
     "i18n": {
       "en": {
         "title": "Input",
@@ -260,17 +98,8 @@
           "hint": "Hint"
         },
         "options": {
-          "size": {
-            "1/3": "Extra small · 1/3",
-            "1/2": "Small · 1/2",
-            "1": "Default · 1",
-            "2": "Large · 2",
-            "3": "Extra large · 3"
-          },
-          "type": {
-            "bordered": "Bordered",
-            "filled": "Filled"
-          }
+          "size": {"1/3": "Extra small · 1/3", "1/2": "Small · 1/2", "1": "Default · 1", "2": "Large · 2", "3": "Extra large · 3"},
+          "type": {"bordered": "Bordered", "filled": "Filled"}
         }
       },
       "ru": {
@@ -287,17 +116,8 @@
           "hint": "Подсказка"
         },
         "options": {
-          "size": {
-            "1/3": "Очень маленькое · 1/3",
-            "1/2": "Маленькое · 1/2",
-            "1": "Обычное · 1",
-            "2": "Большое · 2",
-            "3": "Очень большое · 3"
-          },
-          "type": {
-            "bordered": "С рамкой",
-            "filled": "С заливкой"
-          }
+          "size": {"1/3": "Очень маленькое · 1/3", "1/2": "Маленькое · 1/2", "1": "Обычное · 1", "2": "Большое · 2", "3": "Очень большое · 3"},
+          "type": {"bordered": "С рамкой", "filled": "С заливкой"}
         }
       }
     }

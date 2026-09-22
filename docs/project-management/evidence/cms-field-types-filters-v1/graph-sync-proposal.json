@@ -1,0 +1,12 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "package": "larena/ui",
+  "scope": "cms field types and filters",
+  "feature_refs": [
+    "ui.dataview_table",
+    "ui.input",
+    "ui.checkbox"
+  ],
+  "canonical_update_allowed": false,
+  "proposal": "Map after Root acceptance."
+}
