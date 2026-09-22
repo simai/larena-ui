@@ -1,0 +1,10 @@
+{
+  "schema": "larena.graph_sync_proposal.v1",
+  "package": "larena/ui",
+  "scope": "floating ui pair",
+  "feature_refs": [
+    "ui.frontend_runtime"
+  ],
+  "canonical_update_allowed": false,
+  "proposal": "Map after Root acceptance."
+}

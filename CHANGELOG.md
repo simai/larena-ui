@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin the Framework pair ui-1f1c9d42d964-smart-121e8882d016 with shared Floating UI positioning and the composition editor surfaces as Smart components; ui-eb212efe40cd-smart-9e8d8e762e03 stays available for rollback.
+
 - Connect the CMS records list pagination and table preferences through its query form; ui.input declares its native input type and ui.checkbox submits as a list.
 
 - Let the CMS records pagination span the list as in the table design.

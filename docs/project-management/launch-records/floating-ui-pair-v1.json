@@ -1,17 +1,10 @@
 {
-  "schema": "larena.package_launch_context.v1",
+  "schema": "larena.package_launch_record.v1",
   "package": "larena/ui",
-  "repository_class": "continuation_repository",
-  "repository_contains_prior_implementation": true,
-  "launch_record_ref": "docs/project-management/launch-records/floating-ui-pair-v1.json",
-  "specs_repo": "simai/larena-specs",
-  "specs_commit": "c97a2ffeac0dc65196d3a2ae695204af0ab6ba51",
-  "target_id": "larena.target.server_native_smart_asset_contract_v1",
-  "semantic_digest": "sha256:bbf755329dbf66a24a2c2a2ba63c3cd5b5459a3e220cda7b664703d555b027ed",
+  "goal": "floating-ui-pair",
+  "status": "coding_started",
   "base_commit": "eaed71fe05aa9f680582ff45bad96bada794b428",
-  "selected_features": [
-    "floating_ui_pair"
-  ],
+  "scope": "Pin the Framework pair ui-1f1c9d42d964-smart-121e8882d016 (Floating UI positioning stages 1 and 2, editor surfaces as Smart components) with its immutable runtime artifact; no Larena renderer, route, DB or live changes",
   "allowed_files": [
     ".larena/launch-context.json",
     "CHANGELOG.md",
@@ -33,36 +26,5 @@
     "docs/project-management/evidence/floating-ui-pair-v1/independent-review.md",
     "docs/project-management/evidence/floating-ui-pair-v1/smoke.md",
     "docs/project-management/evidence/floating-ui-pair-v1/tests.md"
-  ],
-  "forbidden_files": [
-    "config/*",
-    "database/*",
-    "routes/*",
-    "lang/*"
-  ],
-  "forbidden_behavior": [
-    "generated_smart_manual_edit",
-    "ui_source_edit",
-    "accepted_target_change",
-    "production_readiness_claim"
-  ],
-  "required_evidence_files": [
-    "README.md",
-    "implementation-summary.md",
-    "independent-review.md",
-    "tests.md",
-    "smoke.md",
-    "file-map.json",
-    "deviations.json",
-    "graph-sync-proposal.json"
-  ],
-  "evidence_path": "docs/project-management/evidence/floating-ui-pair-v1",
-  "graph_sync_proposal_path": "docs/project-management/evidence/floating-ui-pair-v1/graph-sync-proposal.json",
-  "status": "coding_started",
-  "coding_allowed": true,
-  "coding_started": true,
-  "repository_enforcement_installed": true,
-  "review_completed": false,
-  "next_transition": "isolated_slice_review",
-  "coding_branch": "codex/floating-ui-pair"
+  ]
 }
