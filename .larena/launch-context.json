@@ -28,6 +28,7 @@
     "release-artifacts/ui-d81ccde2bdd5-smart-d448fb5563cc-registry-361e430d-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-d81ccde2bdd5-smart-d448fb5563cc-registry-361e430d-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-d81ccde2bdd5-smart-d448fb5563cc-registry-361e430d-exact-git-tree-v2/sources/ui.tar.gz",
+    "tests/Unit/AdminSmartEventBridgeContractTest.php",
     "resources/sf/runtime-lock.json",
     "release-artifacts/ui-1f1c9d42d964-smart-121e8882d016-registry-ed799297-exact-git-tree-v2/manifest.json",
     "release-artifacts/ui-1f1c9d42d964-smart-121e8882d016-registry-ed799297-exact-git-tree-v2/sources/contract.tar.gz",
