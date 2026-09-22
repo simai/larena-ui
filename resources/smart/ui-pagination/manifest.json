@@ -125,6 +125,12 @@
         "minLength": 1,
         "maxLength": 120,
         "pattern": "\\S"
+      },
+      "action-for-all-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
       }
     },
     "required": [
