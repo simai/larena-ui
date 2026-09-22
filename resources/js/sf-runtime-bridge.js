@@ -20,14 +20,21 @@
     window.addEventListener('beforeunload', function (event) {
       if (inFlight) { event.preventDefault(); event.returnValue = ''; }
     }, {signal: lifecycle.signal});
-    target.addEventListener('sf-table:column-settings-change', function (event) {
-      if (event.target !== target || failed || lifecycle.signal.aborted) return;
-      var columns = JSON.parse(JSON.stringify(event.detail?.columnSettings || {}));
-      // Only field columns are personal preferences; the row actions column also reports a width.
+    // Only field columns are settings; the row actions column also reports a width.
+    function fieldColumns(source) {
+      var columns = JSON.parse(JSON.stringify(source || {}));
       var keys = form.dataset.larenaPreferenceKeys ? JSON.parse(form.dataset.larenaPreferenceKeys) : null;
       if (Array.isArray(keys)) {
         Object.keys(columns).forEach(function (key) { if (keys.indexOf(key) === -1) delete columns[key]; });
       }
+      return columns;
+    }
+    var latest = fieldColumns(state.columns);
+    connectSharedColumns(target, form, lifecycle, function () { return latest; });
+    target.addEventListener('sf-table:column-settings-change', function (event) {
+      if (event.target !== target || failed || lifecycle.signal.aborted) return;
+      var columns = fieldColumns(event.detail?.columnSettings);
+      latest = columns;
       inFlight += 1;
       notice(ru ? 'Сохраняем настройки столбцов…' : 'Saving column settings…');
       // Serialize changes so a resize followed by hide cannot overwrite a newer revision.
@@ -55,6 +62,41 @@
         else if (!inFlight) notice(ru ? 'Настройки столбцов сохранены.' : 'Column settings saved.');
       });
     });
+  }
+
+  // Column settings for everyone are saved only when a person asks for it, and only if the server
+  // still holds the shared revision this page was rendered with.
+  function connectSharedColumns(target, form, lifecycle, columns) {
+    var panel = document.querySelector('[data-larena-shared-settings]');
+    var button = panel?.querySelector('#minimal-cms-share-columns');
+    if (!panel || !button) return;
+    var status = form.querySelector('[data-larena-preferences-status]');
+    var revision = Number.parseInt(panel.dataset.larenaSharedRevision || '0', 10);
+    if (!Number.isInteger(revision)) return;
+    button.addEventListener('click', async function () {
+      if (lifecycle.signal.aborted) return;
+      button.setAttribute('disabled', '');
+      try {
+        var response = await fetch(form.dataset.larenaPreferencesUrl, {
+          method: 'POST', credentials: 'same-origin', signal: lifecycle.signal,
+          headers: {'Content-Type': 'application/json', Accept: 'application/json',
+            'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf},
+          body: JSON.stringify({action: 'dataview.preferences.save_shared',
+            scope_ref: form.querySelector('[name="scope_ref"]').value,
+            payload: {structure_id: form.querySelector('[name="structure_id"]').value,
+              base_revision: revision, columns: columns()}})
+        });
+        var receipt = await response.json();
+        if (!response.ok || receipt.status !== 'ok') throw new Error('shared-preferences-rejected');
+        revision += 1;
+        if (status) { status.hidden = false; status.textContent = panel.dataset.larenaSharedSaved || ''; }
+      } catch (error) {
+        if (lifecycle.signal.aborted) return;
+        if (status) { status.hidden = false; status.textContent = panel.dataset.larenaSharedFailed || ''; }
+      } finally {
+        button.removeAttribute('disabled');
+      }
+    }, {signal: lifecycle.signal});
   }
 
   function connectPagination(pagination, form, target, lifecycle, appendRows) {
