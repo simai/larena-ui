@@ -23,6 +23,11 @@
     target.addEventListener('sf-table:column-settings-change', function (event) {
       if (event.target !== target || failed) return;
       var columns = JSON.parse(JSON.stringify(event.detail?.columnSettings || {}));
+      // Only field columns are personal preferences; the row actions column also reports a width.
+      var keys = form.dataset.larenaPreferenceKeys ? JSON.parse(form.dataset.larenaPreferenceKeys) : null;
+      if (Array.isArray(keys)) {
+        Object.keys(columns).forEach(function (key) { if (keys.indexOf(key) === -1) delete columns[key]; });
+      }
       inFlight += 1;
       notice(ru ? 'Сохраняем настройки столбцов…' : 'Saving column settings…');
       // Serialize changes so a resize followed by hide cannot overwrite a newer revision.
