@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Pin the Framework pair ui-1f1c9d42d964-smart-121e8882d016 with shared Floating UI positioning and the composition editor surfaces as Smart components; ui-eb212efe40cd-smart-9e8d8e762e03 stays available for rollback.
+- Pin the Framework pair ui-1f1c9d42d964-smart-6c5d313aca4d with sf-table host intents and bubbling drawer events on top of ui-1f1c9d42d964-smart-121e8882d016, which brought shared Floating UI positioning and the composition editor surfaces as Smart components; ui-eb212efe40cd-smart-9e8d8e762e03 stays available for rollback.
 
 - Connect the CMS records list pagination and table preferences through its query form; ui.input declares its native input type and ui.checkbox submits as a list.
 
