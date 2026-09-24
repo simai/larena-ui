@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin the Framework pair ui-bc8dfd7e4bdb-smart-81741eac168d: data view stage B (events, data bindings and settings persistence in the type manifest).
+
 - Pin the Framework pair ui-d81ccde2bdd5-smart-a916bbadf3aa: data view stage A (template delete event, instance isolation, declared data states).
 
 - Pin the Framework pair ui-d81ccde2bdd5-smart-d448fb5563cc: keyboard filter chips, bubbling modal events and the sf-pagination "for all" fix.
