@@ -1,5 +1,7 @@
 # Changelog
 
+- Keep unsaved column choices visible on a revision conflict and let the user refresh the layer revision before retrying.
+
 ## Unreleased
 
 - Pin the Framework pair ui-56cd91e1d7a3-smart-903ad66c4f4f: Stage C declares simai.dataview-port 1.0.0 on sf-table; host conformance remains to be proven

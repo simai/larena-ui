@@ -8,8 +8,8 @@
     target.setTableSettings({columnSettings: state.columns || {}}, 'larena-preferences-load');
     // Column changes go where the page says: into the open saved view (with that view's revision)
     // or into the person's own layer.
-    var target = state.target && state.target.kind === 'saved_view' ? state.target : null;
-    var revision = target ? target.revision : state.revision;
+    var settingsTarget = state.target && state.target.kind === 'saved_view' ? state.target : null;
+    var revision = settingsTarget ? settingsTarget.revision : state.revision;
     var pending = Promise.resolve();
     var failed = false;
     var inFlight = 0;
@@ -19,6 +19,46 @@
       if (!status) return;
       status.hidden = false;
       status.textContent = message;
+    }
+    function offerRefresh() {
+      if (!status || lifecycle.signal.aborted) return;
+      var refresh = document.createElement('button');
+      refresh.type = 'button';
+      refresh.textContent = ru ? 'Обновить ревизию' : 'Refresh revision';
+      status.replaceChildren(document.createTextNode(ru
+        ? 'Настройки изменились в другом окне. Ваш выбор остаётся на экране. '
+        : 'Settings changed elsewhere. Your draft remains on screen. '), refresh);
+      refresh.addEventListener('click', async function () {
+        refresh.disabled = true;
+        try {
+          var response = await fetch(window.location.href, {credentials: 'same-origin',
+            headers: {Accept: 'application/json'}, signal: lifecycle.signal});
+          var fresh = await response.json();
+          var layer = settingsTarget ? fresh.table_preferences?.target : fresh.table_preferences?.personal;
+          if (!response.ok || fresh.status !== 'ok' || !Number.isInteger(layer?.revision)
+            || (settingsTarget && (layer?.kind !== 'saved_view'
+              || layer?.saved_view_id !== settingsTarget.saved_view_id))) throw new Error('preferences-refresh-rejected');
+          revision = layer.revision;
+          var retry = document.createElement('button');
+          retry.type = 'button';
+          retry.textContent = ru ? 'Сохранить мой вариант' : 'Save my draft';
+          status.replaceChildren(document.createTextNode(ru
+            ? 'Ревизия обновлена. Ваш вариант остаётся на экране. '
+            : 'Revision refreshed. Your draft remains on screen. '), retry);
+          retry.addEventListener('click', function () {
+            failed = false;
+            target.dispatchEvent(new CustomEvent('sf-table:column-settings-change',
+              {detail: {columnSettings: latest}}));
+          }, {once: true, signal: lifecycle.signal});
+        } catch (error) {
+          if (!lifecycle.signal.aborted) {
+            refresh.disabled = false;
+            status.firstChild.textContent = ru
+              ? 'Не удалось обновить ревизию. Ваш вариант остаётся на экране. '
+              : 'Could not refresh the revision. Your draft remains on screen. ';
+          }
+        }
+      }, {signal: lifecycle.signal});
     }
     window.addEventListener('beforeunload', function (event) {
       if (inFlight) { event.preventDefault(); event.returnValue = ''; }
@@ -35,9 +75,10 @@
     var latest = fieldColumns(state.columns);
     connectSharedColumns(target, form, lifecycle, function () { return latest; });
     target.addEventListener('sf-table:column-settings-change', function (event) {
-      if (event.target !== target || failed || lifecycle.signal.aborted) return;
+      if (event.target !== target || lifecycle.signal.aborted) return;
       var columns = fieldColumns(event.detail?.columnSettings);
       latest = columns;
+      if (failed) return;
       inFlight += 1;
       notice(ru ? 'Сохраняем настройки столбцов…' : 'Saving column settings…');
       // Serialize changes so a resize followed by hide cannot overwrite a newer revision.
@@ -47,26 +88,29 @@
           method: 'POST', credentials: 'same-origin',
           headers: {'Content-Type': 'application/json', Accept: 'application/json',
             'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf},
-          body: JSON.stringify(target
+          body: JSON.stringify(settingsTarget
             ? {action: 'dataview.saved_view.layout',
               scope_ref: form.querySelector('[name="scope_ref"]').value,
-              payload: {saved_view_id: target.saved_view_id, base_revision: revision, columns: columns}}
+              payload: {saved_view_id: settingsTarget.saved_view_id, base_revision: revision, columns: columns}}
             : {action: 'dataview.preferences.save',
               scope_ref: form.querySelector('[name="scope_ref"]').value,
               payload: {structure_id: form.querySelector('[name="structure_id"]').value,
                 base_revision: revision, columns: columns}})
         });
         var receipt = await response.json();
-        if (!response.ok || receipt.status !== 'ok') throw new Error('preferences-save-rejected');
+        if (!response.ok || receipt.status !== 'ok') throw new Error(
+          receipt.reason_code === 'minimal_cms_revision_conflict' ? 'preferences-conflict' : 'preferences-save-rejected');
         revision += 1;
-      }).catch(function () {
+      }).catch(function (error) {
         failed = true;
+        if (error.message === 'preferences-conflict') offerRefresh();
       }).finally(function () {
         inFlight -= 1;
-        if (failed) notice(ru
-          ? 'Настройки не сохранены. Перезагрузите страницу и повторите изменение.'
-          : 'Settings were not saved. Reload the page and try the change again.');
-        else if (!inFlight) notice(ru ? 'Настройки столбцов сохранены.' : 'Column settings saved.');
+        if (failed) {
+          if (!status?.querySelector('button')) notice(ru
+            ? 'Настройки не сохранены. Перезагрузите страницу и повторите изменение.'
+            : 'Settings were not saved. Reload the page and try the change again.');
+        } else if (!inFlight) notice(ru ? 'Настройки столбцов сохранены.' : 'Column settings saved.');
       });
     });
   }
@@ -80,6 +124,41 @@
     var status = form.querySelector('[data-larena-preferences-status]');
     var revision = Number.parseInt(panel.dataset.larenaSharedRevision || '0', 10);
     if (!Number.isInteger(revision)) return;
+    function offerSharedRefresh() {
+      if (!status) return;
+      var ru = document.documentElement.lang.startsWith('ru');
+      var refresh = document.createElement('button');
+      refresh.type = 'button';
+      refresh.textContent = ru ? 'Обновить общую ревизию' : 'Refresh shared revision';
+      status.replaceChildren(document.createTextNode(ru
+        ? 'Общие настройки изменились. Ваш выбор остаётся на экране. '
+        : 'Shared settings changed. Your draft remains on screen. '), refresh);
+      refresh.addEventListener('click', async function () {
+        refresh.disabled = true;
+        try {
+          var response = await fetch(window.location.href, {credentials: 'same-origin',
+            headers: {Accept: 'application/json'}, signal: lifecycle.signal});
+          var fresh = await response.json();
+          if (!response.ok || fresh.status !== 'ok'
+            || !Number.isInteger(fresh.table_preferences?.shared?.revision)) throw new Error('shared-refresh-rejected');
+          revision = fresh.table_preferences.shared.revision;
+          var retry = document.createElement('button');
+          retry.type = 'button';
+          retry.textContent = ru ? 'Применить мой вариант для всех' : 'Apply my draft for everyone';
+          status.replaceChildren(document.createTextNode(ru
+            ? 'Общая ревизия обновлена. Ваш вариант остаётся на экране. '
+            : 'Shared revision refreshed. Your draft remains on screen. '), retry);
+          retry.addEventListener('click', function () { button.click(); }, {once: true, signal: lifecycle.signal});
+        } catch (error) {
+          if (!lifecycle.signal.aborted) {
+            refresh.disabled = false;
+            status.firstChild.textContent = ru
+              ? 'Не удалось обновить общую ревизию. Ваш вариант остаётся на экране. '
+              : 'Could not refresh the shared revision. Your draft remains on screen. ';
+          }
+        }
+      }, {signal: lifecycle.signal});
+    }
     button.addEventListener('click', async function () {
       if (lifecycle.signal.aborted) return;
       button.setAttribute('disabled', '');
@@ -94,12 +173,17 @@
               base_revision: revision, columns: columns()}})
         });
         var receipt = await response.json();
-        if (!response.ok || receipt.status !== 'ok') throw new Error('shared-preferences-rejected');
+        if (!response.ok || receipt.status !== 'ok') throw new Error(
+          receipt.reason_code === 'minimal_cms_revision_conflict' ? 'shared-preferences-conflict' : 'shared-preferences-rejected');
         revision += 1;
         if (status) { status.hidden = false; status.textContent = panel.dataset.larenaSharedSaved || ''; }
       } catch (error) {
         if (lifecycle.signal.aborted) return;
-        if (status) { status.hidden = false; status.textContent = panel.dataset.larenaSharedFailed || ''; }
+        if (status) {
+          status.hidden = false;
+          if (error.message === 'shared-preferences-conflict') offerSharedRefresh();
+          else status.textContent = panel.dataset.larenaSharedFailed || '';
+        }
       } finally {
         button.removeAttribute('disabled');
       }
