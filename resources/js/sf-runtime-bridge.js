@@ -6,7 +6,10 @@
     var state = JSON.parse(form.dataset.larenaTablePreferences);
     if (!state || !Number.isInteger(state.revision)) return;
     target.setTableSettings({columnSettings: state.columns || {}}, 'larena-preferences-load');
-    var revision = state.revision;
+    // Column changes go where the page says: into the open saved view (with that view's revision)
+    // or into the person's own layer.
+    var target = state.target && state.target.kind === 'saved_view' ? state.target : null;
+    var revision = target ? target.revision : state.revision;
     var pending = Promise.resolve();
     var failed = false;
     var inFlight = 0;
@@ -44,10 +47,14 @@
           method: 'POST', credentials: 'same-origin',
           headers: {'Content-Type': 'application/json', Accept: 'application/json',
             'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf},
-          body: JSON.stringify({action: 'dataview.preferences.save',
-            scope_ref: form.querySelector('[name="scope_ref"]').value,
-            payload: {structure_id: form.querySelector('[name="structure_id"]').value,
-              base_revision: revision, columns: columns}})
+          body: JSON.stringify(target
+            ? {action: 'dataview.saved_view.layout',
+              scope_ref: form.querySelector('[name="scope_ref"]').value,
+              payload: {saved_view_id: target.saved_view_id, base_revision: revision, columns: columns}}
+            : {action: 'dataview.preferences.save',
+              scope_ref: form.querySelector('[name="scope_ref"]').value,
+              payload: {structure_id: form.querySelector('[name="structure_id"]').value,
+                base_revision: revision, columns: columns}})
         });
         var receipt = await response.json();
         if (!response.ok || receipt.status !== 'ok') throw new Error('preferences-save-rejected');
