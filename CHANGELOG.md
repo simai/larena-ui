@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin the Framework pair ui-cb1cda301648-smart-81741eac168d: Core cb1cda30 whose manifests declare their own version (smart manifest 2.1.0, composition type manifest 1.1.0); standards reissued as 1.0.2.
+
 - Pin the Framework pair ui-bc8dfd7e4bdb-smart-81741eac168d: data view stage B (events, data bindings and settings persistence in the type manifest).
 
 - Pin the Framework pair ui-d81ccde2bdd5-smart-a916bbadf3aa: data view stage A (template delete event, instance isolation, declared data states).
