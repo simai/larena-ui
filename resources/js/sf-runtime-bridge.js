@@ -258,6 +258,100 @@
         if (status) status.textContent = ru ? 'Не удалось загрузить записи. Повторите попытку.' : 'Could not load records. Try again.';
       } finally { loading = false; }
     }, {signal: lifecycle.signal});
+    return {clearContinuation: function () { nextHref = null; }};
+  }
+
+  function connectCmsPort(target, form, lifecycle, acceptRows, pagination, paginationPort) {
+    if (!form?.dataset?.larenaPortUrl?.startsWith('/')) return;
+    var scope = form.querySelector('[name="scope_ref"]')?.value;
+    var structure = form.querySelector('[name="structure_id"]')?.value;
+    if (!scope || !structure) return;
+    var status = form.querySelector('[data-larena-port-status]');
+    var records = form.closest('[data-larena-minimal-cms]')?.querySelector('[data-larena-row-revisions]');
+    var labels = {};
+    try { labels = JSON.parse(form.dataset.larenaPortActionLabels || '{}'); } catch { labels = {}; }
+    var ru = document.documentElement.lang.startsWith('ru');
+    var latest = 0;
+    function notice(kind) {
+      if (!status || lifecycle.signal.aborted) return;
+      status.hidden = false;
+      status.dataset.state = kind;
+      status.textContent = kind === 'loading' ? (ru ? 'Загружаем записи…' : 'Loading records…')
+        : kind === 'empty' ? (ru ? 'Записей нет.' : 'No records.')
+          : kind === 'error' ? (ru ? 'Не удалось загрузить записи. Предыдущий список сохранён.' : 'Could not load records. Previous records remain visible.')
+            : (ru ? 'Записи загружены.' : 'Records loaded.');
+    }
+    function display(value) {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'string') return value;
+      if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+      return JSON.stringify(value);
+    }
+    function tableRows(data) {
+      var columns = Array.isArray(data.columns) ? data.columns.map(function (column) { return column.key; }) : [];
+      var actionTypes = {
+        'record.edit': ['edit', 'larena.record.edit', labels.edit || 'Edit'],
+        'record.view': ['visibility', 'larena.record.view', labels.view || 'View'],
+        'record.delete': ['delete', 'larena.record.delete', labels.delete || 'Delete'],
+        'record.restore': ['restore', 'larena.record.restore', labels.restore || 'Restore'],
+      };
+      return data.records.map(function (record) {
+        var row = {id: record.id};
+        columns.forEach(function (key) { row[key] = display(record.values?.[key]); });
+        row.actions = (record.actions || []).filter(function (action) { return actionTypes[action]; }).map(function (action) {
+          var type = actionTypes[action];
+          return {component: {type: 'icon-button', props: {variant: 'icon', type: 'link', scheme: 'on-surface', size: '1',
+            icon: type[0], value: type[1], ariaLabel: type[2]}}};
+        });
+        return row;
+      });
+    }
+    target.addEventListener('sf-table-query-intent', async function (event) {
+      if (event.target !== target || lifecycle.signal.aborted || event.detail?.reason !== 'context') return;
+      var sequence = event.detail?.sequence;
+      var ids = event.detail?.context?.record_ids;
+      if (!Number.isSafeInteger(sequence) || sequence < 1 || !Array.isArray(ids)) return;
+      latest = sequence;
+      notice('loading');
+      try {
+        var response = await fetch(form.dataset.larenaPortUrl, {
+          method: 'POST', credentials: 'same-origin', signal: lifecycle.signal,
+          headers: {'Content-Type': 'application/json', Accept: 'application/json',
+            'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf || ''},
+          body: JSON.stringify({scope_ref: scope, structure_id: structure, intent: 'query.change',
+            payload: {sequence: sequence, query: {record_ids: ids}}}),
+        });
+        var answer = await response.json();
+        if (lifecycle.signal.aborted || sequence !== latest) return;
+        if (!response.ok || answer.answer !== 'applied' || answer.sequence !== sequence
+          || !Array.isArray(answer.data?.records) || !Array.isArray(answer.data?.columns)
+          || !Number.isInteger(answer.data?.total)) throw new Error('port_query_unavailable');
+        var projected = tableRows(answer.data);
+        var normalized = normalizeTableRows(target, projected);
+        if (!target.applyQueryResult?.(sequence, normalized)) return;
+        acceptRows(projected, normalized);
+        paginationPort?.clearContinuation();
+        if (pagination) {
+          pagination.setAttribute('current', '1');
+          pagination.setAttribute('total', String(answer.data.total));
+          pagination.setAttribute('selection-total', String(normalized.length));
+          pagination.setAttribute('selected-count', '0');
+          pagination.removeAttribute('show-action-for-all');
+        }
+        if (records) {
+          records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(answer.data.records.map(function (record) {
+            return [record.id, record.revision];
+          })));
+          records.dataset.larenaMatchedCount = String(answer.data.total);
+          records.dataset.larenaBulkAll = '';
+        }
+        notice(normalized.length ? 'populated' : 'empty');
+      } catch (error) {
+        if (lifecycle.signal.aborted || sequence !== latest) return;
+        target.setDataState?.('error');
+        notice('error');
+      }
+    }, {signal: lifecycle.signal});
   }
 
   function normalizeTableRows(target, rows) {
@@ -363,13 +457,14 @@
         || target.closest('form[data-larena-dataview-query]');
       connectTablePreferences(target, queryForm, lifecycle);
       var pagination = (workbench || queryForm) && (workbench || queryForm).querySelector('sf-pagination');
+      var paginationPort = null;
       if (pagination) {
         var syncPaginationSelection = function () {
           var selected = target.querySelectorAll('tbody td[data-key="select"] input[type="checkbox"][value]:checked').length;
           pagination.setAttribute('selected-count', String(selected));
           pagination.setAttribute('selection-total', String(rows.length));
         };
-        connectPagination(pagination, queryForm, target, lifecycle, function (incoming) {
+        paginationPort = connectPagination(pagination, queryForm, target, lifecycle, function (incoming) {
           var ids = new Set((data.rows || []).map(function (row) { return String(row.id); }));
           data.rows = (data.rows || []).concat(incoming.filter(function (row) {
             if (ids.has(String(row.id))) return false;
@@ -405,6 +500,10 @@
           pagination.setAttribute('selection-total', String(rows.length));
         }, {signal: lifecycle.signal});
       }
+      connectCmsPort(target, queryForm, lifecycle, function (projected, normalized) {
+        data.rows = projected;
+        rows = normalized;
+      }, pagination, paginationPort);
     }
     target.setAttribute('data-larena-hydrated', 'true');
   }
