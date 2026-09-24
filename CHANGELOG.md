@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin the Framework pair ui-56cd91e1d7a3-smart-903ad66c4f4f: Stage C declares simai.dataview-port 1.0.0 on sf-table; host conformance remains to be proven
+
 - Pin the Framework pair ui-cb1cda301648-smart-81741eac168d: Core cb1cda30 whose manifests declare their own version (smart manifest 2.1.0, composition type manifest 1.1.0); standards reissued as 1.0.2.
 
 - Pin the Framework pair ui-bc8dfd7e4bdb-smart-81741eac168d: data view stage B (events, data bindings and settings persistence in the type manifest).
