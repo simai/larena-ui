@@ -29,6 +29,17 @@ assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
     'ui/distr/core/css/core.css',
     'smart/smart/table/css/table.css',
 ]);
+$dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-data-view'));
+assert(array_column($dataViewAssets, 'asset_key') === [
+    'simai.framework.core.css',
+    'simai.framework.core.js',
+    'simai.framework.smart_base.js',
+    'simai.framework.bridge.js',
+    'simai.framework.sf_table.css',
+    'simai.framework.sf_table.js',
+    'simai.framework.sf_pagination.js',
+    'simai.framework.sf_data_view.js',
+]);
 
 $baseline = FrontendRuntimeLock::bundled()->toArray();
 $switched = $baseline;

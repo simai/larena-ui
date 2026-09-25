@@ -49,6 +49,20 @@
     "smart_base_path": "smart/"
   },
   "components": {
+    "sf-data-view": {
+      "source": "smart/data-view",
+      "javascript": "smart/smart/data-view/js/data-view.js",
+      "css": null,
+      "requires": [
+        "sf-table",
+        "sf-pagination"
+      ],
+      "attributes": [
+        "aria-label",
+        "id",
+        "class"
+      ]
+    },
     "sf-icon": {
       "source": "smart/icons",
       "javascript": "smart/smart/icons/js/icons.js",

@@ -17,6 +17,7 @@ assert($lock->toArray()['ui_smart']['commit'] === '5e7adda70be45418b1de1da872511
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'smart/buttons');
 assert($registry->get('sf-table')['source'] === 'smart/table');
+assert($registry->get('sf-data-view')['source'] === 'smart/data-view');
 assert($registry->get('sf-badge')['source'] === 'smart/badges');
 assert($registry->get('sf-alert')['source'] === 'smart/alert');
 assert($registry->get('sf-pagination')['source'] === 'smart/pagination');
@@ -27,6 +28,7 @@ assert($registry->get('sf-dropdown')['source'] === 'smart/dropdown');
 assert($registry->get('sf-checkbox')['source'] === 'smart/checkbox');
 $registry->assertPropsAllowed('sf-button', ['text' => 'Create', 'disabled' => false]);
 $registry->assertPropsAllowed('sf-table', ['aria-label' => 'Pages', 'data' => ['columns' => [], 'rows' => []]]);
+$registry->assertPropsAllowed('sf-data-view', ['id' => 'cms-records', 'aria-label' => 'Records']);
 $registry->assertPropsAllowed('sf-input', ['label' => 'Title', 'required' => true, 'error' => false, 'autocomplete' => 'new-password']);
 $registry->assertPropsAllowed('sf-table', ['selectable' => false, 'settings' => false, 'actions' => false]);
 try {

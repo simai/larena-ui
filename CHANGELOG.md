@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Register the pinned `sf-data-view` script and its table/pagination dependencies in Larena's runtime lock so the CMS host can load the new composite through the verified asset graph.
+
 - Pin Framework Core `56cd91e1d7a3` and Smart `5e7adda70be4` with registry `980b3a9f`: the separate `sf-data-view` and endpoint-backed filter options are available for Larena laboratory integration.
 
 - Pin the Framework pair ui-56cd91e1d7a3-smart-903ad66c4f4f: Stage C declares simai.dataview-port 1.0.0 on sf-table; host conformance remains to be proven
