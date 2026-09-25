@@ -564,10 +564,11 @@
       try { return JSON.parse(value); } catch { return fallback; }
     };
     var page = parse(form.dataset.larenaPaginationQuery || 'null', {}) || {};
-    var sortField = field('sort_field')?.value || '';
+    var sortField = field('sort_field')?.value || page.sort_field || '';
+    var chosenFilters = parse(field('filters')?.value || page.filters || '{}', {});
     var current = {
-      filters: parse(field('filters')?.value || '{}', {}), search: field('search')?.value || '',
-      sort: sortField ? [{key: sortField, direction: field('sort_direction')?.value === 'desc' ? 'desc' : 'asc'}] : [],
+      filters: chosenFilters, search: field('search')?.value || page.search || '',
+      sort: sortField ? [{key: sortField, direction: (field('sort_direction')?.value || page.sort_direction) === 'desc' ? 'desc' : 'asc'}] : [],
       page: Number(page.page) || 1, per_page: Number(page.per_page) || 20,
     };
     if (field('dataview_id')?.value) current.dataview_id = field('dataview_id').value;
@@ -611,8 +612,8 @@
       url.hash = mode === 'view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
       window.location.assign(url.href);
     };
-    view.setHostPort({version: '1.1.0', capabilities: ['saved-views', 'row-actions',
-      ...(records.dataset.larenaBulkAll === '1' ? ['bulk-under-filter'] : [])],
+    var permissions = parse(records.dataset.larenaPortCapabilities || '[]', []);
+    view.setHostPort({version: '1.1.0', capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
       if ((intent === 'record.mutate' && payload?.action_id === 'delete')
         || intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
@@ -622,8 +623,11 @@
       }
       var sent = {...payload};
       if (intent === 'view.save') {
-        sent = {key: payload?.label || payload?.key, query: payload?.query || {}};
+        sent = {key: payload?.key, query: payload?.query || {}};
         if (Number.isInteger(payload?.revision)) sent.revision = payload.revision;
+        for (var property of ['roles', 'layout', 'settings']) {
+          if (payload && Object.hasOwn(payload, property)) sent[property] = payload[property];
+        }
       }
       if (intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
         if (sent.action_id === 'bulk_delete') sent.action_id = 'archive';
