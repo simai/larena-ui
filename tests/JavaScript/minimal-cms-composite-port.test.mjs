@@ -67,6 +67,24 @@ test('all-record action appears only with the host permission', async () => {
     assert.equal(denied.pagination.attributes['show-action-for-all'], undefined);
 });
 
+test('selected bulk carries one or two revisions through the scoped host port', async () => {
+    const h = await harness({answer: 'refused', reason: 'host_decides'});
+    for (const revisions of [{one: 3}, {one: 3, two: 5}]) {
+        const ids = Object.keys(revisions);
+        const answer = await h.view.port.raise('bulk.apply_selected', {
+            action_id: 'bulk_delete', record_ids: ids, revisions,
+        }, {});
+        assert.equal(answer.answer, 'refused');
+        const call = h.calls.at(-1);
+        assert.equal(call.options.headers['X-CSRF-TOKEN'], 'csrf');
+        assert.deepEqual(JSON.parse(call.options.body), {
+            scope_ref: 'scope:cms', structure_id: 'workbench.demo_solutions',
+            intent: 'bulk.apply_selected',
+            payload: {action_id: 'archive', record_ids: ids, revisions},
+        });
+    }
+});
+
 test('composite view save sends only host-owned fields with revision and full view content', async () => {
     const h = await harness({answer: 'applied'});
     const answer = await h.view.port.raise('view.save', {key: 'draft', label: 'Draft', revision: 2,

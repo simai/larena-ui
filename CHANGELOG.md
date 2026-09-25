@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Pin Framework Core `56cd91e1d7a3` and Smart `90208335806d` with registry `7d7edec0`. The `sf-data-view` selected action now reaches the host port with current revisions for one or more checked records; row actions retain their separate permission check.
+
 - Bind a slotted CMS `sf-data-view` to the scoped 1.1.0 host port. The composite owns query lifecycle; the Larena bridge refuses records without owner-projected `display_values` and never inserts raw reference values into table cells.
 
 - Register the pinned `sf-data-view` script and its table/pagination dependencies in Larena's runtime lock so the CMS host can load the new composite through the verified asset graph.
