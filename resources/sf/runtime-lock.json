@@ -106,6 +106,9 @@
       "source": "smart/table",
       "javascript": "smart/smart/table/js/table.js",
       "css": "smart/smart/table/css/table.css",
+      "requires": [
+        "sf-icon-button"
+      ],
       "attributes": [
         "template",
         "root-class",

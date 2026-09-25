@@ -20,7 +20,10 @@ assert(str_contains($table->html, 'settings="false"'));
 assert(str_contains($table->html, 'actions="false"'));
 assert(str_contains($table->html, 'type="application/json"'));
 assert(str_contains($table->html, 'larena-smart-hydration'));
-assert(count($table->assetRequirements) === 6);
+assert(count($table->assetRequirements) === 9);
+assert(in_array('simai.framework.sf_icon_button.js', array_map(
+    static fn ($requirement): string => $requirement->assetKey, $table->assetRequirements,
+), true));
 assert($table->isSafe());
 
 foreach ([

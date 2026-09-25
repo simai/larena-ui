@@ -118,6 +118,21 @@
       "critical": true
     },
     {
+      "key": "simai.framework.sf_icon.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_icon_button.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_icon_button.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
       "key": "simai.framework.sf_table.css",
       "kind": "css",
       "critical": true

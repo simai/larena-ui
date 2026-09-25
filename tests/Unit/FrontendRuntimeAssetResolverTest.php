@@ -18,6 +18,9 @@ assert($keys === [
     'simai.framework.core.js',
     'simai.framework.smart_base.js',
     'simai.framework.bridge.js',
+    'simai.framework.sf_icon.js',
+    'simai.framework.sf_icon_button.css',
+    'simai.framework.sf_icon_button.js',
     'simai.framework.sf_table.css',
     'simai.framework.sf_table.js',
 ]);
@@ -27,6 +30,7 @@ assert(array_column($core, 'relative_path') === [
 ]);
 assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
     'ui/distr/core/css/core.css',
+    'smart/smart/icon-buttons/css/icon-buttons.css',
     'smart/smart/table/css/table.css',
 ]);
 $dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-data-view'));
@@ -35,6 +39,9 @@ assert(array_column($dataViewAssets, 'asset_key') === [
     'simai.framework.core.js',
     'simai.framework.smart_base.js',
     'simai.framework.bridge.js',
+    'simai.framework.sf_icon.js',
+    'simai.framework.sf_icon_button.css',
+    'simai.framework.sf_icon_button.js',
     'simai.framework.sf_table.css',
     'simai.framework.sf_table.js',
     'simai.framework.sf_pagination.js',
