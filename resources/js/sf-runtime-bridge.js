@@ -554,6 +554,7 @@
     var form = view.closest('form[data-larena-dataview-query]');
     var records = view.closest('[data-larena-row-revisions]');
     if (!form || !records || !form.dataset.larenaPortUrl?.startsWith('/')) return;
+    var storageWorkbench = records.dataset.larenaStorageWorkbenchComposite === '1';
     var scope = form.querySelector('[name="scope_ref"]')?.value;
     var structure = form.querySelector('[name="structure_id"]')?.value;
     if (!scope || !structure || view.dataset.larenaPortConnected === 'true') return;
@@ -573,6 +574,7 @@
     };
     if (field('dataview_id')?.value) current.dataview_id = field('dataview_id').value;
     if (field('include_deleted')?.value === '1') current.include_deleted = true;
+    if (storageWorkbench && field('include_archived')?.value === '1') current.include_archived = true;
     if (field('loaded_saved_view_id')?.value) current.saved_view_id = field('loaded_saved_view_id').value;
     view.query = current;
     var table = view.table;
@@ -597,7 +599,7 @@
           throw new Error('port_display_projection_missing');
         }
         var row = {id: record.id, revision: record.revision,
-          actions: (record.actions || []).map(function (action) { return actions[action]; }).filter(Boolean)};
+          actions: storageWorkbench ? [] : (record.actions || []).map(function (action) { return actions[action]; }).filter(Boolean)};
         keys.forEach(function (key) { row[key] = record.display_values[key] ?? null; });
         return row;
       });
@@ -605,6 +607,10 @@
         return [record.id, record.revision];
       })));
       records.dataset.larenaMatchedCount = String(data.total);
+      if (storageWorkbench) {
+        var legacy = records.closest?.('.larena-workbench-records')?.querySelector('[data-larena-storage-legacy]');
+        if (legacy) legacy.open = false;
+      }
       return {...data, records: projected};
     };
     var navigateRecord = function (id, mode) {
@@ -634,6 +640,7 @@
       }
       if (intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
         if (sent.action_id === 'bulk_delete') sent.action_id = 'archive';
+        if (storageWorkbench && intent === 'bulk.apply_selected') sent.confirmed = true;
       }
       try {
         var response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', signal: options?.signal,
@@ -657,6 +664,10 @@
       }
     }});
     view.dataset.larenaPortConnected = 'true';
+    if (storageWorkbench) {
+      var surface = records.querySelector?.('[data-larena-composite-surface]');
+      if (surface) surface.hidden = false;
+    }
   }
 
   new MutationObserver(function (mutations) {

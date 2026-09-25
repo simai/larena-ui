@@ -6,14 +6,21 @@ import fs from 'node:fs';
 const source = fs.readFileSync(new URL('../../resources/js/sf-runtime-bridge.js', import.meta.url), 'utf8');
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-async function harness(data, {bulkAll = false} = {}) {
+async function harness(data, {bulkAll = false, storageWorkbench = false} = {}) {
     const calls = [];
+    const surface = {hidden: true};
+    const legacy = {open: true};
     const records = {dataset: {larenaFilterFields: JSON.stringify([{key: 'owner', label: 'Owner', filter: {control: 'entity-multi-select'}}]),
-        larenaPortCapabilities: JSON.stringify(['saved-views', 'row-actions']),
-        larenaRowRevisions: '{}', larenaMatchedCount: '0', larenaBulkAll: bulkAll ? '1' : ''}};
+        larenaPortCapabilities: JSON.stringify(storageWorkbench ? [] : ['saved-views', 'row-actions']),
+        larenaRowRevisions: '{}', larenaMatchedCount: '0', larenaBulkAll: bulkAll ? '1' : '',
+        larenaStorageWorkbenchComposite: storageWorkbench ? '1' : ''},
+    querySelector: selector => selector === '[data-larena-composite-surface]' ? surface : null,
+    closest: selector => selector === '.larena-workbench-records'
+        ? {querySelector: target => target === '[data-larena-storage-legacy]' ? legacy : null} : null};
     const inputs = {scope_ref: {value: 'scope:cms'}, structure_id: {value: 'workbench.demo_solutions'},
-        filters: {value: '{}'}, search: {value: ''}, sort_field: {value: ''}, per_page: {value: '20'}};
-    const form = {dataset: {larenaPortUrl: '/admin/cms/port', larenaPreferencesCsrf: 'csrf',
+        filters: {value: '{}'}, search: {value: ''}, sort_field: {value: ''}, per_page: {value: '20'},
+        include_archived: {value: '1'}};
+    const form = {dataset: {larenaPortUrl: storageWorkbench ? '/admin/storage-workbench/port' : '/admin/cms/port', larenaPreferencesCsrf: 'csrf',
         larenaPaginationQuery: JSON.stringify({page: 1, per_page: 20, search: 'needle', sort_field: 'owner', sort_direction: 'desc'})},
     querySelector: selector => ({'[name="scope_ref"]': inputs.scope_ref,
         '[name="structure_id"]': inputs.structure_id})[selector] ?? null,
@@ -34,7 +41,7 @@ async function harness(data, {bulkAll = false} = {}) {
         fetch: async (url, options) => { calls.push({url, options}); return {json: async () => data}; }};
     vm.runInNewContext(source, context);
     await tick();
-    return {view, table, pagination, records, calls};
+    return {view, table, pagination, records, calls, surface, legacy};
 }
 
 test('composite consumes only owner-projected cells and scoped port answers', async () => {
@@ -83,6 +90,30 @@ test('selected bulk carries one or two revisions through the scoped host port', 
             payload: {action_id: 'archive', record_ids: ids, revisions},
         });
     }
+});
+
+test('Storage workbench selected archive confirms on the owner port and hides unsupported row actions', async () => {
+    const h = await harness({answer: 'applied', sequence: 1, data: {
+        columns: [{key: 'owner'}], total: 1,
+        records: [{id: 'record-1', revision: 3, actions: ['record.delete'],
+            values: {owner: 'user:secret'}, display_values: {owner: 'Alice'}}],
+        echo: {filters_chosen: {}, search: '', sort: [], page: 1, per_page: 20},
+    }}, {storageWorkbench: true});
+    assert.equal(h.view.query.include_archived, true);
+    assert.deepEqual(Array.from(h.view.port.capabilities), []);
+    assert.equal(h.surface.hidden, false);
+    assert.equal(h.legacy.open, true);
+    const answer = await h.view.port.raise('query.change', {sequence: 1, query: h.view.query}, {});
+    assert.equal(h.legacy.open, false);
+    assert.deepEqual(JSON.parse(JSON.stringify(answer.data.records)), [{id: 'record-1', revision: 3,
+        actions: [], owner: 'Alice'}]);
+    assert.ok(!JSON.stringify(answer.data.records).includes('user:secret'));
+    await h.view.port.raise('bulk.apply_selected', {action_id: 'bulk_delete',
+        record_ids: ['record-1'], revisions: {'record-1': 3}}, {});
+    assert.equal(h.calls.at(-1).url, 'http://localhost/admin/storage-workbench/port');
+    assert.deepEqual(JSON.parse(h.calls.at(-1).options.body).payload, {
+        action_id: 'archive', confirmed: true, record_ids: ['record-1'], revisions: {'record-1': 3},
+    });
 });
 
 test('composite view save sends only host-owned fields with revision and full view content', async () => {
