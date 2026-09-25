@@ -451,6 +451,12 @@
         throw new Error('larena-smart-table-rows-api-unavailable');
       }
       target.setRows(rows, 'larena-backend-hydration');
+      // A slotted table belongs to sf-data-view. Its rows and listeners come from the
+      // host port, never from the legacy single-table query and pagination bridge.
+      if (target.closest('sf-data-view')) {
+        target.setAttribute('data-larena-hydrated', 'true');
+        return;
+      }
       var workbench = target.closest('[data-larena-dataview-workbench]');
       // The Dataview workbench holds its query form beside the table; the CMS list wraps the table in it.
       var queryForm = (workbench && workbench.querySelector('[data-larena-dataview-query]'))
@@ -544,6 +550,108 @@
     scope.querySelectorAll('[data-larena-read-only="true"] sf-table').forEach(applyReadOnlyTable);
   }
 
+  function connectCmsComposite(view) {
+    var form = view.closest('form[data-larena-dataview-query]');
+    var records = view.closest('[data-larena-row-revisions]');
+    if (!form || !records || !form.dataset.larenaPortUrl?.startsWith('/')) return;
+    var scope = form.querySelector('[name="scope_ref"]')?.value;
+    var structure = form.querySelector('[name="structure_id"]')?.value;
+    if (!scope || !structure || view.dataset.larenaPortConnected === 'true') return;
+    var endpoint = new URL(form.dataset.larenaPortUrl, window.location.href);
+    if (endpoint.origin !== window.location.origin) return;
+    var field = function (name) { return form.elements.namedItem(name); };
+    var parse = function (value, fallback) {
+      try { return JSON.parse(value); } catch { return fallback; }
+    };
+    var page = parse(form.dataset.larenaPaginationQuery || 'null', {}) || {};
+    var sortField = field('sort_field')?.value || '';
+    var current = {
+      filters: parse(field('filters')?.value || '{}', {}), search: field('search')?.value || '',
+      sort: sortField ? [{key: sortField, direction: field('sort_direction')?.value === 'desc' ? 'desc' : 'asc'}] : [],
+      page: Number(page.page) || 1, per_page: Number(page.per_page) || 20,
+    };
+    if (field('dataview_id')?.value) current.dataview_id = field('dataview_id').value;
+    if (field('include_deleted')?.value === '1') current.include_deleted = true;
+    if (field('loaded_saved_view_id')?.value) current.saved_view_id = field('loaded_saved_view_id').value;
+    view.query = current;
+    var table = view.table;
+    if (table && typeof table.setFilterFields === 'function') {
+      var fields = parse(records.dataset.larenaFilterFields || '[]', []);
+      if (Array.isArray(fields)) table.setFilterFields(fields);
+    }
+    var actions = {'record.view': 'view', 'record.edit': 'edit', 'record.delete': 'delete',
+      'record.restore': 'restore'};
+    var project = function (data) {
+      if (!Array.isArray(data?.records) || !Array.isArray(data?.columns) || !Number.isSafeInteger(data?.total)) {
+        throw new Error('port_projection_invalid');
+      }
+      var keys = data.columns.map(function (column) { return column.key; });
+      var projected = data.records.map(function (record) {
+        // The host supplies Property/owner-projected display cells. Raw reference IDs
+        // in record.values are never placed into the table DOM.
+        if (!record || !record.display_values || Array.isArray(record.display_values)) {
+          throw new Error('port_display_projection_missing');
+        }
+        var row = {id: record.id, revision: record.revision,
+          actions: (record.actions || []).map(function (action) { return actions[action]; }).filter(Boolean)};
+        keys.forEach(function (key) { row[key] = record.display_values[key] ?? null; });
+        return row;
+      });
+      records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(data.records.map(function (record) {
+        return [record.id, record.revision];
+      })));
+      records.dataset.larenaMatchedCount = String(data.total);
+      return {...data, records: projected};
+    };
+    var navigateRecord = function (id, mode) {
+      var url = new URL(window.location.href);
+      if (id) url.searchParams.set('record_id', id);
+      else url.searchParams.delete('record_id');
+      url.searchParams.set('record_mode', mode);
+      url.hash = mode === 'view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
+      window.location.assign(url.href);
+    };
+    view.setHostPort({version: '1.1.0', capabilities: ['saved-views', 'row-actions',
+      ...(records.dataset.larenaBulkAll === '1' ? ['bulk-under-filter'] : [])],
+    raise: async function (intent, payload, options) {
+      if ((intent === 'record.mutate' && payload?.action_id === 'delete')
+        || intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
+        if (!window.confirm(records.dataset.larenaConfirmBulkDelete || 'Confirm this action?')) {
+          return {answer: 'refused', reason: 'cancelled'};
+        }
+      }
+      var sent = {...payload};
+      if (intent === 'view.save') {
+        sent = {key: payload?.label || payload?.key, query: payload?.query || {}};
+        if (Number.isInteger(payload?.revision)) sent.revision = payload.revision;
+      }
+      if (intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
+        if (sent.action_id === 'bulk_delete') sent.action_id = 'archive';
+      }
+      try {
+        var response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', signal: options?.signal,
+          headers: {'Content-Type': 'application/json', Accept: 'application/json',
+            'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf || ''},
+          body: JSON.stringify({scope_ref: scope, structure_id: structure, intent: intent, payload: sent})});
+        var answer = await response.json();
+        if (!['applied', 'conflict', 'refused', 'unavailable'].includes(answer?.answer)) {
+          throw new Error('port_answer_invalid');
+        }
+        if (answer.answer === 'applied' && answer.data) answer.data = project(answer.data);
+        if (answer.answer === 'applied' && intent === 'record.open') navigateRecord(payload.record_ids[0], 'view');
+        if (answer.answer === 'applied' && intent === 'record.mutate' && payload.action_id === 'edit') {
+          navigateRecord(payload.record_ids[0], 'edit');
+        }
+        if (answer.answer === 'applied' && intent === 'view.create_record') navigateRecord('', 'create');
+        return answer;
+      } catch (error) {
+        if (options?.signal?.aborted) throw error;
+        return {answer: 'unavailable', reason: error?.message || 'port_unavailable'};
+      }
+    }});
+    view.dataset.larenaPortConnected = 'true';
+  }
+
   new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       if (mutation.type === 'attributes') {
@@ -577,6 +685,10 @@
     if (document.querySelector('[data-larena-read-only="true"] sf-table')) {
       await customElements.whenDefined('sf-table');
       syncReadOnlyTables(document);
+    }
+    if (document.querySelector('sf-data-view')) {
+      await customElements.whenDefined('sf-data-view');
+      document.querySelectorAll('sf-data-view').forEach(connectCmsComposite);
     }
     window.dispatchEvent(new CustomEvent('larena-smart-ready'));
     document.documentElement.dataset.larenaSmartReady = 'true';

@@ -61,6 +61,7 @@
     "docs/project-management/evidence/floating-ui-pair-v1/independent-review.md",
     "docs/project-management/evidence/floating-ui-pair-v1/smoke.md",
     "docs/project-management/evidence/floating-ui-pair-v1/tests.md",
-    "docs/project-management/evidence/editor-components-pair-v1/stage-d-data-view-registration-20260925.md"
+    "docs/project-management/evidence/editor-components-pair-v1/stage-d-data-view-registration-20260925.md",
+    "tests/JavaScript/minimal-cms-composite-port.test.mjs"
   ]
 }

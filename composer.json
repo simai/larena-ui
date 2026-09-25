@@ -106,6 +106,7 @@
       "@test:dataview-host",
       "@test:composition-routing-host",
       "@test:minimal-cms-port-bridge",
+      "@test:minimal-cms-composite-port",
       "@test:composition-schema",
       "@test:composition-list",
       "@test:dependency",
@@ -115,6 +116,7 @@
     "test:composition-list": "node --test tests/JavaScript/registered-list-composition.test.mjs",
     "test:composition-routing-host": "node --test tests/JavaScript/composition-routing-host.test.mjs",
     "test:minimal-cms-port-bridge": "node --test tests/JavaScript/minimal-cms-port-bridge.test.mjs",
+    "test:minimal-cms-composite-port": "node --test tests/JavaScript/minimal-cms-composite-port.test.mjs",
     "test:composition-schema": "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkDocumentSchemaValidatorTest.php"
   },
   "config": {
