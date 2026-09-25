@@ -6,11 +6,11 @@ import fs from 'node:fs';
 const source = fs.readFileSync(new URL('../../resources/js/sf-runtime-bridge.js', import.meta.url), 'utf8');
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-async function harness(data) {
+async function harness(data, {bulkAll = false} = {}) {
     const calls = [];
     const records = {dataset: {larenaFilterFields: JSON.stringify([{key: 'owner', label: 'Owner', filter: {control: 'entity-multi-select'}}]),
         larenaPortCapabilities: JSON.stringify(['saved-views', 'row-actions']),
-        larenaRowRevisions: '{}', larenaMatchedCount: '0', larenaBulkAll: ''}};
+        larenaRowRevisions: '{}', larenaMatchedCount: '0', larenaBulkAll: bulkAll ? '1' : ''}};
     const inputs = {scope_ref: {value: 'scope:cms'}, structure_id: {value: 'workbench.demo_solutions'},
         filters: {value: '{}'}, search: {value: ''}, sort_field: {value: ''}, per_page: {value: '20'}};
     const form = {dataset: {larenaPortUrl: '/admin/cms/port', larenaPreferencesCsrf: 'csrf',
@@ -19,7 +19,8 @@ async function harness(data) {
         '[name="structure_id"]': inputs.structure_id})[selector] ?? null,
     elements: {namedItem: name => inputs[name] ?? null}};
     const table = {setFilterFields(fields) { this.fields = fields; }};
-    const view = {dataset: {}, table, closest: selector => selector === 'form[data-larena-dataview-query]' ? form
+    const pagination = {attributes: {}, setAttribute(name, value) { this.attributes[name] = value; }};
+    const view = {dataset: {}, table, pagination, closest: selector => selector === 'form[data-larena-dataview-query]' ? form
         : selector === '[data-larena-row-revisions]' ? records : null,
     setHostPort(port) { this.port = port; }};
     const document = {readyState: 'complete', documentElement: {dataset: {}},
@@ -33,7 +34,7 @@ async function harness(data) {
         fetch: async (url, options) => { calls.push({url, options}); return {json: async () => data}; }};
     vm.runInNewContext(source, context);
     await tick();
-    return {view, table, records, calls};
+    return {view, table, pagination, records, calls};
 }
 
 test('composite consumes only owner-projected cells and scoped port answers', async () => {
@@ -57,6 +58,13 @@ test('composite consumes only owner-projected cells and scoped port answers', as
     assert.deepEqual(JSON.parse(h.calls[0].options.body), {scope_ref: 'scope:cms',
         structure_id: 'workbench.demo_solutions', intent: 'query.change',
         payload: {sequence: 1, query: JSON.parse(JSON.stringify(h.view.query))}});
+});
+
+test('all-record action appears only with the host permission', async () => {
+    const allowed = await harness({answer: 'applied'}, {bulkAll: true});
+    const denied = await harness({answer: 'applied'});
+    assert.equal(allowed.pagination.attributes['show-action-for-all'], '');
+    assert.equal(denied.pagination.attributes['show-action-for-all'], undefined);
 });
 
 test('composite view save sends only host-owned fields with revision and full view content', async () => {

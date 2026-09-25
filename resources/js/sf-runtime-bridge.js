@@ -576,6 +576,9 @@
     if (field('loaded_saved_view_id')?.value) current.saved_view_id = field('loaded_saved_view_id').value;
     view.query = current;
     var table = view.table;
+    if (view.pagination && records.dataset.larenaBulkAll === '1') {
+      view.pagination.setAttribute('show-action-for-all', '');
+    }
     if (table && typeof table.setFilterFields === 'function') {
       var fields = parse(records.dataset.larenaFilterFields || '[]', []);
       if (Array.isArray(fields)) table.setFilterFields(fields);
