@@ -1,8 +1,8 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-56cd91e1d7a3-smart-903ad66c4f4f",
-  "bundle_id": "ui-56cd91e1d7a3-smart-903ad66c4f4f-registry-5e4cabe5-exact-git-tree-v2",
+  "pair_id": "ui-56cd91e1d7a3-smart-5e7adda70be4",
+  "bundle_id": "ui-56cd91e1d7a3-smart-5e7adda70be4-registry-8969813a-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -15,30 +15,30 @@
   },
   "ui_smart": {
     "tag": null,
-    "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+    "commit": "5e7adda70be45418b1de1da872511cbee7e32196",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "e7d2006ed2fd15ef9e50480e21222d87fef26a0c09cdd661112227226803bea3",
-    "files": 732
+    "sha256": "a07a04790921a2c4bea4bc6c32f93a5fdd2fc7b707d6217caff9ad0c1a549f0d",
+    "files": 785
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-56cd91e1d7a3-smart-903ad66c4f4f",
+    "compatibility_id": "ui-56cd91e1d7a3-smart-5e7adda70be4",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "5e4cabe54e86a55efd6bcfa843bc36acca8a02d858c9fe0d3e0952e77ec69ec6",
+    "file_sha256": "8969813a45baf7a348865c272e39805597bfb655975f9d3d242258d4f9fe5fbc",
     "source": {
-      "commit": "2d5ebda33d4ed3c1a57c9bea5bf345bc43ed2f1d",
+      "commit": "980b3a9f136093cb9112129f663c01717a233559",
       "tree": "contracts/generated",
-      "tree_oid": "acb7e1016c6e9c97407d803af580dc4ae39bed22",
+      "tree_oid": "5a36bbaa9b06257befe7baaec2111ef78995de4a",
       "mount": "contract",
-      "sha256": "d0aec21fff6342c8b44b6b1eaf91b824e3d5d6777d43734c2873d9024a8d1139",
+      "sha256": "56cf66d6615d633648b1ef242b09688df3497d5af9f840f5f078bf510ae408cc",
       "files": 2
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "db637aafd02aaa4768c809d3637edd4b4b83437383c39c21fc4cc75fcafd93a0"
+      "file_sha256": "1a2973fb9a2e47e799a2fd9de40651a0fab93b633857d3f2576ec29969b670a8"
     }
   },
   "boot": {

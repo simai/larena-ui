@@ -12,3 +12,4 @@
 - Then pinned ui-bc8dfd7e4bdb-smart-81741eac168d (data view stage B): new Core bc8dfd7e with type-manifest events, data bindings and settings persistence; archives match the ui-control handoff (core 57ddf023…, smart c03fb468…, registry 072fe96b…).
 - Then pinned ui-cb1cda301648-smart-81741eac168d: Core cb1cda30 whose manifests declare their own version (smart manifest 2.1.0, composition type manifest 1.1.0); standards reissued as 1.0.2.
 - Then pinned ui-56cd91e1d7a3-smart-903ad66c4f4f: Stage C declares simai.dataview-port 1.0.0 on sf-table; host conformance remains to be proven
+- Then pinned ui-56cd91e1d7a3-smart-5e7adda70be4 with `simai/ui` registry `980b3a9f`: the separate `sf-data-view` carries the corrected component identity, and `sf-table` and `sf-data-view` can load owner-scoped filter options. The UI package quality gate passed; Larena host conformance remains to be tested.

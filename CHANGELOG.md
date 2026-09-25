@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Pin Framework Core `56cd91e1d7a3` and Smart `5e7adda70be4` with registry `980b3a9f`: the separate `sf-data-view` and endpoint-backed filter options are available for Larena laboratory integration.
+
 - Pin the Framework pair ui-56cd91e1d7a3-smart-903ad66c4f4f: Stage C declares simai.dataview-port 1.0.0 on sf-table; host conformance remains to be proven
 
 - Pin the Framework pair ui-cb1cda301648-smart-81741eac168d: Core cb1cda30 whose manifests declare their own version (smart manifest 2.1.0, composition type manifest 1.1.0); standards reissued as 1.0.2.
