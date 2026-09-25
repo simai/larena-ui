@@ -1,0 +1,43 @@
+{
+    "schema": "larena.ui.frontend_runtime_artifact.v1",
+    "publication_profile": "exact-git-tree-v2",
+    "bundle_id": "ui-56cd91e1d7a3-smart-b79ef84d74ac-registry-fbbe461a-exact-git-tree-v2",
+    "sources": [
+        {
+            "commit": "56cd91e1d7a3dc19b32a2acfdaa1389744e174a7",
+            "tree": "distr",
+            "mount": "ui",
+            "archive_sha256": "7bc0168242fc4e0dd2b1d8e0c88820e570bcfc2fc9a489e58dc39537a862babf",
+            "files": 5133,
+            "archive": "sources/ui.tar.gz",
+            "compressed_sha256": "1549a9ce0c10cdaf6a3a9ab8eea50bd1b84da1a2c55f02a5c93ee897406d84ad",
+            "tree_fingerprint_sha256": "bce2d4a4e5803ae6d6668d3b6cfc10ac02673e8049a3642e1d83c6b9e897a293",
+            "object_format": "sha1",
+            "file_count": 5133
+        },
+        {
+            "commit": "b79ef84d74acefbfd1409ef90f8024f0ea2d5712",
+            "tree": "smart",
+            "mount": "smart",
+            "archive_sha256": "dfbbd83aca065de54f46ac09b79bd724e349edb99610825733f9e78573694403",
+            "files": 785,
+            "archive": "sources/smart.tar.gz",
+            "compressed_sha256": "d64f0ef2e741a9eb3128757b1b42179108b738c8db006a78aade873981ba4b80",
+            "tree_fingerprint_sha256": "863193c50ff86515baf940f885250170e91d9a268e0d0d6225fe196066426c58",
+            "object_format": "sha1",
+            "file_count": 785
+        },
+        {
+            "commit": "b7a639f364943e36c5067fb169ac26a5e1978aa3",
+            "tree": "contracts/generated",
+            "mount": "contract",
+            "archive_sha256": "e29d430e228c8a82be66a4704a83d4492fb08f9980558ff613ad89b49931819d",
+            "files": 2,
+            "archive": "sources/contract.tar.gz",
+            "compressed_sha256": "0cb25e17a6544e5c13180214371b51671d2474103b81600ca1167021654ae048",
+            "tree_fingerprint_sha256": "1240113153f9cce050fb191410d97df729f2d25ca86e618c3c5b3e7e4162b42c",
+            "object_format": "sha1",
+            "file_count": 2
+        }
+    ]
+}

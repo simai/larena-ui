@@ -7,13 +7,13 @@ require_once __DIR__ . '/../bootstrap.php';
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->pairId() === 'ui-56cd91e1d7a3-smart-8f2522b7e716');
-assert($lock->bundleId() === 'ui-56cd91e1d7a3-smart-8f2522b7e716-registry-29fc9a8c-exact-git-tree-v2');
+assert($lock->pairId() === 'ui-56cd91e1d7a3-smart-b79ef84d74ac');
+assert($lock->bundleId() === 'ui-56cd91e1d7a3-smart-b79ef84d74ac-registry-fbbe461a-exact-git-tree-v2');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->pairId());
-assert(($registry['file_sha256'] ?? null) === '29fc9a8c8bfffec717ca1c5d230ace9c144607ae03e2cbe2fc98e0b751b77265');
+assert(($registry['file_sha256'] ?? null) === 'fbbe461a41857fbd7349fb392679e608a468b219ec2978ca18d7cf9c8607ef13');
 
 $expectation = $lock->publicationExpectation();
 assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact.v1');
@@ -29,17 +29,17 @@ assert($expectation['sources'] === [
         'files' => 5133,
     ],
     [
-        'commit' => '8f2522b7e71671237bc5f102eecac97a0450664e',
+        'commit' => 'b79ef84d74acefbfd1409ef90f8024f0ea2d5712',
         'tree' => 'smart',
         'mount' => 'smart',
-        'archive_sha256' => '0b09a63045348899ccb3013f159d178eff7bce79a715b58d7be33f410f674e23',
+        'archive_sha256' => 'dfbbd83aca065de54f46ac09b79bd724e349edb99610825733f9e78573694403',
         'files' => 785,
     ],
     [
-        'commit' => '467ca4012abb36b375858efd217dfc92694ad4c3',
+        'commit' => 'b7a639f364943e36c5067fb169ac26a5e1978aa3',
         'tree' => 'contracts/generated',
         'mount' => 'contract',
-        'archive_sha256' => '7ba3be66c90bd3d6923b851bc57bbe3093bb1c060c9464a43a3681db3f074b5a',
+        'archive_sha256' => 'e29d430e228c8a82be66a4704a83d4492fb08f9980558ff613ad89b49931819d',
         'files' => 2,
     ],
 ]);
@@ -73,10 +73,10 @@ assert($sources[0]['repository'] === '/tmp/ui');
 assert($sources[1]['repository'] === '/tmp/ui-smart');
 assert($sources[2] === [
     'repository' => '/tmp/ui',
-    'commit' => '467ca4012abb36b375858efd217dfc92694ad4c3',
+    'commit' => 'b7a639f364943e36c5067fb169ac26a5e1978aa3',
     'tree' => 'contracts/generated',
     'mount' => 'contract',
-    'sha256' => '7ba3be66c90bd3d6923b851bc57bbe3093bb1c060c9464a43a3681db3f074b5a',
+    'sha256' => 'e29d430e228c8a82be66a4704a83d4492fb08f9980558ff613ad89b49931819d',
 ]);
 
 foreach ([

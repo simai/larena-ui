@@ -1,8 +1,8 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-56cd91e1d7a3-smart-8f2522b7e716",
-  "bundle_id": "ui-56cd91e1d7a3-smart-8f2522b7e716-registry-29fc9a8c-exact-git-tree-v2",
+  "pair_id": "ui-56cd91e1d7a3-smart-b79ef84d74ac",
+  "bundle_id": "ui-56cd91e1d7a3-smart-b79ef84d74ac-registry-fbbe461a-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -15,30 +15,30 @@
   },
   "ui_smart": {
     "tag": null,
-    "commit": "8f2522b7e71671237bc5f102eecac97a0450664e",
+    "commit": "b79ef84d74acefbfd1409ef90f8024f0ea2d5712",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "0b09a63045348899ccb3013f159d178eff7bce79a715b58d7be33f410f674e23",
+    "sha256": "dfbbd83aca065de54f46ac09b79bd724e349edb99610825733f9e78573694403",
     "files": 785
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-56cd91e1d7a3-smart-8f2522b7e716",
+    "compatibility_id": "ui-56cd91e1d7a3-smart-b79ef84d74ac",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "29fc9a8c8bfffec717ca1c5d230ace9c144607ae03e2cbe2fc98e0b751b77265",
+    "file_sha256": "fbbe461a41857fbd7349fb392679e608a468b219ec2978ca18d7cf9c8607ef13",
     "source": {
-      "commit": "467ca4012abb36b375858efd217dfc92694ad4c3",
+      "commit": "b7a639f364943e36c5067fb169ac26a5e1978aa3",
       "tree": "contracts/generated",
-      "tree_oid": "76f59816f81ee5619c5a194bfb6819f353698178",
+      "tree_oid": "1d747e99c54b341aaa18ad3d43ce7690b7b0ec5a",
       "mount": "contract",
-      "sha256": "7ba3be66c90bd3d6923b851bc57bbe3093bb1c060c9464a43a3681db3f074b5a",
+      "sha256": "e29d430e228c8a82be66a4704a83d4492fb08f9980558ff613ad89b49931819d",
       "files": 2
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "3fd9e3ff1be6c819d7db9726da552a70ae43317f809b992cbe60754da3316835"
+      "file_sha256": "f3df24eef059e14022b342e7a26e63a2f8f08d7aa412542685ddb1797753bec3"
     }
   },
   "boot": {
