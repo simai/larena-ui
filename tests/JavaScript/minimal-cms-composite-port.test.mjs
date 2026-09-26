@@ -10,13 +10,20 @@ async function harness(data, {bulkAll = false, storageWorkbench = false} = {}) {
     const calls = [];
     const surface = {hidden: true};
     const legacy = {open: true};
+    const heading = {textContent: 'Items found: 3'};
+    const badgeText = {textContent: '450'};
+    const badge = {attributes: {text: '450', 'aria-label': 'Элементы: 450'},
+        getAttribute(name) { return this.attributes[name] ?? null; },
+        setAttribute(name, value) { this.attributes[name] = value; },
+        querySelector(selector) { return selector === '.sf-badge-text' ? badgeText : null; }};
     const records = {dataset: {larenaFilterFields: JSON.stringify([{key: 'owner', label: 'Owner', filter: {control: 'entity-multi-select'}}]),
         larenaPortCapabilities: JSON.stringify(storageWorkbench ? [] : ['saved-views', 'row-actions']),
         larenaRowRevisions: '{}', larenaMatchedCount: '0', larenaBulkAll: bulkAll ? '1' : '',
         larenaStorageWorkbenchComposite: storageWorkbench ? '1' : ''},
     querySelector: selector => selector === '[data-larena-composite-surface]' ? surface : null,
     closest: selector => selector === '.larena-workbench-records'
-        ? {querySelector: target => target === '[data-larena-storage-legacy]' ? legacy : null} : null};
+        ? {querySelector: target => target === '[data-larena-storage-legacy]' ? legacy
+            : target === '.larena-workbench-section-header p' ? heading : null} : null};
     const inputs = {scope_ref: {value: 'scope:cms'}, structure_id: {value: 'workbench.demo_solutions'},
         filters: {value: '{}'}, search: {value: ''}, sort_field: {value: ''}, per_page: {value: '20'},
         include_archived: {value: '1'}};
@@ -31,6 +38,7 @@ async function harness(data, {bulkAll = false, storageWorkbench = false} = {}) {
         : selector === '[data-larena-row-revisions]' ? records : null,
     setHostPort(port) { this.port = port; }};
     const document = {readyState: 'complete', documentElement: {dataset: {}},
+        getElementById: id => id === 'minimal-cms-record-count' ? badge : null,
         querySelector: selector => selector === 'sf-data-view' ? view : null,
         querySelectorAll: selector => selector === 'sf-data-view' ? [view] : []};
     const window = {location: new URL('http://localhost/admin/cms'), dispatchEvent() {}, confirm: () => true};
@@ -38,10 +46,11 @@ async function harness(data, {bulkAll = false, storageWorkbench = false} = {}) {
         customElements: {whenDefined: async () => {}},
         MutationObserver: class { observe() {} disconnect() {} },
         CustomEvent: class { constructor(type) { this.type = type; } },
-        fetch: async (url, options) => { calls.push({url, options}); return {json: async () => data}; }};
+        fetch: async (url, options) => { calls.push({url, options}); return {json: async () =>
+            typeof data === 'function' ? data(calls.length) : data}; }};
     vm.runInNewContext(source, context);
     await tick();
-    return {view, table, pagination, records, calls, surface, legacy};
+    return {view, table, pagination, records, calls, surface, legacy, badge, badgeText, heading};
 }
 
 test('composite consumes only owner-projected cells and scoped port answers', async () => {
@@ -61,6 +70,9 @@ test('composite consumes only owner-projected cells and scoped port answers', as
     assert.deepEqual(JSON.parse(JSON.stringify(answer.data.records)), [{id: 'record-1', revision: 3,
         actions: ['view'], owner: 'Alice'}]);
     assert.ok(!JSON.stringify(answer.data.records).includes('user:secret'));
+    assert.equal(h.badge.attributes.text, '1');
+    assert.equal(h.badge.attributes['aria-label'], 'Элементы: 1');
+    assert.equal(h.badgeText.textContent, '1');
     assert.equal(h.calls[0].url, 'http://localhost/admin/cms/port');
     assert.deepEqual(JSON.parse(h.calls[0].options.body), {scope_ref: 'scope:cms',
         structure_id: 'workbench.demo_solutions', intent: 'query.change',
@@ -105,6 +117,7 @@ test('Storage workbench selected archive confirms on the owner port and hides un
     assert.equal(h.legacy.open, true);
     const answer = await h.view.port.raise('query.change', {sequence: 1, query: h.view.query}, {});
     assert.equal(h.legacy.open, false);
+    assert.equal(h.heading.textContent, 'Items found: 1');
     assert.deepEqual(JSON.parse(JSON.stringify(answer.data.records)), [{id: 'record-1', revision: 3,
         actions: [], owner: 'Alice'}]);
     assert.ok(!JSON.stringify(answer.data.records).includes('user:secret'));
@@ -114,6 +127,25 @@ test('Storage workbench selected archive confirms on the owner port and hides un
     assert.deepEqual(JSON.parse(h.calls.at(-1).options.body).payload, {
         action_id: 'archive', confirmed: true, record_ids: ['record-1'], revisions: {'record-1': 3},
     });
+});
+
+test('older query answer cannot restore a stale outer count or row revisions', async () => {
+    const replies = [];
+    const h = await harness(() => new Promise(resolve => replies.push(resolve)));
+    const result = (sequence, total) => ({answer: 'applied', sequence, data: {
+        columns: [{key: 'owner'}], total,
+        records: [{id: `record-${sequence}`, revision: sequence, actions: [], display_values: {owner: 'Alice'}}],
+    }});
+    const first = h.view.port.raise('query.change', {sequence: 1, query: {}}, {});
+    const second = h.view.port.raise('query.change', {sequence: 2, query: {}}, {});
+    await tick();
+    replies[1](result(2, 215));
+    await second;
+    replies[0](result(1, 450));
+    await first;
+    assert.equal(h.badge.attributes.text, '215');
+    assert.equal(h.records.dataset.larenaMatchedCount, '215');
+    assert.deepEqual(JSON.parse(h.records.dataset.larenaRowRevisions), {'record-2': 2});
 });
 
 test('composite view save sends only host-owned fields with revision and full view content', async () => {

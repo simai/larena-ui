@@ -587,6 +587,28 @@
     }
     var actions = {'record.view': 'view', 'record.edit': 'edit', 'record.delete': 'delete',
       'record.restore': 'restore'};
+    var latestQuerySequence = null;
+    var syncMatchedCount = function (total) {
+      var count = String(total);
+      records.dataset.larenaMatchedCount = count;
+      if (storageWorkbench) {
+        var heading = records.closest?.('.larena-workbench-records')?.querySelector('.larena-workbench-section-header p');
+        if (heading && /\d[\d\s.,]*\s*$/.test(heading.textContent || '')) {
+          heading.textContent = heading.textContent.replace(/\d[\d\s.,]*\s*$/, count);
+        }
+        return;
+      }
+      var badge = document.getElementById('minimal-cms-record-count');
+      if (!badge) return;
+      var oldCount = badge.getAttribute('text');
+      var label = badge.getAttribute('aria-label');
+      if (oldCount && label?.endsWith(oldCount)) {
+        badge.setAttribute('aria-label', label.slice(0, -oldCount.length) + count);
+      }
+      badge.setAttribute('text', count);
+      var visibleText = badge.querySelector('.sf-badge-text');
+      if (visibleText) visibleText.textContent = count;
+    };
     var project = function (data) {
       if (!Array.isArray(data?.records) || !Array.isArray(data?.columns) || !Number.isSafeInteger(data?.total)) {
         throw new Error('port_projection_invalid');
@@ -606,7 +628,7 @@
       records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(data.records.map(function (record) {
         return [record.id, record.revision];
       })));
-      records.dataset.larenaMatchedCount = String(data.total);
+      syncMatchedCount(data.total);
       if (storageWorkbench) {
         var legacy = records.closest?.('.larena-workbench-records')?.querySelector('[data-larena-storage-legacy]');
         if (legacy) legacy.open = false;
@@ -624,6 +646,7 @@
     var permissions = parse(records.dataset.larenaPortCapabilities || '[]', []);
     view.setHostPort({version: '1.1.0', capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
+      if (intent === 'query.change') latestQuerySequence = payload?.sequence;
       if ((intent === 'record.mutate' && payload?.action_id === 'delete')
         || intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
         if (!window.confirm(records.dataset.larenaConfirmBulkDelete || 'Confirm this action?')) {
@@ -651,7 +674,12 @@
         if (!['applied', 'conflict', 'refused', 'unavailable'].includes(answer?.answer)) {
           throw new Error('port_answer_invalid');
         }
-        if (answer.answer === 'applied' && answer.data) answer.data = project(answer.data);
+        // The composite drops an obsolete reply after raise resolves; host-owned counters
+        // and row revisions must wait for that same newest query.
+        if (answer.answer === 'applied' && answer.data
+          && (intent !== 'query.change' || payload?.sequence === latestQuerySequence)) {
+          answer.data = project(answer.data);
+        }
         if (answer.answer === 'applied' && intent === 'record.open') navigateRecord(payload.record_ids[0], 'view');
         if (answer.answer === 'applied' && intent === 'record.mutate' && payload.action_id === 'edit') {
           navigateRecord(payload.record_ids[0], 'edit');
