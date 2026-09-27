@@ -57,6 +57,10 @@
     "release-artifacts/ui-56cd91e1d7a3-smart-b79ef84d74ac-registry-fbbe461a-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-56cd91e1d7a3-smart-b79ef84d74ac-registry-fbbe461a-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-56cd91e1d7a3-smart-b79ef84d74ac-registry-fbbe461a-exact-git-tree-v2/sources/ui.tar.gz",
+    "release-artifacts/ui-56cd91e1d7a3-smart-1f898fc321c0-registry-899085b4-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-56cd91e1d7a3-smart-1f898fc321c0-registry-899085b4-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-56cd91e1d7a3-smart-1f898fc321c0-registry-899085b4-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-56cd91e1d7a3-smart-1f898fc321c0-registry-899085b4-exact-git-tree-v2/sources/ui.tar.gz",
     "resources/sf/runtime-lock.json",
     "release-artifacts/ui-1f1c9d42d964-smart-121e8882d016-registry-ed799297-exact-git-tree-v2/manifest.json",
     "release-artifacts/ui-1f1c9d42d964-smart-121e8882d016-registry-ed799297-exact-git-tree-v2/sources/contract.tar.gz",
@@ -76,6 +80,7 @@
     "docs/project-management/evidence/floating-ui-pair-v1/smoke.md",
     "docs/project-management/evidence/floating-ui-pair-v1/tests.md",
     "docs/project-management/evidence/editor-components-pair-v1/stage-d-data-view-registration-20260925.md",
-    "tests/JavaScript/minimal-cms-composite-port.test.mjs"
+    "tests/JavaScript/minimal-cms-composite-port.test.mjs",
+    "docs/project-management/evidence/floating-ui-pair-v1/icon-duplicate-definition-pair-20260927.md"
   ]
 }
