@@ -7,13 +7,13 @@ require_once __DIR__ . '/../bootstrap.php';
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
-assert($lock->pairId() === 'ui-ad5f32abc314-smart-4637903f9e70');
-assert($lock->bundleId() === 'ui-ad5f32abc314-smart-4637903f9e70-registry-a1235186-exact-git-tree-v2');
+assert($lock->pairId() === 'ui-15249a155c60-smart-7d1475a3e4c3');
+assert($lock->bundleId() === 'ui-15249a155c60-smart-7d1475a3e4c3-registry-5df5b20c-exact-git-tree-v2');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->pairId());
-assert(($registry['file_sha256'] ?? null) === 'a1235186d3af8ccbb2220e310879ff3f91942744ee50f5a3579dd855277109e3');
+assert(($registry['file_sha256'] ?? null) === '5df5b20cf0bf2013a93001812f292003d85d0ab592c747094f187372869ea816');
 
 $expectation = $lock->publicationExpectation();
 assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact.v1');
@@ -22,24 +22,24 @@ assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());
 assert($expectation['sources'] === [
     [
-        'commit' => 'ad5f32abc314d85edc4c1c606f9c25f8801bb4ee',
+        'commit' => '15249a155c601aebd29598a1dee4671c9f6b8bc7',
         'tree' => 'distr',
         'mount' => 'ui',
-        'archive_sha256' => '082ff6283603cb3c677377218c932ad73dcfb298afb21d1941113f7b27c6b55b',
+        'archive_sha256' => 'ef5ebc8f07e7b49e89ab0859e50d191112911eb0f5df1dabdc133b84511b2e5e',
         'files' => 5133,
     ],
     [
-        'commit' => '4637903f9e704dd9b66c1829324ab42cad1c92cf',
+        'commit' => '7d1475a3e4c383561e5b9b1c9ea928fde4813223',
         'tree' => 'smart',
         'mount' => 'smart',
-        'archive_sha256' => '1a19e1f1dfd6d866b823ae05de32a2329d5d160a81e6dc74a30c01a73f8414fb',
+        'archive_sha256' => 'e367309359c72603c42bc6bcbf31724fb52d10920c05db818d063200dc189f1f',
         'files' => 785,
     ],
     [
-        'commit' => 'f6871ee76e0528b131654282c39421535236adc6',
+        'commit' => '88ceb58225c20f4c48612b9f64a6349213537d5e',
         'tree' => 'contracts/generated',
         'mount' => 'contract',
-        'archive_sha256' => '924d065e5b47a061758d3dddc715a8d4781315de2ead3bb21392e80c00c3def1',
+        'archive_sha256' => 'd926e9d937c7cfe57957b94e7fa8d3dba77777283bfb5112f97c2c61a5473fe9',
         'files' => 2,
     ],
 ]);
@@ -73,10 +73,10 @@ assert($sources[0]['repository'] === '/tmp/ui');
 assert($sources[1]['repository'] === '/tmp/ui-smart');
 assert($sources[2] === [
     'repository' => '/tmp/ui',
-    'commit' => 'f6871ee76e0528b131654282c39421535236adc6',
+    'commit' => '88ceb58225c20f4c48612b9f64a6349213537d5e',
     'tree' => 'contracts/generated',
     'mount' => 'contract',
-    'sha256' => '924d065e5b47a061758d3dddc715a8d4781315de2ead3bb21392e80c00c3def1',
+    'sha256' => 'd926e9d937c7cfe57957b94e7fa8d3dba77777283bfb5112f97c2c61a5473fe9',
 ]);
 
 foreach ([
