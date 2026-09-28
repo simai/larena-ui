@@ -91,6 +91,11 @@
     "tests/JavaScript/minimal-cms-composite-port.test.mjs",
     "docs/project-management/evidence/floating-ui-pair-v1/icon-duplicate-definition-pair-20260927.md",
     "docs/project-management/evidence/floating-ui-pair-v1/base-define-guard-pair-20260927.md",
-    "docs/project-management/evidence/floating-ui-pair-v1/search-caret-pair-20260927.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/search-caret-pair-20260927.md",
+    "release-artifacts/ui-e5a1228a9d8a-smart-c184f5944ae6-registry-4ea0ab27-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-e5a1228a9d8a-smart-c184f5944ae6-registry-4ea0ab27-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-e5a1228a9d8a-smart-c184f5944ae6-registry-4ea0ab27-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-e5a1228a9d8a-smart-c184f5944ae6-registry-4ea0ab27-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/row-actions-pair-20260928.md"
   ]
 }
