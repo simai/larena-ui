@@ -172,7 +172,7 @@ final class Smart
     private static function requiresExplicitFalse(string $tag, string $attribute): bool
     {
         return ($tag === 'sf-table'
-                && in_array($attribute, ['selectable', 'settings', 'actions'], true))
+                && in_array($attribute, ['selectable', 'settings', 'actions', 'row-actions'], true))
             || ($tag === 'sf-dropdown' && $attribute === 'search')
             || ($tag === 'sf-admin-menu' && $attribute === 'settings')
             || ($tag === 'sf-tag' && $attribute === 'closable');

@@ -16,6 +16,9 @@ $table = Smart::render('sf-table', ['aria-label' => 'Pages', 'selectable' => fal
 assert(str_contains($table->html, '<sf-table'));
 assert(!str_contains($table->html, 'read-only='));
 assert(str_contains($table->html, 'selectable="false"'));
+// row-actions defaults to true in the Framework table, so false has to be written out.
+$menuOnly = Smart::render('sf-table', ['aria-label' => 'Pages', 'actions' => true, 'row-actions' => false, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => []]]);
+assert(str_contains($menuOnly->html, 'row-actions="false"') && str_contains($menuOnly->html, ' actions'));
 assert(str_contains($table->html, 'settings="false"'));
 assert(str_contains($table->html, 'actions="false"'));
 assert(str_contains($table->html, 'type="application/json"'));
