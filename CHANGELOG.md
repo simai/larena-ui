@@ -2,6 +2,10 @@
 
 - Keep unsaved column choices visible on a revision conflict and let the user refresh the layer revision before retrying.
 
+## Unreleased — current Framework pair
+
+- Pin the Framework pair `ui-0315c0ffebb6-smart-41fd1892b345` (registry `c66d7212`), bound by the Framework owner on 2026-10-01, replacing `ui-e5a1228a9d8a-smart-c184f5944ae6`.
+
 ## Unreleased
 
 - Pin Framework Core `56cd91e1d7a3` and Smart `90208335806d` with registry `7d7edec0`. The `sf-data-view` selected action now reaches the host port with current revisions for one or more checked records; row actions retain their separate permission check.

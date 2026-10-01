@@ -104,7 +104,12 @@
     "release-artifacts/ui-e5a1228a9d8a-smart-c184f5944ae6-registry-4ea0ab27-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-e5a1228a9d8a-smart-c184f5944ae6-registry-4ea0ab27-exact-git-tree-v2/sources/ui.tar.gz",
     "docs/project-management/evidence/floating-ui-pair-v1/row-actions-pair-20260928.md",
-    "src/Smart.php"
+    "src/Smart.php",
+    "release-artifacts/ui-0315c0ffebb6-smart-41fd1892b345-registry-c66d7212-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-0315c0ffebb6-smart-41fd1892b345-registry-c66d7212-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-0315c0ffebb6-smart-41fd1892b345-registry-c66d7212-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-0315c0ffebb6-smart-41fd1892b345-registry-c66d7212-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261001.md"
   ],
   "forbidden_files": [
     "config/*",
