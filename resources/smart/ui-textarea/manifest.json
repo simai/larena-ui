@@ -21,7 +21,7 @@
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["size", "type", "label", "required", "rows", "placeholder", "hint", "name", "value", "disabled", "error", "aria-label", "id"],
+    "required": ["size", "type", "label", "required", "rows", "name", "value", "disabled", "error", "aria-label", "id"],
     "additionalProperties": false
   },
   "slots": {},

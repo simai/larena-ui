@@ -6,7 +6,7 @@
     "checked": {"type": "boolean"}, "disabled": {"type": "boolean"}, "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"},
     "value": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"}, "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
     "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}, "class": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9 _-]*$"}
-  }, "required": ["size", "type", "label", "checked", "disabled", "name", "value", "aria-label"], "additionalProperties": false},
+  }, "required": ["size", "type", "checked", "disabled", "name", "value", "aria-label"], "additionalProperties": false},
   "slots": {}, "events": {"change": {"kind": "dom", "backend_handler_binding": false}}, "views": {"default": {}}, "presets": {}, "constraints": {},
   "render": {"strategy": "host", "renderer": "ui.sf.element"}, "frontend": {"runtime": "simai-framework", "tag": "sf-toggle"},
   "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}, {"key": "simai.framework.core.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_toggle.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_toggle.js", "kind": "javascript", "critical": true}],

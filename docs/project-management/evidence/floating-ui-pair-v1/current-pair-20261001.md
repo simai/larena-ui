@@ -9,3 +9,5 @@ Framework changes carried since the previous pin (Framework CHANGELOG, Unrelease
 The runtime lock keeps Larena's component and attribute lists; only the pair, bundle, source and registry entries change.
 
 The `ui.textarea` manifest allows values up to 65,536 characters (was 2,000): admin forms rendered with Framework controls edit structure and page descriptors as JSON, which the owning handlers validate and bound themselves.
+
+The toggle `label`, checkbox `description` and textarea `placeholder` and `hint` are optional: the Framework renders each as visible text whenever it is given, so a required value forced duplicate text (an icon-only theme switch labelled "Color theme", a group name under every box). The accessible name stays required as `aria-label` or `label`.

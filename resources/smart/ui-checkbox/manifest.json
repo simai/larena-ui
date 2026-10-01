@@ -19,7 +19,7 @@
       "error": {"type": "boolean"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["size", "label", "description", "position", "checked", "disabled", "indeterminate", "name", "value", "error", "id"],
+    "required": ["size", "label", "position", "checked", "disabled", "indeterminate", "name", "value", "error", "id"],
     "additionalProperties": false
   },
   "slots": {},

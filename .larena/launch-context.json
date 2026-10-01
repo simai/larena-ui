@@ -110,7 +110,9 @@
     "release-artifacts/ui-0315c0ffebb6-smart-41fd1892b345-registry-c66d7212-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-0315c0ffebb6-smart-41fd1892b345-registry-c66d7212-exact-git-tree-v2/sources/ui.tar.gz",
     "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261001.md",
-    "resources/smart/ui-textarea/manifest.json"
+    "resources/smart/ui-textarea/manifest.json",
+    "resources/smart/ui-toggle/manifest.json",
+    "resources/smart/ui-checkbox/manifest.json"
   ],
   "forbidden_files": [
     "config/*",
