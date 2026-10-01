@@ -7,3 +7,5 @@ This pair replaces `ui-e5a1228a9d8a-smart-c184f5944ae6`: Core `0315c0ffebb698536
 Framework changes carried since the previous pin (Framework CHANGELOG, Unreleased): `sf-toggle` deprecated in favour of `sf-switch`; the `--size-1/3` step removed from checkbox, radio and switch; `--sf-on-surface-muted` retired for text (WCAG contrast); radius scale raised (control 4px, block 8px, `radius-4`, `--sf-radius--surface`); `elevation-1…5` and `--sf-surface-5`; one focus ring per component and separate border roles; `--sf-label-large` fixed at 14/20; a page without `window.sfPath` warns that it loads from the CDN.
 
 The runtime lock keeps Larena's component and attribute lists; only the pair, bundle, source and registry entries change.
+
+The `ui.textarea` manifest allows values up to 65,536 characters (was 2,000): admin forms rendered with Framework controls edit structure and page descriptors as JSON, which the owning handlers validate and bound themselves.

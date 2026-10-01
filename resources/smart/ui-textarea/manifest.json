@@ -15,7 +15,7 @@
       "placeholder": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
       "hint": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "\\S"},
       "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"},
-      "value": {"type": "string", "maxLength": 2000},
+      "value": {"type": "string", "maxLength": 65536},
       "disabled": {"type": "boolean"},
       "error": {"type": "boolean"},
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
