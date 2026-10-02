@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-227b90a6355a-smart-5c48c415d04d` (registry `70a87a25`), bound by the Framework owner on 2026-10-02, replacing `ui-f36cee75e553-smart-ae58fee26055`.
 - Pin the Framework pair `ui-f36cee75e553-smart-ae58fee26055` (registry `8ce17733`), bound by the Framework owner on 2026-10-02, replacing `ui-0315c0ffebb6-smart-41fd1892b345`.
 - Pin the Framework pair `ui-0315c0ffebb6-smart-41fd1892b345` (registry `c66d7212`), bound by the Framework owner on 2026-10-01, replacing `ui-e5a1228a9d8a-smart-c184f5944ae6`.
 
