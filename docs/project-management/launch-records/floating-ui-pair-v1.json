@@ -115,6 +115,11 @@
     "release-artifacts/ui-227b90a6355a-smart-5c48c415d04d-registry-70a87a25-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-227b90a6355a-smart-5c48c415d04d-registry-70a87a25-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-227b90a6355a-smart-5c48c415d04d-registry-70a87a25-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261002-focus.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261002-focus.md",
+    "release-artifacts/ui-3b0f4adecf3e-smart-ff82c2636e0e-registry-945f9a99-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-3b0f4adecf3e-smart-ff82c2636e0e-registry-945f9a99-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-3b0f4adecf3e-smart-ff82c2636e0e-registry-945f9a99-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-3b0f4adecf3e-smart-ff82c2636e0e-registry-945f9a99-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261003-loader.md"
   ]
 }
