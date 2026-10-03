@@ -644,6 +644,7 @@
       window.location.assign(url.href);
     };
     var permissions = parse(records.dataset.larenaPortCapabilities || '[]', []);
+    var shownRecords = [];
     view.setHostPort({version: '1.1.0', capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
       if (intent === 'query.change') latestQuerySequence = payload?.sequence;
@@ -679,6 +680,16 @@
         if (answer.answer === 'applied' && answer.data
           && (intent !== 'query.change' || payload?.sequence === latestQuerySequence)) {
           answer.data = project(answer.data);
+          if (intent === 'query.change') {
+            // "Show more" adds the next page under the rows already shown; any other query starts over.
+            if (payload?.reason === 'show-more') {
+              answer.data.records = shownRecords.concat(answer.data.records);
+              records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(answer.data.records.map(function (row) {
+                return [row.id, row.revision];
+              })));
+            }
+            shownRecords = answer.data.records;
+          }
         }
         if (answer.answer === 'applied' && intent === 'record.open') navigateRecord(payload.record_ids[0], 'view');
         if (answer.answer === 'applied' && intent === 'record.mutate' && payload.action_id === 'edit') {
