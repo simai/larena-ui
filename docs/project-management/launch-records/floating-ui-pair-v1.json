@@ -123,6 +123,11 @@
     "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261003-loader.md",
     "resources/smart/dataview-table/view/default.json",
     "resources/smart/ui-pagination/view/default.json",
-    "tests/Unit/PaginationLocalizationContractTest.php"
+    "tests/Unit/PaginationLocalizationContractTest.php",
+    "release-artifacts/ui-5e466412cac0-smart-a794c2e9c492-registry-6932972a-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-5e466412cac0-smart-a794c2e9c492-registry-6932972a-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-5e466412cac0-smart-a794c2e9c492-registry-6932972a-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-5e466412cac0-smart-a794c2e9c492-registry-6932972a-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261003-table-defects.md"
   ]
 }

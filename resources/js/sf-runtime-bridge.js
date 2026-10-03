@@ -681,14 +681,12 @@
           && (intent !== 'query.change' || payload?.sequence === latestQuerySequence)) {
           answer.data = project(answer.data);
           if (intent === 'query.change') {
-            // "Show more" adds the next page under the rows already shown; any other query starts over.
-            if (payload?.reason === 'show-more') {
-              answer.data.records = shownRecords.concat(answer.data.records);
-              records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(answer.data.records.map(function (row) {
-                return [row.id, row.revision];
-              })));
-            }
-            shownRecords = answer.data.records;
+            // The data view adds the rows of "Show more" under the shown ones; the revisions of
+            // every shown row stay known, so a bulk action on earlier rows still checks them.
+            shownRecords = payload?.reason === 'show-more' ? shownRecords.concat(answer.data.records) : answer.data.records;
+            records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(shownRecords.map(function (row) {
+              return [row.id, row.revision];
+            })));
           }
         }
         if (answer.answer === 'applied' && intent === 'record.open') navigateRecord(payload.record_ids[0], 'view');
