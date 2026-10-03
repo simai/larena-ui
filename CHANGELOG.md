@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- The `sf-pagination` allow-list and the `ui.pagination` contract use the label attributes of the pinned Framework manifest (`previous-label`, `next-label`, `last-label`, `actions-label`); the stale names `previous-page-label`, `next-page-label`, `last-page-text`, `go-to-page-label` and `show-total-text` from 2026-08-20 are gone, so every pagination label can be translated.
 - The host port bridge adds the rows of "Show more" under the rows already shown, with their revisions, instead of replacing the page.
 - Pin the Framework pair `ui-3b0f4adecf3e-smart-ff82c2636e0e` (registry `945f9a99`), bound by the Framework owner on 2026-10-03, replacing `ui-227b90a6355a-smart-5c48c415d04d`.
 - Pin the Framework pair `ui-227b90a6355a-smart-5c48c415d04d` (registry `70a87a25`), bound by the Framework owner on 2026-10-02, replacing `ui-f36cee75e553-smart-ae58fee26055`.

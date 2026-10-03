@@ -31,18 +31,16 @@ $render = static function (array $labels) use ($manager, $activation): string {
 $en = $render([
     'selected-label' => 'Selected:',
     'total-label' => 'Total:',
-    'show-total-text' => 'Show total',
     'pages-label' => 'Pages:',
-    'previous-page-label' => 'Previous page',
+    'previous-label' => 'Previous page',
     'page-label' => 'Page',
-    'go-to-page-label' => 'Go to page',
-    'next-page-label' => 'Next page',
-    'last-page-text' => 'Last',
+    'next-label' => 'Next page',
+    'last-label' => 'Last',
 ]);
-foreach (['selected-label="Selected:"', 'show-total-text="Show total"', 'pages-label="Pages:"', 'last-page-text="Last"'] as $attribute) {
+foreach (['selected-label="Selected:"', 'pages-label="Pages:"', 'last-label="Last"'] as $attribute) {
     assert(str_contains($en, $attribute));
 }
-foreach (['Отмечено', 'Показать количество', 'Страницы', 'Последняя'] as $russianLabel) {
+foreach (['Отмечено', 'Страницы', 'Последняя'] as $russianLabel) {
     assert(!str_contains($en, $russianLabel));
 }
 
@@ -50,17 +48,15 @@ $ru = $render([
     'show-more-text' => 'Показать ещё',
     'selected-label' => 'Отмечено:',
     'total-label' => 'Всего:',
-    'show-total-text' => 'Показать количество',
     'pages-label' => 'Страницы:',
-    'previous-page-label' => 'Предыдущая страница',
+    'previous-label' => 'Предыдущая страница',
     'page-label' => 'Страница',
-    'go-to-page-label' => 'Перейти к странице',
-    'next-page-label' => 'Следующая страница',
-    'last-page-text' => 'Последняя',
+    'next-label' => 'Следующая страница',
+    'last-label' => 'Последняя',
     'page-size-label' => 'Элементов на странице',
     'aria-label' => 'Навигация по страницам',
 ]);
-foreach (['selected-label="Отмечено:"', 'show-total-text="Показать количество"', 'pages-label="Страницы:"', 'last-page-text="Последняя"'] as $attribute) {
+foreach (['selected-label="Отмечено:"', 'pages-label="Страницы:"', 'last-label="Последняя"'] as $attribute) {
     assert(str_contains($ru, $attribute));
 }
 
@@ -69,7 +65,7 @@ assert(is_string($runtime));
 foreach (['selectedLabel', 'showTotalText', 'pagesLabel', 'lastPageText'] as $property) {
     assert(str_contains($runtime, $property));
 }
-foreach (['Отмечено', 'Показать количество', 'Страницы', 'Последняя'] as $hardCodedLabel) {
+foreach (['Отмечено', 'Страницы', 'Последняя'] as $hardCodedLabel) {
     assert(!str_contains($runtime, $hardCodedLabel));
 }
 

@@ -42,19 +42,13 @@
         "maxLength": 120,
         "pattern": "\\S"
       },
-      "show-total-text": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 120,
-        "pattern": "\\S"
-      },
       "pages-label": {
         "type": "string",
         "minLength": 1,
         "maxLength": 120,
         "pattern": "\\S"
       },
-      "previous-page-label": {
+      "previous-label": {
         "type": "string",
         "minLength": 1,
         "maxLength": 120,
@@ -66,19 +60,13 @@
         "maxLength": 120,
         "pattern": "\\S"
       },
-      "go-to-page-label": {
+      "next-label": {
         "type": "string",
         "minLength": 1,
         "maxLength": 120,
         "pattern": "\\S"
       },
-      "next-page-label": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 120,
-        "pattern": "\\S"
-      },
-      "last-page-text": {
+      "last-label": {
         "type": "string",
         "minLength": 1,
         "maxLength": 120,
@@ -131,6 +119,12 @@
         "minLength": 1,
         "maxLength": 120,
         "pattern": "\\S"
+      },
+      "actions-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120,
+        "pattern": "\\S"
       }
     },
     "required": [
@@ -141,13 +135,11 @@
       "show-more-text",
       "selected-label",
       "total-label",
-      "show-total-text",
       "pages-label",
-      "previous-page-label",
+      "previous-label",
       "page-label",
-      "go-to-page-label",
-      "next-page-label",
-      "last-page-text",
+      "next-label",
+      "last-label",
       "page-size-label",
       "aria-label",
       "id"
@@ -285,13 +277,11 @@
       "show-more-text": "Show more",
       "selected-label": "Selected:",
       "total-label": "Total:",
-      "show-total-text": "Show total",
       "pages-label": "Pages:",
-      "previous-page-label": "Previous page",
+      "previous-label": "Previous page",
       "page-label": "Page",
-      "go-to-page-label": "Go to page",
-      "next-page-label": "Next page",
-      "last-page-text": "Last",
+      "next-label": "Next page",
+      "last-label": "Last",
       "page-size-label": "Items per page",
       "aria-label": "Page navigation",
       "id": "ui-pagination-reference"
