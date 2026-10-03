@@ -4,6 +4,9 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-c051aa62458e-smart-85d1858d7632` (registry `d5a3b15e`), with the column move and pinned-cell fixes, replacing `ui-c33663c3822b-smart-5e974280513e`.
+- Pin the Framework pair `ui-c33663c3822b-smart-5e974280513e` (registry `b68ec231`), with the table fixes and count on request, replacing `ui-ed549e7282ef-smart-6a58ac134bdb`.
+- Pin the Framework pair `ui-ed549e7282ef-smart-6a58ac134bdb` (registry `65f2a16a`) with the data view table behaviour, replacing `ui-5e466412cac0-smart-c969ab09e15b`; the bridge declares data view port 1.2.0 and the pagination allow-list gains `action-choose-label`, `actions-region-label` and `clear-selection-label`.
 - Pin the Framework pair `ui-5e466412cac0-smart-c969ab09e15b` (registry `640a1653`), handed over by the Framework owner on 2026-10-03 with the data view table presentation, replacing `ui-5e466412cac0-smart-a794c2e9c492`.
 - Pin the Framework pair `ui-5e466412cac0-smart-a794c2e9c492` (registry `6932972a`), handed over by the Framework owner on 2026-10-03 with the data view table defect fixes, replacing `ui-3b0f4adecf3e-smart-ff82c2636e0e`. The host port bridge no longer appends the rows of "Show more": the data view does it.
 - The `sf-pagination` allow-list and the `ui.pagination` contract use the label attributes of the pinned Framework manifest (`previous-label`, `next-label`, `last-label`, `actions-label`); the stale names `previous-page-label`, `next-page-label`, `last-page-text`, `go-to-page-label` and `show-total-text` from 2026-08-20 are gone, so every pagination label can be translated.
