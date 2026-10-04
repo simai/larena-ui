@@ -4,6 +4,8 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-ea764e2281ac-smart-66cc68814180` (registry `1fe47f1e`), with the round-2 fixes, replacing `ui-84c633342c57-smart-1f3da4c3470e`.
+- Pin the Framework pair `ui-84c633342c57-smart-1f3da4c3470e` (registry `96f2be14`), with the data view table round 2, replacing `ui-c051aa62458e-smart-85d1858d7632`.
 - Pin the Framework pair `ui-c051aa62458e-smart-85d1858d7632` (registry `d5a3b15e`), with the column move and pinned-cell fixes, replacing `ui-c33663c3822b-smart-5e974280513e`.
 - Pin the Framework pair `ui-c33663c3822b-smart-5e974280513e` (registry `b68ec231`), with the table fixes and count on request, replacing `ui-ed549e7282ef-smart-6a58ac134bdb`.
 - Pin the Framework pair `ui-ed549e7282ef-smart-6a58ac134bdb` (registry `65f2a16a`) with the data view table behaviour, replacing `ui-5e466412cac0-smart-c969ab09e15b`; the bridge declares data view port 1.2.0 and the pagination allow-list gains `action-choose-label`, `actions-region-label` and `clear-selection-label`.

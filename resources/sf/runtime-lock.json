@@ -1,44 +1,44 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-c051aa62458e-smart-85d1858d7632",
-  "bundle_id": "ui-c051aa62458e-smart-85d1858d7632-registry-d5a3b15e-exact-git-tree-v2",
+  "pair_id": "ui-ea764e2281ac-smart-66cc68814180",
+  "bundle_id": "ui-ea764e2281ac-smart-66cc68814180-registry-1fe47f1e-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
     "tag": null,
-    "commit": "c051aa62458e74f78298925c80e92e1031ac0058",
+    "commit": "ea764e2281ac6aacb145cbc7fc53501ceee902ea",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "b735cd3bb1a3e48a06c44e76f6b0f4e3e2f944a2e71ab79ec49e8ec47304114c",
+    "sha256": "316c531ca17d854893563185a735eee320f8cf2f56d1392e341d24cb03cc0ca4",
     "files": 6129
   },
   "ui_smart": {
     "tag": null,
-    "commit": "85d1858d76320da03a9e8afcc4ca99f102444aa0",
+    "commit": "66cc688141805ee6bee1a2c35a87aad2bff245ea",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "5b646c8dc6a0effe65cf079a65004af2f1da4be5751406a7b73236fa370573ab",
-    "files": 879
+    "sha256": "95b47362d0bee03cb9f958f9f93091ce3eb87863ae1b8440bb82c8470f6b7470",
+    "files": 931
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-c051aa62458e-smart-85d1858d7632",
+    "compatibility_id": "ui-ea764e2281ac-smart-66cc68814180",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "d5a3b15e11aadc1e1b2960cb2f9915baeaa9251563e984475004fb0135a83b06",
+    "file_sha256": "1fe47f1e4ebcf155d8757f40d5ca9257a5895e8978cbccf56040c8b464b12587",
     "source": {
-      "commit": "18f68dcaa7d0fe1526d407b6a54952b5354f3532",
+      "commit": "03dc7a465c85d05cfa13302c854e145af53a9dc1",
       "tree": "contracts/generated",
-      "tree_oid": "a0589162d42c3feb0c3008d9fece494a3e4b4767",
+      "tree_oid": "a79cc9fc20523558cdddc78484fd3edec3444234",
       "mount": "contract",
-      "sha256": "14a6d51531df826f9bbf320e2de7a0f58b66280fd6c9b8bc150afa264a256ac5",
+      "sha256": "7bfea44210da0fb3c87354da9844275bc3d32df92c688930368c259fd843c261",
       "files": 2
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "1c255c0dfeba477053c0e6eb1fed4954dc25f134a45efcfb46316e3ecdf9ca68"
+      "file_sha256": "a81bbf3ac73dc48206281786cee568c7eaf423b53806133abd99ec17ba803e77"
     }
   },
   "boot": {
@@ -207,6 +207,8 @@
         "has-next",
         "show-count-label",
         "counting-label",
+        "first-label",
+        "page-field-label",
         "id",
         "class"
       ]

@@ -645,7 +645,7 @@
     };
     var permissions = parse(records.dataset.larenaPortCapabilities || '[]', []);
     var shownRecords = [];
-    view.setHostPort({version: '1.2.0', capabilities: Array.isArray(permissions) ? permissions : [],
+    view.setHostPort({version: '1.4.0', capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
       if (intent === 'query.change') latestQuerySequence = payload?.sequence;
       if ((intent === 'record.mutate' && payload?.action_id === 'delete')

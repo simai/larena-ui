@@ -60,7 +60,7 @@ test('composite consumes only owner-projected cells and scoped port answers', as
             values: {owner: 'user:secret'}, display_values: {owner: 'Alice'}}],
         echo: {filters_chosen: {}, search: '', sort: [], page: 1, per_page: 20},
     }});
-    assert.equal(h.view.port.version, '1.2.0');
+    assert.equal(h.view.port.version, '1.4.0');
     assert.deepEqual(Array.from(h.view.port.capabilities), ['saved-views', 'row-actions']);
     assert.equal(h.view.query.search, 'needle');
     assert.deepEqual(JSON.parse(JSON.stringify(h.view.query.sort)), [{key: 'owner', direction: 'desc'}]);
