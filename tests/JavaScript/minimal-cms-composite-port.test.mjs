@@ -168,3 +168,27 @@ test('missing owner display projection refuses the page without exposing raw IDs
     assert.equal(answer.answer, 'unavailable');
     assert.equal(answer.reason, 'port_display_projection_missing');
 });
+
+test('a saved record writes only its own row again, asking the page that holds it once', async () => {
+    const page = (owner, revision) => ({answer: 'applied', data: {
+        columns: [{key: 'owner'}], total: 2,
+        records: [{id: 'record-1', revision: 1, actions: [], display_values: {owner: 'Alice'}},
+            {id: 'record-2', revision, actions: [], display_values: {owner}}],
+    }});
+    const h = await harness((call) => (call === 1 ? page('Bob', 1) : page('Carol', 2)));
+    const patched = [];
+    let refreshed = 0;
+    h.view.updateRecord = (id, row) => { patched.push([id, row]); return true; };
+    h.view.refresh = () => { refreshed += 1; };
+    await h.view.port.raise('query.change', {sequence: 1, query: {page: 1, per_page: 20, search: 'needle'}}, {});
+    assert.equal(await h.view.larenaRefreshRecord('record-2'), true);
+    assert.equal(refreshed, 0);
+    assert.equal(JSON.parse(h.calls[1].options.body).payload.query.search, 'needle');
+    assert.equal(patched.length, 1);
+    assert.equal(patched[0][0], 'record-2');
+    assert.equal(patched[0][1].owner, 'Carol');
+    assert.deepEqual(JSON.parse(h.records.dataset.larenaRowRevisions), {'record-1': 1, 'record-2': 2});
+    // A record the shown rows do not hold asks the table for its page again.
+    assert.equal(await h.view.larenaRefreshRecord('record-9'), false);
+    assert.equal(refreshed, 1);
+});

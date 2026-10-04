@@ -596,7 +596,6 @@
         if (heading && /\d[\d\s.,]*\s*$/.test(heading.textContent || '')) {
           heading.textContent = heading.textContent.replace(/\d[\d\s.,]*\s*$/, count);
         }
-        return;
       }
       var badge = document.getElementById('minimal-cms-record-count');
       if (!badge) return;
@@ -609,22 +608,23 @@
       var visibleText = badge.querySelector('.sf-badge-text');
       if (visibleText) visibleText.textContent = count;
     };
+    var projectRecord = function (record, keys) {
+      // The host supplies Property/owner-projected display cells. Raw reference IDs
+      // in record.values are never placed into the table DOM.
+      if (!record || !record.display_values || Array.isArray(record.display_values)) {
+        throw new Error('port_display_projection_missing');
+      }
+      var row = {id: record.id, revision: record.revision,
+        actions: storageWorkbench ? [] : (record.actions || []).map(function (action) { return actions[action]; }).filter(Boolean)};
+      keys.forEach(function (key) { row[key] = record.display_values[key] ?? null; });
+      return row;
+    };
     var project = function (data) {
       if (!Array.isArray(data?.records) || !Array.isArray(data?.columns) || !Number.isSafeInteger(data?.total)) {
         throw new Error('port_projection_invalid');
       }
       var keys = data.columns.map(function (column) { return column.key; });
-      var projected = data.records.map(function (record) {
-        // The host supplies Property/owner-projected display cells. Raw reference IDs
-        // in record.values are never placed into the table DOM.
-        if (!record || !record.display_values || Array.isArray(record.display_values)) {
-          throw new Error('port_display_projection_missing');
-        }
-        var row = {id: record.id, revision: record.revision,
-          actions: storageWorkbench ? [] : (record.actions || []).map(function (action) { return actions[action]; }).filter(Boolean)};
-        keys.forEach(function (key) { row[key] = record.display_values[key] ?? null; });
-        return row;
-      });
+      var projected = data.records.map(function (record) { return projectRecord(record, keys); });
       records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(data.records.map(function (record) {
         return [record.id, record.revision];
       })));
@@ -647,6 +647,46 @@
     };
     var permissions = parse(records.dataset.larenaPortCapabilities || '[]', []);
     var shownRecords = [];
+    // The query of the shown rows; "Show more" appends the next pages of the same query.
+    var listQuery = current;
+    var post = async function (intent, sent, signal) {
+      var response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', signal: signal,
+        headers: {'Content-Type': 'application/json', Accept: 'application/json',
+          'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf || ''},
+        body: JSON.stringify({scope_ref: scope, structure_id: structure, intent: intent, payload: sent})});
+      var answer = await response.json();
+      if (!['applied', 'conflict', 'refused', 'unavailable'].includes(answer?.answer)) {
+        throw new Error('port_answer_invalid');
+      }
+      return answer;
+    };
+    // After the record panel saved a record, only that row is written again: the page that holds
+    // it is asked once and the row is patched into the table (updateRecord). A record the shown
+    // rows do not hold (a new one, or one that left the filter) asks the table for its page again.
+    view.larenaRefreshRecord = async function (id) {
+      var key = String(id || '');
+      var index = shownRecords.findIndex(function (row) { return String(row.id) === key; });
+      if (!key || index < 0) { view.refresh?.('record-unknown'); return false; }
+      var perPage = Number(listQuery?.per_page) || 20;
+      var asked = {...listQuery, page: (Number(listQuery?.page) || 1) + Math.floor(index / perPage)};
+      try {
+        var answer = await post('query.change', {sequence: Number.MAX_SAFE_INTEGER, query: asked});
+        var columns = Array.isArray(answer?.data?.columns) ? answer.data.columns.map(function (column) { return column.key; }) : null;
+        var record = columns && Array.isArray(answer.data.records)
+          ? answer.data.records.find(function (item) { return String(item?.id) === key; }) : null;
+        if (answer.answer !== 'applied' || !record) { view.refresh?.('record-unknown'); return false; }
+        var row = projectRecord(record, columns);
+        if (Number.isSafeInteger(answer.data.total)) syncMatchedCount(answer.data.total);
+        shownRecords[index] = row;
+        records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(shownRecords.map(function (item) {
+          return [item.id, item.revision];
+        })));
+        return view.updateRecord?.(row.id, row) === true;
+      } catch {
+        view.refresh?.('record-unknown');
+        return false;
+      }
+    };
     view.setHostPort({version: '1.4.0', capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
       if (intent === 'query.change') latestQuerySequence = payload?.sequence;
@@ -669,14 +709,7 @@
         if (storageWorkbench && intent === 'bulk.apply_selected') sent.confirmed = true;
       }
       try {
-        var response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', signal: options?.signal,
-          headers: {'Content-Type': 'application/json', Accept: 'application/json',
-            'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf || ''},
-          body: JSON.stringify({scope_ref: scope, structure_id: structure, intent: intent, payload: sent})});
-        var answer = await response.json();
-        if (!['applied', 'conflict', 'refused', 'unavailable'].includes(answer?.answer)) {
-          throw new Error('port_answer_invalid');
-        }
+        var answer = await post(intent, sent, options?.signal);
         // The composite drops an obsolete reply after raise resolves; host-owned counters
         // and row revisions must wait for that same newest query.
         if (answer.answer === 'applied' && answer.data
@@ -686,6 +719,7 @@
             // The data view adds the rows of "Show more" under the shown ones; the revisions of
             // every shown row stay known, so a bulk action on earlier rows still checks them.
             shownRecords = payload?.reason === 'show-more' ? shownRecords.concat(answer.data.records) : answer.data.records;
+            if (payload?.reason !== 'show-more' && payload?.query) listQuery = payload.query;
             records.dataset.larenaRowRevisions = JSON.stringify(Object.fromEntries(shownRecords.map(function (row) {
               return [row.id, row.revision];
             })));
@@ -752,7 +786,21 @@
   }
 
   // A record panel loaded into the page later hydrates its own Smart elements the same way.
-  window.LarenaSmartBridge = Object.freeze({ hydrate: boot });
+  window.LarenaSmartBridge = Object.freeze({
+    hydrate: boot,
+    // The record panel saved a record: write its row again in every list connected to the port.
+    // Without a record id (a create, delete or restore) the lists ask for their page again.
+    refreshRecord: function (id) {
+      // Only lists answered by the host port can ask again; a list with rows in place cannot.
+      var views = Array.prototype.slice.call(document.querySelectorAll('sf-data-view[data-larena-port-connected="true"]'))
+        .filter(function (view) { return typeof view.larenaRefreshRecord === 'function'; });
+      views.forEach(function (view) {
+        if (id) void view.larenaRefreshRecord(id);
+        else view.refresh?.('record-saved');
+      });
+      return views.length > 0;
+    },
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
