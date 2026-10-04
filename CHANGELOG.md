@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-7e13732dc09f-smart-c80a0f2e441b` (registry `3ccc1927`), with the data view table round 3, replacing `ui-66bf83821f2b-smart-66cc68814180`.
 - The runtime bridge exposes `LarenaSmartBridge.hydrate()` for content loaded later and opens a record through the admin's in-place record panel when the page offers one.
 - Pin the Framework pair `ui-66bf83821f2b-smart-66cc68814180` (registry `56a68e13`), with the Inter font in the Framework core, replacing `ui-ea764e2281ac-smart-66cc68814180`.
 - Pin the Framework pair `ui-ea764e2281ac-smart-66cc68814180` (registry `1fe47f1e`), with the round-2 fixes, replacing `ui-84c633342c57-smart-1f3da4c3470e`.
