@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- A composite «Create» item that names another structure (`data-larena-create-items`) opens that structure's record panel.
 - Pin the Framework pair `ui-26434c2bab11-smart-f0b1097df368` (registry `9e51f3dd`), with the round-3 fixes, replacing `ui-7e13732dc09f-smart-c80a0f2e441b`.
 - `LarenaSmartBridge.refreshRecord(id)` writes a saved record's row again from the page that holds it (`updateRecord`), or asks port-backed lists for their page; the Storage records count beside the heading follows the list.
 - Pin the Framework pair `ui-7e13732dc09f-smart-c80a0f2e441b` (registry `3ccc1927`), with the data view table round 3, replacing `ui-66bf83821f2b-smart-66cc68814180`.

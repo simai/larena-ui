@@ -635,8 +635,9 @@
       }
       return {...data, records: projected};
     };
-    var navigateRecord = function (id, mode) {
+    var navigateRecord = function (id, mode, structureId) {
       var url = new URL(window.location.href);
+      if (structureId) url.searchParams.set('structure_id', structureId);
       if (id) url.searchParams.set('record_id', id);
       else url.searchParams.delete('record_id');
       url.searchParams.set('record_mode', mode);
@@ -729,7 +730,12 @@
         if (answer.answer === 'applied' && intent === 'record.mutate' && payload.action_id === 'edit') {
           navigateRecord(payload.record_ids[0], 'edit');
         }
-        if (answer.answer === 'applied' && intent === 'view.create_record') navigateRecord('', 'create');
+        if (answer.answer === 'applied' && intent === 'view.create_record') {
+          // A composite «Create» item may name another structure (a section from the catalog list).
+          var created = parse(view.dataset.larenaCreateItems || '[]', []);
+          var item = Array.isArray(created) ? created.find(function (entry) { return entry && entry.id === payload?.item; }) : null;
+          navigateRecord('', 'create', item && typeof item.structure_id === 'string' ? item.structure_id : null);
+        }
         return answer;
       } catch (error) {
         if (options?.signal?.aborted) throw error;
