@@ -52,11 +52,11 @@ $baseline = FrontendRuntimeLock::bundled()->toArray();
 $switched = $baseline;
 $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 $switched['pair_id'] = 'ui-aaaaaaaaaaaa-smart-66cc68814180';
-$switched['bundle_id'] = 'ui-aaaaaaaaaaaa-smart-66cc68814180-registry-1fe47f1e-exact-git-tree-v2';
+$switched['bundle_id'] = 'ui-aaaaaaaaaaaa-smart-66cc68814180-registry-56a68e13-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = $switched['pair_id'];
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-ea764e2281ac-smart-66cc68814180');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-66bf83821f2b-smart-66cc68814180');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];

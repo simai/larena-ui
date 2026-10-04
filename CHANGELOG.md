@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-66bf83821f2b-smart-66cc68814180` (registry `56a68e13`), with the Inter font in the Framework core, replacing `ui-ea764e2281ac-smart-66cc68814180`.
 - Pin the Framework pair `ui-ea764e2281ac-smart-66cc68814180` (registry `1fe47f1e`), with the round-2 fixes, replacing `ui-84c633342c57-smart-1f3da4c3470e`.
 - Pin the Framework pair `ui-84c633342c57-smart-1f3da4c3470e` (registry `96f2be14`), with the data view table round 2, replacing `ui-c051aa62458e-smart-85d1858d7632`.
 - Pin the Framework pair `ui-c051aa62458e-smart-85d1858d7632` (registry `d5a3b15e`), with the column move and pinned-cell fixes, replacing `ui-c33663c3822b-smart-5e974280513e`.

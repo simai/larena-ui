@@ -1,17 +1,17 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-ea764e2281ac-smart-66cc68814180",
-  "bundle_id": "ui-ea764e2281ac-smart-66cc68814180-registry-1fe47f1e-exact-git-tree-v2",
+  "pair_id": "ui-66bf83821f2b-smart-66cc68814180",
+  "bundle_id": "ui-66bf83821f2b-smart-66cc68814180-registry-56a68e13-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
     "tag": null,
-    "commit": "ea764e2281ac6aacb145cbc7fc53501ceee902ea",
+    "commit": "66bf83821f2bf4ec9e84c2a137c326ae9c03e5f9",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "316c531ca17d854893563185a735eee320f8cf2f56d1392e341d24cb03cc0ca4",
-    "files": 6129
+    "sha256": "52352700a2519fabbcc1c4f421f8d18ea479aaeeca272b3aac71f99a6a4a4602",
+    "files": 6143
   },
   "ui_smart": {
     "tag": null,
@@ -23,22 +23,22 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-ea764e2281ac-smart-66cc68814180",
+    "compatibility_id": "ui-66bf83821f2b-smart-66cc68814180",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "1fe47f1e4ebcf155d8757f40d5ca9257a5895e8978cbccf56040c8b464b12587",
+    "file_sha256": "56a68e1316b556aa67f6fa7e247601d2f13ceff279f29162871586b9f43c8a51",
     "source": {
-      "commit": "03dc7a465c85d05cfa13302c854e145af53a9dc1",
+      "commit": "bc6b21b7e6ea2cd5dba8ac7cb10267e3db5df4c1",
       "tree": "contracts/generated",
-      "tree_oid": "a79cc9fc20523558cdddc78484fd3edec3444234",
+      "tree_oid": "a000563b6f4fb5698e6fb6751614a835a5e055b5",
       "mount": "contract",
-      "sha256": "7bfea44210da0fb3c87354da9844275bc3d32df92c688930368c259fd843c261",
+      "sha256": "f829d0ed396500acdbe955958397fd211393a76190c3fd325d5371c19ad1bd06",
       "files": 2
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "a81bbf3ac73dc48206281786cee568c7eaf423b53806133abd99ec17ba803e77"
+      "file_sha256": "bd7eb6c7394248b7e2985450a57e43cbd466eac08f97a5c3d9c799cb11b8a1a2"
     }
   },
   "boot": {
