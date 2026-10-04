@@ -182,6 +182,11 @@
     "resources/smart/ui-admin-menu/manifest.json",
     "resources/adapters/ui.admin_menu.json",
     "resources/js/admin-smart-event-bridge.js",
-    "src/Assets/AdminSmartEventBridgeAssetManifest.php"
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php",
+    "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-menu-search-panel-fix.md"
   ]
 }
