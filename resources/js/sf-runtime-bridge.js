@@ -693,13 +693,19 @@
       if (intent === 'query.change') latestQuerySequence = payload?.sequence;
       if ((intent === 'record.mutate' && payload?.action_id === 'delete')
         || intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
-        if (!window.confirm(records.dataset.larenaConfirmBulkDelete || 'Confirm this action?')) {
+        // One record from its row menu, or several: the message says which, with their number.
+        var single = intent === 'record.mutate';
+        var count = single ? 1 : (intent === 'bulk.apply_under_filter' ? Number(records.dataset.larenaMatchedCount) || 0
+          : (Array.isArray(payload?.record_ids) ? payload.record_ids.length : 0));
+        var message = (single && records.dataset.larenaConfirmRecordDelete) || records.dataset.larenaConfirmBulkDelete || 'Confirm this action?';
+        if (!window.confirm(message.replace(':count', String(count)))) {
           return {answer: 'refused', reason: 'cancelled'};
         }
       }
       var sent = {...payload};
       if (intent === 'view.save') {
         sent = {key: payload?.key, query: payload?.query || {}};
+        if (typeof payload?.label === 'string' && payload.label.trim()) sent.label = payload.label.trim();
         if (Number.isInteger(payload?.revision)) sent.revision = payload.revision;
         for (var property of ['roles', 'layout', 'settings']) {
           if (payload && Object.hasOwn(payload, property)) sent[property] = payload[property];

@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- `view.save` passes the view's label; the delete confirmation names one record or the number of checked records.
 - Pin the Framework pair `ui-727a22fe189e-smart-7d932ed51408` (registry `8ca0191d`), with the admin menu search panel in place, replacing `ui-a928c76c79da-smart-8e60c9cdbf32`.
 - `ui.admin_menu` takes `search-mode`, `search-label`, `search-shortcut`, `search-hint` and `search-keys-hint`; the admin event bridge answers `sf-admin-menu-search` from `/admin/quick-search` (the newest query wins, the menu's own sections group is not repeated).
 - Pin the Framework pair `ui-a928c76c79da-smart-8e60c9cdbf32` (registry `147ba77c`), with stable table cells, replacing `ui-26434c2bab11-smart-f0b1097df368`.

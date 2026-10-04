@@ -154,7 +154,7 @@ test('composite view save sends only host-owned fields with revision and full vi
         query: {search: 'needle'}, roles: {title: 'owner'},
         layout: {columns: [{key: 'owner'}]}, settings: {density: 'compact'}}, {});
     assert.equal(answer.answer, 'applied');
-    assert.deepEqual(JSON.parse(h.calls[0].options.body).payload, {key: 'draft', revision: 2,
+    assert.deepEqual(JSON.parse(h.calls[0].options.body).payload, {key: 'draft', label: 'Draft', revision: 2,
         query: {search: 'needle'}, roles: {title: 'owner'},
         layout: {columns: [{key: 'owner'}]}, settings: {density: 'compact'}});
 });
