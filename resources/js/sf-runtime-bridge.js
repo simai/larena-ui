@@ -641,6 +641,8 @@
       else url.searchParams.delete('record_id');
       url.searchParams.set('record_mode', mode);
       url.hash = mode === 'view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
+      // The record panel opens over the list in place when the admin page offers it.
+      if (window.LarenaRecordPanel && window.LarenaRecordPanel.open(url.href)) return;
       window.location.assign(url.href);
     };
     var permissions = parse(records.dataset.larenaPortCapabilities || '[]', []);
@@ -748,6 +750,9 @@
     window.dispatchEvent(new CustomEvent('larena-smart-ready'));
     document.documentElement.dataset.larenaSmartReady = 'true';
   }
+
+  // A record panel loaded into the page later hydrates its own Smart elements the same way.
+  window.LarenaSmartBridge = Object.freeze({ hydrate: boot });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
