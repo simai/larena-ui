@@ -175,7 +175,12 @@
     "release-artifacts/ui-7e13732dc09f-smart-c80a0f2e441b-registry-3ccc1927-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-7e13732dc09f-smart-c80a0f2e441b-registry-3ccc1927-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-7e13732dc09f-smart-c80a0f2e441b-registry-3ccc1927-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-table-round-3.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-table-round-3.md",
+    "release-artifacts/ui-26434c2bab11-smart-f0b1097df368-registry-9e51f3dd-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-26434c2bab11-smart-f0b1097df368-registry-9e51f3dd-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-26434c2bab11-smart-f0b1097df368-registry-9e51f3dd-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-26434c2bab11-smart-f0b1097df368-registry-9e51f3dd-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-table-round-3-fixes.md"
   ],
   "forbidden_files": [
     "config/*",
