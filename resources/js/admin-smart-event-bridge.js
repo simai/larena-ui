@@ -48,6 +48,35 @@
         applyCompactLayout(menu, event.detail?.compact === true);
     });
 
+    // The menu's search panel (search-mode="panel") finds its own sections; the admin data groups
+    // (CMS records, storages, users, files) come from /admin/quick-search. A newer query cancels
+    // the older request, and the menu itself drops an answer that is no longer the live one.
+    let searchRequest = null;
+    document.addEventListener('sf-admin-menu-search', async (event) => {
+        const menu = event.target?.closest?.('sf-admin-menu');
+        const query = String(event.detail?.query ?? '').trim();
+        const requestId = event.detail?.requestId;
+        if (!menu || typeof menu.setSearchResults !== 'function') return;
+        searchRequest?.abort();
+        if (query.length < 2) {
+            menu.setSearchResults(requestId, []);
+            return;
+        }
+        const controller = new AbortController();
+        searchRequest = controller;
+        try {
+            const response = await fetch('/admin/quick-search?q=' + encodeURIComponent(query), {
+                credentials: 'same-origin', signal: controller.signal, headers: {Accept: 'application/json'},
+            });
+            const payload = response.ok ? await response.json() : {groups: []};
+            const groups = (Array.isArray(payload?.groups) ? payload.groups : [])
+                .filter((group) => group && group.key !== 'menu.sections' && Array.isArray(group.items) && group.items.length);
+            menu.setSearchResults(requestId, groups);
+        } catch (error) {
+            if (error?.name !== 'AbortError') menu.setSearchResults(requestId, []);
+        }
+    });
+
     customElements.whenDefined('sf-admin-menu').then(() => {
         document.querySelectorAll(selector).forEach((menu) => {
             applyCompactLayout(menu, menu.getProp?.('compact') === true || menu.hasAttribute('compact'));

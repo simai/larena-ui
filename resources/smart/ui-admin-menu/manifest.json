@@ -27,6 +27,11 @@
       "system-settings-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
       "system-settings-reset-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
       "search-placeholder": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
+      "search-mode": {"type": "string", "enum": ["row", "panel"]},
+      "search-label": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
+      "search-shortcut": {"type": "string", "maxLength": 40},
+      "search-hint": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
+      "search-keys-hint": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
       "toggle-label": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
       "items": {"type": "array"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}

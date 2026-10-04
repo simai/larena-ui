@@ -7,7 +7,7 @@
   "accepted_props": {
     "source": "resources/smart/ui-admin-menu/manifest.json",
     "package_owned": ["brand", "logo", "logo-href", "items"],
-    "host_owned": ["aria-label", "search-placeholder", "toggle-label", "persistence-mode", "settings-mode", "settings-revision", "system-settings-revision", "allow-system-settings"],
+    "host_owned": ["aria-label", "search-placeholder", "search-mode", "search-label", "search-shortcut", "search-hint", "search-keys-hint", "toggle-label", "persistence-mode", "settings-mode", "settings-revision", "system-settings-revision", "allow-system-settings"],
     "user_draft_only": ["compact"]
   },
   "allowed_events": {

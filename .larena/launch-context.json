@@ -185,7 +185,11 @@
     "release-artifacts/ui-a928c76c79da-smart-8e60c9cdbf32-registry-147ba77c-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-a928c76c79da-smart-8e60c9cdbf32-registry-147ba77c-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-a928c76c79da-smart-8e60c9cdbf32-registry-147ba77c-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-stable-cells.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-stable-cells.md",
+    "resources/smart/ui-admin-menu/manifest.json",
+    "resources/adapters/ui.admin_menu.json",
+    "resources/js/admin-smart-event-bridge.js",
+    "src/Assets/AdminSmartEventBridgeAssetManifest.php"
   ],
   "forbidden_files": [
     "config/*",
