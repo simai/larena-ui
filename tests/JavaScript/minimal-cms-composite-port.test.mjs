@@ -72,7 +72,7 @@ test('composite consumes only owner-projected cells and scoped port answers', as
     assert.ok(!JSON.stringify(answer.data.records).includes('user:secret'));
     assert.equal(h.badge.attributes.text, '1');
     assert.equal(h.badge.attributes['aria-label'], 'Элементы: 1');
-    assert.equal(h.badgeText.textContent, '1');
+    assert.equal(h.badgeText.textContent, '450', 'the badge markup is left to the badge');
     assert.equal(h.calls[0].url, 'http://localhost/admin/cms/port');
     assert.deepEqual(JSON.parse(h.calls[0].options.body), {scope_ref: 'scope:cms',
         structure_id: 'workbench.demo_solutions', intent: 'query.change',

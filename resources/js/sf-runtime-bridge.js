@@ -604,9 +604,8 @@
       if (oldCount && label?.endsWith(oldCount)) {
         badge.setAttribute('aria-label', label.slice(0, -oldCount.length) + count);
       }
+      // The badge renders its own text from the attribute; writing into its markup breaks its renderer.
       badge.setAttribute('text', count);
-      var visibleText = badge.querySelector('.sf-badge-text');
-      if (visibleText) visibleText.textContent = count;
     };
     var projectRecord = function (record, keys) {
       // The host supplies Property/owner-projected display cells. Raw reference IDs
