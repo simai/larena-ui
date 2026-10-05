@@ -197,6 +197,11 @@
     "release-artifacts/ui-3e83509fd810-smart-9501b9b58e06-registry-51c8170e-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-3e83509fd810-smart-9501b9b58e06-registry-51c8170e-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-3e83509fd810-smart-9501b9b58e06-registry-51c8170e-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261005-dataview-table-round-5.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261005-dataview-table-round-5.md",
+    "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261005-dataview-table-round-5-fix.md"
   ]
 }
