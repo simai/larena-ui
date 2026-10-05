@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-3e83509fd810-smart-9501b9b58e06` (registry `51c8170e`), with the data view table round five, replacing `ui-13fb3b08c318-smart-e4396290ec1f`.
 - Pin the Framework pair `ui-13fb3b08c318-smart-e4396290ec1f` (registry `b7695882`), with the data view table round four, replacing `ui-727a22fe189e-smart-7d932ed51408`.
 - The admin event bridge sets the menu's «Recent» list (`setRecentResults`) and remembers a result opened from the search panel.
 - The records count beside the heading is updated through the badge's `text` attribute only; writing into the badge's markup broke its renderer (`Cannot set properties of null`).
