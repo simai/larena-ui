@@ -52,6 +52,18 @@
     // (CMS records, storages, users, files) come from /admin/quick-search. A newer query cancels
     // the older request, and the menu itself drops an answer that is no longer the live one.
     let searchRequest = null;
+    // Where each shown result came from, so opening one can be remembered for «Recent».
+    let shownResults = new Map();
+    const rememberShown = (groups) => {
+        for (const group of Array.isArray(groups) ? groups : []) {
+            for (const item of Array.isArray(group?.items) ? group.items : []) {
+                if (item && typeof item.href === 'string') {
+                    shownResults.set(item.href, {text: item.text, subtext: item.subtext, icon: item.icon,
+                        source: typeof item.source === 'string' ? item.source : group.key});
+                }
+            }
+        }
+    };
     document.addEventListener('sf-admin-menu-search', async (event) => {
         const menu = event.target?.closest?.('sf-admin-menu');
         const query = String(event.detail?.query ?? '').trim();
@@ -69,6 +81,7 @@
                 credentials: 'same-origin', signal: controller.signal, headers: {Accept: 'application/json'},
             });
             const payload = response.ok ? await response.json() : {groups: []};
+            rememberShown(payload?.groups);
             const groups = (Array.isArray(payload?.groups) ? payload.groups : [])
                 .filter((group) => group && group.key !== 'menu.sections' && Array.isArray(group.items) && group.items.length);
             menu.setSearchResults(requestId, groups);
@@ -77,7 +90,33 @@
         }
     });
 
+    // «Recent» for the empty field: the results this person last opened from the panel.
+    const loadRecent = async (menu) => {
+        if (typeof menu?.setRecentResults !== 'function') return;
+        try {
+            const response = await fetch('/admin/quick-search/recent', {credentials: 'same-origin', headers: {Accept: 'application/json'}});
+            const payload = response.ok ? await response.json() : {groups: []};
+            rememberShown(payload?.groups);
+            menu.setRecentResults(Array.isArray(payload?.groups) ? payload.groups : []);
+        } catch {
+            menu.setRecentResults([]);
+        }
+    };
+    document.addEventListener('click', (event) => {
+        const link = event.composedPath().find((node) => node instanceof HTMLAnchorElement && node.getAttribute('href'));
+        const panel = link?.closest?.('.sf-admin-menu-panel-search');
+        if (!link || !panel) return;
+        const href = link.getAttribute('href');
+        const item = shownResults.get(href);
+        if (!item || !item.source) return;
+        fetch('/admin/quick-search/recent', {method: 'POST', credentials: 'same-origin', keepalive: true,
+            headers: {Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken()},
+            body: JSON.stringify({text: item.text, subtext: item.subtext || null, href, icon: item.icon || null, source: item.source})})
+            .catch(() => {});
+    }, true);
+
     customElements.whenDefined('sf-admin-menu').then(() => {
+        document.querySelectorAll('sf-admin-menu[search-mode="panel"]').forEach((menu) => { void loadRecent(menu); });
         document.querySelectorAll(selector).forEach((menu) => {
             applyCompactLayout(menu, menu.getProp?.('compact') === true || menu.hasAttribute('compact'));
         });

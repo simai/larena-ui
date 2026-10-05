@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- The admin event bridge sets the menu's «Recent» list (`setRecentResults`) and remembers a result opened from the search panel.
 - The records count beside the heading is updated through the badge's `text` attribute only; writing into the badge's markup broke its renderer (`Cannot set properties of null`).
 - `view.save` passes the view's label; the delete confirmation names one record or the number of checked records.
 - Pin the Framework pair `ui-727a22fe189e-smart-7d932ed51408` (registry `8ca0191d`), with the admin menu search panel in place, replacing `ui-a928c76c79da-smart-8e60c9cdbf32`.
