@@ -202,6 +202,7 @@
     "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-e3060d23fb21-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261005-dataview-table-round-5-fix.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261005-dataview-table-round-5-fix.md",
+    "resources/smart/ui-icon-button/manifest.json"
   ]
 }
