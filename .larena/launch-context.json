@@ -194,7 +194,12 @@
     "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-727a22fe189e-smart-7d932ed51408-registry-8ca0191d-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-menu-search-panel-fix.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261004-menu-search-panel-fix.md",
+    "release-artifacts/ui-13fb3b08c318-smart-e4396290ec1f-registry-b7695882-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-13fb3b08c318-smart-e4396290ec1f-registry-b7695882-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-13fb3b08c318-smart-e4396290ec1f-registry-b7695882-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-13fb3b08c318-smart-e4396290ec1f-registry-b7695882-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261005-dataview-table-round-4.md"
   ],
   "forbidden_files": [
     "config/*",
