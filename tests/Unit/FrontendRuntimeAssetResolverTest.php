@@ -51,12 +51,12 @@ assert(array_column($dataViewAssets, 'asset_key') === [
 $baseline = FrontendRuntimeLock::bundled()->toArray();
 $switched = $baseline;
 $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-$switched['pair_id'] = 'ui-aaaaaaaaaaaa-smart-2e67938d3596';
-$switched['bundle_id'] = 'ui-aaaaaaaaaaaa-smart-2e67938d3596-registry-816a8e7a-exact-git-tree-v2';
+$switched['pair_id'] = 'ui-aaaaaaaaaaaa-smart-237fa22bac3a';
+$switched['bundle_id'] = 'ui-aaaaaaaaaaaa-smart-237fa22bac3a-registry-404eac9c-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = $switched['pair_id'];
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-e3060d23fb21-smart-2e67938d3596');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-05f1c93eae4d-smart-237fa22bac3a');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];
