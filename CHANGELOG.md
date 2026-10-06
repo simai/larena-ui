@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-836001d88fa5-smart-fef30d766b5f` (registry `1fde2a13`), with the modeless property view panel, replacing `ui-aa2dc925113d-smart-57f5d9dc68a5`.
 - Pin the Framework pair `ui-aa2dc925113d-smart-57f5d9dc68a5` (registry `9f5de6a9`), with every reference field's candidates kept, replacing `ui-98f97dae7b79-smart-69b2f94dbc1f`.
 - Pin the Framework pair `ui-98f97dae7b79-smart-69b2f94dbc1f` (registry `f965fe13`), with the record picker in sf-property-view, replacing `ui-2bb868506729-smart-b4638dec898e`.
 - Pin the Framework pair `ui-2bb868506729-smart-b4638dec898e` (registry `e447e808`), with sf-property-view styled and tag-loaded, replacing `ui-3ce7598e932f-smart-f999163c2388`.
