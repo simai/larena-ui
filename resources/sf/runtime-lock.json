@@ -1,44 +1,44 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v3",
   "runtime": "simai-framework",
-  "pair_id": "ui-571f3dc8fc5b-smart-8a820884d00e",
-  "bundle_id": "ui-571f3dc8fc5b-smart-8a820884d00e-registry-daf5f3e6-exact-git-tree-v2",
+  "pair_id": "ui-27bae24b8864-smart-7013a3918410",
+  "bundle_id": "ui-27bae24b8864-smart-7013a3918410-registry-95547a06-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
     "tag": null,
-    "commit": "571f3dc8fc5bc93d4a5d48cfadefcaefb4a5176b",
+    "commit": "27bae24b88640d8c6be959e7dc1296388f4be841",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "b6824cac8c15953ca4968daeac7e2c95d9ff1cd2db8118850502b897aa9a2e59",
+    "sha256": "d8ee6c5dadeda1c3565290525cef2b0dbe453bbe4558f0ca8600736e09411fba",
     "files": 6143
   },
   "ui_smart": {
     "tag": null,
-    "commit": "8a820884d00e3c7f3b310b5f5bd7fecaa267cb45",
+    "commit": "7013a3918410f8facd818db9c8e7d89276f4487e",
     "tree": "smart",
     "mount": "smart",
-    "sha256": "623feb29755aac52484de8854f45176fa366ca31d822cd3f270cb55eed242786",
+    "sha256": "aa4c3e64bb00ba5c752162dff28fddebb624b35f2bf6e4c4a15ad98d9f66e5c1",
     "files": 1159
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-571f3dc8fc5b-smart-8a820884d00e",
+    "compatibility_id": "ui-27bae24b8864-smart-7013a3918410",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "daf5f3e6ea19319b7ab26e311a13d45689ef3e12e8172876bb56c38bc7d9bf29",
+    "file_sha256": "95547a06593ac866501790bee2c2130e66bbf32ade81bc5febd59238c053cbc3",
     "source": {
-      "commit": "27bae24b88640d8c6be959e7dc1296388f4be841",
+      "commit": "aebed0ee96ef028e135799b89a10c7e203954f65",
       "tree": "contracts/generated",
-      "tree_oid": "939583c02b54a08dea6b30ec2066c5119e5bf4c9",
+      "tree_oid": "bd255cb4cbd452ce50ed2369b42aa686e1fdd132",
       "mount": "contract",
-      "sha256": "7df1ab07922dcbd8fa677aa1ad146f633b502bdd6d5ad1471a07b742ca21b730",
+      "sha256": "759126ecd392354058e8eef1c8e90e7bfe895f3bd8f75bad3d24acb0eadd3cd1",
       "files": 2
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "f48562bf964aa11bd78ae0d7ed1a1237ac0426cbb9272bb38e67c76c593f056d"
+      "file_sha256": "0877f07c8b77c108cc2f45609c8a50e5d714e5d95fa447ac4696cc40b84dd5cf"
     }
   },
   "boot": {
