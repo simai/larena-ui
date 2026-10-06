@@ -245,7 +245,12 @@
     "release-artifacts/ui-836001d88fa5-smart-fef30d766b5f-registry-1fde2a13-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-836001d88fa5-smart-fef30d766b5f-registry-1fde2a13-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-836001d88fa5-smart-fef30d766b5f-registry-1fde2a13-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261006-property-panel.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261006-property-panel.md",
+    "release-artifacts/ui-571f3dc8fc5b-smart-8a820884d00e-registry-daf5f3e6-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-571f3dc8fc5b-smart-8a820884d00e-registry-daf5f3e6-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-571f3dc8fc5b-smart-8a820884d00e-registry-daf5f3e6-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-571f3dc8fc5b-smart-8a820884d00e-registry-daf5f3e6-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261007-property-panel-stack.md"
   ],
   "forbidden_files": [
     "config/*",
