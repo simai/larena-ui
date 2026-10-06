@@ -215,7 +215,12 @@
     "release-artifacts/ui-05f1c93eae4d-smart-237fa22bac3a-registry-404eac9c-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-05f1c93eae4d-smart-237fa22bac3a-registry-404eac9c-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-05f1c93eae4d-smart-237fa22bac3a-registry-404eac9c-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261006-typed-cells.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261006-typed-cells.md",
+    "release-artifacts/ui-4ebf9f7f4d63-smart-9a9898d9b1f0-registry-cdbce90c-exact-git-tree-v2/manifest.json",
+    "release-artifacts/ui-4ebf9f7f4d63-smart-9a9898d9b1f0-registry-cdbce90c-exact-git-tree-v2/sources/contract.tar.gz",
+    "release-artifacts/ui-4ebf9f7f4d63-smart-9a9898d9b1f0-registry-cdbce90c-exact-git-tree-v2/sources/smart.tar.gz",
+    "release-artifacts/ui-4ebf9f7f4d63-smart-9a9898d9b1f0-registry-cdbce90c-exact-git-tree-v2/sources/ui.tar.gz",
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261006-tonal-cells.md"
   ],
   "forbidden_files": [
     "config/*",

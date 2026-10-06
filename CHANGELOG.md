@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-4ebf9f7f4d63-smart-9a9898d9b1f0` (registry `cdbce90c`), with tonal choice cells and boolean words from the field, replacing `ui-05f1c93eae4d-smart-237fa22bac3a`.
 - Pin the Framework pair `ui-05f1c93eae4d-smart-237fa22bac3a` (registry `404eac9c`), with every Property type rendered in table cells, replacing `ui-e3060d23fb21-smart-2e67938d3596`.
 - Pin the Framework pair `ui-e3060d23fb21-smart-2e67938d3596` (registry `816a8e7a`), with the filter templates tab fixed, replacing `ui-3e83509fd810-smart-9501b9b58e06`.
 - Pin the Framework pair `ui-3e83509fd810-smart-9501b9b58e06` (registry `51c8170e`), with the data view table round five, replacing `ui-13fb3b08c318-smart-e4396290ec1f`.
