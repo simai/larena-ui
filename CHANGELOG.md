@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-2bb868506729-smart-b4638dec898e` (registry `e447e808`), with sf-property-view styled and tag-loaded, replacing `ui-3ce7598e932f-smart-f999163c2388`.
 - Pin the Framework pair `ui-3ce7598e932f-smart-f999163c2388` (registry `d0959190`), with the first sf-property-view, replacing `ui-4ebf9f7f4d63-smart-9a9898d9b1f0`.
 - Pin the Framework pair `ui-4ebf9f7f4d63-smart-9a9898d9b1f0` (registry `cdbce90c`), with tonal choice cells and boolean words from the field, replacing `ui-05f1c93eae4d-smart-237fa22bac3a`.
 - Pin the Framework pair `ui-05f1c93eae4d-smart-237fa22bac3a` (registry `404eac9c`), with every Property type rendered in table cells, replacing `ui-e3060d23fb21-smart-2e67938d3596`.

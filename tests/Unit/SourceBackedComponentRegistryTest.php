@@ -9,10 +9,10 @@ use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
 assert($lock->tag() === null);
-assert($lock->pairId() === 'ui-3ce7598e932f-smart-f999163c2388');
+assert($lock->pairId() === 'ui-2bb868506729-smart-b4638dec898e');
 assert(str_starts_with($lock->pairId(), 'ui-'));
-assert($lock->toArray()['ui']['commit'] === '3ce7598e932faf9f45991ac80eed9e01ec0f098f');
-assert($lock->toArray()['ui_smart']['commit'] === 'f999163c2388ffd9063866b493fd0528cb86e1c1');
+assert($lock->toArray()['ui']['commit'] === '2bb8685067293a9c3b85bfdafef949b6a9b7265f');
+assert($lock->toArray()['ui_smart']['commit'] === 'b4638dec898e72790cf2c1e21d341535b0830b40');
 
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'smart/buttons');
