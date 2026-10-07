@@ -4,6 +4,7 @@
 
 ## Unreleased — current Framework pair
 
+- Pin the Framework pair `ui-b67a48087c27-smart-2ce766aa8dcc` (registry `71efd13e`), with the property view arrangement, related records and phone step, replacing `ui-27bae24b8864-smart-7013a3918410`.
 - Pin the Framework pair `ui-27bae24b8864-smart-7013a3918410` (registry `95547a06`), with the property view panel laid out, replacing `ui-571f3dc8fc5b-smart-8a820884d00e`.
 - Pin the Framework pair `ui-571f3dc8fc5b-smart-8a820884d00e` (registry `daf5f3e6`), with the property view panel stack, slots and file upload, replacing `ui-836001d88fa5-smart-fef30d766b5f`.
 - Pin the Framework pair `ui-836001d88fa5-smart-fef30d766b5f` (registry `1fde2a13`), with the modeless property view panel, replacing `ui-aa2dc925113d-smart-57f5d9dc68a5`.
