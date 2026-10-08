@@ -10,17 +10,28 @@ use InvalidArgumentException;
 /** Backend projection of the selected Framework page/section types. */
 final class FrameworkLayoutDocumentTypes
 {
-    /** @return array<string,array{validate:Closure,render:Closure}> */
-    public static function registrations(): array
+    /**
+     * @param array<string,string> $hostClasses Trusted host page classes per type (e.g. its stylesheet's names for
+     *                                          the page and the section); never read from the Document.
+     * @return array<string,array{validate:Closure,render:Closure}>
+     */
+    public static function registrations(array $hostClasses = []): array
     {
+        foreach ($hostClasses as $type => $classes) {
+            if (!in_array($type, ['layout.page', 'layout.section'], true)
+                || preg_match('/^[a-z][a-z0-9_-]{0,79}(?: [a-z][a-z0-9_-]{0,79}){0,7}$/D', $classes) !== 1) {
+                throw new InvalidArgumentException('ui_document_layout_host_class_invalid');
+            }
+        }
         $types = [];
         foreach (['layout.page', 'layout.section'] as $type) {
+            $class = $hostClasses[$type] ?? null;
             $types[$type] = ['validate' => static function (array $node) use ($type): void { self::validate($node, $type); },
-                'render' => static function (array $node, array $slots) use ($type): string {
+                'render' => static function (array $node, array $slots) use ($type, $class): string {
                     self::validate($node, $type);
                     $escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
                     $tag = $type === 'layout.page' ? 'main' : 'section';
-                    $attributes = ' data-sf-composition-id="'.$escape($node['id']).'"';
+                    $attributes = ($class === null ? '' : ' class="'.$escape($class).'"').' data-sf-composition-id="'.$escape($node['id']).'"';
                     if ($type === 'layout.section') $attributes .= ' data-composition-preset="'.$escape($node['presentation']['preset'] ?? 'surface').'"';
                     return '<'.$tag.$attributes.'>'.($slots['default'] ?? '').'</'.$tag.'>';
                 }];

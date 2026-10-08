@@ -29,6 +29,12 @@ final readonly class SmartManager
         return new self(SmartRegistry::withDefaults());
     }
 
+    /** The registered manifest of a Smart component; fails closed for an unknown key. */
+    public function manifest(string $key): SmartComponentManifest
+    {
+        return $this->registry->manifest($key);
+    }
+
     /**
      * @param array<string, mixed> $props
      * @param array<string, mixed> $assetActivation

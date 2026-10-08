@@ -253,6 +253,11 @@
     "release-artifacts/ui-b67a48087c27-smart-2ce766aa8dcc-registry-71efd13e-exact-git-tree-v2/sources/contract.tar.gz",
     "release-artifacts/ui-b67a48087c27-smart-2ce766aa8dcc-registry-71efd13e-exact-git-tree-v2/sources/smart.tar.gz",
     "release-artifacts/ui-b67a48087c27-smart-2ce766aa8dcc-registry-71efd13e-exact-git-tree-v2/sources/ui.tar.gz",
-    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261007-property-view-arrangement.md"
+    "docs/project-management/evidence/floating-ui-pair-v1/current-pair-20261007-property-view-arrangement.md",
+    "src/Runtime/SmartDocumentNodeTypes.php",
+    "src/Runtime/FrameworkLayoutDocumentTypes.php",
+    "src/Runtime/SmartManager.php",
+    "tests/Unit/SmartDocumentNodeTypesTest.php",
+    "tests/Unit/FrameworkLayoutDocumentTypesTest.php"
   ]
 }
