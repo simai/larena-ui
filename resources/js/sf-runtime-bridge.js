@@ -712,7 +712,8 @@
       }
       if (intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
         if (sent.action_id === 'bulk_delete') sent.action_id = 'archive';
-        if (storageWorkbench && intent === 'bulk.apply_selected') sent.confirmed = true;
+        // The person confirmed the selection in the dialog above; the host port reads that as its confirmation.
+        if (intent === 'bulk.apply_selected') sent.confirmed = true;
       }
       try {
         var answer = await post(intent, sent, options?.signal);

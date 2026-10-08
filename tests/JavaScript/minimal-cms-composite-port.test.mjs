@@ -99,7 +99,8 @@ test('selected bulk carries one or two revisions through the scoped host port', 
         assert.deepEqual(JSON.parse(call.options.body), {
             scope_ref: 'scope:cms', structure_id: 'workbench.demo_solutions',
             intent: 'bulk.apply_selected',
-            payload: {action_id: 'archive', record_ids: ids, revisions},
+            // The person confirmed in the dialog, so every host port receives the confirmation.
+            payload: {action_id: 'archive', confirmed: true, record_ids: ids, revisions},
         });
     }
 });
