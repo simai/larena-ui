@@ -555,6 +555,8 @@
     var records = view.closest('[data-larena-row-revisions]');
     if (!form || !records || !form.dataset.larenaPortUrl?.startsWith('/')) return;
     var storageWorkbench = records.dataset.larenaStorageWorkbenchComposite === '1';
+    // A list whose page asks for it keeps the open saved view in its query (the Storage section).
+    var openViewInQuery = records.dataset.larenaOpenViewInQuery === '1';
     var scope = form.querySelector('[name="scope_ref"]')?.value;
     var structure = form.querySelector('[name="structure_id"]')?.value;
     if (!scope || !structure || view.dataset.larenaPortConnected === 'true') return;
@@ -710,6 +712,10 @@
           if (payload && Object.hasOwn(payload, property)) sent[property] = payload[property];
         }
       }
+      // While a saved view is open in such a list, a column change is saved into that view.
+      if (openViewInQuery && intent === 'settings.save_personal' && typeof view.query?.saved_view_id === 'string') {
+        sent.saved_view_id = view.query.saved_view_id;
+      }
       if (intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
         if (sent.action_id === 'bulk_delete') sent.action_id = 'archive';
         // The person confirmed the selection in the dialog above; the host port reads that as its confirmation.
@@ -718,8 +724,9 @@
       try {
         var answer = await post(intent, sent, options?.signal);
         // The composite drops an obsolete reply after raise resolves; host-owned counters
-        // and row revisions must wait for that same newest query.
-        if (answer.answer === 'applied' && answer.data
+        // and row revisions must wait for that same newest query. An answer without rows (the new
+        // column settings after a save) goes to the data view as it is.
+        if (answer.answer === 'applied' && answer.data && Array.isArray(answer.data.records)
           && (intent !== 'query.change' || payload?.sequence === latestQuerySequence)) {
           answer.data = project(answer.data);
           if (intent === 'query.change') {
@@ -731,6 +738,14 @@
               return [row.id, row.revision];
             })));
           }
+        }
+        if (openViewInQuery && (intent === 'view.open' || intent === 'view.delete')) {
+          // The Storage list keeps the open saved view in its query: the queries that follow show
+          // that view's column layout. Deleting it, or opening something else, leaves it.
+          var opened = {...(view.query || {})};
+          if (intent === 'view.open' && answer.answer === 'applied') opened.saved_view_id = payload?.key;
+          else if (intent === 'view.open' || (answer.answer === 'applied' && opened.saved_view_id === payload?.key)) delete opened.saved_view_id;
+          view.query = opened;
         }
         if (answer.answer === 'applied' && intent === 'record.open') navigateRecord(payload.record_ids[0], 'view');
         if (answer.answer === 'applied' && intent === 'record.mutate' && payload.action_id === 'edit') {

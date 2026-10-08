@@ -6,7 +6,7 @@ import fs from 'node:fs';
 const source = fs.readFileSync(new URL('../../resources/js/sf-runtime-bridge.js', import.meta.url), 'utf8');
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-async function harness(data, {bulkAll = false, storageWorkbench = false} = {}) {
+async function harness(data, {bulkAll = false, storageWorkbench = false, openViewInQuery = false} = {}) {
     const calls = [];
     const surface = {hidden: true};
     const legacy = {open: true};
@@ -19,7 +19,7 @@ async function harness(data, {bulkAll = false, storageWorkbench = false} = {}) {
     const records = {dataset: {larenaFilterFields: JSON.stringify([{key: 'owner', label: 'Owner', filter: {control: 'entity-multi-select'}}]),
         larenaPortCapabilities: JSON.stringify(storageWorkbench ? [] : ['saved-views', 'row-actions']),
         larenaRowRevisions: '{}', larenaMatchedCount: '0', larenaBulkAll: bulkAll ? '1' : '',
-        larenaStorageWorkbenchComposite: storageWorkbench ? '1' : ''},
+        larenaStorageWorkbenchComposite: storageWorkbench ? '1' : '', larenaOpenViewInQuery: openViewInQuery ? '1' : ''},
     querySelector: selector => selector === '[data-larena-composite-surface]' ? surface : null,
     closest: selector => selector === '.larena-workbench-records'
         ? {querySelector: target => target === '[data-larena-storage-legacy]' ? legacy
@@ -192,4 +192,25 @@ test('a saved record writes only its own row again, asking the page that holds i
     // A record the shown rows do not hold asks the table for its page again.
     assert.equal(await h.view.larenaRefreshRecord('record-9'), false);
     assert.equal(refreshed, 1);
+});
+
+test('column settings answers reach the data view as they are, and the Storage list keeps an open saved view', async () => {
+    const settings = {columns: [{key: 'owner', visible: false}], column_settings: {layers: {personal: {revision: 2, columns: {owner: {visible: false}}}},
+        target: {kind: 'personal', revision: 2, key: null}}};
+    const h = await harness(count => count === 1 ? {answer: 'applied', data: settings}
+        : count === 2 ? {answer: 'applied', data: {columns: [{key: 'owner'}], total: 0, records: []}}
+            : {answer: 'applied', data: settings}, {openViewInQuery: true});
+    const saved = await h.view.port.raise('settings.save_personal', {columnSettings: {owner: {visible: false}}, base_revision: 1}, {});
+    assert.deepEqual(JSON.parse(JSON.stringify(saved.data)), settings, 'an answer without rows is not projected');
+    assert.equal(JSON.parse(h.calls[0].options.body).payload.saved_view_id, undefined);
+    await h.view.port.raise('view.open', {key: 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa'}, {});
+    assert.equal(h.view.query.saved_view_id, 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa');
+    await h.view.port.raise('settings.save_personal', {columnSettings: {}, base_revision: 1}, {});
+    assert.equal(JSON.parse(h.calls[2].options.body).payload.saved_view_id, 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa',
+        'a change while a saved view is open is written into that view');
+    await h.view.port.raise('view.delete', {key: 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa'}, {});
+    assert.equal(h.view.query.saved_view_id, undefined);
+    const cms = await harness({answer: 'applied'});
+    await cms.view.port.raise('view.open', {key: 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa'}, {});
+    assert.equal(cms.view.query.saved_view_id, undefined, 'the Minimal CMS list keeps its own behaviour');
 });
