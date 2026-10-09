@@ -36,6 +36,7 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     const pagination = {attributes: {}, setAttribute(name, value) { this.attributes[name] = value; }};
     const view = {dataset: {}, table, pagination, closest: selector => selector === 'form[data-larena-dataview-query]' ? form
         : selector === '[data-larena-row-revisions]' ? records : null,
+    listeners: {}, addEventListener(type, listener) { this.listeners[type] = listener; },
     setHostPort(port) { this.port = port; }};
     const document = {readyState: 'complete', documentElement: {dataset: {}},
         getElementById: id => id === 'minimal-cms-record-count' ? badge : null,
@@ -158,6 +159,18 @@ test('composite view save sends only host-owned fields with revision and full vi
     assert.deepEqual(JSON.parse(h.calls[0].options.body).payload, {key: 'draft', label: 'Draft', revision: 2,
         query: {search: 'needle'}, roles: {title: 'owner'},
         layout: {columns: [{key: 'owner'}]}, settings: {density: 'compact'}});
+});
+
+test('a view saved with «Save for all» ticked in the table form goes to the host as a view for everyone', async () => {
+    const h = await harness({answer: 'applied'});
+    const save = key => h.view.port.raise('view.save', {key, label: 'Ours', query: {}}, {});
+    h.view.listeners['sf-table-template-save']({detail: {key: 'filter_template_1', label: 'Ours', data: {template_save_for_all: '1'}}});
+    await save('filter_template_1');
+    // The choice is used once: a later save of the composite's own is the person's view.
+    await save('filter_template_1');
+    h.view.listeners['sf-table-template-save']({detail: {key: 'filter_template_2', label: 'Mine', data: {}}});
+    await save('filter_template_2');
+    assert.deepEqual(h.calls.map(call => JSON.parse(call.options.body).payload.target), ['shared', undefined, undefined]);
 });
 
 test('missing owner display projection refuses the page without exposing raw IDs', async () => {

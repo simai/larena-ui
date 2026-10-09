@@ -590,6 +590,14 @@
     var actions = {'record.view': 'view', 'record.edit': 'edit', 'record.delete': 'delete',
       'record.restore': 'restore'};
     var latestQuerySequence = null;
+    // The table's save form has «Save for all»; the composite does not pass it on with the view, so
+    // the page keeps it for the save of that view that follows.
+    var saveForAll = null;
+    view.addEventListener?.('sf-table-template-save', function (event) {
+      var detail = event.detail && !Array.isArray(event.detail) ? event.detail : null;
+      var flag = detail?.data?.template_save_for_all;
+      saveForAll = detail ? {key: detail.key, shared: flag === true || flag === '1' || flag === 'on'} : null;
+    }, true);
     var syncMatchedCount = function (total) {
       var count = String(total);
       records.dataset.larenaMatchedCount = count;
@@ -711,6 +719,8 @@
         for (var property of ['roles', 'layout', 'settings']) {
           if (payload && Object.hasOwn(payload, property)) sent[property] = payload[property];
         }
+        if (saveForAll && saveForAll.key === payload?.key && saveForAll.shared) sent.target = 'shared';
+        saveForAll = null;
       }
       // While a saved view is open in such a list, a column change is saved into that view.
       if (openViewInQuery && intent === 'settings.save_personal' && typeof view.query?.saved_view_id === 'string') {
