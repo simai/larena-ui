@@ -42,7 +42,10 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
         getElementById: id => id === 'minimal-cms-record-count' ? badge : null,
         querySelector: selector => selector === 'sf-data-view' ? view : null,
         querySelectorAll: selector => selector === 'sf-data-view' ? [view] : []};
-    const window = {location: new URL('http://localhost/admin/cms'), dispatchEvent() {}, confirm: () => true};
+    const assigned = [];
+    const location = new URL('http://localhost/admin/cms');
+    location.assign = (href) => assigned.push(String(href));
+    const window = {location, dispatchEvent() {}, confirm: () => true};
     const context = {document, window, URL, JSON, Object, AbortController,
         customElements: {whenDefined: async () => {}},
         MutationObserver: class { observe() {} disconnect() {} },
@@ -51,7 +54,7 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
             typeof data === 'function' ? data(calls.length) : data}; }};
     vm.runInNewContext(source, context);
     await tick();
-    return {view, table, pagination, records, calls, surface, legacy, badge, badgeText, heading};
+    return {view, table, pagination, records, calls, surface, legacy, badge, badgeText, heading, assigned};
 }
 
 test('composite consumes only owner-projected cells and scoped port answers', async () => {
@@ -171,6 +174,14 @@ test('a view saved with «Save for all» ticked in the table form goes to the ho
     h.view.listeners['sf-table-template-save']({detail: {key: 'filter_template_2', label: 'Mine', data: {}}});
     await save('filter_template_2');
     assert.deepEqual(h.calls.map(call => JSON.parse(call.options.body).payload.target), ['shared', undefined, undefined]);
+});
+
+test('a «Create» item with an address the host built opens that address', async () => {
+    const h = await harness({answer: 'applied'});
+    h.view.dataset.larenaCreateItems = JSON.stringify([{id: 'record', name: 'Record'},
+        {id: 'field-section', name: 'Section', href: '/admin/storage/workbench.sections?record_mode=create#minimal-cms-record-editor'}]);
+    await h.view.port.raise('view.create_record', {item: 'field-section'}, {});
+    assert.deepEqual(h.assigned, ['http://localhost/admin/storage/workbench.sections?record_mode=create#minimal-cms-record-editor']);
 });
 
 test('missing owner display projection refuses the page without exposing raw IDs', async () => {

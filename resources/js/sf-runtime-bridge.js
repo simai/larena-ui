@@ -765,7 +765,15 @@
           // A composite «Create» item may name another structure (a section from the catalog list).
           var created = parse(view.dataset.larenaCreateItems || '[]', []);
           var item = Array.isArray(created) ? created.find(function (entry) { return entry && entry.id === payload?.item; }) : null;
-          navigateRecord('', 'create', item && typeof item.structure_id === 'string' ? item.structure_id : null);
+          // An item may carry the address the host built for it (the Storage section keeps the storage in its path).
+          if (item && typeof item.href === 'string' && item.href.startsWith('/admin/')) {
+            var target = new URL(item.href, window.location.href);
+            if (!(window.LarenaRecordPanel && target.pathname === window.location.pathname && window.LarenaRecordPanel.open(target.href))) {
+              window.location.assign(target.href);
+            }
+          } else {
+            navigateRecord('', 'create', item && typeof item.structure_id === 'string' ? item.structure_id : null);
+          }
         }
         return answer;
       } catch (error) {
