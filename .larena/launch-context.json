@@ -333,7 +333,10 @@
     "release-artifacts/ui-eb212efe40cd-smart-9e8d8e762e03-registry-856fa165-exact-git-tree-v2/sources/ui.tar.gz",
     "scripts/package-frontend-runtime-artifact.py",
     "src/Frontend/FrameworkContractRegistry.php",
-    "src/Frontend/FrontendRuntimeLock.php"
+    "src/Frontend/FrontendRuntimeLock.php",
+    "components/*",
+    ".gitattributes",
+    "LICENSE"
   ],
   "forbidden_files": [
     "config/*",

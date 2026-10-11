@@ -1,0 +1,3 @@
+# The Larena components sources (written by the SIMAI Framework session) are built into the
+# runtime artifact; the composer archive of this package does not carry them.
+/components export-ignore
