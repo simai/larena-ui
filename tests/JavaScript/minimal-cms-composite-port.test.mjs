@@ -45,7 +45,8 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     const assigned = [];
     const location = new URL('http://localhost/admin/cms');
     location.assign = (href) => assigned.push(String(href));
-    const window = {location, dispatchEvent() {}, confirm: () => true};
+    const confirmed = [];
+    const window = {location, dispatchEvent() {}, confirm: (message) => { confirmed.push(message); return true; }};
     const context = {document, window, URL, JSON, Object, AbortController,
         customElements: {whenDefined: async () => {}},
         MutationObserver: class { observe() {} disconnect() {} },
@@ -54,7 +55,7 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
             typeof data === 'function' ? data(calls.length) : data}; }};
     vm.runInNewContext(source, context);
     await tick();
-    return {view, table, pagination, records, calls, surface, legacy, badge, badgeText, heading, assigned};
+    return {view, table, pagination, records, calls, surface, legacy, badge, badgeText, heading, assigned, confirmed};
 }
 
 test('composite consumes only owner-projected cells and scoped port answers', async () => {
@@ -182,6 +183,19 @@ test('a «Create» item with an address the host built opens that address', asyn
         {id: 'field-section', name: 'Section', href: '/admin/storage/workbench.sections?record_mode=create#minimal-cms-record-editor'}]);
     await h.view.port.raise('view.create_record', {item: 'field-section'}, {});
     assert.deepEqual(h.assigned, ['http://localhost/admin/storage/workbench.sections?record_mode=create#minimal-cms-record-editor']);
+});
+
+test('an action under the filter names the search and asks with its own message', async () => {
+    const h = await harness({answer: 'applied', count: 3});
+    h.records.dataset.larenaMatchedCount = '3';
+    h.records.dataset.larenaConfirmBulkDelete = 'Selected: :count?';
+    h.records.dataset.larenaConfirmBulkDeleteAll = 'All under the filter: :count?';
+    h.view.query = {...(h.view.query || {}), search: 'An'};
+    await h.view.port.raise('bulk.apply_under_filter', {action_id: 'bulk_delete', filters: {}, confirmed_total: 3}, {});
+    assert.deepEqual(h.confirmed, ['All under the filter: 3?']);
+    const sent = JSON.parse(h.calls.at(-1).options.body).payload;
+    assert.equal(sent.search, 'An');
+    assert.equal(sent.action_id, 'archive');
 });
 
 test('missing owner display projection refuses the page without exposing raw IDs', async () => {

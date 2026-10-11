@@ -706,7 +706,9 @@
         var single = intent === 'record.mutate';
         var count = single ? 1 : (intent === 'bulk.apply_under_filter' ? Number(records.dataset.larenaMatchedCount) || 0
           : (Array.isArray(payload?.record_ids) ? payload.record_ids.length : 0));
-        var message = (single && records.dataset.larenaConfirmRecordDelete) || records.dataset.larenaConfirmBulkDelete || 'Confirm this action?';
+        var message = (single && records.dataset.larenaConfirmRecordDelete)
+          || (intent === 'bulk.apply_under_filter' && records.dataset.larenaConfirmBulkDeleteAll)
+          || records.dataset.larenaConfirmBulkDelete || 'Confirm this action?';
         if (!window.confirm(message.replace(':count', String(count)))) {
           return {answer: 'refused', reason: 'cancelled'};
         }
@@ -730,6 +732,9 @@
         if (sent.action_id === 'bulk_delete') sent.action_id = 'archive';
         // The person confirmed the selection in the dialog above; the host port reads that as its confirmation.
         if (intent === 'bulk.apply_selected') sent.confirmed = true;
+        // The composite names the filters of an action under the filter; the search narrows the same list,
+        // so the host counts what the person saw.
+        if (intent === 'bulk.apply_under_filter' && typeof view.query?.search === 'string') sent.search = view.query.search;
       }
       try {
         var answer = await post(intent, sent, options?.signal);
