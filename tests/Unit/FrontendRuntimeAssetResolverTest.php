@@ -53,12 +53,12 @@ $switched = $baseline;
 $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 $switched['ui']['release'] = 'ui-aaaaaaaaaaaa';
 $switched['larena']['requires_framework'] = 'ui-aaaaaaaaaaaa';
-$switched['pair_id'] = 'ui-aaaaaaaaaaaa-larena-39a533137abc';
+$switched['pair_id'] = 'ui-aaaaaaaaaaaa-larena-31f934cd9508';
 $switched['bundle_id'] = $switched['pair_id'] . '-registry-695d967e-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = 'ui-aaaaaaaaaaaa';
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-ec56cef08625-larena-39a533137abc');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-ec56cef08625-larena-31f934cd9508');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];
