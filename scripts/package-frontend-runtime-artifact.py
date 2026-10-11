@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Materialize an immutable Larena UI runtime artifact from exact Git trees."""
+"""Materialize an immutable Larena UI runtime artifact from exact Git trees.
+
+The artifact is built from the free SIMAI Framework release (simai/ui) and the SIMAI Framework Pro release
+built against it (simai/ui-pro, private). It is written outside any Git repository: no Framework bytes are
+committed; the lock in resources/sf/runtime-lock.json names both releases and their hashes.
+"""
 
 from __future__ import annotations
 
@@ -82,13 +87,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lock", required=True, type=Path)
     parser.add_argument("--ui-repository", required=True, type=Path)
-    parser.add_argument("--smart-repository", required=True, type=Path)
-    parser.add_argument("--contract-repository", required=True, type=Path)
+    parser.add_argument("--pro-repository", required=True, type=Path)
     parser.add_argument("--output-root", required=True, type=Path)
     arguments = parser.parse_args()
 
     lock = json.loads(arguments.lock.read_text())
-    if lock.get("schema") != "larena.ui.frontend_runtime_lock.v3":
+    if lock.get("schema") != "larena.ui.frontend_runtime_lock.v4":
         raise RuntimeError("runtime_lock_schema_invalid")
     if lock.get("publication_profile") != "exact-git-tree-v2":
         raise RuntimeError("runtime_publication_profile_invalid")
@@ -96,6 +100,8 @@ def main() -> None:
     expected_bundle = f"{lock['pair_id']}-registry-{lock['framework_registry']['file_sha256'][:8]}-exact-git-tree-v2"
     if bundle_id != expected_bundle:
         raise RuntimeError("runtime_bundle_identity_mismatch")
+    if lock["pro"]["requires_framework"] != lock["ui"]["release"]:
+        raise RuntimeError("runtime_pro_framework_mismatch")
     destination = arguments.output_root / bundle_id
     if destination.exists() or destination.is_symlink():
         raise RuntimeError("runtime_artifact_already_exists")
@@ -107,8 +113,8 @@ def main() -> None:
         sources.mkdir()
         receipts = [
             source_receipt(lock["ui"], arguments.ui_repository, "ui.tar.gz", sources),
-            source_receipt(lock["ui_smart"], arguments.smart_repository, "smart.tar.gz", sources),
-            source_receipt(lock["framework_registry"]["source"], arguments.contract_repository, "contract.tar.gz", sources),
+            source_receipt(lock["pro"], arguments.pro_repository, "pro.tar.gz", sources),
+            source_receipt(lock["framework_registry"]["source"], arguments.ui_repository, "contract.tar.gz", sources),
         ]
         manifest = {
             "schema": "larena.ui.frontend_runtime_artifact.v1",

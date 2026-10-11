@@ -32,7 +32,18 @@ final readonly class FrontendRuntimeLock
         return $lock;
     }
 
+    /** The free Framework release and the Pro release built against it, as one id: ui-<12>-pro-<12>. */
     public function pairId(): string { return (string) $this->data['pair_id']; }
+    /** The free Framework release (ui-<12>); the contract registry names it. */
+    public function frameworkId(): string { return (string) $this->data['ui']['release']; }
+    /** The SIMAI Framework Pro release (pro-<12>): sf-table, sf-data-view, sf-property-view, sf-admin-menu. */
+    public function proId(): string { return (string) $this->data['pro']['release']; }
+    /** Where the Pro package's Smart tree sits in the published bundle; the page declares it before core.js. */
+    public function proBase(): string { return (string) $this->data['boot']['pro_base']; }
+    /** Where the free Framework's Smart tree sits in the published bundle. */
+    public function smartBase(): string { return (string) $this->data['boot']['smart_base_path']; }
+    /** Where the free Framework's runtime (core, components, utilities) sits in the published bundle. */
+    public function uiBase(): string { return (string) $this->data['boot']['ui_base']; }
     public function bundleId(): string { return (string) $this->data['bundle_id']; }
     public function publicationProfile(): string { return (string) $this->data['publication_profile']; }
     public function tag(): ?string
@@ -76,7 +87,7 @@ final readonly class FrontendRuntimeLock
             'publication_profile' => $this->publicationProfile(),
             'sources' => [
                 $this->publicationReceipt($this->data['ui']),
-                $this->publicationReceipt($this->data['ui_smart']),
+                $this->publicationReceipt($this->data['pro']),
                 $this->publicationReceipt($this->data['framework_registry']['source']),
             ],
         ];
@@ -104,10 +115,15 @@ final readonly class FrontendRuntimeLock
         return array_values(array_unique($files));
     }
 
-    /** @return list<array{repository:string,commit:string,tree:string,mount:string,sha256:string}> */
-    public function publicationSources(string $uiRepository, string $smartRepository): array
+    /**
+     * The three exact Git trees a bundle is built from: the free Framework runtime, the Pro Smart tree and
+     * the free Framework's contract registry. The Pro repository is private; only the build reads it.
+     *
+     * @return list<array{repository:string,commit:string,tree:string,mount:string,sha256:string}>
+     */
+    public function publicationSources(string $uiRepository, string $proRepository): array
     {
-        $repositories = [$uiRepository, $smartRepository, $uiRepository];
+        $repositories = [$uiRepository, $proRepository, $uiRepository];
 
         return array_map(
             static fn (array $source, int $index): array => [
@@ -140,53 +156,46 @@ final readonly class FrontendRuntimeLock
 
     private function assertValid(): void
     {
-        $publicationProfile = $this->data['publication_profile'] ?? null;
-        $revisionPair = $publicationProfile === 'exact-git-tree-v2'
-            && preg_match('/^ui-[a-f0-9]{12}-smart-[a-f0-9]{12}$/', (string) ($this->data['pair_id'] ?? '')) === 1;
-        $stableTag = '/^v\d+\.\d+\.\d+$/';
-        $candidateTag = '/^v\d+\.\d+\.\d+(?:-[0-9A-Za-z]+(?:\.[0-9A-Za-z]+)*)?$/';
-        $tagPattern = $publicationProfile === 'exact-git-tree-v2' ? $candidateTag : $stableTag;
-        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v3'
+        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v4'
             || ($this->data['runtime'] ?? null) !== 'simai-framework'
-            || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['pair_id'] ?? ''))
+            || ($this->data['publication_profile'] ?? null) !== 'exact-git-tree-v2'
+            || !array_key_exists('tag', $this->data) || $this->data['tag'] !== null
+            || preg_match('/^ui-[a-f0-9]{12}-pro-[a-f0-9]{12}$/', (string) ($this->data['pair_id'] ?? '')) !== 1
             || !preg_match('/^[a-z0-9][a-z0-9._-]+$/', (string) ($this->data['bundle_id'] ?? ''))
-            || !in_array($publicationProfile, ['verified-release-artifact-v1', 'exact-git-tree-v2'], true)
-            || (!($revisionPair && array_key_exists('tag', $this->data) && $this->data['tag'] === null)
-                && !preg_match($tagPattern, (string) ($this->data['tag'] ?? '')))
         ) {
             throw new RuntimeException('ui_frontend_runtime_lock_invalid');
         }
-        foreach (['ui', 'ui_smart'] as $source) {
+        foreach (['ui' => 'simai/ui', 'pro' => 'simai/ui-pro'] as $source => $repository) {
             $value = $this->data[$source] ?? null;
             if (!is_array($value)
-                || (!($revisionPair && array_key_exists('tag', $value) && $value['tag'] === null)
-                    && !preg_match($candidateTag, (string) ($value['tag'] ?? '')))
+                || !array_key_exists('tag', $value) || $value['tag'] !== null
+                || ($value['repository'] ?? null) !== $repository
                 || !$this->validPublicationSource($value)
             ) {
                 throw new RuntimeException('ui_frontend_runtime_source_invalid:' . $source);
             }
         }
-        if (($this->data['ui']['tag'] ?? null) !== ($this->data['tag'] ?? null)
-            || ($this->data['ui']['tree'] ?? null) !== 'distr'
-            || ($this->data['ui']['mount'] ?? null) !== 'ui'
-            || ($this->data['ui_smart']['tree'] ?? null) !== 'smart'
-            || ($this->data['ui_smart']['mount'] ?? null) !== 'smart'
+        $ui = $this->data['ui'];
+        $pro = $this->data['pro'];
+        // The free release lives in simai/ui under distr; Pro is a Smart tree of its own.
+        if (($ui['tree'] ?? null) !== 'distr' || ($ui['mount'] ?? null) !== 'ui'
+            || ($pro['tree'] ?? null) !== 'smart' || ($pro['mount'] ?? null) !== 'pro'
         ) {
             throw new RuntimeException('ui_frontend_runtime_source_layout_invalid');
         }
 
-        $expectedPairId = $revisionPair ? sprintf(
-            'ui-%s-smart-%s',
-            substr((string) $this->data['ui']['commit'], 0, 12),
-            substr((string) $this->data['ui_smart']['commit'], 0, 12),
-        ) : sprintf(
-            'sf-%s-%s-%s',
-            (string) $this->data['tag'],
-            substr((string) $this->data['ui']['commit'], 0, 8),
-            substr((string) $this->data['ui_smart']['commit'], 0, 8),
-        );
-        if ($this->data['pair_id'] !== $expectedPairId) {
+        $frameworkId = 'ui-' . substr((string) $ui['commit'], 0, 12);
+        $proId = 'pro-' . substr((string) $pro['commit'], 0, 12);
+        $expectedPairId = $frameworkId . '-' . $proId;
+        if (($ui['release'] ?? null) !== $frameworkId
+            || ($pro['release'] ?? null) !== $proId
+            || $this->data['pair_id'] !== $expectedPairId
+        ) {
             throw new RuntimeException('ui_frontend_runtime_pair_identity_mismatch');
+        }
+        // A Pro release is built against exactly one free release; the two are always pinned together.
+        if (($pro['requires_framework'] ?? null) !== $frameworkId) {
+            throw new RuntimeException('ui_frontend_runtime_pro_framework_mismatch');
         }
 
         $registry = $this->data['framework_registry'] ?? null;
@@ -195,7 +204,7 @@ final readonly class FrontendRuntimeLock
             : null;
         if (!is_array($registry)
             || ($registry['schema_id'] ?? null) !== 'simai.framework.contract-registry'
-            || ($registry['compatibility_id'] ?? null) !== $expectedPairId
+            || ($registry['compatibility_id'] ?? null) !== $frameworkId
             || ($registry['profile'] ?? null) !== 'plain-assets-v1'
             || ($registry['relative_path'] ?? null) !== 'contract/contracts/generated/framework-contract-registry.json'
             || !$this->safeRelativePath($registry['relative_path'])
@@ -205,16 +214,11 @@ final readonly class FrontendRuntimeLock
             || ($source['tree'] ?? null) !== 'contracts/generated'
             || !preg_match('/^[a-f0-9]{40}$/', (string) ($source['tree_oid'] ?? ''))
             || ($source['mount'] ?? null) !== 'contract'
-            || (!$revisionPair && ($source['files'] ?? null) !== 1)
         ) {
             throw new RuntimeException('ui_frontend_framework_registry_lock_invalid');
         }
 
-        $mounts = [
-            (string) $this->data['ui']['mount'],
-            (string) $this->data['ui_smart']['mount'],
-            (string) $source['mount'],
-        ];
+        $mounts = [(string) $ui['mount'], (string) $pro['mount'], (string) $source['mount']];
         if (count(array_unique($mounts)) !== count($mounts)) {
             throw new RuntimeException('ui_frontend_runtime_source_mount_duplicate');
         }
@@ -222,10 +226,7 @@ final readonly class FrontendRuntimeLock
             throw new RuntimeException('ui_frontend_framework_registry_path_outside_mount');
         }
 
-        $this->assertRuntimePaths(
-            (string) $this->data['ui']['mount'],
-            (string) $this->data['ui_smart']['mount'],
-        );
+        $this->assertRuntimePaths((string) $ui['mount'], (string) $pro['mount']);
 
         $expectedBundleId = $expectedPairId
             . '-registry-' . substr((string) $registry['file_sha256'], 0, 8)
@@ -246,7 +247,7 @@ final readonly class FrontendRuntimeLock
             && $source['files'] > 0;
     }
 
-    private function assertRuntimePaths(string $uiMount, string $smartMount): void
+    private function assertRuntimePaths(string $uiMount, string $proMount): void
     {
         $boot = $this->data['boot'] ?? null;
         if (!is_array($boot)) {
@@ -259,9 +260,11 @@ final readonly class FrontendRuntimeLock
                 throw new RuntimeException('ui_frontend_runtime_boot_path_invalid:' . $field);
             }
         }
-        foreach (['ui_base' => $uiMount, 'smart_base_path' => $smartMount] as $field => $mount) {
+        foreach (['ui_base' => $uiMount, 'smart_base_path' => $uiMount, 'pro_base' => $proMount] as $field => $mount) {
             $path = $boot[$field] ?? null;
-            if (!$this->safeRelativePath($path, true) || !$this->insideMount((string) $path, $mount, true)) {
+            if (!$this->safeRelativePath($path, true) || !$this->insideMount((string) $path, $mount, true)
+                || !str_ends_with((string) $path, '/')
+            ) {
                 throw new RuntimeException('ui_frontend_runtime_boot_path_invalid:' . $field);
             }
         }
@@ -271,13 +274,21 @@ final readonly class FrontendRuntimeLock
             throw new RuntimeException('ui_frontend_runtime_components_invalid');
         }
         foreach ($components as $tag => $component) {
+            // A free component lives in the free Smart tree, a Pro one in the Pro tree; nothing else.
+            $package = is_array($component) ? ($component['package'] ?? null) : null;
+            $base = match ($package) {
+                'framework' => (string) $boot['smart_base_path'],
+                'pro' => (string) $boot['pro_base'],
+                default => null,
+            };
             if (!is_string($tag)
                 || preg_match('/^sf-[a-z0-9]+(?:-[a-z0-9]+)*$/', $tag) !== 1
                 || !is_array($component)
+                || $base === null
                 || !$this->safeRelativePath($component['source'] ?? null)
-                || !$this->insideMount((string) ($component['source'] ?? ''), $smartMount)
+                || !str_starts_with((string) ($component['source'] ?? ''), $base)
                 || !$this->safeRelativePath($component['javascript'] ?? null)
-                || !$this->insideMount((string) ($component['javascript'] ?? ''), $smartMount)
+                || !str_starts_with((string) ($component['javascript'] ?? ''), $base)
                 || !array_key_exists('css', $component)
             ) {
                 throw new RuntimeException('ui_frontend_runtime_component_invalid:' . (string) $tag);
@@ -286,7 +297,7 @@ final readonly class FrontendRuntimeLock
             $css = $component['css'];
             if ($css !== null
                 && (!$this->safeRelativePath($css)
-                    || (!$this->insideMount((string) $css, $smartMount)
+                    || (!$this->insideMount((string) $css, $proMount)
                         && !$this->insideMount((string) $css, $uiMount)))
             ) {
                 throw new RuntimeException('ui_frontend_runtime_component_css_invalid:' . $tag);
