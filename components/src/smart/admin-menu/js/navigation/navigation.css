@@ -640,14 +640,18 @@
 
   /* ─── the profile menu ──────────────────────────────────────────────────── */
 
-  /* Above the person who opened it, wider than the rail when the menu is
-     collapsed, on step 3 like every other surface that floats here. */
+  /* Above the person who opened it, on step 3 like every other surface that
+     floats here. Its width is its own, not the column's: wider than the first
+     column (f6), so «Безопасность учётной записи» and a row with its value read
+     whole, and as wide as its longest line up to g2, never past the window. */
   .sf-admin-nav-account {
     position: absolute;
     z-index: 10;
     inset-block-end: calc(100% - var(--sf-a4));
     inset-inline-start: var(--sf-a4);
-    inline-size: var(--sf-f4);
+    inline-size: max-content;
+    min-inline-size: var(--sf-f8);
+    max-inline-size: min(var(--sf-g2), calc(100vw - 2 * var(--sf-a4)));
     max-block-size: var(--sf-g9);
     display: flex;
     flex-direction: column;
@@ -664,6 +668,8 @@
   .sf-admin-nav[data-wide="false"] .sf-admin-nav-account {
     inset-inline-end: var(--sf-a4);
     inline-size: auto;
+    min-inline-size: 0;
+    max-inline-size: none;
   }
 
   .sf-admin-nav-account button.sf-admin-nav-row {

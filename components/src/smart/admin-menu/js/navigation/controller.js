@@ -333,6 +333,15 @@ export class NavigationController {
             const first = !this.navigation;
             this.navigation = answer;
             if (first) this.applyPersonPreferences(answer.person);
+            // On a wide screen the menu opens where the page is: the root that
+            // holds the current row shows its column, as a person who came
+            // through it last left it. Only on the first answer -- a root the
+            // person closed stays closed when the menu is read again.
+            if (first && this.wide && !this.openRoot && !answer.person?.compact) {
+                const holder = this.roots().find((root) => this.holdsCurrent(root)
+                    && root.key !== answer.current && (root.children ?? []).length > 0);
+                if (holder) this.openRoot = holder.key;
+            }
             this.status = "ready";
             this.message = "";
             this.compact = Boolean(answer.person?.compact);
