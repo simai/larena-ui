@@ -8,12 +8,12 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
 // The free Framework release and the Larena components package built over it, pinned together.
-assert($lock->pairId() === 'ui-ec56cef08625-larena-31f934cd9508');
+assert($lock->pairId() === 'ui-ec56cef08625-larena-97781825e5a2');
 assert($lock->frameworkId() === 'ui-ec56cef08625');
-assert($lock->larenaId() === 'larena-31f934cd9508');
+assert($lock->larenaId() === 'larena-97781825e5a2');
 assert($lock->toArray()['larena']['requires_framework'] === $lock->frameworkId());
 assert($lock->toArray()['larena']['repository'] === 'simai/larena-ui' && $lock->toArray()['larena']['package_path'] === 'components');
-assert($lock->bundleId() === 'ui-ec56cef08625-larena-31f934cd9508-registry-695d967e-exact-git-tree-v2');
+assert($lock->bundleId() === 'ui-ec56cef08625-larena-97781825e5a2-registry-695d967e-exact-git-tree-v2');
 assert($lock->uiBase() === 'ui/distr/' && $lock->smartBase() === 'ui/distr/smart/' && $lock->larenaBase() === 'larena/smart/');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
@@ -35,10 +35,10 @@ assert($expectation['sources'] === [
         'files' => 7815,
     ],
     [
-        'commit' => '31f934cd9508db23ee4a872025dccad0e1d1e06b',
+        'commit' => '97781825e5a24f37a11581f993799410f9e728a4',
         'tree' => 'smart',
         'mount' => 'larena',
-        'archive_sha256' => 'ad2d4bb8d4220d7ef9802b175fc0ca4ba0fa32a846161fdd1b898dfbe0d075a0',
+        'archive_sha256' => '2aa09477c51443410bba475cc50883a912074bb1ec151c6baa93009641fd401c',
         'files' => 66,
     ],
     [
