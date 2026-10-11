@@ -39,7 +39,74 @@
       "smart.inputs",
       "smart.sortable"
     ],
-    "public_parts": []
+    "public_parts": [],
+    "declarative": {
+      "standard": "simai.composition.document.v1",
+      "type": "smart.admin-menu",
+      "mode": "leaf",
+      "profiles": [
+        "ui-layout"
+      ],
+      "props": [
+        "allow-system-settings",
+        "aria-label",
+        "brand",
+        "collapsible",
+        "compact",
+        "logo",
+        "logo-href",
+        "panel-class",
+        "persistence-mode",
+        "root-class",
+        "search-hint",
+        "search-keys-hint",
+        "search-label",
+        "search-mode",
+        "search-placeholder",
+        "search-shortcut",
+        "search-title",
+        "searchable",
+        "settings",
+        "settings-mode",
+        "settings-revision",
+        "settings-title",
+        "system-settings-revision",
+        "template",
+        "toggle-label"
+      ],
+      "presentation": {
+        "views": [
+          "default"
+        ],
+        "presets": [],
+        "modifiers": []
+      },
+      "slots": {},
+      "renderer": {
+        "kind": "custom-element",
+        "name": "sf-admin-menu"
+      },
+      "assets": [],
+      "data": {},
+      "events": [
+        "sf-admin-menu-intent",
+        "sf-admin-menu-navigate",
+        "sf-admin-menu-compact-change"
+      ],
+      "persistence": {
+        "settings_key_prop": null,
+        "revision_prop": null
+      },
+      "host_port": {
+        "port": "simai.admin-navigation-port",
+        "version": "1.0.0",
+        "path": "src/core/contracts/ports/simai.admin-navigation-port/1.0.0/port.json",
+        "sha256": "467091d6c2e61b9956551cfe532ef9508ef994fa685582edfeb34882aa3c178c",
+        "supported_versions": [
+          "1.0.0"
+        ]
+      }
+    }
   },
   "inputs": {
     "type": "object",
@@ -553,6 +620,27 @@
           }
         }
       }
+    },
+    "sf-admin-menu-intent": {
+      "summary": "What a person asked of the host, announced for every intent of simai.admin-navigation-port as the menu raises it. The host answers through the port, not through this event.",
+      "payload": {
+        "type": "object",
+        "required": [
+          "intent",
+          "payload"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "type": "string",
+            "description": "The port intent, e.g. navigation.load or favourite.add."
+          },
+          "payload": {
+            "type": "object",
+            "description": "The intent's payload as the port declares it."
+          }
+        }
+      }
     }
   },
   "state": {
@@ -728,7 +816,7 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/controller.js",
-        "sha256": "527509e1b82b749b6de0cacb1a5f640b839761cdc9e1d4bbdccb5ec2ab4839bd"
+        "sha256": "25b5e51814bf4dc01b1d393af60c6c92279654d3e302520955e808bea9e07784"
       },
       {
         "path": "src/component/admin-menu/scss/_css__admin_menu.scss",

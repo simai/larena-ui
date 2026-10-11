@@ -306,7 +306,15 @@ export class NavigationController {
 
     // A host that throws is a host that did not answer; a person sees the same
     // «unavailable» as for a host that said so.
+    // Every intent is also announced as sf-admin-menu-intent on the element,
+    // which is the event the port names for all of them: a page can watch what a
+    // person asked of the host without standing between the two.
     async raise(intent, payload = {}) {
+        this.element.dispatchEvent(new CustomEvent("sf-admin-menu-intent", {
+            bubbles: true,
+            composed: true,
+            detail: {intent, payload: copy(payload)},
+        }));
         try {
             const answer = await this.port.raise(intent, copy(payload), {});
             return answer && typeof answer === "object" ? answer : {answer: "unavailable"};
