@@ -1,0 +1,711 @@
+@layer sf.components {
+  /* The toolbar is one line while one line is enough, and two lines when it is
+     not — with the search, Create and the gear on the upper line and the filter
+     and its chips below. `wrap-reverse` is what does it: the search block is the
+     last child, so when it no longer fits beside the chips it wraps onto the
+     line above.
+
+     Focus has nothing to do with the arrangement any more. The search block used
+     to move up only while the field was focused and drop back below the chips
+     when it lost focus, so the panel rearranged itself under the person's hands.
+     The rule it replaced also re-rendered on focusin, and a render around a
+     focused field makes the browser lose the caret: text inserted without
+     keystrokes — layout switchers, dictation, on-screen keyboards — came out
+     reversed. Nothing here changes the DOM either. */
+  sf-table .sf-table-toolbar {
+    flex-wrap: wrap-reverse;
+    align-items: stretch;
+  }
+
+  /* The search row keeps a usable width or goes to the line above. Without a
+     floor it simply shrank instead of wrapping, and the field ended up a stub
+     beside the chips. */
+  sf-table .sf-table-toolbar .sf-table-toolbar-end {
+    flex: 1 1 auto;
+    min-inline-size: var(--sf-g0);
+  }
+
+  sf-table .sf-table-toolbar .sf-search-input {
+    flex: 1 1 var(--sf-g0);
+  }
+
+  /* The field animates when it collapses and jumps when it expands, on
+     purpose. A width transition running under a focused field leaves the
+     caret uncommitted in Chrome: text inserted without keystrokes — layout
+     switchers, dictation, on-screen keyboards — then lands at position 0 and
+     comes out reversed. The transition property is read from the state being
+     entered, so naming it only on the unfocused state animates the collapse
+     and leaves the expansion instant. */
+  sf-table .sf-table-toolbar .sf-search-input {
+    transition-property: flex-grow, flex-shrink, flex-basis;
+    transition-duration: var(--sf-duration-fast);
+    transition-timing-function: var(--sf-ease-exit);
+  }
+
+  sf-table .sf-table-toolbar:has(.sf-search-input :focus) .sf-search-input {
+    transition-property: none;
+  }
+
+  /* Nothing in the toolbar clips a focus ring: a ring is drawn outside the
+     element's box, so an ancestor that hides its overflow cuts it off. */
+  sf-table .sf-table-toolbar,
+  sf-table .sf-table-toolbar-start,
+  sf-table .sf-table-toolbar-end {
+    overflow: visible;
+  }
+
+  /* The component table carries a bottom margin, which inside the scroll area is
+     an empty band between the last row and whatever follows — Show more, in the
+     view the consumer reported. The area ends where the rows end. */
+  sf-table .sf-table-scroll > .table {
+    margin-block-end: 0;
+  }
+
+  sf-table > * .table > :not(caption) > * > * {
+    vertical-align: middle;
+    padding-block: var(--sf-space-1);
+  }
+
+  .sf-table-context-menu {
+    max-width: var(--sf-table-context-menu--max-width, var(--sf-g2));
+    width: var(--sf-table-context-menu--available-inline-size, 100%);
+    /* A window as tall as its content puts its own buttons below the fold as
+       soon as a site has fifteen fields, and the page has to be scrolled to
+       reach them. The ceiling is the space left under the window's own top
+       edge, which only the component knows, so it arrives as a property. */
+    max-block-size: var(--sf-table-context-menu--max-block-size, none);
+    overflow: hidden;
+  }
+
+  /* The chain a bounded window needs: every box between the ceiling and the
+     scrolling list must be allowed to shrink, or the list keeps its full
+     height and pushes the buttons out of the window instead. */
+  .sf-table-context-menu .sf-table-context-body,
+  .sf-table-context-menu .sf-tabs,
+  .sf-table-context-menu .sf-tabs-main-container,
+  .sf-table-context-menu .sf-tabs-main-container > *,
+  .sf-table-context-menu [slot^="panel-"] {
+    min-block-size: 0;
+  }
+
+  /* Only the tab a person is on becomes the scrolling column. The first form of
+     this rule said `.sf-tabs-main-container > *` and so gave `display: flex` to
+     the tab that is not selected, which is hidden by a display of its own: the
+     filter window then showed its fields under its templates. A box that must
+     be allowed to shrink is not the same box as one that must be laid out. */
+  .sf-table-context-menu .sf-tabs,
+  .sf-table-context-menu .sf-tabs-main-container,
+  .sf-table-context-menu .sf-tabs-main-container > .sf-tabs-main-tab.selected {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+  }
+
+  /* The search stood flush against the window edges while every other block in
+     the window is inset by the same step. */
+  /* The inline insets of every block in these windows come from the menu's own
+     published axis -- --sf-context-menu--item-inset-start-1 / -end-1 -- rather
+     than from a step written here. They had been a literal --sf-space-2, which
+     measured 20px against the axis's 17 on desktop and 16 against 15 on mobile:
+     straight inside the window, because the rows live inside these blocks, and
+     3px away from where every other menu in the Framework puts its content. A
+     second copy of the arithmetic is how the two drift apart; the fallback keeps
+     old runtimes rendering. */
+  .sf-table-context-menu .sf-table-column-search {
+    --sf-table-column-search--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
+    --sf-table-column-search--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    --sf-table-column-search--padding-top: var(--sf-space-2);
+    padding-bottom: var(--sf-table-column-search--padding-bottom, 0);
+    padding-top: var(--sf-table-column-search--padding-top);
+    padding-inline-end: var(--sf-table-column-search--padding-inline-end);
+    padding-inline-start: var(--sf-table-column-search--padding-inline-start);
+  }
+
+  sf-table > .sf-table thead th[data-key="select"] {
+    --sf-table--select-column-width: var(--sf-text-height-1);
+    width: var(--sf-table--select-column-width);
+  }
+
+  sf-table > .sf-table thead th[data-key="settings"] {
+    --sf-table--settigs-column-width: calc(var(--sf-text-height-1) + var(--sf-ui-1--space-y-tightness-default));
+    width: var(--sf-table--settigs-column-width);
+    text-align: center;
+  }
+
+  /* The table's cell spacing, declared rather than inherited. Measured at 2px,
+     which is the browser's own default for a separated-border table: nobody in
+     this Framework chose it, and it sits between every pair of cells and above
+     every row while the spacing ladder is used for everything else. The value is
+     kept exactly as it was shipping, so nothing moves, and it is now a token a
+     consumer can see and an owner can decide about.
+
+     The inset is published because a container that embeds a list has to put the
+     row text on the same inline axis as whatever stands beside it, and the only
+     honest way to do that is with the table's own number -- not a constant typed
+     into the embedder, which would drift the first time either value changed.
+     It is the spacing before the first cell plus that cell's own padding. */
+  /* On the root, not on sf-table: a container that embeds a list has to read the
+     inset to align to it, and a custom property declared on the table would only
+     be visible to the table and its descendants. The first version of this
+     declared it on sf-table, where the embedder above it read nothing and the
+     compensation silently came to zero. */
+  :root {
+    --sf-table--cell-spacing: calc(var(--sf-px) * 2);
+    /* The narrowest a data column may be before the table scrolls instead of
+       squeezing further. Ten steps of the ladder, chosen by measurement rather
+       than by eye: at six the typed cells wrapped and a row grew from 57px to
+       81 where the typed-cells probe watches it, because a badge and its text
+       need more room than a date does. At ten both hold -- a column keeps a
+       date, a status badge or a heading on one line, and a row that is typed
+       is no taller than the same row plain (owner, 2026-10-09).
+
+       A host that knows better says so per column, and that wins. */
+    --sf-table--column-min-inline-size: var(--sf-f0);
+    /* The cell's own leading padding, measured at 8px on the built bytes rather
+       than derived -- and 8px is --sf-a8, so it is named here rather than
+       written out again (owner, 2026-10-09). It is set by a nested rule in this sheet, and a nested rule's
+       selector is relative, so neither a grep nor `cell.matches()` can attribute
+       it -- the honest thing is to say the number was measured and let a check
+       hold it true. tests/browser/property-view asserts the row text of an
+       embedded list lands on the field-label axis, so if this padding changes that
+       probe goes red rather than an embedded list quietly drifting.
+
+       It was 1px before: that was the user agent's default, measured on a table
+       in a shadow tree where this sheet does not reach. The first version of this
+       inset was computed from that reading and put an embedded list 7px out once
+       the table was styled. */
+    --sf-table--row-text-inset: calc(var(--sf-table--cell-spacing) + var(--sf-a8));
+  }
+
+  sf-table table {
+    border-spacing: var(--sf-table--cell-spacing);
+  }
+
+  sf-table th {
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-style: solid;
+    border-inline-start-color: transparent;
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-style: solid;
+    border-inline-end-color: transparent;
+  }
+
+  /* The head's own separator on hover: a neutral line, not `inherit`, which
+     took whatever colour the head text happened to carry and read as a blue bar
+     wherever that was the primary colour. */
+  sf-table th.hover {
+    border-inline-end-color: var(--sf-outline);
+  }
+
+  sf-table .sf-table-sort-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  sf-table .sf-table-sort-icon {
+    --sf-icon--font-size: var(--sf-icon-size-1);
+    opacity: 0;
+  }
+
+  sf-table .sf-table-sort-button[data-direction] .sf-table-sort-icon,
+  sf-table th:hover .sf-table-sort-icon,
+  sf-table .sf-table-sort-button:focus-visible .sf-table-sort-icon {
+    opacity: 1;
+  }
+
+  /* The strip that takes the width: it sits astride the line between two
+     headers, is wide enough to hit with a mouse, and shows nothing of itself —
+     the line it is on is the affordance, and the cursor says what it does. */
+  sf-table .sf-table-column-resizer {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: calc(var(--sf-b0) / -2);
+    inline-size: var(--sf-b0);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 2;
+  }
+
+  /* The keyboard reaches it, so it has to show where it is: the shared ring,
+     turned inwards, because the strip is flush with the headers on both sides
+     and a ring drawn outside it would sit on their text. */
+  sf-table .sf-table-column-resizer:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
+  }
+
+  sf-table th.is-resizing {
+    user-select: none;
+  }
+
+  sf-table th.is-resizing-forward {
+    border-inline-end-color: var(--sf-primary);
+  }
+
+  sf-table th.is-resizing-backward {
+    border-inline-start-color: var(--sf-primary);
+  }
+
+  sf-table th.is-column-dragging,
+  sf-table td.is-column-dragging {
+    background-color: color-mix(in srgb, var(--sf-primary) 14%, transparent);
+    color: transparent;
+  }
+
+  sf-table th.is-column-dragging > *,
+  sf-table td.is-column-dragging > * {
+    opacity: 0;
+  }
+
+  sf-table th.is-column-drag-before {
+    border-inline-start-color: var(--sf-primary);
+  }
+
+  sf-table th.is-column-drag-after {
+    border-inline-end-color: var(--sf-primary);
+  }
+
+  sf-table th.is-column-drag-before::before,
+  sf-table th.is-column-drag-after::after {
+    background-color: var(--sf-primary);
+    block-size: 100%;
+    content: "";
+    inline-size: calc(var(--sf-px) * 2);
+    inset-block-start: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: var(--sf-z-index-1);
+  }
+
+  sf-table th.is-column-drag-before::before {
+    inset-inline-start: 0;
+    transform: translateX(-50%);
+  }
+
+  sf-table th.is-column-drag-after::after {
+    inset-inline-end: 0;
+    transform: translateX(50%);
+  }
+
+  .sf-table-column-drag-ghost {
+    align-items: center;
+    background-color: var(--sf-primary-container);
+    border: var(--sf-px) solid var(--sf-primary);
+    box-shadow: var(--sf-ui-shadow-3);
+    display: flex;
+    opacity: 0.92;
+    padding-block: var(--sf-space-1);
+    padding-inline: var(--sf-space-1);
+  }
+
+  .sf-table-column-dragging,
+  .sf-table-column-dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
+  }
+
+  .sf-table-column-resizing,
+  .sf-table-column-resizing * {
+    cursor: col-resize !important;
+    user-select: none !important;
+  }
+
+  sf-table > .sf-table thead th[data-key="actions"] {
+    --sf-table--actions-column-width: var(--sf-f0);
+    width: var(--sf-table--actions-column-width);
+  }
+
+  /* The head paints its own surface, and the colour has a role behind it.
+     Until now it sat on `thead` alone, under a custom property nothing defines,
+     so the head was transparent — invisible while the table rested on a surface
+     of the same colour, and plainly wrong once the head became sticky: a sticky
+     `th` leaves the box `thead` paints, and the rows scrolled through the
+     labels. The fallback is `--sf-surface-0`, the surface `body` itself paints,
+     because a table that is not inside a raised box rests on that one; a host
+     that puts the table on another surface names it through the property. */
+  sf-table > .sf-table thead,
+  sf-table > .sf-table thead th {
+    background-color: var(--sf-table-head--background-color, var(--sf-surface-0));
+  }
+
+  sf-table > * .sf-table-avatar {
+    max-width: var(--sf-table-avatar--max-width);
+  }
+
+  sf-table .sf-table-link-cell {
+    color: inherit;
+    display: inline-flex;
+    max-width: 100%;
+    min-width: 0;
+    text-decoration: none;
+  }
+
+  sf-table a.sf-table-link-cell:hover .sf-table-link-cell-text,
+  sf-table a.sf-table-link-cell:focus-visible .sf-table-link-cell-text {
+    color: var(--sf-primary);
+    text-decoration: underline;
+  }
+
+  sf-table .sf-table-link-cell-text,
+  sf-table .sf-table-link-cell-subtext {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  sf-table .sf-table-link-cell-subtext {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-table-context-menu .sf-tabs-top-container {
+    --sf-tabs-top-container--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
+    --sf-tabs-top-container--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    --sf-tabs-top-container--padding-top: var(--sf-space-2);
+  }
+  .sf-table-context-menu .sf-table-context-top {
+    --sf-table-context-top--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
+    --sf-table-context-top--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    --sf-table-context-top--padding-top: var(--sf-space-2);
+    padding-bottom: var(--sf-table-context-top--padding-bottom, 0);
+    padding-top: var(--sf-table-context-top--padding-top);
+    padding-inline-end: var(--sf-table-context-top--padding-inline-end);
+    padding-inline-start: var(--sf-table-context-top--padding-inline-start);
+  }
+  .sf-table-context-menu .sf-table-context-main {
+    --sf-table-context-main--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
+    --sf-table-context-main--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    padding-bottom: var(--sf-table-context-main--padding-bottom, 0);
+    padding-top: var(--sf-table-context-main--padding-top,0);
+    padding-inline-end: var(--sf-table-context-main--padding-inline-end);
+    padding-inline-start: var(--sf-table-context-main--padding-inline-start);
+  }
+  .sf-table-context-menu .sf-table-context-bottom {
+    --sf-table-context-bottom--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
+    --sf-table-context-bottom--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    --sf-table-context-bottom--padding-bottom: var(--sf-space-2);
+    padding-bottom: var(--sf-table-context-bottom--padding-bottom);
+    padding-top: var(--sf-table-context-bottom--padding-top, 0);
+    padding-inline-end: var(--sf-table-context-bottom--padding-inline-end);
+    padding-inline-start: var(--sf-table-context-bottom--padding-inline-start);
+  }
+  .sf-table-context-menu .sf-context-menu-columns {
+    --sf-context-menu-columns--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
+    --sf-context-menu-columns--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    --sf-context-menu-columns--padding-top: var(--sf-space-2);
+    --sf-context-menu-columns--padding-bottom: var(--sf-space-2);
+    padding-bottom: var(--sf-context-menu-columns--padding-bottom, 0);
+    padding-top: var(--sf-context-menu-columns--padding-top);
+    padding-inline-end: var(--sf-context-menu-columns--padding-inline-end);
+    padding-inline-start: var(--sf-context-menu-columns--padding-inline-start);
+  }
+  .sf-table-context-menu .sf-tabs-main-container {
+    /* Lengths, for the same reason as the panel's own insets above. */
+    --sf-tabs-main-container--padding-top: 0px;
+    --sf-tabs-main-container--padding-bottom: 0px;
+  }
+  .sf-table-context-menu .sf-settings-context-menu-item [data-keep]:not(.sf-button-pinned) {
+    opacity: 0;
+  }
+
+  .sf-table-context-menu .sf-settings-context-menu-item.is-dragging {
+    opacity: 0.8;
+    /* A dragged item is lifted to step 3: surface and shadow, or it is flat
+       in the dark theme. */
+    background-color: var(--sf-elevation-3--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
+    box-shadow: var(--sf-elevation-3--shadow);
+  }
+
+  .sf-table-context-menu .sf-settings-context-menu-item.drag-placeholder {
+    opacity: 0.32;
+    pointer-events: none;
+  }
+}
+@layer sf.states {
+  .sf-table-context-menu .sf-settings-context-menu-item:hover [data-keep] {
+    opacity: 1;
+  }
+}
+@layer sf.overrides {
+  .sf-icon-button.sf-button-pinned .sf-icon {
+    --sf-button-pinned--color: var(--sf-primary);
+    --sf-icon--color: var(--sf-button-pinned--color);
+  }
+  .sf-table-context-menu .sf-context-menu-content {
+    /*--sf-context-menu-content--padding-bottom: var(--sf-space-2);*/
+    /*--sf-context-menu-content--padding-inline-end: var(--sf-space-2);*/
+    /*--sf-context-menu-content--padding-inline-start: var(--sf-space-2);*/
+    /*--sf-context-menu-content--padding-top: var(--sf-space-2);*/
+    /* These are lengths, not numbers. The menu's own axis is published as
+       `calc(space-x + 1px - var(--sf-context-menu-content--padding-inline-start))`,
+       and a unitless 0 makes that calc invalid, so the whole declaration is
+       dropped: the axis read as nothing on this panel, the menu's own items lost
+       their inset here, and this window's blocks had no axis to follow. A zero
+       with a unit costs nothing and keeps the arithmetic valid. */
+    --sf-context-menu-content--padding-bottom: 0px;
+    --sf-context-menu-content--padding-inline-end: 0px;
+    --sf-context-menu-content--padding-inline-start: 0px;
+    --sf-context-menu-content--padding-top: 0px;
+  }
+  .sf-table-context-menu .sf-settings-context-menu-item .sf-icon-button {
+    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
+    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
+    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-default);
+    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-default);
+  }
+  sf-table > * .sf-search-input.sf-input.sf-input--size-1 .sf-input-field {
+    --sf-input-field--padding-bottom: var(
+            --sf-ui-1\/3--space-y-tightness-default
+    );
+    --sf-input-field--padding-top: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+
+  sf-table
+  > *
+  .sf-search-input.sf-input.sf-input--size-1
+  .sf-icon-button--size-1 {
+    --sf-icon-button--padding-bottom: var(
+            --sf-ui-1\/3--space-y-tightness-default
+    );
+    --sf-icon-button--padding-inline-end: var(
+            --sf-ui-1\/3--space-y-tightness-default
+    );
+    --sf-icon-button--padding-inline-start: var(
+            --sf-ui-1\/3--space-y-tightness-default
+    );
+    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+
+  sf-table  .sf-avatar-label-group-container {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  sf-table   .sf-avatar-label-group-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* Who the head sticks to follows who owns the scroll. A sticky element binds
+     to its nearest scroll container, so while the rows scroll in their own area
+     the head sticks to that area — right when the host bounds the table's
+     height, useless when it does not: the area never scrolls, the page does,
+     and the head leaves with it.
+
+     In `page` mode the area stops being a scroll container at all, so the head
+     resolves against the viewport. Measured rather than assumed: with the head
+     sticky and the page scrolled by 600px, `overflow: auto` leaves it at
+     -398px, `overflow-x: auto` with `overflow-y: clip` also leaves it at -398
+     because the clip axis computes to `hidden` and still makes a scroll
+     container, a bounded height leaves it at -398 as well, and only
+     `overflow: visible` holds it at 0. The cost is that a table wider than the
+     page scrolls the page sideways instead of scrolling inside its own box. */
+  sf-table .sf-table-scroll[data-sf-vertical-scroll="page"] {
+    overflow: visible;
+  }
+
+  /* A re-query over rows already on screen dims them and shows one spinner in
+     the middle of what the person can see. `sticky` centres it against the
+     scrollport rather than the table, so it stays in the middle of the visible
+     part of a table taller or wider than its box — the old loader replaced the
+     rows and sat in the top left corner of the result. */
+  sf-table .sf-table-busy {
+    position: sticky;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+    inline-size: fit-content;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  sf-table tbody[data-busy] {
+    opacity: 0.5;
+    transition-property: opacity;
+    transition-duration: var(--sf-duration-fast);
+    transition-timing-function: var(--sf-animation);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    sf-table tbody[data-busy] {
+      transition-duration: 0s;
+    }
+  }
+
+  /* The pinned block keeps the box, the row menu and the title column in place
+     while the rest of the row scrolls sideways. The edge of the block carries a
+     soft shadow, and only while something is actually hidden behind it — the
+     scroll handler sets the attribute. The shadow is drawn by the cell that
+     ends the block, over the rows it overlaps, which is why it is a
+     pseudo-element and not a border: a border would move the cell's content. */
+  sf-table .sf-table-scroll[data-sf-pin-scrolled] [data-sf-pin-edge]::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: calc(var(--sf-a4) * -1);
+    inline-size: var(--sf-a4);
+    pointer-events: none;
+    /* `--sf-alpha-8` is the neutral ink of the current theme at 8%, so the
+       shadow follows light and dark without a colour of its own. The direction
+       is written physically because a gradient takes no logical keyword; the
+       RTL pipeline mirrors it, as it does for the row's focus bar. */
+    background-image: linear-gradient(to right, var(--sf-alpha-8), transparent);
+  }
+
+  /* A row says whether it is selected, so the look is a rule rather than a
+     reading of the checkbox in its cell. `data-selected` and not
+     `aria-selected`: this is a plain table, its rows are not grid rows, and the
+     checkbox already carries the state for assistive technology — claiming it
+     twice, once invalidly, would be worse than not claiming it here.
+
+     The colour sits on the row, not on its cells. A pinned cell has to be
+     opaque or the rows it overlaps read through it, and it has to be opaque in
+     the colour of its own row — painting it with the table surface, as the
+     pinned placement first did, left the pinned columns white under a selected
+     or a hovered row.
+
+     So a row is two layers: an opaque surface underneath and the state as a
+     tint over it. Every state colour here is an alpha colour, so a pinned cell
+     that simply inherited the result painted the same tint a second time and
+     came out a shade darker than the rest of its row — which is what the
+     consumer saw on a hovered row. Inheriting both layers paints each exactly
+     once. */
+  sf-table tbody tr {
+    background-color: var(--sf-table-row--background-color, var(--sf-surface-0));
+  }
+
+  sf-table .sf-table-scroll tbody [data-sf-pinned] {
+    background-color: inherit;
+    background-image: inherit;
+  }
+
+  sf-table tbody tr:hover {
+    background-image: linear-gradient(
+      var(--sf-surface-container-hover),
+      var(--sf-surface-container-hover)
+    );
+  }
+
+  sf-table tbody tr[data-selected] {
+    background-image: linear-gradient(
+      var(--sf-primary-container),
+      var(--sf-primary-container)
+    );
+  }
+
+  /* The row the person is on carries `data-current` and takes focus, and shows
+     nothing of its own. It used to draw a bar in its first cell, and the
+     consumer found that the bar outlived what it meant: after a box was
+     unticked the bar stayed, and a bar beside a row reads as a mark. Where the
+     person is is answered by the focus ring instead, and only when the keyboard
+     is what put them there.
+
+     The ring is one ring around the row, drawn by a pseudo-element above the
+     pinned cells. A plain outline on the row is painted over by them — a cell
+     is a child of the row, so its background covers the parent's outline — and
+     that is what the consumer saw: blue segments across the loose cells only,
+     appearing the moment a modifier key switched the browser into keyboard
+     modality. */
+  /* Only a row that has the keyboard focus is positioned, because only then is
+     there a ring to hang on it. Positioning every row made each one a stacking
+     context of its own, and a consumer saw pinned cells left unpainted while
+     scrolling a table with two pinned columns — the kind of compositing
+     difference that costs nothing to avoid. */
+  sf-table tbody tr:focus-visible {
+    position: relative;
+    outline: none;
+  }
+
+  sf-table tbody tr:focus-visible::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
+  }
+
+  sf-table tbody tr[data-selected]:hover {
+    background-image: linear-gradient(
+      var(--sf-primary-container-hover),
+      var(--sf-primary-container-hover)
+    );
+  }
+
+  /* Sorting is answered in the header, not by shading the column: a sorted
+     column keeps the background of every other one. */
+  sf-table th:hover .sf-table-sort-icon {
+    /* A glyph is non-text graphics, and WCAG 1.4.11 asks 3:1 of it.
+     --sf-on-surface-muted is 3.18:1 light and 2.92:1 dark, so it sat on the
+     line in one theme and under it in the other. --sf-on-surface-variant is
+     the Framework's own paler-than-text role, 6.47 and 5.95, and the one a
+     label already reads in (owner, 2026-10-08). */
+    --sf-icon--color: var(--sf-on-surface-variant);
+  }
+
+  sf-table th[aria-sort]:not([aria-sort="none"]) .sf-table-sort-button {
+    color: var(--sf-primary);
+  }
+
+  sf-table th[aria-sort]:not([aria-sort="none"]) .sf-table-sort-icon {
+    --sf-icon--color: var(--sf-primary);
+  }
+
+  /* The mark under a sorted header is drawn rather than bordered, so it does not
+     move the cell or fight the separator the resize handle uses. */
+  sf-table th[aria-sort]:not([aria-sort="none"]) {
+    position: relative;
+  }
+
+  sf-table th[aria-sort]:not([aria-sort="none"])::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: var(--sf-a2);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+
+  @media (forced-colors: active) {
+    sf-table th[aria-sort]:not([aria-sort="none"])::after {
+      background-color: Highlight;
+    }
+
+    sf-table tbody tr[data-selected] > td {
+      background-color: Highlight;
+      color: HighlightText;
+    }
+  }
+
+  /* The guide is one line, 1px in the colour of every other line in the table —
+     not the primary colour, which would read as a selection. It runs through the
+     rows only: the head keeps its own short separator below. */
+  sf-table .sf-table-resize-guide {
+    position: absolute;
+    inline-size: var(--sf-px);
+    background-color: var(--sf-outline-variant);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  sf-table .sf-table-resize-guide[hidden] {
+    display: none;
+  }
+
+  @media (forced-colors: active) {
+    sf-table .sf-table-resize-guide {
+      background-color: CanvasText;
+    }
+  }
+}
