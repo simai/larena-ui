@@ -177,37 +177,182 @@
   },
   "methods": {
     "applyProjection": {
-      "summary": "Render a host answer in all three slots."
+      "summary": "Render a host answer in all three slots.",
+      "arguments": [
+        {
+          "name": "data",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "null"
+      }
     },
     "applyUnderFilter": {
-      "summary": "Raise a confirmed filter-wide action."
+      "summary": "Raise a confirmed filter-wide action.",
+      "arguments": [
+        {
+          "name": "actionId",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "confirmedTotal",
+          "type": "number",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "changeQuery": {
-      "summary": "Change search, filters, sort or window."
+      "summary": "Change search, filters, sort or window.",
+      "arguments": [
+        {
+          "name": "patch",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "reason",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "deleteView": {
-      "summary": "Delete a saved view."
+      "summary": "Delete a saved view.",
+      "arguments": [
+        {
+          "name": "key",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "notify": {
-      "summary": "Show one notice over the card, or clear it with an empty text. A refusal, a conflict and an unreachable host raise it by themselves."
+      "summary": "Show one notice over the card, or clear it with an empty text. A refusal, a conflict and an unreachable host raise it by themselves.",
+      "arguments": [
+        {
+          "name": "text",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "options",
+          "type": "object",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "openView": {
-      "summary": "Open a saved view."
+      "summary": "Open a saved view.",
+      "arguments": [
+        {
+          "name": "key",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "refresh": {
-      "summary": "Request current query with a new sequence."
+      "summary": "Request current query with a new sequence.",
+      "arguments": [
+        {
+          "name": "reason",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "saveColumnSettings": {
-      "summary": "Write a column-settings layer with its revision."
+      "summary": "Write a column-settings layer with its revision.",
+      "arguments": [
+        {
+          "name": "columnSettings",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "options",
+          "type": "object",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "saveView": {
-      "summary": "Save a personal or shared view."
+      "summary": "Save a personal or shared view.",
+      "arguments": [
+        {
+          "name": "view",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "setHostPort": {
-      "summary": "Bind an exact host adapter."
+      "summary": "Bind an exact host adapter.",
+      "arguments": [
+        {
+          "name": "host",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "updateRecord": {
-      "summary": "Write one record in place: that row is rewritten and nothing is asked of the host. A write answered with records alone takes this path by itself."
+      "summary": "Write one record in place: that row is rewritten and nothing is asked of the host. A write answered with records alone takes this path by itself.",
+      "arguments": [
+        {
+          "name": "id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "patch",
+          "type": "object",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Whether a shown record was rewritten."
+      }
     }
   },
   "events": {
@@ -322,33 +467,30 @@
   },
   "state": {
     "machines": {
-      "data": {
-        "states": [
-          "loading",
-          "populated",
-          "empty",
-          "error"
-        ],
-        "initial": "loading"
-      }
+      "data": [
+        "loading",
+        "populated",
+        "empty",
+        "error"
+      ]
     },
     "visual_states": [
+      "default",
       "loading",
-      "populated",
       "empty",
       "error"
     ]
   },
   "persistence": {
-    "mode": "host",
-    "source_of_truth": "host port",
+    "mode": "external-host",
+    "source_of_truth": "host",
     "network_owner": "host",
     "revision_field": "revision"
   },
   "ownership": {
-    "source": "simai/ui-source",
+    "source": "simai/larena-ui",
     "data": "host",
-    "effects": "host adapter",
+    "effects": "host",
     "forbidden_client_responsibilities": [
       "access decisions",
       "database writes",
@@ -362,12 +504,14 @@
       "records",
       "saved_views"
     ],
-    "network_policy": "No implicit network requests"
+    "network_policy": "deny"
   },
   "accessibility": {
     "role": "region",
-    "accessible_name": "aria-label",
-    "keyboard": "Native controls and child Smart components",
+    "accessible_name": "required",
+    "keyboard": [
+      "Native controls and child Smart components"
+    ],
     "focus": "No focus movement on data refresh"
   },
   "presentation": {
@@ -379,23 +523,21 @@
       "ru",
       "en"
     ],
-    "responsive": "Slots and child components own responsive behavior"
-  },
-  "adapter": {
-    "kind": "host-port",
-    "protocol": "simai.dataview-port",
-    "module": "src/smart/data-view/index.js"
-  },
-  "artifacts": {
-    "fixtures": [
-      "tests/fixtures/dataview-reference-host.mjs"
-    ],
-    "scenarios": [
-      "tests/data-view-composite.contract.test.mjs"
+    "responsive": [
+      "Slots and child components own responsive behaviour"
     ]
   },
+  "adapter": {
+    "kind": "generic",
+    "protocol": "simai.smart-studio-adapter.v1",
+    "module": null
+  },
+  "artifacts": {
+    "fixtures": [],
+    "scenarios": []
+  },
   "readiness": {
-    "level": "candidate",
+    "level": "host-required",
     "required_checks": [
       "host-port-reference",
       "data-view-composite",
@@ -453,6 +595,10 @@
       "compatibility",
       "docs"
     ],
-    "minimal_example": "<sf-data-view aria-label=\"Записи\"><sf-table slot=\"content\" aria-label=\"Записи\"></sf-table><sf-pagination slot=\"pagination\"></sf-pagination></sf-data-view>"
+    "minimal_example": "<sf-data-view aria-label=\"Записи\"><sf-table slot=\"content\" aria-label=\"Записи\"></sf-table><sf-pagination slot=\"pagination\"></sf-pagination></sf-data-view>",
+    "owner_commands": [
+      "node scripts/test.mjs",
+      "node scripts/run-browser-probes.mjs <free output> <package output>"
+    ]
   }
 }

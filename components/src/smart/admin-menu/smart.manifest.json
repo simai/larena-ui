@@ -319,6 +319,53 @@
         "type": "object",
         "description": "A promise that settles when the host has answered."
       }
+    },
+    "setHostPort": {
+      "summary": "Bind the host of simai.admin-navigation-port; the menu then draws the navigation shell instead of the items menu.",
+      "arguments": [
+        {
+          "name": "host",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
+    },
+    "setSearchResults": {
+      "summary": "The host answers one search request with its own groups of results. An answer to a query the person has moved on from is dropped.",
+      "arguments": [
+        {
+          "name": "requestId",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "groups",
+          "type": "array",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Whether the answer was for the current query and was shown."
+      }
+    },
+    "setRecentResults": {
+      "summary": "What the host offers an empty search field: a recent list, standing until it sets another.",
+      "arguments": [
+        {
+          "name": "groups",
+          "type": "array",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Always true."
+      }
     }
   },
   "events": {
@@ -525,6 +572,7 @@
       ]
     },
     "visual_states": [
+      "default",
       "loading",
       "empty",
       "saving",
@@ -532,9 +580,7 @@
       "error",
       "conflict",
       "disabled",
-      "compact",
-      "nested",
-      "mobile"
+      "open"
     ]
   },
   "persistence": {
@@ -597,7 +643,8 @@
       "desktop-expanded",
       "desktop-compact",
       "mobile-full-width",
-      "viewport-bounded-context-menu"
+      "viewport-bounded-context-menu",
+      "nested-columns"
     ]
   },
   "adapter": {
@@ -712,13 +759,10 @@
       "backend",
       "scenarios"
     ],
-    "minimal_example": "<sf-admin-menu aria-label=\"Admin menu\" searchable collapsible persistence-mode=\"external\"></sf-admin-menu>"
-  },
-  "public_abi": {
-    "methods": {
-      "setSearchResults": {
-        "summary": "The host answers one search request with its own groups of results."
-      }
-    }
+    "minimal_example": "<sf-admin-menu aria-label=\"Admin menu\" searchable collapsible persistence-mode=\"external\"></sf-admin-menu>",
+    "owner_commands": [
+      "node scripts/test.mjs",
+      "node scripts/run-browser-probes.mjs <free output> <package output>"
+    ]
   }
 }

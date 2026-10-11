@@ -1232,16 +1232,13 @@
       ]
     },
     "visual_states": [
+      "default",
       "loading",
-      "populated",
       "empty",
       "error",
       "selected",
-      "filtered",
-      "settings-open",
-      "context-menu",
-      "wide-overflow",
-      "mobile"
+      "active",
+      "open"
     ]
   },
   "persistence": {
@@ -1484,6 +1481,10 @@
       "backend",
       "scenarios"
     ],
-    "minimal_example": "<sf-table aria-label=\"Записи\" table-settings-key=\"package.records\"></sf-table>"
+    "minimal_example": "<sf-table aria-label=\"Записи\" table-settings-key=\"package.records\"></sf-table>",
+    "owner_commands": [
+      "node scripts/test.mjs",
+      "node scripts/run-browser-probes.mjs <free output> <package output>"
+    ]
   }
 }

@@ -92,6 +92,19 @@
         "show-rare",
         "template"
       ],
+      "presentation": {
+        "views": [
+          "default"
+        ],
+        "presets": [],
+        "modifiers": []
+      },
+      "slots": {},
+      "renderer": {
+        "kind": "custom-element",
+        "name": "sf-property-view"
+      },
+      "assets": [],
       "data": {},
       "events": [
         "sf-property-view-address-copy",
@@ -104,11 +117,6 @@
       "persistence": {
         "settings_key_prop": null,
         "revision_prop": null
-      },
-      "presentation": {
-        "views": [
-          "default"
-        ]
       },
       "host_port": {
         "port": "simai.property-view-port",
@@ -127,10 +135,6 @@
           "1.8.0",
           "1.10.0"
         ]
-      },
-      "renderer": {
-        "kind": "custom-element",
-        "name": "sf-property-view"
       }
     }
   },
@@ -583,58 +587,270 @@
   },
   "methods": {
     "setHostPort": {
-      "summary": "Connect a host adapter exposing raise(intent, payload, {signal}), version and capabilities."
+      "summary": "Connect a host adapter exposing raise(intent, payload, {signal}), version and capabilities.",
+      "arguments": [
+        {
+          "name": "host",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "load": {
-      "summary": "Read the object again through the port."
+      "summary": "Read the object again through the port.",
+      "arguments": [
+        {
+          "name": "reason",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer to the read: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "editGroup": {
-      "summary": "Open one group for editing."
+      "summary": "Open one group for editing.",
+      "arguments": [
+        {
+          "name": "section",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "group",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "cancelEdit": {
-      "summary": "Close the open group, dropping what was typed. Writes nothing."
+      "summary": "Close the open group, dropping what was typed. Writes nothing.",
+      "arguments": [],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "saveGroup": {
-      "summary": "Save the changed fields of the open group as one revision."
+      "summary": "Save the changed fields of the open group as one revision.",
+      "arguments": [],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer to the write: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "selectSection": {
-      "summary": "Open one section."
+      "summary": "Open one section.",
+      "arguments": [
+        {
+          "name": "key",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "changeField": {
-      "summary": "Record that a field was changed. Called by the edit template; a host does not need it."
+      "summary": "Record that a field was changed. Called by the edit template; a host does not need it.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "any",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "getFieldOptionsPage": {
-      "summary": "The page of candidates the host last answered with for one field."
+      "summary": "The page of candidates the host last answered with for one field.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "description": "The options page loaded for the field, or null."
+      }
     },
     "getFieldOptionSearch": {
-      "summary": "What the person has typed into one field's picker."
+      "summary": "What the person has typed into one field's picker.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "The search text typed for the field's options."
+      }
     },
     "setFieldOptionSearch": {
-      "summary": "Record what the person typed, without asking the host."
+      "summary": "Record what the person typed, without asking the host.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "loadFieldOptions": {
-      "summary": "Ask the host for a page of candidates for one field."
+      "summary": "Ask the host for a page of candidates for one field.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "options",
+          "type": "object",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer with the options page: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     },
     "closePanel": {
-      "summary": "Announce that the panel should close. Closing is the host's decision."
+      "summary": "Announce that the panel should close. Closing is the host's decision.",
+      "arguments": [
+        {
+          "name": "reason",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "copyAddress": {
-      "summary": "Copy the address the host gave, and say whether the browser allowed it."
+      "summary": "Copy the address the host gave, and say whether the browser allowed it.",
+      "arguments": [],
+      "returns": {
+        "type": "object",
+        "description": "A promise of whether the address reached the clipboard."
+      }
     },
     "openFullPage": {
-      "summary": "Announce that this object should open on a full page."
+      "summary": "Announce that this object should open on a full page.",
+      "arguments": [],
+      "returns": {
+        "type": "object",
+        "description": "The element, for chaining."
+      }
     },
     "getFieldUploads": {
-      "summary": "The files in flight for one field, in the shape sf-file-upload reads."
+      "summary": "The files in flight for one field, in the shape sf-file-upload reads.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "array",
+        "description": "The uploads in progress or done for the field."
+      }
     },
     "startFieldUpload": {
-      "summary": "Hand the host the files the person chose, one intent each."
+      "summary": "Hand the host the files the person chose, one intent each.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "items",
+          "type": "array",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the element, settled when the uploads are raised."
+      }
     },
     "retryFieldUpload": {
-      "summary": "Send one failed file again."
+      "summary": "Send one failed file again.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the element, settled when the upload is raised again."
+      }
     },
     "openReference": {
-      "summary": "Ask the host to open a reference the person activated."
+      "summary": "Ask the host to open a reference the person activated.",
+      "arguments": [
+        {
+          "name": "field",
+          "type": "object",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "any",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer to the opening: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+      }
     }
   },
   "events": {
@@ -729,33 +945,30 @@
   },
   "state": {
     "machines": {
-      "data": {
-        "states": [
-          "loading",
-          "ready",
-          "empty",
-          "error"
-        ],
-        "initial": "loading"
-      }
+      "data": [
+        "loading",
+        "ready",
+        "empty",
+        "error"
+      ]
     },
     "visual_states": [
+      "default",
       "loading",
-      "ready",
       "empty",
       "error"
     ]
   },
   "persistence": {
-    "mode": "host",
-    "source_of_truth": "host port",
+    "mode": "external-host",
+    "source_of_truth": "host",
     "network_owner": "host",
     "revision_field": "revision"
   },
   "ownership": {
-    "source": "simai/ui-source",
+    "source": "simai/larena-ui",
     "data": "host",
-    "effects": "host adapter",
+    "effects": "host",
     "forbidden_client_responsibilities": [
       "access decisions",
       "database writes",
@@ -770,12 +983,14 @@
       "sections",
       "field values"
     ],
-    "network_policy": "No implicit network requests"
+    "network_policy": "deny"
   },
   "accessibility": {
     "role": "region",
-    "accessible_name": "aria-label",
-    "keyboard": "Native controls and child Smart components",
+    "accessible_name": "required",
+    "keyboard": [
+      "Native controls and child Smart components"
+    ],
     "focus": "No focus movement on re-read"
   },
   "presentation": {
@@ -787,21 +1002,21 @@
       "ru",
       "en"
     ],
-    "responsive": "The section list and the fields stack below the tablet breakpoint; child components own their own responsive behaviour"
+    "responsive": [
+      "The section list and the fields stack below the tablet breakpoint; child components own their own responsive behaviour"
+    ]
   },
   "adapter": {
-    "kind": "host-port",
-    "protocol": "simai.property-view-port",
-    "module": "src/smart/property-view/index.js"
+    "kind": "generic",
+    "protocol": "simai.smart-studio-adapter.v1",
+    "module": null
   },
   "artifacts": {
     "fixtures": [],
-    "scenarios": [
-      "tests/browser/property-view.browser.mjs"
-    ]
+    "scenarios": []
   },
   "readiness": {
-    "level": "experimental",
+    "level": "host-required",
     "required_checks": [
       "host-port",
       "property-view",
@@ -860,6 +1075,18 @@
       "Do not pass a component or a CSS class for a field value: pass its property type and let the renderer set decide.",
       "Do not expect the component to hold a value or a revision between reads.",
       "Do not filter rare fields out of the answer: mark them and send them, or toggling the view twice shows two different objects."
+    ],
+    "required_reads": [
+      "host_port",
+      "events",
+      "ownership",
+      "compatibility",
+      "docs"
+    ],
+    "minimal_example": "<sf-property-view collection=\"storage\" record-id=\"42\" aria-label=\"Запись\"></sf-property-view>",
+    "owner_commands": [
+      "node scripts/test.mjs",
+      "node scripts/run-browser-probes.mjs <free output> <package output>"
     ]
   }
 }

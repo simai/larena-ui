@@ -53,6 +53,7 @@ export const CROSS_CUTTING = [
   'runtime-relations.contract.test.mjs',
   'sass-variable-modules.contract.test.mjs',
   'small-control-ladder.contract.test.mjs',
+  'smart-manifest-schema.contract.test.mjs',
   'third-party-notices.contract.test.mjs',
   'token-derivation.contract.test.mjs',
   'typography-54-contract.test.mjs',
