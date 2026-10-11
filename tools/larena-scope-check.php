@@ -87,7 +87,15 @@ foreach (array_keys($changedFiles) as $file) {
             continue 2;
         }
     }
-    if (!$exactlyAllowed && !$evidenceAllowed) {
+    // A folder given as "<path>/*" (one another owner writes, such as components/) allows every file under it.
+    $folderAllowed = false;
+    foreach ($allowedFiles as $pattern) {
+        if (str_ends_with($pattern, '/*') && matches_pattern($file, $pattern)) {
+            $folderAllowed = true;
+            break;
+        }
+    }
+    if (!$exactlyAllowed && !$folderAllowed && !$evidenceAllowed) {
         $errors[] = $file . ' is outside allowed_files and evidence_path';
     }
 }

@@ -31,7 +31,7 @@ assert(array_column($core, 'relative_path') === [
 assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
     'ui/distr/core/css/core.css',
     'ui/distr/smart/icon-buttons/css/icon-buttons.css',
-    'pro/smart/table/css/table.css',
+    'larena/smart/table/css/table.css',
 ]);
 $dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-data-view'));
 assert(array_column($dataViewAssets, 'asset_key') === [
@@ -52,13 +52,13 @@ $baseline = FrontendRuntimeLock::bundled()->toArray();
 $switched = $baseline;
 $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 $switched['ui']['release'] = 'ui-aaaaaaaaaaaa';
-$switched['pro']['requires_framework'] = 'ui-aaaaaaaaaaaa';
-$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-1f894a46f488';
-$switched['bundle_id'] = $switched['pair_id'] . '-registry-58c57cca-exact-git-tree-v2';
+$switched['larena']['requires_framework'] = 'ui-aaaaaaaaaaaa';
+$switched['pair_id'] = 'ui-aaaaaaaaaaaa-larena-98ad1a012a17';
+$switched['bundle_id'] = $switched['pair_id'] . '-registry-938efd93-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = 'ui-aaaaaaaaaaaa';
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-09bc6b371eca-pro-1f894a46f488');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-9fb0297bb5c2-larena-98ad1a012a17');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];

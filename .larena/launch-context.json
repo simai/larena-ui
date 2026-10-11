@@ -336,7 +336,8 @@
     "src/Frontend/FrontendRuntimeLock.php",
     "components/*",
     ".gitattributes",
-    "LICENSE"
+    "LICENSE",
+    "tools/larena-scope-check.php"
   ],
   "forbidden_files": [
     "config/*",

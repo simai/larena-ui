@@ -1,50 +1,62 @@
 {
-  "schema": "larena.ui.frontend_runtime_lock.v4",
+  "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-09bc6b371eca-pro-1f894a46f488",
-  "bundle_id": "ui-09bc6b371eca-pro-1f894a46f488-registry-58c57cca-exact-git-tree-v2",
+  "pair_id": "ui-9fb0297bb5c2-larena-98ad1a012a17",
+  "bundle_id": "ui-9fb0297bb5c2-larena-98ad1a012a17-registry-938efd93-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-09bc6b371eca",
+    "release": "ui-9fb0297bb5c2",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "09bc6b371eca0ea27723d4a6ace756526c34851d",
+    "commit": "9fb0297bb5c21827f6cdfc5588ff9dfd6ccbb6fa",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "04ff2d1815b7ef769238df0ae14a58d814226a7d79e58f4564192ae8fc34ae5f",
-    "files": 7722
+    "sha256": "1e4e58b83b7ad416cda26be5fb3b65977be55df7faa3bb0a02f6787a8c4105b8",
+    "files": 7815
   },
-  "pro": {
-    "release": "pro-1f894a46f488",
-    "repository": "simai/ui-pro",
-    "requires_framework": "ui-09bc6b371eca",
+  "larena": {
+    "release": "larena-98ad1a012a17",
+    "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "1f894a46f48887b8f2874b4567ada7e6c36f473d",
+    "commit": "98ad1a012a1750300a05cecef67ed2cbb91aa462",
     "tree": "smart",
-    "mount": "pro",
-    "sha256": "8b6a78c0465d9dabd962d33b5d861d5d87c21a6a85878856d895be132f97832b",
-    "files": 62
+    "mount": "larena",
+    "sha256": "5febe260cf06f5bc1e18e1e57e35aa2bbe25a30f3dd0b21e0fdb5413ef2d63ed",
+    "files": 66,
+    "requires_framework": "ui-9fb0297bb5c2",
+    "package_path": "components",
+    "package_tree": "d3a897219cdfd9cbdd8f1f64f0c30c12e595cd53",
+    "framework_source": {
+      "repository": "simai/ui-source",
+      "revision": "253cb441daa9c0312c39e72e3e47378a1f13e14d"
+    },
+    "builder": {
+      "repository": "simai/ui-builder",
+      "revision": "412e55de40ffd95671b0b2abdcf09c86cab6a4fd"
+    },
+    "manifest_sha256": "2b1448dfefa1a96e3f7bc928153f70a409d8993db4ae7119c34c83ff9fd459ca",
+    "receipt_sha256": "936f4a6dceb6c1622c372506ac03e5275f3fce395fb5c9fa0b85a75a32b0d6fb"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-09bc6b371eca",
+    "compatibility_id": "ui-9fb0297bb5c2",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "58c57cca12c41f36e80a6e3a8a9589f6f5ec70ffb429b438ed57886b8b6c18e3",
+    "file_sha256": "938efd93b5865bde277facb2aa17fc5168fae80d4c678298e17123d345661c1c",
     "source": {
       "tag": null,
-      "commit": "ff24012d2a32712602d0f0fca11579acd77dfa8a",
+      "commit": "19793312d701951eddc57204e44a441edbe95ec9",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "094013017891139a019a668492cf37d0929265d829268c63fb7505570a216f47",
+      "sha256": "ece9189f72f56ed88c10a019ad335e0b2d909b8929d541c03065c1bc94a80cce",
       "files": 2,
-      "tree_oid": "b9303b6a9ec654cec0bd13bb67e5c95bdbbc86a7"
+      "tree_oid": "0d3b5a17622922569646dc1dcebc9db497f64539"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "988f94fc07ad76333759dd8f66d17b29630c1ad609068af8bfd76d9dd6d5938e"
+      "file_sha256": "e1195da3a0fd8f160a81df246b4ba9fd612fcc819ec756d229ed91de8ee34a8b"
     }
   },
   "boot": {
@@ -53,12 +65,12 @@
     "smart_base": "ui/distr/core/js/smart-base.js",
     "ui_base": "ui/distr/",
     "smart_base_path": "ui/distr/smart/",
-    "pro_base": "pro/smart/"
+    "larena_base": "larena/smart/"
   },
   "components": {
     "sf-data-view": {
-      "source": "pro/smart/data-view",
-      "javascript": "pro/smart/data-view/js/data-view.js",
+      "source": "larena/smart/data-view",
+      "javascript": "larena/smart/data-view/js/data-view.js",
       "css": null,
       "requires": [
         "sf-table",
@@ -69,7 +81,7 @@
         "id",
         "class"
       ],
-      "package": "pro"
+      "package": "larena"
     },
     "sf-icon": {
       "source": "ui/distr/smart/icons",
@@ -113,9 +125,9 @@
       "package": "framework"
     },
     "sf-table": {
-      "source": "pro/smart/table",
-      "javascript": "pro/smart/table/js/table.js",
-      "css": "pro/smart/table/css/table.css",
+      "source": "larena/smart/table",
+      "javascript": "larena/smart/table/js/table.js",
+      "css": "larena/smart/table/css/table.css",
       "requires": [
         "sf-icon-button"
       ],
@@ -134,7 +146,7 @@
         "id",
         "class"
       ],
-      "package": "pro"
+      "package": "larena"
     },
     "sf-badge": {
       "source": "ui/distr/smart/badges",
@@ -372,9 +384,9 @@
       "package": "framework"
     },
     "sf-admin-menu": {
-      "source": "pro/smart/admin-menu",
-      "javascript": "pro/smart/admin-menu/js/admin-menu.js",
-      "css": "ui/distr/component/admin-menu/css/admin-menu.css",
+      "source": "larena/smart/admin-menu",
+      "javascript": "larena/smart/admin-menu/js/admin-menu.js",
+      "css": "larena/smart/admin-menu/css/admin-menu.css",
       "requires": [
         "sf-icon",
         "sf-badge",
@@ -414,7 +426,7 @@
         "id",
         "class"
       ],
-      "package": "pro"
+      "package": "larena"
     },
     "sf-breadcrumbs": {
       "source": "ui/distr/smart/breadcrumbs",
@@ -548,9 +560,9 @@
       "package": "framework"
     },
     "sf-property-view": {
-      "source": "pro/smart/property-view",
-      "javascript": "pro/smart/property-view/js/property-view.js",
-      "css": "pro/smart/property-view/css/property-view.css",
+      "source": "larena/smart/property-view",
+      "javascript": "larena/smart/property-view/js/property-view.js",
+      "css": "larena/smart/property-view/css/property-view.css",
       "requires": [],
       "attributes": [
         "panel-label",
@@ -565,7 +577,7 @@
         "id",
         "class"
       ],
-      "package": "pro"
+      "package": "larena"
     }
   }
 }
