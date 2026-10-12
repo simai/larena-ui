@@ -816,11 +816,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/controller.js",
-        "sha256": "2bfb1bc0a21764c7b7375e12f1a21d5af4362a30ba213d863cdb05ccf54518ed"
+        "sha256": "e0078061d76ea093d68ce59ec2bf70d2180d6e7311d901f35692b16a6719670e"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/menu.js",
-        "sha256": "4fbb3b475d2e99a3827cad265c64a90a5953f79cb0a90f83563d86fed69232ab"
+        "sha256": "c837335ce7a15afd48049d2d902b48a3eadc318053d5688fca9f278849992ec3"
       },
       {
         "path": "src/component/admin-menu/scss/_css__admin_menu.scss",

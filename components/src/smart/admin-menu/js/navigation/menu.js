@@ -4,8 +4,18 @@
 // outside the navigation's own rendering, so a re-render of the columns does
 // not take an open menu away.
 
-export function openMenu(controller, anchor, {label, entries, select, side = "block-end", align = "start", search = null, onSearch = null, onClose = null}) {
+// The standard menu is a lazy relation: fetched after the page is ready, so a
+// press that comes before it has arrived asks the Loader for it and waits.
+async function standardMenuDefined() {
+    if (customElements.get("sf-context-menu")) return true;
+    globalThis.SF?.Loader?.ensurePlugin?.("cl-context-menu") ?? globalThis.SF?.Loader?.ensureSmartElementLoaded?.("sf-context-menu");
+    await Promise.race([customElements.whenDefined("sf-context-menu"), new Promise((settle) => setTimeout(settle, 3000))]);
+    return Boolean(customElements.get("sf-context-menu"));
+}
+
+export async function openMenu(controller, anchor, {label, entries, select, side = "block-end", align = "start", search = null, onSearch = null, onClose = null}) {
     if (!(anchor instanceof Element)) return null;
+    if (!(await standardMenuDefined())) return null;
     let menu = controller._menu;
     if (!menu?.isConnected) {
         menu = document.createElement("sf-context-menu");

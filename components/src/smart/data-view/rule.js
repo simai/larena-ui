@@ -8,11 +8,12 @@ SF.RuleLoader["cl-data-view"] = {
   mode: "smart",
   js: true,
   css: false,
+  // lazy: a notice appears after an answer; fetched after the page is ready (2026-10-12).
   relation: [
     { name: "icons" },
     { name: "cl-table" },
     { name: "cl-pagination" },
-    { name: "cl-toast" },
+    { name: "cl-toast", lazy: true },
     { name: "cl-buttons" },
     { name: "cl-checkbox" },
     { name: "cl-dropdown" },

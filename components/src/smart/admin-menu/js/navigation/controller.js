@@ -544,7 +544,7 @@ export class NavigationController {
     async openSites(anchor) {
         if (!this.canSwitchSite()) return;
         this.sites = {...this.sites, open: true, query: "", items: [], next: null};
-        const opened = openMenu(this, anchor, {
+        const opened = await openMenu(this, anchor, {
             label: this.text("chooseSite"),
             entries: this.siteEntries(),
             search: {placeholder: this.text("findSite"), empty: this.text("nothingFound"), remote: true},

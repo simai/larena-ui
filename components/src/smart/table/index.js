@@ -6020,7 +6020,7 @@ class SfTable extends SfBaseElement {
     // of the host's row_actions is a real submenu rather than a second menu
     // swapped in over the first. What a choice does is unchanged -- an intent
     // for the row, or the action's own handler where it has one.
-    openRowMenu(event, row = {}) {
+    async openRowMenu(event, row = {}) {
         const anchor = event?.currentTarget?.querySelector?.("button")
             ?? event?.target?.closest?.("button")
             ?? event?.currentTarget;
@@ -6038,6 +6038,12 @@ class SfTable extends SfBaseElement {
                     .map((member) => ({id: member.id, text: member.name, icon: iconOf(member), danger: member.danger === true})),
             }
             : {id: action.id, text: action.name, icon: iconOf(action), danger: action.danger === true}));
+        // The standard menu is a lazy relation of the table: fetched after the
+        // page is ready, and asked for here if a press comes first.
+        if (!customElements.get("sf-context-menu")) {
+            globalThis.SF?.Loader?.ensurePlugin?.("cl-context-menu");
+            await Promise.race([customElements.whenDefined("sf-context-menu"), new Promise((settle) => setTimeout(settle, 3000))]);
+        }
         const menu = this.rowMenu();
         menu.setAttribute("aria-label", this.getContextMenuLabel({row, menu: "row-settings"}));
         menu.entries = entries;

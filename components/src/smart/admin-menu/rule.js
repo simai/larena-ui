@@ -6,19 +6,20 @@ SF.RuleLoader["cl-admin-menu"] = {
   // The navigation shell brings its own stylesheet; the `items` menu is styled
   // by the free admin-menu component and needs none.
   css: true,
+  // lazy: menus open on a press and the edit mode on demand; fetched after the page is ready (2026-10-12).
   relation: [
     { name: "admin-menu" },
     { name: "icons" },
     { name: "inputs" },
     { name: "badges" },
     { name: "cl-buttons" },
-    { name: "cl-context-menu" },
+    { name: "cl-context-menu", lazy: true },
     { name: "cl-badges" },
     { name: "cl-icons" },
     { name: "cl-icon-buttons" },
     { name: "cl-inputs" },
     // The navigation shell's edit mode moves rows with sf-sortable; a tag the
     // menu renders is a tag it fetches.
-    { name: "cl-sortable" },
+    { name: "cl-sortable", lazy: true },
   ],
 };
