@@ -6015,6 +6015,61 @@ class SfTable extends SfBaseElement {
         };
     }
 
+    // The row's menu is the Framework's standard menu (owner, 2026-10-12): it
+    // opens below its button and start-aligned, in the top layer, and a group
+    // of the host's row_actions is a real submenu rather than a second menu
+    // swapped in over the first. What a choice does is unchanged -- an intent
+    // for the row, or the action's own handler where it has one.
+    openRowMenu(event, row = {}) {
+        const anchor = event?.currentTarget?.querySelector?.("button")
+            ?? event?.target?.closest?.("button")
+            ?? event?.currentTarget;
+        if (!(anchor instanceof Element)) return null;
+        const selection = Array.isArray(row.actions) && row.actions.every((item) => typeof item === "string")
+            ? row.actions
+            : null;
+        const items = this.getActionRowItems(row);
+        const iconOf = (action) => action?.icon ?? action?.component?.props?.icon ?? undefined;
+        const entries = items.map((action) => (Array.isArray(action.members)
+            ? {
+                id: action.id, text: action.name, icon: iconOf(action),
+                submenu: action.members
+                    .filter((member) => !selection || selection.includes(member.id))
+                    .map((member) => ({id: member.id, text: member.name, icon: iconOf(member), danger: member.danger === true})),
+            }
+            : {id: action.id, text: action.name, icon: iconOf(action), danger: action.danger === true}));
+        const menu = this.rowMenu();
+        menu.setAttribute("aria-label", this.getContextMenuLabel({row, menu: "row-settings"}));
+        menu.entries = entries;
+        this._rowMenuContext = {row, items, anchor};
+        return menu.toggleFor(anchor);
+    }
+
+    rowMenu() {
+        if (this._rowMenu?.isConnected) return this._rowMenu;
+        const menu = document.createElement("sf-context-menu");
+        menu.setAttribute("popup", "");
+        menu.dataset.sfTableMenu = "row";
+        menu.addEventListener("sf-context-menu-select", (event) => {
+            const context = this._rowMenuContext;
+            if (!context) return;
+            const id = event.detail?.id;
+            const {row, items, anchor} = context;
+            const action = items.find((item) => item.id === id);
+            const member = action ? null : items.flatMap((item) => item.members ?? []).find((item) => item.id === id);
+            if (member) {
+                this.requestActionIntent(member.id, [row.id]);
+                return;
+            }
+            const handler = action?.component?.props?.["@click"] ?? action?.component?.props?.onClick;
+            if (typeof handler === "function") handler({currentTarget: anchor, target: anchor, preventDefault() {}, stopPropagation() {}});
+            else if (action) this.requestActionIntent(action.id, [row.id]);
+        });
+        (this.closest("dialog[open]") || document.body).append(menu);
+        this._rowMenu = menu;
+        return menu;
+    }
+
     // Which of the table's actions this row offers, and in what shape.
     //
     // `row.actions` is read twice over a row's life and means two things. From
@@ -6157,13 +6212,7 @@ class SfTable extends SfBaseElement {
                     icon: "menu",
                     ariaLabel: this.text("menuLabel"),
                     value: "menu",
-                    "@click": (e) => {
-                        this.openContextMenu(e, {
-                            type: 'left',
-                            menu: 'row-settings',
-                            row,
-                        })
-                    }
+                    "@click": (e) => this.openRowMenu(e, row),
                 },
             });
         }
@@ -6440,6 +6489,11 @@ class SfTable extends SfBaseElement {
     }
 
     disconnectedCallback() {
+        // The row menu lives beside the page, not inside the table: it goes
+        // with the table that made it.
+        this._rowMenu?.close?.({restoreFocus: false});
+        this._rowMenu?.remove();
+        this._rowMenu = null;
         for (const page of this._filterOptionPages.values()) {
             page.controller?.abort();
             clearTimeout(page.searchTimer);

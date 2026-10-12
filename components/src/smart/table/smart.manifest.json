@@ -1548,7 +1548,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "268bbeb4be2928c9360635eced7a297847749f63b95b423f83e16dc8207871b0"
+        "sha256": "55105b873e61f80bd5aecba2c66ff822b43709a09555253b03ce9129e9def13e"
       },
       {
         "path": "src/smart/table/js/templates/default.js",

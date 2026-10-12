@@ -1,5 +1,6 @@
 import {html, nothing} from "lit";
 import {LIST_ID} from "./controller";
+import {openMenu} from "./menu";
 
 // The edit mode (assignment, section 7): both columns at once, a banner with
 // the profile being edited and what that means, and on every row a handle, an
@@ -46,32 +47,34 @@ function renderNaming(context, mode) {
     </form>`;
 }
 
-function renderProfileList(context) {
-    const {controller, navigation, text, edit} = context;
+// The profiles to edit, and what can be done to the one being edited, in the
+// standard menu. Naming a profile is a form, so it opens in the banner rather
+// than inside the menu.
+function openProfiles(context, anchor) {
+    const {controller, navigation, text} = context;
     const profiles = navigation.profiles;
     const current = controller.currentProfile();
-    return html`<div class="sf-admin-nav-edit-profiles" role="dialog" aria-label=${text("menuProfile")}>
-        <ul class="sf-admin-nav-account-list" role="listbox" aria-label=${text("menuProfile")}>
-            ${profiles.list.map((entry) => html`<li role="option" aria-selected=${String(entry.key === profiles.current)}>
-                <button type="button" class="sf-admin-nav-row" ?disabled=${!controller.mayEdit(entry)}
-                    @click=${() => controller.editProfile(entry.key)}>
-                    ${icon(entry.kind === "personal" ? "person" : "group")}
-                    <span class="sf-admin-nav-row-label">${entry.label}</span>
-                    ${entry.key === profiles.current ? icon("check", "sf-admin-nav-row-chevron") : nothing}
-                </button>
-            </li>`)}
-        </ul>
-        <hr class="sf-admin-nav-divider">
-        ${edit.naming ? renderNaming(context, edit.naming) : html`
-            ${newProfileKinds(controller).personal || newProfileKinds(controller).shared ? html`<button type="button"
-                class="sf-admin-nav-row" @click=${() => controller.startNaming("new")}>
-                ${icon("add")}<span class="sf-admin-nav-row-label">${text("newProfile")}</span></button>` : nothing}
-            ${current?.renamable ? html`<button type="button" class="sf-admin-nav-row" @click=${() => controller.startNaming("rename")}>
-                ${icon("edit")}<span class="sf-admin-nav-row-label">${text("renameProfile")}</span></button>` : nothing}
-            ${current?.removable ? html`<button type="button" class="sf-admin-nav-row sf-admin-nav-row--danger"
-                @click=${() => controller.deleteProfile()}>
-                ${icon("delete")}<span class="sf-admin-nav-row-label">${text("deleteProfile")}</span></button>` : nothing}`}
-    </div>`;
+    const kinds = newProfileKinds(controller);
+    const entries = profiles.list.map((entry) => ({
+        id: `profile:${entry.key}`, text: entry.label, kind: "radio",
+        icon: entry.kind === "personal" ? "person" : "group",
+        checked: entry.key === profiles.current, disabled: !controller.mayEdit(entry),
+    }));
+    const actions = [
+        kinds.personal || kinds.shared ? {id: "new", text: text("newProfile"), icon: "add"} : null,
+        current?.renamable ? {id: "rename", text: text("renameProfile"), icon: "edit"} : null,
+        current?.removable ? {id: "delete", text: text("deleteProfile"), icon: "delete", danger: true} : null,
+    ].filter(Boolean);
+    if (actions.length) entries.push({type: "separator"}, ...actions);
+    return openMenu(controller, anchor, {
+        label: text("menuProfile"), entries,
+        select: (id) => {
+            if (id?.startsWith("profile:")) return controller.editProfile(id.slice("profile:".length));
+            if (id === "new" || id === "rename") return controller.startNaming(id);
+            if (id === "delete") return controller.deleteProfile();
+            return null;
+        },
+    });
 }
 
 export function renderEditBanner(context) {
@@ -84,13 +87,13 @@ export function renderEditBanner(context) {
             <span class="sf-admin-nav-row-label">${text("editMenu")}</span>
             <sf-button size="1/2" @click=${() => controller.stopEdit()} text=${text("done")}></sf-button>
         </div>
-        <button type="button" class="sf-admin-nav-edit-profile" aria-haspopup="dialog"
-            aria-expanded=${String(edit.profiles)} @click=${() => controller.toggleEditProfiles()}>
+        <button type="button" class="sf-admin-nav-edit-profile" aria-haspopup="menu"
+            aria-expanded="false" @click=${(event) => openProfiles(context, event.currentTarget)}>
             ${icon(shared ? "group" : "person")}
             <span class="sf-admin-nav-row-label">${text("profileLabel")} <b>${current?.label ?? ""}</b></span>
             ${icon("expand_more", "sf-admin-nav-row-chevron")}
         </button>
-        ${edit.profiles ? renderProfileList(context) : nothing}
+        ${edit.naming ? renderNaming(context, edit.naming) : nothing}
         <p class="sf-admin-nav-edit-note">${shared ? text("noteShared") : text("notePersonal")}</p>
         ${edit.message ? html`<p class="sf-admin-nav-edit-message" role="alert">${edit.message}</p>` : nothing}
         <sf-button size="1/2" appearance="outline" scheme="on-surface" icon-start="restart_alt"
@@ -98,20 +101,27 @@ export function renderEditBanner(context) {
     </div>`;
 }
 
-function renderRowMenu(context, row) {
+function openRowMenu(context, row, anchor) {
     const {controller, text} = context;
     const renamed = row.package_label && row.label !== row.package_label;
-    return html`<div class="sf-admin-nav-row-menu" role="menu">
-        ${row.kind !== "divider" ? html`<button type="button" role="menuitem" class="sf-admin-nav-row"
-            @click=${() => { controller.edit = {...controller.edit, renaming: row.key, rowMenu: null}; controller.update("edit"); }}>
-            ${icon("edit")}<span class="sf-admin-nav-row-label">${text("rename")}</span></button>` : nothing}
-        ${renamed ? html`<button type="button" role="menuitem" class="sf-admin-nav-row"
-            @click=${() => controller.returnPackageName(row.key)}>
-            ${icon("undo")}<span class="sf-admin-nav-row-label">${text("packageName")}</span></button>` : nothing}
-        ${row.own ? html`<button type="button" role="menuitem" class="sf-admin-nav-row sf-admin-nav-row--danger"
-            @click=${() => controller.removeOwnRow(row.key)}>
-            ${icon("delete")}<span class="sf-admin-nav-row-label">${text("deleteRow")}</span></button>` : nothing}
-    </div>`;
+    const entries = [
+        row.kind !== "divider" ? {id: "rename", text: text("rename"), icon: "edit"} : null,
+        renamed ? {id: "package-name", text: text("packageName"), icon: "undo"} : null,
+        row.own ? {id: "delete", text: text("deleteRow"), icon: "delete", danger: true} : null,
+    ].filter(Boolean);
+    if (!entries.length) return null;
+    return openMenu(controller, anchor, {
+        label: `${text("more")}: ${row.label ?? ""}`, entries,
+        select: (id) => {
+            if (id === "rename") {
+                controller.edit = {...controller.edit, renaming: row.key};
+                return controller.update("edit");
+            }
+            if (id === "package-name") return controller.returnPackageName(row.key);
+            if (id === "delete") return controller.removeOwnRow(row.key);
+            return null;
+        },
+    });
 }
 
 function renderRenaming(context, row) {
@@ -128,7 +138,6 @@ function renderRenaming(context, row) {
 // line with the same controls, so it can be moved and hidden like a row.
 function renderEditRow(context, row, {draggable = true} = {}) {
     const {controller, text, edit, openRoot} = context;
-    const menuOpen = edit.rowMenu === row.key;
     const name = row.kind === "divider" ? text("addDivider") : row.label;
     // A root still opens its column in the edit mode: its rows are edited there.
     const label = row.kind === "root"
@@ -149,11 +158,10 @@ function renderEditRow(context, row, {draggable = true} = {}) {
         <button type="button" class="sf-admin-nav-edit-button" aria-pressed=${String(!row.hidden)}
             aria-label=${`${row.hidden ? text("show") : text("hide")}: ${name}`} title=${row.hidden ? text("show") : text("hide")}
             @click=${() => controller.toggleHidden(row.key)}>${icon(row.hidden ? "visibility_off" : "visibility", "")}</button>
-        <button type="button" class="sf-admin-nav-edit-button" aria-haspopup="menu" aria-expanded=${String(menuOpen)}
+        <button type="button" class="sf-admin-nav-edit-button" aria-haspopup="menu" aria-expanded="false"
             aria-label=${`${text("more")}: ${name}`} title=${text("more")}
-            @click=${() => { controller.edit = {...controller.edit, rowMenu: menuOpen ? null : row.key}; controller.update("edit"); }}>
+            @click=${(event) => openRowMenu(context, row, event.currentTarget)}>
             ${icon("more_horiz", "")}</button>
-        ${menuOpen ? renderRowMenu(context, row) : nothing}
     </div>`;
 }
 
@@ -187,19 +195,23 @@ function renderAdd(context, root) {
             </div>
         </form>`;
     }
-    if (edit.adding === "menu") {
-        return html`<div class="sf-admin-nav-row-menu sf-admin-nav-add-menu" role="menu">
-            <button type="button" role="menuitem" class="sf-admin-nav-row" @click=${() => controller.addOwnRow(root.key, "divider")}>
-                ${icon("horizontal_rule")}<span class="sf-admin-nav-row-label">${text("addDivider")}</span></button>
-            <button type="button" role="menuitem" class="sf-admin-nav-row" @click=${() => controller.addOwnRow(root.key, "heading")}>
-                ${icon("title")}<span class="sf-admin-nav-row-label">${text("addHeading")}</span></button>
-            <button type="button" role="menuitem" class="sf-admin-nav-row"
-                @click=${() => { controller.edit = {...controller.edit, adding: "link"}; controller.update("edit"); }}>
-                ${icon("link")}<span class="sf-admin-nav-row-label">${text("addLink")}</span></button>
-        </div>`;
-    }
-    return html`<button type="button" class="sf-admin-nav-row sf-admin-nav-add" aria-haspopup="menu"
-        @click=${() => { controller.edit = {...controller.edit, adding: "menu"}; controller.update("edit"); }}>
+    const choose = (anchor) => openMenu(controller, anchor, {
+        label: text("add"),
+        entries: [
+            {id: "divider", text: text("addDivider"), icon: "horizontal_rule"},
+            {id: "heading", text: text("addHeading"), icon: "title"},
+            {id: "link", text: text("addLink"), icon: "link"},
+        ],
+        select: (id) => {
+            if (id === "link") {
+                controller.edit = {...controller.edit, adding: "link"};
+                return controller.update("edit");
+            }
+            return controller.addOwnRow(root.key, id);
+        },
+    });
+    return html`<button type="button" class="sf-admin-nav-row sf-admin-nav-add" aria-haspopup="menu" aria-expanded="false"
+        @click=${(event) => choose(event.currentTarget)}>
         ${icon("add")}<span class="sf-admin-nav-row-label">${text("add")}</span></button>`;
 }
 

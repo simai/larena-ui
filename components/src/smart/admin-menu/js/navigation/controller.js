@@ -14,6 +14,7 @@
 // which root is open, which section is unfolded, what they typed into «Найти в
 // разделе», whether the menu is on its rail. Every change leaves through the
 // port, and nothing the host said is kept past the next answer.
+import {closeMenu, removeMenu} from "./menu";
 import {pageText} from "../../../../core/js/page-language";
 
 export const NAVIGATION_PORT = "simai.admin-navigation-port";
@@ -268,6 +269,7 @@ export class NavigationController {
     }
 
     dispose() {
+        removeMenu(this);
         clearTimeout(this._paletteTimer);
         this.element.removeEventListener("sf-sortable-intent", this._onSortableIntent);
         this.wideMedia?.removeEventListener?.("change", this._onWideChange);
@@ -748,6 +750,7 @@ export class NavigationController {
     }
 
     stopEdit() {
+        closeMenu(this);
         this.edit = {on: false, renaming: null, adding: null, rowMenu: null, profiles: false, naming: null, message: ""};
         this.update("edit");
     }

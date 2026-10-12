@@ -263,14 +263,17 @@ try {
   // The check above compares this window's blocks with each other, so it is
   // blind to the thing a person actually sees: whether they agree with the rows
   // the Framework draws inside them. Both are measured here from one origin --
-  // the border box of .sf-context-menu-content, which is the panel the items
+  // the padding box of .sf-context-menu-content, which is the panel the items
   // live in -- against the axis the menu publishes for its own items.
   const axis = await page.evaluate(() => {
     const content = document.querySelector('sf-context-menu .sf-context-menu-content')
       ?? document.querySelector('sf-context-menu .sf-table-context-menu');
     if (!content) return null;
-    const origin = content.getBoundingClientRect().left;
-    const end = content.getBoundingClientRect().right;
+    // From the padding edge, where the published inset is counted from: the
+    // panel has a hairline border since the standard menu (2026-10-12), and
+    // the border box put every block a pixel off an axis they all shared.
+    const origin = content.getBoundingClientRect().left + content.clientLeft;
+    const end = content.getBoundingClientRect().right - content.clientLeft;
     const start = (node) => node ? Math.round((node.getBoundingClientRect().left - origin) * 10) / 10 : null;
     const finish = (node) => node ? Math.round((end - node.getBoundingClientRect().right) * 10) / 10 : null;
     const px = (value) => {

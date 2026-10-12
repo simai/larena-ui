@@ -819,43 +819,14 @@
     color: var(--sf-error);
   }
 
-  .sf-admin-nav-edit-profiles,
-  .sf-admin-nav-row-menu {
-    position: absolute;
-    z-index: 20;
-    inset-inline: var(--sf-a4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sf-px);
-    padding: var(--sf-a4);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-elevation-3--surface);
-    box-shadow: var(--sf-elevation-3--shadow);
-    color: var(--sf-on-surface);
-  }
-
-  .sf-admin-nav-edit-profiles {
-    inset-block-start: calc(var(--sf-d0) + var(--sf-space-1));
-  }
-
-  .sf-admin-nav-row-menu {
-    inset-block-start: 100%;
-  }
-
-  .sf-admin-nav-edit-profiles button.sf-admin-nav-row,
-  .sf-admin-nav-row-menu button.sf-admin-nav-row,
+  /* The profile list, a row's ⋯ and «Добавить» open the Framework's standard
+     menu (js/navigation/menu.js); the add control alone is drawn here. */
   button.sf-admin-nav-add {
     inline-size: 100%;
     border: 0;
     background: none;
     font: inherit;
     text-align: start;
-  }
-
-  .sf-admin-nav-edit-profiles button.sf-admin-nav-row:disabled {
-    cursor: default;
-    color: var(--sf-on-disable);
   }
 
   .sf-admin-nav-edit-list {
@@ -953,10 +924,6 @@
   .sf-admin-nav-add {
     color: var(--sf-primary);
     --sf-icon--color: var(--sf-primary);
-  }
-
-  .sf-admin-nav-add-menu {
-    position: static;
   }
 
   .sf-admin-nav-edit-form {
