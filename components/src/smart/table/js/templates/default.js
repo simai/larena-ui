@@ -897,7 +897,11 @@ export function renderTableTemplate(context) {
             return renderCellItem(value, context.component);
         }
 
-        return value;
+        // Plain text stops at three lines with an ellipsis: a long description
+        // in a list made one row as tall as the screen (owner, 2026-10-12). The
+        // whole text is the record's, and a long one reads in full on hover.
+        const text = String(value);
+        return html`<span class="sf-table-cell-text" title=${text.length > 80 ? text : nothing}>${text}</span>`;
     }
 
     return html`

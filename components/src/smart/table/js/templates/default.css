@@ -503,6 +503,16 @@
     transform: rotate(90deg);
   }
 
+  /* A cell's plain text, three lines at most. */
+  sf-table .sf-table-cell-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--sf-table-cell--line-clamp, 3);
+    line-clamp: var(--sf-table-cell--line-clamp, 3);
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+
   sf-table .sf-table-tree-path {
     overflow: hidden;
     text-overflow: ellipsis;
