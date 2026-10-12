@@ -427,6 +427,17 @@ function toColumnSize(value) {
 // they hold and are not text anyone reads.
 const SYSTEM_COLUMNS = new Set(['select', 'settings', 'actions']);
 
+// The first load draws the rows it is waiting for, in the Framework's skeleton
+// (owner, 2026-10-12): the shape of the list is on screen before its records,
+// instead of one spinner in an empty table. Widths vary by row and column so
+// the placeholder reads as text, not as a grid of bars. The words are for a
+// reader and stay in a status; the bars are hidden from one.
+const SKELETON_ROWS = 6;
+const SKELETON_WIDTHS = ['w-3/4', 'w-1/2', 'w-2/3', 'w-1/3', 'w-2/5', 'w-3/5'];
+const skeletonBar = (row, column) => html`<div class="sf-skeleton sf-skeleton--animation-pulse" aria-hidden="true">
+    <div class="sf-skeleton-text sf-skeleton-text--size-1/2 ${SKELETON_WIDTHS[(row + column * 2) % SKELETON_WIDTHS.length]}"></div>
+</div>`;
+
 // The floor is the component's measurement, not a declaration here: it is
 // applied to a column only while there is not room for every column to be
 // readable. Written always it would be the width rather than a minimum -- a
@@ -585,11 +596,7 @@ export function renderTableTemplate(context) {
                 // language the host set, and the circle is for everyone else.
                 // Before this there were two indicators here, one of them in
                 // English on a Russian page.
-                loading: html`
-                    <div class="sf-table-state-busy flex items-cross-center content-main-center" role="status">
-                        <sf-spinner size="1" label="" aria-label=${context.loadingText}></sf-spinner>
-                    </div>
-                `,
+                loading: null,
                 error: html`
                     <div class="flex flex-col items-cross-start gap-1/2" role="alert">
                         <span>${context.errorText}</span>
@@ -605,6 +612,24 @@ export function renderTableTemplate(context) {
                 empty: html`<span>${context.emptyText}</span>`,
             }[dataState] || html`<span>${context.emptyText}</span>`;
 
+            if (dataState === 'loading') {
+                return html`
+                    <tbody data-state="loading" class="sf-table-skeleton">
+                        ${Array.from({length: SKELETON_ROWS}, (_, row) => html`<tr aria-hidden="true">
+                            ${columns.some((column) => !SYSTEM_COLUMNS.has(column?.key))
+                                    ? columns.map((column, at) => html`<td>${SYSTEM_COLUMNS.has(column?.key) ? nothing : skeletonBar(row, at)}</td>`)
+                                    // Before the host's first answer the columns are not
+                                    // known yet: three bars across the whole row.
+                                    : html`<td colspan=${String(Math.max(columns.length, 1))}>
+                                        <div class="flex gap-2">${[0, 1, 2].map((at) => html`<div class="flex-1">${skeletonBar(row, at)}</div>`)}</div>
+                                    </td>`}
+                        </tr>`)}
+                    </tbody>
+                    <tbody><tr><td colspan=${String(Math.max(columns.length, 1))} class="sf-table-visually-hidden">
+                        <span role="status">${context.loadingText}</span>
+                    </td></tr></tbody>
+                `;
+            }
             return html`
                 <tbody data-state=${dataState}>
                     <tr>
@@ -629,11 +654,16 @@ export function renderTableTemplate(context) {
         const {rows = []} = state.data || {};
         const dataState = resolvedDataState(context);
         if (dataState !== 'populated' && !(dataState === 'loading' && rows.length)) {
+            if (dataState === 'loading') {
+                return html`<div class="sf-table-list sf-table-skeleton flex flex-col" data-state="loading">
+                    ${Array.from({length: SKELETON_ROWS}, (_, row) => html`<div class="sf-table-list-item flex flex-col gap-1/3 p-1" aria-hidden="true">
+                        ${skeletonBar(row, 0)}${skeletonBar(row, 1)}
+                    </div>`)}
+                    <span class="sf-table-visually-hidden" role="status">${context.loadingText}</span>
+                </div>`;
+            }
             return html`<div class="sf-table-state p-2" data-state=${dataState}>${
-                dataState === 'loading'
-                    ? html`<div class="sf-table-state-busy flex items-cross-center content-main-center" role="status">
-                               <sf-spinner size="1" label="" aria-label=${context.loadingText}></sf-spinner></div>`
-                    : dataState === 'error'
+                dataState === 'error'
                         ? html`<div class="flex flex-col items-cross-start gap-1/2" role="alert"><span>${context.errorText}</span>
                                <sf-button type="outline" scheme="on-surface" size="1" text=${context.retryText}
                                           @click=${() => context.component.requestRetry()}></sf-button></div>`

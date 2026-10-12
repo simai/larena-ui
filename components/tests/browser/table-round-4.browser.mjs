@@ -91,28 +91,34 @@ const centre = (page, code) => page.evaluate((source) => {
 }, code);
 
 try {
-  // 6. The first load: one indicator, no English word, no zeros in the footer.
+  // 6. The first load: the rows it waits for as skeletons (owner, 2026-10-12,
+  // which replaced the one centred spinner), the words read in a status and
+  // not printed, no English word, no zeros in the footer.
   {
     const page = await open(1500);
     await page.waitForTimeout(300);
     const first = await page.evaluate(() => {
-      const body = document.querySelector('#t tbody');
-      const text = (body?.textContent ?? '').replace(/\s+/gu, ' ').trim();
+      const table = document.querySelector('#t');
+      const skeleton = table?.querySelector('tbody.sf-table-skeleton');
+      const status = table?.querySelector('[role="status"]');
       const footer = document.querySelector('#p .sf-pagination-main')?.textContent?.replace(/\s+/gu, ' ').trim() ?? '';
-      const spinner = body?.querySelector('sf-spinner');
-      const area = document.querySelector('#t .sf-table-scroll')?.getBoundingClientRect();
-      const box = spinner?.querySelector('div')?.getBoundingClientRect() ?? spinner?.getBoundingClientRect();
+      const printed = (skeleton?.textContent ?? '').replace(/\s+/gu, ' ').trim();
       return {
-        text: text.slice(0, 60), english: /Loading/u.test(text), indicators: body?.querySelectorAll('sf-spinner').length ?? 0,
-        label: spinner?.getAttribute('aria-label') ?? null,
-        centred: box && area ? Math.abs((box.left + box.width / 2) - (area.left + area.width / 2)) < 40 : null,
+        rows: skeleton?.querySelectorAll('tr').length ?? 0,
+        bars: skeleton?.querySelectorAll('.sf-skeleton-text').length ?? 0,
+        hidden: skeleton ? [...skeleton.querySelectorAll('tr')].every((row) => row.getAttribute('aria-hidden') === 'true') : false,
+        printed: printed.slice(0, 40),
+        label: status?.textContent?.trim() ?? null,
+        english: /Loading/u.test(table?.textContent ?? ''),
+        spinners: table?.querySelectorAll('tbody sf-spinner').length ?? 0,
         footer: footer.slice(0, 80),
         zeros: /0\/0|Всего: 0/u.test(footer),
         marked: /Отмечено/u.test(footer),
       };
     });
-    if (first.english || first.indicators !== 1 || first.zeros || first.marked || first.centred !== true || !first.label) {
-      note({case: 'first load', got: first, expected: 'one centred indicator, read not printed, and no zeros in the footer'});
+    if (first.english || first.rows !== 6 || first.bars < 6 || !first.hidden || first.printed || first.spinners
+      || first.zeros || first.marked || !first.label) {
+      note({case: 'first load', got: first, expected: 'six skeleton rows hidden from a reader, the words in a status, and no zeros in the footer'});
     }
     await page.close();
   }
