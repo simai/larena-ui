@@ -6219,6 +6219,9 @@ class SfTable extends SfBaseElement {
             reason,
         );
         this.syncSelectionPort();
+        // New rows are new selection: a tree that redrew its rows after a bulk
+        // write left the page box half-ticked over rows none of which were.
+        if (Object.prototype.hasOwnProperty.call(nextPatch, "rows")) this.syncSelectAllState();
         return result;
     }
 
