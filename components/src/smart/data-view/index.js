@@ -43,7 +43,7 @@ function projectColumn(column) {
     return projected;
 }
 
-const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0"];
+const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0"];
 const DATA_VIEW_TEXT = {
     en: {
         showAll: "Show all",

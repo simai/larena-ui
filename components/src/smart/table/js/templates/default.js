@@ -318,6 +318,11 @@ export function resolvedDataState(context) {
 }
 
 function renderHeadLabel(context, column) {
+    // The actions column is as wide as its icons, and its heading broke in two
+    // over them («Дей / ствия»): it is named for assistive technology only.
+    if (column.key === 'actions' && !column.component) {
+        return html`<span class="sf-table-visually-hidden">${column.label}</span>`;
+    }
     const content = column.component
         ? context.component.renderSmartElement(column.component.type, column.component.props)
         : column.label;
@@ -737,9 +742,17 @@ export function renderTableTemplate(context) {
                                context.component.toggleTreeRow(row);
                            }}><i class="sf-icon" aria-hidden="true">chevron_right</i></button>`
             : tree ? html`<span class="sf-table-tree-toggle" aria-hidden="true"></span>` : nothing;
+        // The node's icon, the host's to choose (port 1.9.0): a page with pages
+        // under it is still a page. Without one, a folder for a node with
+        // children -- open when it is open -- and a document for a leaf.
+        const icon = tree
+            ? (tree.expanded ? (row.icon_expanded ?? row.icon) : row.icon)
+                ?? (tree.hasChildren ? (tree.expanded ? 'folder_open' : 'folder') : 'description')
+            : row.icon;
         return html`
             <span class="sf-table-tree-cell" style=${`--sf-table-tree--level: ${level}`}>
                 ${toggle}
+                ${icon ? html`<i class="sf-icon sf-table-tree-icon" aria-hidden="true">${icon}</i>` : nothing}
                 <span class="sf-table-tree-value flex flex-col min-w-0">
                     <span class="min-w-0">${value}</span>
                     ${path ? html`<span class="sf-table-tree-path">${path}</span>` : nothing}

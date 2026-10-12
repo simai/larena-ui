@@ -103,9 +103,9 @@
       ],
       "host_port": {
         "port": "simai.dataview-port",
-        "version": "1.8.0",
-        "path": "src/core/contracts/ports/simai.dataview-port/1.8.0/port.json",
-        "sha256": "50455526cdf5e30550a7455fff11c00134da35184f23a7875b910049ff0359bb",
+        "version": "1.9.0",
+        "path": "src/core/contracts/ports/simai.dataview-port/1.9.0/port.json",
+        "sha256": "5ccd5feef999939959152c2c971dc069fd56f57d9b532291e99954793a53b43d",
         "supported_versions": [
           "1.0.0",
           "1.1.0",
@@ -115,7 +115,8 @@
           "1.5.0",
           "1.6.0",
           "1.7.0",
-          "1.8.0"
+          "1.8.0",
+          "1.9.0"
         ]
       }
     }
@@ -659,7 +660,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "6016d5761a42b92b77fae4cba73815705407ec65c7693c9849c4da3626cbd140"
+        "sha256": "bae22554673c4f91781cf324bac55cdb168cce1e96f7eed355365d620cfa420c"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",
