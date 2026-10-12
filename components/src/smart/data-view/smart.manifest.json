@@ -61,7 +61,8 @@
         "sf-table-query-intent",
         "sf-table-template-delete",
         "sf-table-template-save",
-        "sf-table-template-select"
+        "sf-table-template-select",
+        "sf-table-tree-intent"
       ],
       "persistence": {
         "settings_key_prop": null,
@@ -102,9 +103,9 @@
       ],
       "host_port": {
         "port": "simai.dataview-port",
-        "version": "1.7.0",
-        "path": "src/core/contracts/ports/simai.dataview-port/1.7.0/port.json",
-        "sha256": "7adc0b1d2220ca84751825c75e0d00b7d2b9209a346967ae69ff33d748e8bc0a",
+        "version": "1.8.0",
+        "path": "src/core/contracts/ports/simai.dataview-port/1.8.0/port.json",
+        "sha256": "50455526cdf5e30550a7455fff11c00134da35184f23a7875b910049ff0359bb",
         "supported_versions": [
           "1.0.0",
           "1.1.0",
@@ -113,7 +114,8 @@
           "1.4.0",
           "1.5.0",
           "1.6.0",
-          "1.7.0"
+          "1.7.0",
+          "1.8.0"
         ]
       }
     }
@@ -353,6 +355,79 @@
         "type": "boolean",
         "description": "Whether a shown record was rewritten."
       }
+    },
+    "expandNode": {
+      "summary": "Open a node the host said has children: from what the view holds, or by asking the host with tree.expand.",
+      "arguments": [
+        {
+          "name": "id",
+          "type": [
+            "string",
+            "integer"
+          ],
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer, or of null when superseded."
+      }
+    },
+    "collapseNode": {
+      "summary": "Close an open node. The view's own business; the host is not asked.",
+      "arguments": [
+        {
+          "name": "id",
+          "type": [
+            "string",
+            "integer"
+          ],
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "null"
+      }
+    },
+    "loadMoreNodes": {
+      "summary": "The next page of one level: the roots through the query, a node's children through tree.expand with its cursor.",
+      "arguments": [
+        {
+          "name": "parent",
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "required": true
+        },
+        {
+          "name": "cursor",
+          "type": [
+            "string",
+            "null"
+          ],
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer, or of null when superseded."
+      }
+    },
+    "openMoveDialog": {
+      "summary": "Ask the host where a record may go (node.targets), let the person choose among exactly those places, and move it there (node.move).",
+      "arguments": [
+        {
+          "name": "record",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the host answer, or of null when superseded."
+      }
     }
   },
   "events": {
@@ -463,6 +538,25 @@
           }
         }
       }
+    },
+    "sf-table-tree-intent": {
+      "summary": "A tree intent of simai.dataview-port 1.8.0 -- tree.expand, node.targets or node.move -- announced as the view raises it. The host answers through the port.",
+      "payload": {
+        "type": "object",
+        "required": [
+          "intent",
+          "payload"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "intent": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          }
+        }
+      }
     }
   },
   "state": {
@@ -565,7 +659,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "0d409a80dfbf090269c681856ff5e13e87d9b15b80b7f3530e03f0bc4d18d382"
+        "sha256": "a0f836b051c6d5ed649be03b32defc42ca51db6e6a9fe9c4fd919a3240242e89"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",
@@ -578,6 +672,10 @@
       {
         "path": "tests/fixtures/data-view-composite-lab.html",
         "sha256": "5e541ba6148eea02a0192c66606698587c31a0c9a74d2d7848044835d0120f36"
+      },
+      {
+        "path": "src/smart/data-view/js/tree.js",
+        "sha256": "800ce7a5fe2ca9681b4dc4cd283055bf815b0346aec4bb5e9df40189c682e2c4"
       }
     ],
     "generated_runtime": []

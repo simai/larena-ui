@@ -971,6 +971,57 @@
       "returns": {
         "type": "null"
       }
+    },
+    "isTree": {
+      "summary": "Whether the rows are a tree: some row carries __tree, written by the data view from the host's levels.",
+      "arguments": [],
+      "returns": {
+        "type": "boolean"
+      }
+    },
+    "treeColumnKey": {
+      "summary": "The column a tree hangs from: the title column, or the first data column.",
+      "arguments": [
+        {
+          "name": "columns",
+          "type": "array",
+          "required": false
+        }
+      ],
+      "returns": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "toggleTreeRow": {
+      "summary": "Say that a tree row was opened or closed (sf-table-tree-toggle).",
+      "arguments": [
+        {
+          "name": "row",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element."
+      }
+    },
+    "requestTreeMore": {
+      "summary": "Ask for the next page of a tree level (sf-table-tree-more).",
+      "arguments": [
+        {
+          "name": "row",
+          "type": "object",
+          "required": true
+        }
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The element."
+      }
     }
   },
   "events": {
@@ -1203,6 +1254,46 @@
           }
         },
         "additionalProperties": false
+      }
+    },
+    "sf-table-tree-toggle": {
+      "summary": "The person opened or closed a tree row. The data view answers it; the table only says which row and whether it was open.",
+      "payload": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "integer"
+            ]
+          },
+          "expanded": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "sf-table-tree-more": {
+      "summary": "The person asked for the next page of one tree level.",
+      "payload": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "parent": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "cursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
       }
     }
   },
@@ -1437,19 +1528,19 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "b01284065edc96ff1d3a1a6532a776a087ca3d7fcbe82e619488868b2b9fb0af"
+        "sha256": "a86f3a89c1a8860789c5946fb1819bcb9e9a342e0cd2164fa663f2336cb9352b"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "40ba2058a43477666da747d6afddc8cae65fe7661b70eeed7d59b72b2bebe9da"
+        "sha256": "3f6d887b5b42809bcfa399442f578f28e37a1e85b72146a0359554a2c52140bc"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "9101789700a8870eb834d1e065ed619533f442edd13ae662e9f3ab19441ce9a0"
+        "sha256": "f491432c3911b88e5bba0fb02dccfa378e3b7c1de915108c2588560163f03a68"
       },
       {
         "path": "src/smart/helpers/option-badge.js",
-        "sha256": "dd087971b3f337a28f8f2d5bfdba7ebe9767d0297799f60adf77f38821aff685"
+        "sha256": "3d86eadce74690add49205be7bf4259d88847cb8a60821b4dae783584543000f"
       },
       {
         "path": "src/smart/table/rule.js",

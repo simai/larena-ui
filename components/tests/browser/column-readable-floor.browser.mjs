@@ -63,7 +63,13 @@ try {
     const table = document.querySelector('#t table');
     const floor = Number.parseFloat(getComputedStyle(table).getPropertyValue('--sf-table--column-min-inline-size'))
       * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const widths = [...table.querySelectorAll('thead th')].map((th) => Math.round(th.getBoundingClientRect().width));
+    // The data columns by name. Taking the last five once counted the actions
+    // column among them, which passed only while that column was held at the
+    // floor too -- it is as wide as its buttons now.
+    const data = new Set(['title', 'code', 'section', 'status', 'updated']);
+    const widths = [...table.querySelectorAll('thead th')]
+      .filter((th) => data.has(th.dataset.key))
+      .map((th) => Math.round(th.getBoundingClientRect().width));
     let node = table.parentElement;
     let scroller = null;
     while (node && node !== document.body) {
@@ -72,7 +78,7 @@ try {
     }
     return {
       floor: Math.round(floor),
-      dataWidths: widths.slice(-5),
+      dataWidths: widths,
       scrollBy: scroller ? scroller.scrollWidth - scroller.clientWidth : 0,
     };
   });

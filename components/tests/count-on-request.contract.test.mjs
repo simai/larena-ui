@@ -144,10 +144,11 @@ test('the count port is additive, and the versions before it are untouched', asy
   // The composite has moved on: 1.4.0 made pinning a personal column setting,
   // 1.5.0 lets a write be answered with the record it changed and a saved view
   // remember its filter fields, 1.6.0 adds opening the whole list from a capped
-  // one, and 1.7.0 lets a column say what it holds. 1.3.0 keeps the count as it
+  // one, 1.7.0 lets a column say what it holds, and 1.8.0 lets the list be a
+  // tree. 1.3.0 keeps the count as it
   // was published.
-  assert.equal(declared.version, '1.7.0');
-  assert.deepEqual(declared.supported_versions, ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0']);
+  assert.equal(declared.version, '1.8.0');
+  assert.deepEqual(declared.supported_versions, ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0', '1.8.0']);
   assert.ok(manifest.events['sf-count-request'], 'the composite announces the event the intent is raised by');
   const earlier = await json('src/core/contracts/ports/simai.dataview-port/1.2.0/port.json');
   assert.equal(earlier.version, '1.2.0', 'the published version keeps its number');

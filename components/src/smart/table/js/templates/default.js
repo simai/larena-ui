@@ -366,7 +366,12 @@ function renderColgroup(context) {
                 // for a column nobody sized, and an empty string is neither
                 // null nor undefined. The same shape cost sf-button its icon
                 // shortcut for as long as that component existed.
+                // The actions column is sized for its buttons. Without a width it
+                // took whatever room was left -- a thousand pixels on a wide
+                // page -- and the data columns were measured as cramped beside
+                // it and held at their floor.
                 const width = toColumnSize(column.colWidth ?? column.width ?? column.size)
+                        || (column.key === 'actions' ? (context.component?.actionsColumnWidth || 'var(--sf-table--actions-column-width, var(--sf-f0))') : '')
                         || (context.component?.columnsAreCramped
                                 && context.component?.columnTakesFloor?.(column)
                             ? 'var(--sf-table--column-min-inline-size)'
@@ -528,10 +533,16 @@ export function renderTableTemplate(context) {
     }
 
     function renderRows(context, columns, rows, {busy = false} = {}) {
+        const treeColumn = context.component.treeColumnKey?.(columns);
         return html`
             <tbody data-busy=${busy ? '' : nothing}>
-            ${rows.map((row, rowIndex) => keyed(`row:${row.id ?? row.value ?? rowIndex}`, html`
+            ${rows.map((row, rowIndex) => row.__tree?.more ? keyed(`row:${row.id}`, renderMoreRow(context, columns, row)) : keyed(`row:${row.id ?? row.value ?? rowIndex}`, html`
                 <tr data-selected=${row.select?.component?.props?.checked === true ? '' : nothing}
+                    aria-level=${row.__tree ? String(row.__tree.level + 1) : nothing}
+                    aria-expanded=${row.__tree?.hasChildren ? String(row.__tree.expanded === true) : nothing}
+                    aria-setsize=${row.__tree ? String(row.__tree.setsize) : nothing}
+                    aria-posinset=${row.__tree ? String(row.__tree.posinset) : nothing}
+                    aria-busy=${row.__tree?.loading ? 'true' : nothing}
                     data-row-id=${context.component.getRowKey(row, rowIndex)}
                     data-current=${context.component.isCurrentRow(row, rowIndex) ? '' : nothing}
                     tabindex="-1"
@@ -544,11 +555,56 @@ export function renderTableTemplate(context) {
                         html`
                         <td data-key="${column.key}" data-item="${row.id}_${column.key}"
                             data-sf-pinned=${context.component.isPinnedColumn(column) ? '' : nothing}
-                            style=${context.component.getStickyCellStyle(columns, index) || nothing}>${renderCellValue(row, column)}</td>
+                            style=${context.component.getStickyCellStyle(columns, index) || nothing}>${column.key === treeColumn
+                                ? renderTreeCell(context, row, renderCellValue(row, column))
+                                : renderCellValue(row, column)}</td>
                     `))}
                 </tr>
             `))}
             </tbody>`;
+    }
+
+    // The first cell of a tree row: indented by its level, with the button that
+    // opens or closes it when the host said it has children, and -- in a search
+    // over a tree -- the path it lives under, so a found row says where it is.
+    function renderTreeCell(context, row, value) {
+        const tree = row.__tree;
+        const path = Array.isArray(row.path) && row.path.length
+            ? row.path.map((item) => item?.label ?? item).join(' / ')
+            : '';
+        if (!tree && !path) return value;
+        const level = tree?.level ?? 0;
+        const toggle = tree?.hasChildren
+            ? html`<button type="button" class="sf-table-tree-toggle"
+                           data-expanded=${tree.expanded ? '' : nothing}
+                           aria-label=${context.component.text(tree.expanded ? 'treeCollapse' : 'treeExpand')}
+                           @click=${(event) => {
+                               event.stopPropagation();
+                               context.component.toggleTreeRow(row);
+                           }}><i class="sf-icon" aria-hidden="true">chevron_right</i></button>`
+            : tree ? html`<span class="sf-table-tree-toggle" aria-hidden="true"></span>` : nothing;
+        return html`
+            <span class="sf-table-tree-cell" style=${`--sf-table-tree--level: ${level}`}>
+                ${toggle}
+                <span class="sf-table-tree-value flex flex-col min-w-0">
+                    <span class="min-w-0">${value}</span>
+                    ${path ? html`<span class="sf-table-tree-path">${path}</span>` : nothing}
+                </span>
+            </span>`;
+    }
+
+    // The next page of one level, as a row of its own at that level.
+    function renderMoreRow(context, columns, row) {
+        return html`
+            <tr class="sf-table-tree-more" aria-level=${String(row.__tree.level + 1)}>
+                <td colspan=${String(columns.length)}>
+                    <span class="sf-table-tree-cell" style=${`--sf-table-tree--level: ${row.__tree.level}`}>
+                        <span class="sf-table-tree-toggle" aria-hidden="true"></span>
+                        <sf-button appearance="link" size="1/2" text=${context.component.text('treeMore')}
+                                   @click=${() => context.component.requestTreeMore(row)}></sf-button>
+                    </span>
+                </td>
+            </tr>`;
     }
 
     function renderCellValue(row, column) {
@@ -661,12 +717,20 @@ export function renderTableTemplate(context) {
                     const {actions} = state;
                     const actionId = el.id || el.component?.props?.value;
                     const action = actions.find(action => action.id === actionId);
+                    // The host's own actions (its row_actions) live in the row
+                    // menu: a page has a dozen of them, which drawn in a row of
+                    // buttons wrapped it to three lines.
+                    if (el.inline === false) return false;
 
                     return action?.visible ?? true
                 });
             }
+            // Several values -- badges for each language, tags for each choice
+            // -- wrap onto the next line when the column is narrower than
+            // they are, instead of running out of the cell under the next one.
+            // The row of actions stays on one line: it is sized for it.
             return html`
-                <div class="flex items-cross-center gap-1/3">
+                <div class="flex ${column.key === 'actions' ? '' : 'flex-wrap'} items-cross-center gap-1/3">
                     ${value.map((item) => renderCellItem(item, context.component))}
                 </div>
             `;
@@ -708,6 +772,7 @@ export function renderTableTemplate(context) {
                     <table
                             ${ref(context.component.refs.table)}
                             class="table border-separate border-spacing-0 min-w-full w-max table-fixed transition"
+                            role=${context.component.isTree?.() ? 'treegrid' : nothing}
                             aria-label=${context.ariaLabel || nothing}
                     >
                         ${renderColgroup(context)}

@@ -6,6 +6,7 @@ import "../pagination/index.js";
 // table and the page row.
 import "../toast/index.js";
 import {pageText} from "../../core/js/page-language";
+import {acceptLevel, collapse, createTree, expandKnown, hasLevel, knownRecords, markLoading, visibleRows} from "./js/tree.js";
 const EVENTS = Object.freeze({
     "sf-table-query-intent": "query.change",
     "sf-table-template-select": "view.open",
@@ -42,7 +43,7 @@ function projectColumn(column) {
     return projected;
 }
 
-const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0"];
+const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0"];
 const DATA_VIEW_TEXT = {
     en: {
         showAll: "Show all",
@@ -66,6 +67,18 @@ const DATA_VIEW_TEXT = {
         noticeRefused: "The action was refused.",
         noticeUnavailable: "The action is unavailable.",
         noticeFailed: "The action was not carried out.",
+        moveAction: "Move…",
+        createChildAction: "Add a nested one",
+        moveTitle: "Move «{label}»",
+        moveRoot: "To the top level",
+        movePlace: "Place",
+        moveFirst: "First",
+        moveLast: "Last",
+        moveApply: "Move",
+        moveNoTargets: "There is nowhere this record can be moved.",
+        confirmTitle: "Confirm the change",
+        confirmApply: "Confirm",
+        cancel: "Cancel",
     },
     ru: {
         showAll: "Показать все",
@@ -89,6 +102,18 @@ const DATA_VIEW_TEXT = {
         noticeRefused: "Действие отклонено.",
         noticeUnavailable: "Действие недоступно.",
         noticeFailed: "Действие не выполнено.",
+        moveAction: "Переместить…",
+        createChildAction: "Добавить вложенную",
+        moveTitle: "Переместить «{label}»",
+        moveRoot: "На верхний уровень",
+        movePlace: "Место",
+        moveFirst: "Первым",
+        moveLast: "Последним",
+        moveApply: "Переместить",
+        moveNoTargets: "Эту запись некуда переместить.",
+        confirmTitle: "Подтвердите изменение",
+        confirmApply: "Подтвердить",
+        cancel: "Отмена",
     },
 };
 // The parts this element draws itself and a consumer can leave out. `status` is
@@ -109,8 +134,13 @@ const CHROME_PARTS = ["toolbar", "pagination", "select", "settings"];
 // Writes that cannot have changed a row, so the view does not re-query after
 // them. Opening a record changes nothing either; the rest of the settings layer
 // is the person's own view of the same rows.
+const ANSWER_ONLY = new Set(["node.targets"]);
+const TREE_INTENTS = new Set(["tree.expand", "node.targets", "node.move"]);
+
 const NO_REFRESH_AFTER = new Set([
     "record.open",
+    "tree.expand",
+    "node.targets",
     "settings.save_personal",
     "settings.save_shared",
 ]);
@@ -122,6 +152,14 @@ class SfDataView extends HTMLElement {
         this.instanceId = `sf-data-view-${++instanceNumber}`;
         this.query = {filters: {}, search: "", sort: [], page: 1, per_page: 25};
         this.records = [];
+        // The tree, when the host answers in levels (port 1.8.0): mode is
+        // tree, flat or flattened as the last answer said, null before one.
+        this.treeMode = null;
+        this.tree = createTree();
+        this._treeAppend = new Set();
+        this.treeSequence = 0;
+        // The host's labels and groups for its own action ids (row_actions).
+        this.rowActionCatalog = [];
         this.continuing = false;
         this.appended = null;
         this.columns = [];
@@ -214,6 +252,7 @@ class SfDataView extends HTMLElement {
             <slot name="pagination"><sf-pagination top="false" bottom="false"></sf-pagination></slot>
             <slot name="bulk"></slot>
             <slot name="notice"></slot>
+            <slot name="dialog"></slot>
           </section>`;
     }
 
@@ -337,6 +376,7 @@ class SfDataView extends HTMLElement {
             "sf-table-retry", "sf-port-output", "sf-page-change", "sf-page-size-change",
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
+            "sf-table-tree-toggle", "sf-table-tree-more",
         ];
         for (const name of events) this.shadowRoot.addEventListener(name, this._bound);
         for (const name of events) this.addEventListener(name, this._bound);
@@ -396,6 +436,7 @@ class SfDataView extends HTMLElement {
             "sf-table-retry", "sf-port-output", "sf-page-change", "sf-page-size-change",
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
+            "sf-table-tree-toggle", "sf-table-tree-more",
         ];
         for (const name of events) this.shadowRoot.removeEventListener(name, this._bound);
         for (const name of events) this.removeEventListener(name, this._bound);
@@ -433,6 +474,8 @@ class SfDataView extends HTMLElement {
     }
 
     get cappedRecords() {
+        // A tree is drawn whole, as far as it is open: the cap is a list's.
+        if (this.treeMode === "tree") return visibleRows(this.tree);
         const cap = this.rowCap;
         return cap ? this.records.slice(0, cap) : this.records;
     }
@@ -504,11 +547,19 @@ class SfDataView extends HTMLElement {
             "view.save_shared": "shared-saved-views",
             "settings.save_shared": "shared-column-settings", "bulk.apply_under_filter": "bulk-under-filter",
             "record.open": "row-actions", "record.mutate": "row-actions",
+            "tree.expand": "tree", "node.targets": "tree-move", "node.move": "tree-move",
         }[intent];
         if (capability && !this.hostPort.capabilities?.includes(capability)) {
             const answer = {answer: "unavailable", reason: "capability-not-provided"};
             this._showAnswer(intent, answer);
             return answer;
+        }
+        // The tree's intents are announced as the one event the port names
+        // for them, so a page can watch them without standing in the way.
+        if (TREE_INTENTS.has(intent)) {
+            this.dispatchEvent(new CustomEvent("sf-table-tree-intent", {
+                bubbles: true, composed: true, detail: {intent, payload: copy(payload)},
+            }));
         }
         const epoch = this.epoch;
         const sequence = query ? payload.sequence : null;
@@ -520,8 +571,26 @@ class SfDataView extends HTMLElement {
             }
             if (query && answer.sequence != null && answer.sequence !== sequence) return null;
             if (query) this.pending = null;
+            // A write the host confirms first (port 1.8.0): it answered with what
+            // it is about to do and a digest of it. The person reads it; if they
+            // confirm, the same intent goes again with the digest, which the
+            // host checks against the write it described.
+            if (!query && answer.answer === "refused" && answer.reason === "confirm_required"
+                && answer.data?.confirm?.digest && !payload?.confirm) {
+                const confirmed = await this._dialog({
+                    title: pageText(DATA_VIEW_TEXT, "confirmTitle", this),
+                    text: String(answer.data.confirm.summary ?? ""),
+                    apply: pageText(DATA_VIEW_TEXT, "confirmApply", this),
+                });
+                if (!confirmed) return {answer: "refused", reason: "not-confirmed"};
+                return this._raise(intent, {...payload, confirm: String(answer.data.confirm.digest)});
+            }
             if (answer.answer === "applied") {
-                if (!query && this._isRecordPatch(answer.data)) this._applyRecordPatch(answer.data.records);
+                // Where a node may go is an answer to a question, not a view of
+                // the list: it is read by the move dialog and changes no rows.
+                if (ANSWER_ONLY.has(intent)) {
+                    // nothing to project
+                } else if (!query && this._isRecordPatch(answer.data)) this._applyRecordPatch(answer.data.records);
                 else if (answer.data) this.applyProjection(answer.data);
                 if (query && !answer.data) throw new TypeError("Applied query has no data");
                 if (intent === "view.open") this.refresh("view-switch");
@@ -587,7 +656,38 @@ class SfDataView extends HTMLElement {
 
     applyProjection(data) {
         if (!data || typeof data !== "object") throw new TypeError("Port data must be an object");
-        if (Array.isArray(data.records)) {
+        if (Array.isArray(data.row_actions)) this.rowActionCatalog = copy(data.row_actions);
+        // One node's children: they go under it, and nothing else about the
+        // view changes -- not the query, not the count, not the columns.
+        const tree = data.tree && typeof data.tree === "object" ? data.tree : null;
+        if (tree?.mode === "tree" && tree.parent !== null && tree.parent !== undefined && Array.isArray(data.records)) {
+            const parent = String(tree.parent);
+            acceptLevel(this.tree, {
+                parent, records: copy(data.records), hasNext: tree.has_next === true,
+                cursor: tree.cursor ?? null, append: this._treeAppend.delete(parent),
+            });
+            this.records = knownRecords(this.tree);
+            this._renderProjection();
+            return;
+        }
+        // An answer without records is no new shape of the list (a settings
+        // write, a saved view): the mode stays what the last list said.
+        if (tree) this.treeMode = tree.mode ?? null;
+        else if (Array.isArray(data.records)) this.treeMode = null;
+        if (this.treeMode === "tree" && Array.isArray(data.records)) {
+            const reopen = [...this.tree.expanded];
+            acceptLevel(this.tree, {
+                records: copy(data.records), hasNext: tree.has_next === true,
+                cursor: tree.cursor ?? null, append: this.continuing && this.records.length > 0,
+            });
+            this.records = knownRecords(this.tree);
+            this.appended = null;
+            // Branches a person had open stay open: their children are asked
+            // for again, since a re-read may have changed them.
+            for (const id of reopen) {
+                if (this.tree.nodes.get(id)?.has_children === true && !hasLevel(this.tree, id)) this.expandNode(id);
+            }
+        } else if (Array.isArray(data.records)) {
             const next = copy(data.records);
             // A continuation keeps what is already shown and adds to it, and
             // keeps it by identity: a record the port repeats is not duplicated.
@@ -730,6 +830,15 @@ class SfDataView extends HTMLElement {
     // written. A full projection is still a full projection.
     updateRecord(id, patch = {}) {
         const key = String(id);
+        if (this.treeMode === "tree") {
+            const known = this.tree.nodes.get(key);
+            if (!known || !patch || typeof patch !== "object") return false;
+            this.tree.nodes.set(key, {...known, ...copy(patch), id: known.id});
+            this.records = knownRecords(this.tree);
+            this.table?.setRows?.(visibleRows(this.tree));
+            this._renderBulkBand();
+            return true;
+        }
         const index = this.records.findIndex((record) => String(record?.id) === key);
         if (index < 0 || !patch || typeof patch !== "object") return false;
         const next = {...this.records[index], ...copy(patch), id: this.records[index].id};
@@ -739,6 +848,172 @@ class SfDataView extends HTMLElement {
         return true;
     }
 
+    // ─── the tree (port 1.8.0) ───────────────────────────────────────────────
+    // Opening a node shows the children the view already has, or asks the host
+    // for them; closing it is the view's own business. A node is opened only
+    // when the host said it has children.
+    expandNode(id) {
+        const key = String(id);
+        const node = this.tree.nodes.get(key);
+        if (!node || node.has_children !== true) return null;
+        if (hasLevel(this.tree, key)) {
+            expandKnown(this.tree, key);
+            this._renderTreeRows();
+            return null;
+        }
+        markLoading(this.tree, key);
+        this._renderTreeRows();
+        return this._raise("tree.expand", {id: node.id, cursor: null, sequence: ++this.treeSequence});
+    }
+
+    collapseNode(id) {
+        collapse(this.tree, id);
+        this._renderTreeRows();
+    }
+
+    // The next page of one level: of the roots through the query, as a list
+    // pages, and of a node's children through tree.expand with its cursor.
+    loadMoreNodes(parent, cursor) {
+        if (parent === null || parent === undefined || parent === "") {
+            return this.changeQuery({page: this.query.page + 1}, "show-more");
+        }
+        const key = String(parent);
+        this._treeAppend.add(key);
+        const node = this.tree.nodes.get(key);
+        return this._raise("tree.expand", {id: node?.id ?? parent, cursor: cursor ?? null, sequence: ++this.treeSequence});
+    }
+
+    // Where a node may go is the host's: it is asked first, and only the places
+    // it names are offered -- the top level when it allows that, and the first
+    // or last place among the new siblings when it allows reordering.
+    async openMoveDialog(record) {
+        const answer = await this._raise("node.targets", {id: record.id});
+        if (answer?.answer !== "applied") return answer;
+        const targets = answer.data?.move_targets ?? {};
+        const parents = Array.isArray(targets.parents) ? targets.parents : [];
+        const options = [
+            ...(targets.root ? [{id: null, label: pageText(DATA_VIEW_TEXT, "moveRoot", this), path: []}] : []),
+            ...parents.filter((parent) => String(parent.id) !== String(record.id)),
+        ];
+        if (!options.length) {
+            this.notify(pageText(DATA_VIEW_TEXT, "moveNoTargets", this), {kind: "warning"});
+            return {answer: "refused", reason: "no-targets"};
+        }
+        const label = String(record.title ?? record.label ?? record.name ?? record.id);
+        const chosen = await this._dialog({
+            title: pageText(DATA_VIEW_TEXT, "moveTitle", this).replace("{label}", label),
+            apply: pageText(DATA_VIEW_TEXT, "moveApply", this),
+            options,
+            reorder: targets.reorder === true,
+        });
+        if (!chosen) return null;
+        return this._raise("node.move", {
+            id: record.id, parent: chosen.parent, index: chosen.index,
+            ...(record.revision !== undefined ? {revision: record.revision} : {}),
+        });
+    }
+
+    // One small dialog for both the move and the confirmation: a native
+    // <dialog> in the light DOM, where the Framework's styles reach it, shown
+    // modal so it holds the focus and Escape closes it. Resolves with what was
+    // chosen, true for a plain confirmation, or null.
+    _dialog({title, text = "", apply, options = null, reorder = false}) {
+        const dialog = document.createElement("dialog");
+        dialog.slot = "dialog";
+        // No layout utility on the dialog itself: one that sets display would
+        // beat the browser's own hiding of a closed dialog.
+        dialog.className = "sf-data-view-dialog";
+        dialog.setAttribute("aria-label", title);
+        dialog.style.cssText = "max-inline-size: min(var(--sf-g4), calc(100vw - 2 * var(--sf-space-3)));"
+            + "padding: var(--sf-space-3); border: 0; border-radius: var(--sf-radius--surface);"
+            + "background-color: var(--sf-elevation-3--surface); box-shadow: var(--sf-elevation-3--shadow);"
+            + "color: var(--sf-on-surface);";
+        const heading = document.createElement("h2");
+        heading.className = "sf-text-2 font-semibold m-0";
+        heading.textContent = title;
+        const content = document.createElement("div");
+        content.className = "flex flex-col gap-3";
+        dialog.append(content);
+        content.append(heading);
+        if (text) {
+            const body = document.createElement("p");
+            body.className = "sf-text-1 m-0";
+            body.textContent = text;
+            content.append(body);
+        }
+        const name = `${this.instanceId}-move`;
+        if (options) {
+            const list = document.createElement("div");
+            list.setAttribute("role", "radiogroup");
+            list.setAttribute("aria-label", title);
+            list.className = "flex flex-col gap-1";
+            options.forEach((option, index) => {
+                const radio = document.createElement("sf-radio");
+                radio.setAttribute("name", name);
+                radio.setAttribute("value", option.id === null ? "" : String(option.id));
+                radio.setAttribute("label", String(option.label));
+                if (Array.isArray(option.path) && option.path.length) radio.setAttribute("description", option.path.join(" / "));
+                if (index === 0) radio.setAttribute("checked", "");
+                list.append(radio);
+            });
+            content.append(list);
+            if (reorder) {
+                const placeList = document.createElement("div");
+                placeList.setAttribute("role", "radiogroup");
+                placeList.setAttribute("aria-label", pageText(DATA_VIEW_TEXT, "movePlace", this));
+                placeList.className = "flex gap-2";
+                for (const [value, key] of [["last", "moveLast"], ["first", "moveFirst"]]) {
+                    const radio = document.createElement("sf-radio");
+                    radio.setAttribute("name", `${name}-place`);
+                    radio.setAttribute("value", value);
+                    radio.setAttribute("label", pageText(DATA_VIEW_TEXT, key, this));
+                    if (value === "last") radio.setAttribute("checked", "");
+                    placeList.append(radio);
+                }
+                content.append(placeList);
+            }
+        }
+        const footer = document.createElement("div");
+        footer.className = "flex justify-end gap-2";
+        const cancel = document.createElement("sf-button");
+        cancel.setAttribute("appearance", "outline");
+        cancel.setAttribute("text", pageText(DATA_VIEW_TEXT, "cancel", this));
+        const confirm = document.createElement("sf-button");
+        confirm.setAttribute("text", apply);
+        confirm.dataset.apply = "";
+        footer.append(cancel, confirm);
+        content.append(footer);
+        this.append(dialog);
+        const checked = (radioName) => [...dialog.querySelectorAll(`sf-radio[name="${radioName}"]`)]
+            .find((radio) => radio.checked === true || radio.hasAttribute("checked") && radio.checked !== false);
+        return new Promise((settle) => {
+            const finish = (value) => {
+                dialog.close();
+                dialog.remove();
+                settle(value);
+            };
+            cancel.addEventListener("click", () => finish(null));
+            dialog.addEventListener("cancel", (event) => {
+                event.preventDefault();
+                finish(null);
+            });
+            confirm.addEventListener("click", () => {
+                if (!options) return finish(true);
+                const parentRadio = checked(name);
+                const value = parentRadio?.getAttribute("value") ?? "";
+                const option = options.find((item) => (item.id === null ? "" : String(item.id)) === value) ?? options[0];
+                const place = reorder ? checked(`${name}-place`)?.getAttribute("value") : "last";
+                return finish({parent: option.id, index: place === "first" ? 0 : null});
+            });
+            dialog.showModal();
+        });
+    }
+
+    _renderTreeRows() {
+        this.records = knownRecords(this.tree);
+        this.table?.setRows?.(visibleRows(this.tree));
+    }
+
     // An answer that carries records and nothing else is a patch of those
     // records, not a new page: it has no echo of the query, no total and no
     // columns, so there is nothing to lay out again.
@@ -746,7 +1021,7 @@ class SfDataView extends HTMLElement {
         return Boolean(data)
             && Array.isArray(data.records)
             && !data.echo && data.total == null && !data.columns
-            && !data.saved_views && !data.column_settings;
+            && !data.saved_views && !data.column_settings && !data.tree;
     }
 
     _applyRecordPatch(records = []) {
@@ -792,9 +1067,18 @@ class SfDataView extends HTMLElement {
             // apply. A view does not show a control the host has not claimed,
             // which is the same rule the saved-view controls already follow
             // (admin polygon, 2026-10-10).
+            // A table the host wrote row-actions="false" on keeps it: the host has
+            // put every action in its own row menu and still claims the
+            // capability, because its menu raises record.open and record.mutate
+            // through the port (Larena, 2026-10-12). What the table carried
+            // before the view first touched it is the host's word.
+            if (!table.hasAttribute?.("data-sf-host-row-actions")) {
+                table.setAttribute("data-sf-host-row-actions", table.getAttribute?.("row-actions") ?? "");
+            }
+            const hostSaysNo = table.getAttribute?.("data-sf-host-row-actions") === "false";
             table.setAttribute(
                 "row-actions",
-                this.hostPort?.capabilities?.includes("row-actions") ? "true" : "false",
+                !hostSaysNo && this.hostPort?.capabilities?.includes("row-actions") ? "true" : "false",
             );
             // The accessible name of a list the host did not slot in. The fallback
             // table carries a name of its own, which is right for a page list and
@@ -813,9 +1097,51 @@ class SfDataView extends HTMLElement {
             // the label broke mid-word and set the row height.
             this._knownRowActions ??= table.ACTIONS_SETTINGS_ROW ?? [];
             const known = this._knownRowActions;
-            table.ACTIONS_SETTINGS_ROW = [...allowed].map((id) => known.find((action) => action.id === id) ?? {
-                id, name: id, component: {type: "button", props: {text: id, type: "link"}},
-            });
+            // The host's own actions are named by its catalogue (row_actions,
+            // port 1.8.0); an action the catalogue groups is offered once, as
+            // the group, with a submenu of the members a record allows. Which
+            // members a row shows is still that record's actions alone.
+            const catalog = new Map(this.rowActionCatalog.map((entry) => [entry.id, entry]));
+            // In a tree, move and create are the view's own actions and named
+            // by it, unless the host's catalogue names them.
+            const treeActions = this.treeMode === "tree"
+                ? {move: pageText(DATA_VIEW_TEXT, "moveAction", this), create: pageText(DATA_VIEW_TEXT, "createChildAction", this)}
+                : {};
+            const single = (id) => {
+                const entry = catalog.get(id) ?? (treeActions[id] ? {id, label: treeActions[id]} : null);
+                if (entry) {
+                    return {
+                        id, name: entry.label, danger: entry.danger === true, inline: false,
+                        component: {type: "button", props: {text: entry.label, type: "link", ...(entry.icon ? {icon: entry.icon} : {})}},
+                    };
+                }
+                return known.find((action) => action.id === id) ?? {
+                    id, name: id, component: {type: "button", props: {text: id, type: "link"}},
+                };
+            };
+            const groups = new Map();
+            const listed = [];
+            for (const id of allowed) {
+                const group = catalog.get(id)?.group;
+                if (!group) {
+                    listed.push(single(id));
+                    continue;
+                }
+                if (!groups.has(group)) {
+                    const label = catalog.get(id).group_label ?? group;
+                    const entry = {id: `group:${group}`, name: label, members: [], inline: false,
+                        component: {type: "button", props: {text: label, type: "link"}}};
+                    groups.set(group, entry);
+                    listed.push(entry);
+                }
+                groups.get(group).members.push(single(id));
+            }
+            table.ACTIONS_SETTINGS_ROW = listed;
+            // A list whose every action lives in the row menu has no actions
+            // column to draw.
+            if (listed.length && listed.every((action) => action.inline === false)) {
+                table.setAttribute("row-actions", "false");
+            }
             // The port the list is holding, handed to the table for one thing:
             // the renderer set asks a host how to format a value, and a cell had
             // no host to ask. Only the formatting is read from it -- the table
@@ -1001,6 +1327,13 @@ class SfDataView extends HTMLElement {
         const ids = detail?.record_ids;
         if (!Array.isArray(ids) || !ids.length || typeof detail.action_id !== "string") return;
         const chosen = ids.map((id) => this.records.find((record) => record.id === id));
+        // In a tree two of a record's actions are the view's own: move opens
+        // the choice of the places the host offers, create makes a node under
+        // it. Each is offered only when the record lists it.
+        if (this.treeMode === "tree" && !selectedBulk && ids.length === 1 && chosen[0]?.actions?.includes(detail.action_id)) {
+            if (detail.action_id === "move") return this.openMoveDialog(chosen[0]);
+            if (detail.action_id === "create") return this._raise("view.create_record", {item: null, parent: chosen[0].id});
+        }
         // A selected-bulk action has its own ID and permission in the host, even
         // when just one row is selected. The host checks the whole batch.
         if (chosen.some((record) => !record)
@@ -1048,6 +1381,11 @@ class SfDataView extends HTMLElement {
             return undefined;
         }
         if (event.type === "sf-table-retry") return this.refresh("retry");
+        if (event.type === "sf-table-tree-toggle") {
+            const id = event.detail?.id;
+            return event.detail?.expanded ? this.collapseNode(id) : this.expandNode(id);
+        }
+        if (event.type === "sf-table-tree-more") return this.loadMoreNodes(event.detail?.parent, event.detail?.cursor);
         if (event.type === "sf-table-action-intent") return this._action(event.detail);
         if (event.type === "sf-table-column-settings-change") {
             return this.saveColumnSettings(event.detail?.columnSettings ?? event.detail, {

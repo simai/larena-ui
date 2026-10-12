@@ -4,6 +4,7 @@ import {dirname, resolve} from 'node:path';
 import test from 'node:test';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
+import * as treeModel from '../src/smart/data-view/js/tree.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const source = readFileSync(resolve(root, 'src/smart/data-view/index.js'), 'utf8')
@@ -97,6 +98,8 @@ vm.runInNewContext(source, {
   // English table is what this fake answers with, which is enough for a test
   // about wiring rather than about wording.
   pageText: (table, key) => table.en?.[key] ?? key,
+  // The tree model is a module of plain functions, supplied the same way.
+  ...treeModel,
   document: {createElement: (tag) => new FakeChild(tag)},
 });
 const DataView = elements.get('sf-data-view');

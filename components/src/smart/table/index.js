@@ -48,6 +48,9 @@ const TABLE_TEXT = {
         filterSettingsLabel: "Filter settings",
         fieldWordText: "field",
         rowActionsLabel: "Row actions",
+        treeExpand: "Expand",
+        treeCollapse: "Collapse",
+        treeMore: "Show more",
         createOptionsLabel: "Ways to create",
         resetText: "Reset",
         contextSaveTemplateLabel: "Saving the filter as a template",
@@ -108,6 +111,9 @@ const TABLE_TEXT = {
         filterSettingsLabel: "Настройки фильтра",
         fieldWordText: "поле",
         rowActionsLabel: "Действия со строкой",
+        treeExpand: "Развернуть",
+        treeCollapse: "Свернуть",
+        treeMore: "Показать ещё",
         createOptionsLabel: "Варианты создания",
         resetText: "Сбросить",
         contextSaveTemplateLabel: "Сохранение шаблона фильтра",
@@ -981,8 +987,43 @@ class SfTable extends SfBaseElement {
     // The keyboard reaches the same two answers as the pointer: Enter opens the
     // row, Space marks it. Without them the row would be focusable and mute,
     // and marking would be reachable only by pointing at the box.
+    // ─── the tree (data view port 1.8.0) ─────────────────────────────────────
+    // A table is a tree when its rows carry __tree, which the data view writes
+    // from the host's levels. The table only draws it and says what a person
+    // asked for; which nodes exist and what opening one means is the view's.
+    isTree() {
+        return (this.getTableData?.().rows ?? []).some((row) => row?.__tree);
+    }
+
+    // The column a tree hangs from: the one the host marked as the title, or
+    // the first column that holds data.
+    treeColumnKey(columns = this.getColumns()) {
+        if (!this.isTree()) return null;
+        const data = columns.filter((column) => column?.key && !["select", "settings", "actions"].includes(column.key) && !column.system);
+        return (data.find((column) => column.role === "title") ?? data[0])?.key ?? null;
+    }
+
+    toggleTreeRow(row) {
+        if (!row?.__tree?.hasChildren) return this;
+        return this.dispatchTableEvent("sf-table-tree-toggle", Object.freeze({id: row.id, expanded: row.__tree.expanded === true}));
+    }
+
+    requestTreeMore(row) {
+        if (!row?.__tree?.more) return this;
+        return this.dispatchTableEvent("sf-table-tree-more", Object.freeze({parent: row.__tree.parent, cursor: row.__tree.cursor ?? null}));
+    }
+
     handleRowKeydown(event, row) {
         if (event?.target !== event?.currentTarget) return this;
+        // A treegrid row: the right arrow opens a closed node, the left arrow
+        // closes an open one.
+        if (row?.__tree?.hasChildren && (event.key === "ArrowRight" || event.key === "ArrowLeft")) {
+            const open = row.__tree.expanded === true;
+            if ((event.key === "ArrowRight") !== open) {
+                event.preventDefault?.();
+                return this.toggleTreeRow(row);
+            }
+        }
         if (event.key === "Enter") {
             return this.handleRowOpen({target: event.currentTarget}, row);
         }
@@ -2145,10 +2186,24 @@ class SfTable extends SfBaseElement {
         if (!Number.isFinite(floor) || floor <= 0) return false;
         // What the columns that are not floored already take, measured rather
         // than assumed: the select box, the gear, the actions.
+        // The actions column counts at its declared width, never more: measured,
+        // it had already swallowed the room the data columns were denied, and
+        // the measurement made the denial permanent.
         const taken = [...this.querySelectorAll("thead th")]
             .filter((cell) => !floored.some((column) => column.key === cell.dataset.key))
-            .reduce((total, cell) => total + cell.getBoundingClientRect().width, 0);
+            .reduce((total, cell) => total + (cell.dataset.key === "actions"
+                ? Math.min(cell.getBoundingClientRect().width, floor)
+                : cell.getBoundingClientRect().width), 0);
         return width - taken < floored.length * floor;
+    }
+
+    // The actions column as wide as its buttons: each a size-1 icon button, the
+    // same measure the settings column is given, with the cell's padding once.
+    get actionsColumnWidth() {
+        const inline = (this.ACTIONS_SETTINGS_ROW ?? []).filter((action) => action?.inline !== false).length;
+        if (!inline) return "";
+        return `calc(${inline} * (var(--sf-text-height-1) + var(--sf-ui-1--space-y-tightness-default) * 2)`
+            + ` + ${inline - 1} * var(--sf-space-1\\/3) + var(--sf-b6))`;
     }
 
     columnTakesFloor(column) {
@@ -5916,7 +5971,34 @@ class SfTable extends SfBaseElement {
             && row.actions.every((item) => typeof item === "string")
             ? row.actions
             : null;
-        return actions.filter((action) => !selection || selection.includes(action.id)).map((action) => {
+        // A group (the host's row_actions, port 1.8.0) is offered when the
+        // record allows any of its members, and opens a submenu of exactly
+        // those: «Опубликовать › ru» on a row drafted in ru, not in en.
+        const allowedMembers = (action) => (action.members || [])
+            .filter((member) => !selection || selection.includes(member.id));
+        return actions.filter((action) => (Array.isArray(action.members)
+            ? allowedMembers(action).length > 0
+            : !selection || selection.includes(action.id))).map((action) => {
+            if (Array.isArray(action.members)) {
+                const members = allowedMembers(action);
+                const props = {...(action.component?.props || {})};
+                props["@click"] = (event) => this.openContextMenu(event, {
+                    type: "left", row, action, menu: "row-settings",
+                    items: members.map((member) => ({
+                        component: "sf-button",
+                        props: {
+                            type: "link",
+                            scheme: member.danger ? "error" : "on-surface",
+                            text: member.name,
+                            "@click": () => {
+                                this.requestActionIntent(member.id, [row.id]);
+                                this.closeContextMenu();
+                            },
+                        },
+                    })),
+                });
+                return {...action, component: {...(action.component || {}), props}};
+            }
             const component = action.component || {};
             const props = {
                 ...(action.props || {}),
@@ -6331,6 +6413,7 @@ class SfTable extends SfBaseElement {
     }
 
     templateContext() {
+        this._renderedCramped = this.columnsAreCramped;
         const props = this.getPropsContext();
 
         return this.createTemplateContext({
@@ -6395,6 +6478,18 @@ class SfTable extends SfBaseElement {
 
     afterRender() {
         this.measurePinnedColumns();
+        // Whether the columns are cramped is read from the laid-out table, so
+        // the first render guesses: before layout the actions column and the
+        // floors are not yet where they will be. When the answer after the
+        // render is not the one the render used, render once more.
+        // Twice at most in a row, so a width that sits on the edge cannot keep
+        // the table re-rendering.
+        if (this.columnsAreCramped !== this._renderedCramped && (this._crampedRetries ?? 0) < 2) {
+            this._crampedRetries = (this._crampedRetries ?? 0) + 1;
+            this.requestComponentUpdate("cramped-columns");
+        } else {
+            this._crampedRetries = 0;
+        }
         this.bindPinnedColumnScroll();
         this.setCheckboxHeight();
         this.bindHoverEvent();

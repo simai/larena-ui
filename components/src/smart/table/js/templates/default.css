@@ -150,7 +150,11 @@
      declared it on sf-table, where the embedder above it read nothing and the
      compensation silently came to zero. */
   :root {
-    --sf-table--cell-spacing: calc(var(--sf-px) * 2);
+    /* No space between cells. It was 2px, and on a highlighted, selected or
+       hovered row the gaps read as dark separators between every cell (owner,
+       2026-10-12). The row's own line below is the only rule a row needs; the
+       inset below is derived from this, so an embedded list stays on its axis. */
+    --sf-table--cell-spacing: 0px;
     /* The narrowest a data column may be before the table scrolls instead of
        squeezing further. Ten steps of the ladder, chosen by measurement rather
        than by eye: at six the typed cells wrapped and a row grew from 57px to
@@ -319,10 +323,9 @@
     user-select: none !important;
   }
 
-  sf-table > .sf-table thead th[data-key="actions"] {
-    --sf-table--actions-column-width: var(--sf-f0);
-    width: var(--sf-table--actions-column-width);
-  }
+  /* The actions column's width is its <col>'s: as wide as the buttons it holds
+     (sf-table actionsColumnWidth). A width on the head cell won in a fixed
+     layout and held it at f0 -- 160px around one eye icon. */
 
   /* The head paints its own surface, and the colour has a role behind it.
      Until now it sat on `thead` alone, under a custom property nothing defines,
@@ -427,6 +430,63 @@
   .sf-table-context-menu .sf-settings-context-menu-item.drag-placeholder {
     opacity: 0.32;
     pointer-events: none;
+  }
+
+  /* A tree row (data view port 1.8.0): the first data cell is indented by the
+     row's level, one icon step per level, and leads with the button that
+     opens or closes the node -- or with its width, so leaves line up with the
+     nodes beside them. */
+  sf-table .sf-table-tree-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-a4);
+    min-inline-size: 0;
+    padding-inline-start: calc(var(--sf-table-tree--level, 0) * var(--sf-icon-size-2));
+  }
+
+  sf-table .sf-table-tree-toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--sf-icon-size-2);
+    block-size: var(--sf-icon-size-2);
+    padding: 0;
+    border: 0;
+    border-radius: var(--sf-radius--ui);
+    background: none;
+    color: var(--sf-on-surface-variant);
+  }
+
+  sf-table button.sf-table-tree-toggle {
+    cursor: pointer;
+  }
+
+  sf-table button.sf-table-tree-toggle:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset, 0);
+  }
+
+  sf-table .sf-table-tree-toggle .sf-icon {
+    --sf-icon--color: currentColor;
+    transition: transform var(--sf-duration-fast);
+  }
+
+  sf-table .sf-table-tree-toggle:dir(rtl) .sf-icon {
+    transform: rotate(180deg);
+  }
+
+  sf-table .sf-table-tree-toggle[data-expanded] .sf-icon {
+    transform: rotate(90deg);
+  }
+
+  sf-table .sf-table-tree-path {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
   }
 }
 @layer sf.states {
