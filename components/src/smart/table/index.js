@@ -49,6 +49,12 @@ const TABLE_TEXT = {
         fieldWordText: "field",
         rowActionsLabel: "Row actions",
         treeExpand: "Expand",
+        listFilterLabel: "Filter, {count} active",
+        sortLabel: "Sort",
+        sortNone: "As the host orders it",
+        sortAscending: "ascending",
+        sortDescending: "descending",
+        closeText: "Close",
         treeCollapse: "Collapse",
         treeMore: "Show more",
         createOptionsLabel: "Ways to create",
@@ -112,6 +118,12 @@ const TABLE_TEXT = {
         fieldWordText: "поле",
         rowActionsLabel: "Действия со строкой",
         treeExpand: "Развернуть",
+        listFilterLabel: "Фильтр, активных условий: {count}",
+        sortLabel: "Сортировка",
+        sortNone: "Как задано источником",
+        sortAscending: "по возрастанию",
+        sortDescending: "по убыванию",
+        closeText: "Закрыть",
         treeCollapse: "Свернуть",
         treeMore: "Показать ещё",
         createOptionsLabel: "Варианты создания",
@@ -200,6 +212,17 @@ class SfTable extends SfBaseElement {
             // vertical scroll to the document, so the head stays visible while
             // the page scrolls; the rows then scroll sideways only.
             verticalScroll: {attribute: 'vertical-scroll', default: 'self', values: ['self', 'page']},
+            // How the records are drawn. `auto` is a table while the table's own
+            // container is at least `list-below` pixels wide and a compact list
+            // of records below that -- a phone, or a list beside an open panel;
+            // `table` and `list` hold one of them whatever the width (owner,
+            // 2026-10-12: one mobile view, the compact list). A table is a table
+            // unless asked: sf-data-view asks for auto on a page's list.
+            layout: {default: 'table', values: ['auto', 'table', 'list']},
+            listBelow: {attribute: 'list-below', type: Number, default: 600},
+            // How many fields a record shows under its title in the list, chosen
+            // by the columns' priority (lower first).
+            listFields: {attribute: 'list-fields', type: Number, default: 3},
             toolbar: {type: Boolean, default: true},
             settings: {type: Boolean, default: true},
             pagin: {type: Boolean, default: false},
@@ -751,6 +774,52 @@ class SfTable extends SfBaseElement {
             <sf-context-menu
                     :key=${x + y}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'toolbar-actions'})}
+                    style="
+            position: fixed;
+            left: ${x}px;
+            inset-block-start: calc(${y}px + calc(var(--sf-focus-outline-width) * 2));
+            z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
+          "
+                    data-context-main-menu
+                    .items=${items}
+            ></sf-context-menu>
+        `;
+    }
+
+    // The list has no column heads to sort by, so its sort is a menu: the host's
+    // own order, then each sortable column one way and the other. Choosing one
+    // raises sf-table-sort-change exactly as a head does.
+    renderListSortContextMenu(data) {
+        const {x, y} = data;
+        const current = this.state.sort || {};
+        const choose = (key, direction) => {
+            this.closeContextMenu();
+            this.setSort(key, direction);
+            this.dispatchTableEvent('sf-table-sort-change', Object.freeze({key, direction}));
+        };
+        const option = (text, key, direction) => ({
+            component: "sf-button",
+            props: {
+                type: "link",
+                scheme: current.key === key && current.direction === direction ? "primary" : "on-surface",
+                text,
+                "aria-pressed": String(current.key === key && current.direction === direction),
+                "@click": () => choose(key, direction),
+            },
+        });
+        const sortable = this.getColumns().filter((column) => column?.sortable && !column.system
+            && !["select", "settings", "actions"].includes(column.key));
+        const items = [
+            option(this.text('sortNone'), null, null),
+            ...sortable.flatMap((column) => [
+                option(`${column.label ?? column.key}, ${this.text('sortAscending')}`, column.key, 'asc'),
+                option(`${column.label ?? column.key}, ${this.text('sortDescending')}`, column.key, 'desc'),
+            ]),
+        ];
+        return html`
+            <sf-context-menu
+                    :key=${x + y}
+                    aria-label=${this.getContextMenuLabel({...data, menu: 'list-sort'})}
                     style="
             position: fixed;
             left: ${x}px;
@@ -2199,6 +2268,17 @@ class SfTable extends SfBaseElement {
 
     // The actions column as wide as its buttons: each a size-1 icon button, the
     // same measure the settings column is given, with the cell's padding once.
+    // Whether the records are a compact list rather than a table: chosen by the
+    // width of the box the table sits in, which is what a list beside an open
+    // panel is narrow in, not the window.
+    get isList() {
+        const layout = this.getProp?.("layout") ?? "table";
+        if (layout === "list") return true;
+        if (layout === "table") return false;
+        const below = Number(this.getProp?.("listBelow")) || 600;
+        return this._responsiveWidth > 0 && this._responsiveWidth < below;
+    }
+
     get actionsColumnWidth() {
         const inline = (this.ACTIONS_SETTINGS_ROW ?? []).filter((action) => action?.inline !== false).length;
         if (!inline) return "";
@@ -2369,6 +2449,8 @@ class SfTable extends SfBaseElement {
                 return this.text('contextRowActionsLabel');
             case 'create':
                 return this.text('contextCreateOptionsLabel');
+            case 'list-sort':
+                return this.text('sortLabel');
             case 'toolbar-actions':
                 return this.text('contextViewActionsLabel');
             case 'table-settings':
@@ -3925,6 +4007,8 @@ class SfTable extends SfBaseElement {
                 return this.renderRowSettingsContextMenu(data);
             case 'create':
                 return this.renderCreateContextMenu(data);
+            case 'list-sort':
+                return this.renderListSortContextMenu(data);
             case 'toolbar-actions':
                 return this.renderToolbarActionsContextMenu(data);
             case 'filter-favorites':
@@ -4018,11 +4102,18 @@ class SfTable extends SfBaseElement {
             html`
                 <div
                         class="sf-table-context-layer"
+                        data-sf-sheet=${this.isList && ["filter-settings", "tag-settings"].includes(data.menu) ? "" : nothing}
                         ${ref(this.refs.contextMenu)}
                         @click=${(event) => this.handleContextLayerClick(event)}
                 >
                     ${this.renderMainContextMenu(data)}
                     ${data.submenu?.open ? this.renderContextSubmenu(data.submenu) : nothing}
+                    ${this.isList && ["filter-settings", "tag-settings"].includes(data.menu) ? html`
+                        <div class="sf-table-sheet-close">
+                            <sf-icon-button size="1" type="link" scheme="on-surface"
+                                            icon="close" aria-label=${this.text('closeText')}
+                                            @click=${() => this.closeContextMenu()}></sf-icon-button>
+                        </div>` : nothing}
                 </div>
             `,
             this.getPortalContainer(),
@@ -5784,7 +5875,9 @@ class SfTable extends SfBaseElement {
             ...rightSystemColumns,
         ].filter((column) => column?.visible !== false);
         const width = this._responsiveWidth || this.clientWidth || 0;
-        if (!width || !userColumns.some((column) => column.priority !== undefined)) return columns;
+        // The list chooses its own fields by priority and wants every column to
+        // choose from; dropping columns that do not fit is the table's answer.
+        if (this.isList || !width || !userColumns.some((column) => column.priority !== undefined)) return columns;
         const columnWidth = (column) => {
             const value = column.min_width ?? column.minWidth ?? column.width;
             const parsed = typeof value === "number" ? value : Number.parseFloat(String(value ?? ""));
@@ -6419,6 +6512,7 @@ class SfTable extends SfBaseElement {
         return this.createTemplateContext({
             ...props,
             component: this,
+            list: this.isList,
             rootClass: this.getRootClass(),
             rootStyle: this.getRootStyle(),
             filterText: this.text("filterText", "filter-text"),

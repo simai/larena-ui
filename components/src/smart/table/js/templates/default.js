@@ -25,6 +25,88 @@ function getEventInputValue(event, fallback = '') {
     return fallback;
 }
 
+// The toolbar of the compact list: one line, the search taking the room and the
+// filter and create as icons beside it -- the table's toolbar wrapped to three
+// lines on a phone and took a quarter of the screen. Active filters follow as a
+// row of chips that scrolls sideways, each removable, and the filter itself
+// opens as a sheet over the whole screen.
+function renderListToolbar(context) {
+    const {state} = context.component;
+    const {value} = state.search;
+    const filterTags = context.component.getCurrentFilterTags();
+    const filterValues = context.component.getCurrentFilterValues();
+    const active = Object.entries(filterTags || {}).filter(([, tag]) => tag?.active !== false);
+    return html`
+        <div class="sf-table-toolbar sf-table-toolbar--list flex flex-col gap-1/3 flex-none"
+             data-sf-filter-tags="${active.length ? '1' : '0'}">
+            <div class="flex items-cross-center gap-1/3 min-w-0">
+                <sf-input
+                        size="1"
+                        root-class="sf-search-input flex-1 min-w-0"
+                        type="bordered"
+                        value="${value}"
+                        placeholder=${context.searchPlaceholder}
+                        name="sf_table_search"
+                        aria-label=${context.searchPlaceholder}
+                        @input=${(e) => context.component.searchChange({value: getEventInputValue(e, value)})}
+                        @keydown=${(e) => context.component.handleSearchKeyDown(e)}
+                        @keyup=${(e) => context.component.handleSearchKeyUp(e)}
+                        hint-icon="search"
+                ></sf-input>
+                <span class="sf-table-list-filter">
+                    <sf-icon-button
+                            size="1"
+                            type=${active.length ? 'default' : 'outline'}
+                            scheme="primary"
+                            icon="filter_list"
+                            aria-label=${active.length
+                                ? context.component.text('listFilterLabel').replace('{count}', String(active.length))
+                                : context.filterText}
+                            @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'filter-settings'})}
+                    ></sf-icon-button>
+                    ${active.length ? html`<span class="sf-table-list-filter-count" aria-hidden="true">${active.length}</span>` : nothing}
+                </span>
+                ${context.component.getColumns().some((column) => column?.sortable && !column.system) ? html`
+                    <sf-icon-button
+                            size="1"
+                            type=${state.sort?.key ? 'default' : 'outline'}
+                            scheme=${state.sort?.key ? 'primary' : 'on-surface'}
+                            icon="swap_vert"
+                            aria-label=${context.component.text('sortLabel')}
+                            aria-haspopup="menu"
+                            @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'list-sort'})}
+                    ></sf-icon-button>` : nothing}
+                ${context.actions ? html`
+                    <sf-icon-button
+                            size="1"
+                            type="outline"
+                            scheme="on-surface"
+                            icon="add"
+                            aria-label=${context.createText}
+                            @click=${(e) => (state.createItems?.length
+                                ? context.component.openContextMenu(e, {type: 'bottom', menu: 'create'})
+                                : context.component.requestCreateIntent(null))}
+                    ></sf-icon-button>` : nothing}
+            </div>
+            ${active.length ? html`
+                <div class="sf-table-list-tags flex items-cross-center gap-1/3">
+                    ${active.map(([k, tag]) => {
+                        const filterValue = filterValues?.[k] || {};
+                        const count = Array.isArray(filterValue.values) ? filterValue.values.length : tag.count || '';
+                        return html`
+                            <sf-tag type="default" size="1" text='${tag.label}' interactive closable :key=${k}
+                                    root-class="active" count='${count}'
+                                    @close="${() => context.component.removeFilterTag(k)}"
+                                    @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'tag-settings', fieldKey: k, anchorSelector: '.sf-tag'})}
+                            ></sf-tag>`;
+                    })}
+                    <sf-button size="1" type="link" scheme="on-surface" text=${context.clearText}
+                               @click="${() => context.component.removeFilterTag()}"></sf-button>
+                </div>` : nothing}
+        </div>
+    `;
+}
+
 function renderToolbar(context) {
     const {state} = context.component;
     const {value} = state.search;
@@ -532,6 +614,78 @@ export function renderTableTemplate(context) {
         return renderRows(context, columns, rows);
     }
 
+    // The compact list: each record as a block -- its box, its title (with the
+    // tree's indent and button when it is a tree), the few fields the columns'
+    // priority puts first, and its row menu. Opening and selecting are the
+    // row's, so a record does in the list what it does in the table. The rest
+    // of the record is the record panel's, opened the way a row opens it.
+    function renderList() {
+        const columns = context.component?.getColumns?.() || [];
+        const {rows = []} = state.data || {};
+        const dataState = resolvedDataState(context);
+        if (dataState !== 'populated' && !(dataState === 'loading' && rows.length)) {
+            return html`<div class="sf-table-state p-2" data-state=${dataState}>${
+                dataState === 'loading'
+                    ? html`<div class="sf-table-state-busy flex items-cross-center content-main-center" role="status">
+                               <sf-spinner size="1" label="" aria-label=${context.loadingText}></sf-spinner></div>`
+                    : dataState === 'error'
+                        ? html`<div class="flex flex-col items-cross-start gap-1/2" role="alert"><span>${context.errorText}</span>
+                               <sf-button type="outline" scheme="on-surface" size="1" text=${context.retryText}
+                                          @click=${() => context.component.requestRetry()}></sf-button></div>`
+                        : html`<span>${context.emptyText}</span>`}</div>`;
+        }
+        const select = columns.find((column) => column.key === 'select');
+        const menu = columns.find((column) => column.key === 'settings');
+        const data = columns.filter((column) => column?.key && !['select', 'settings', 'actions'].includes(column.key)
+            && !column.system && column.visible !== false);
+        const title = data.find((column) => column.role === 'title') ?? data[0];
+        const limit = Math.max(0, Number(context.component.getProp?.('listFields') ?? 3) || 0);
+        const fields = data.filter((column) => column !== title)
+            .map((column, order) => ({column, order}))
+            .sort((a, b) => ((a.column.priority ?? 1e6) - (b.column.priority ?? 1e6)) || (a.order - b.order))
+            .slice(0, limit)
+            .map(({column}) => column);
+        const filled = (value) => !(value === null || value === undefined || value === '' || (Array.isArray(value) && !value.length));
+        return html`
+            <ul class="sf-table-list" role="list" aria-label=${context.ariaLabel || nothing}
+                aria-busy=${dataState === 'loading' ? 'true' : nothing}>
+                ${rows.map((row, rowIndex) => row.__tree?.more
+                    ? keyed(`item:${row.id}`, html`
+                        <li class="sf-table-list-more" style=${`--sf-table-tree--level: ${row.__tree.level}`}>
+                            <sf-button appearance="link" size="1/2" text=${context.component.text('treeMore')}
+                                       @click=${() => context.component.requestTreeMore(row)}></sf-button>
+                        </li>`)
+                    : keyed(`item:${row.id ?? rowIndex}`, html`
+                        <li class="sf-table-list-item"
+                            data-row-id=${context.component.getRowKey(row, rowIndex)}
+                            data-selected=${row.select?.component?.props?.checked === true ? '' : nothing}
+                            data-current=${context.component.isCurrentRow(row, rowIndex) ? '' : nothing}
+                            aria-level=${row.__tree ? String(row.__tree.level + 1) : nothing}
+                            aria-expanded=${row.__tree?.hasChildren ? String(row.__tree.expanded === true) : nothing}
+                            tabindex="-1"
+                            @mousedown=${(event) => context.component.handleRowPointerDown(event)}
+                            @click=${(event) => context.component.handleRowClick(event, row, rowIndex)}
+                            @dblclick=${(event) => context.component.handleRowOpen(event, row)}
+                            @keydown=${(event) => context.component.handleRowKeydown(event, row)}>
+                            ${select ? html`<span class="sf-table-list-select">${renderCellValue(row, select)}</span>` : nothing}
+                            <div class="sf-table-list-main">
+                                <div class="sf-table-list-title">${title
+                                    ? (row.__tree || row.path ? renderTreeCell(context, row, renderCellValue(row, title)) : renderCellValue(row, title))
+                                    : nothing}</div>
+                                ${fields.some((column) => filled(row[column.key])) ? html`
+                                    <div class="sf-table-list-fields">
+                                        ${fields.filter((column) => filled(row[column.key])).map((column) => html`
+                                            <span class="sf-table-list-field">
+                                                <span class="sf-table-list-label">${column.label ?? column.key}</span>
+                                                <span class="sf-table-list-value">${renderCellValue(row, column)}</span>
+                                            </span>`)}
+                                    </div>` : nothing}
+                            </div>
+                            ${menu ? html`<span class="sf-table-list-menu">${renderCellValue(row, menu)}</span>` : nothing}
+                        </li>`))}
+            </ul>`;
+    }
+
     function renderRows(context, columns, rows, {busy = false} = {}) {
         const treeColumn = context.component.treeColumnKey?.(columns);
         return html`
@@ -699,9 +853,12 @@ export function renderTableTemplate(context) {
         if (!carriesHostComponent) {
             const typed = context.component?.getTypedCellValue?.(column, value);
             if (typed !== null && typeof typed !== "undefined") {
+                // Badges and tags from the renderer set wrap onto the next line,
+                // as the host's own values do: this branch drew them in one
+                // line that ran out of the cell (owner, 2026-10-12).
                 if (Array.isArray(typed)) {
                     return html`
-                        <div class="flex items-cross-center gap-1/3">
+                        <div class="flex flex-wrap items-cross-center gap-1/3">
                             ${typed.map((item) => renderCellItem(item, context.component))}
                         </div>
                     `;
@@ -745,7 +902,7 @@ export function renderTableTemplate(context) {
 
     return html`
         <section
-                class="sf-table min-w-0 flex flex-col gap-1/3 flex-1 min-h-0 ${context.rootClass ||
+                class="sf-table ${context.list ? 'sf-table--list' : ''} min-w-0 flex flex-col gap-1/3 flex-1 min-h-0 ${context.rootClass ||
                 ""}"
                 style=${context.rootStyle || nothing}
                 aria-label=${context.ariaLabel || nothing}
@@ -753,7 +910,7 @@ export function renderTableTemplate(context) {
                 data-state=${resolvedDataState(context)}
                 aria-busy=${resolvedDataState(context) === 'loading' ? 'true' : nothing}
         >
-            ${context.toolbar ? renderToolbar(context) : nothing}
+            ${context.toolbar ? (context.list ? renderListToolbar(context) : renderToolbar(context)) : nothing}
             ${context.component.renderBulkActions()}
 
             <div class="table-wrap min-w-0 max-w-full flex flex-col flex-1 min-h-0">
@@ -769,6 +926,7 @@ export function renderTableTemplate(context) {
                             </div>
                         `
                         : nothing}
+                    ${context.list ? renderList() : html`
                     <table
                             ${ref(context.component.refs.table)}
                             class="table border-separate border-spacing-0 min-w-full w-max table-fixed transition"
@@ -778,7 +936,7 @@ export function renderTableTemplate(context) {
                         ${renderColgroup(context)}
                         ${renderHead(context)}
                         ${renderBody(context)}
-                    </table>
+                    </table>`}
                 </div>
 
                 ${context.pagin

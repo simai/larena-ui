@@ -577,6 +577,7 @@ class SfDataView extends HTMLElement {
             // host checks against the write it described.
             if (!query && answer.answer === "refused" && answer.reason === "confirm_required"
                 && answer.data?.confirm?.digest && !payload?.confirm) {
+                await this._ensureElements(["sf-button"]);
                 const confirmed = await this._dialog({
                     title: pageText(DATA_VIEW_TEXT, "confirmTitle", this),
                     text: String(answer.data.confirm.summary ?? ""),
@@ -900,6 +901,11 @@ class SfDataView extends HTMLElement {
             return {answer: "refused", reason: "no-targets"};
         }
         const label = String(record.title ?? record.label ?? record.name ?? record.id);
+        // The choices are sf-radio, which nothing else on the page may have
+        // asked for: a Loader that scans the light DOM never meets the
+        // dialog's (Larena: an empty choice list, 2026-10-12). Asked for here,
+        // and waited for briefly; the dialog opens either way.
+        await this._ensureElements(["sf-radio", "sf-button"]);
         const chosen = await this._dialog({
             title: pageText(DATA_VIEW_TEXT, "moveTitle", this).replace("{label}", label),
             apply: pageText(DATA_VIEW_TEXT, "moveApply", this),
@@ -911,6 +917,18 @@ class SfDataView extends HTMLElement {
             id: record.id, parent: chosen.parent, index: chosen.index,
             ...(record.revision !== undefined ? {revision: record.revision} : {}),
         });
+    }
+
+    async _ensureElements(tags) {
+        const loader = globalThis.SF?.Loader;
+        await Promise.all(tags.map((tag) => {
+            if (customElements.get(tag)) return null;
+            loader?.ensureSmartElementLoaded?.(tag);
+            return Promise.race([
+                customElements.whenDefined(tag),
+                new Promise((settle) => setTimeout(settle, 3000)),
+            ]);
+        }));
     }
 
     // One small dialog for both the move and the confirmation: a native
@@ -931,8 +949,11 @@ class SfDataView extends HTMLElement {
         const heading = document.createElement("h2");
         heading.className = "sf-text-2 font-semibold m-0";
         heading.textContent = title;
+        // The places can be many; the list scrolls and the title and the
+        // buttons stay where they are.
         const content = document.createElement("div");
         content.className = "flex flex-col gap-3";
+        content.style.cssText = "max-block-size: calc(100dvh - 4 * var(--sf-space-3));";
         dialog.append(content);
         content.append(heading);
         if (text) {
@@ -947,6 +968,7 @@ class SfDataView extends HTMLElement {
             list.setAttribute("role", "radiogroup");
             list.setAttribute("aria-label", title);
             list.className = "flex flex-col gap-1";
+            list.style.cssText = "overflow-y: auto; min-block-size: 0; flex: 1 1 auto;";
             options.forEach((option, index) => {
                 const radio = document.createElement("sf-radio");
                 radio.setAttribute("name", name);
@@ -1059,6 +1081,15 @@ class SfDataView extends HTMLElement {
             // read as leftovers from a page table -- there is no bulk band and no
             // toolbar in an embedded list for either of them to lead to.
             table.setAttribute("selectable", this.renders("select") ? "true" : "false");
+            // A page's list becomes the compact list on a narrow container; an
+            // embedded one (no toolbar) stays a table, and a layout the host
+            // wrote on its table is the host's.
+            if (!table.hasAttribute?.("data-sf-host-layout")) {
+                table.setAttribute("data-sf-host-layout", table.getAttribute?.("layout") ?? "");
+            }
+            if (!table.getAttribute?.("data-sf-host-layout")) {
+                table.setAttribute("layout", this.renders("toolbar") ? "auto" : "table");
+            }
             table.setAttribute("settings", this.renders("settings") ? "true" : "false");
             // Row actions are the host's to claim. The intent was already
             // refused without the capability -- answered «unavailable» without
@@ -1189,7 +1220,9 @@ class SfDataView extends HTMLElement {
         const toolbar = this.shadowRoot.querySelector('[part="toolbar"]');
         if (toolbar) toolbar.hidden = !this.renders("toolbar");
         const pageRow = this.shadowRoot.querySelector('slot[name="pagination"]');
-        if (pageRow) pageRow.hidden = !this.renders("pagination");
+        // A tree has no pages: a level that is long ends in Show more, and the
+        // host gives no total for the page row to count.
+        if (pageRow) pageRow.hidden = !this.renders("pagination") || this.treeMode === "tree";
         if (!this.capHidesRows) {
             if (this._showAll?.isConnected) this._showAll.remove();
             this._showAll = null;

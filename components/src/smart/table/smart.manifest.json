@@ -283,6 +283,26 @@
         "type": "string",
         "default": "Apply the filter",
         "description": "Label of the filter window’s commit button; the number of conditions a press would change is appended to it while a draft is pending."
+      },
+      "layout": {
+        "type": "string",
+        "default": "table",
+        "enum": [
+          "auto",
+          "table",
+          "list"
+        ],
+        "description": "How the records are drawn: a table, a compact list of records, or auto -- a table while the table's container is at least list-below pixels wide, the list below that. sf-data-view asks for auto on a page's list."
+      },
+      "list-below": {
+        "type": "number",
+        "default": 600,
+        "description": "The container width, in pixels, below which layout auto draws the compact list."
+      },
+      "list-fields": {
+        "type": "number",
+        "default": 3,
+        "description": "How many fields a record shows under its title in the compact list, chosen by the columns' priority."
       }
     }
   },
@@ -1528,15 +1548,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "a86f3a89c1a8860789c5946fb1819bcb9e9a342e0cd2164fa663f2336cb9352b"
+        "sha256": "eae8d8b83b43060e8fc3e78816c35d30f9f2f77754beea242740f60b41909a95"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "3f6d887b5b42809bcfa399442f578f28e37a1e85b72146a0359554a2c52140bc"
+        "sha256": "078c727c8534e9fc460d0dfa1fd64cc6110742020298aede8d1c8c48b6434d71"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "f491432c3911b88e5bba0fb02dccfa378e3b7c1de915108c2588560163f03a68"
+        "sha256": "59448fad8da2103c0dd998492665d52db9f945b6b6f5128da1fab160ca60ec0e"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

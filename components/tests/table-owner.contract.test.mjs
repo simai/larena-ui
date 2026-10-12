@@ -11,8 +11,9 @@ test('Smart Table names every owned action and contextual surface', async () => 
   ]);
 
   // Eight since round three: the toolbar's control opens the view's actions.
-  assert.equal((table.match(/<sf-context-menu/g) || []).length, 8);
-  assert.equal((table.match(/<sf-context-menu[\s\S]*?aria-label=/g) || []).length, 8);
+  // Nine since the compact list, whose sort is a menu (it has no column heads).
+  assert.equal((table.match(/<sf-context-menu/g) || []).length, 9);
+  assert.equal((table.match(/<sf-context-menu[\s\S]*?aria-label=/g) || []).length, 9);
   assert.match(table, /getContextMenuLabel\(data = \{\}\)/);
   assert.match(template, /aria-label="Сохранить шаблон фильтра"/);
   assert.match(template, /aria-label=\$\{value\.length \? 'Очистить поиск' : 'Поиск'\}/);

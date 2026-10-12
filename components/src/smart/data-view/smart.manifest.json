@@ -659,7 +659,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "a0f836b051c6d5ed649be03b32defc42ca51db6e6a9fe9c4fd919a3240242e89"
+        "sha256": "6016d5761a42b92b77fae4cba73815705407ec65c7693c9849c4da3626cbd140"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",
