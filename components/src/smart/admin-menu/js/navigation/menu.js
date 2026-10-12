@@ -4,7 +4,7 @@
 // outside the navigation's own rendering, so a re-render of the columns does
 // not take an open menu away.
 
-export function openMenu(controller, anchor, {label, entries, select}) {
+export function openMenu(controller, anchor, {label, entries, select, side = "block-end", align = "start"}) {
     if (!(anchor instanceof Element)) return null;
     let menu = controller._menu;
     if (!menu?.isConnected) {
@@ -23,7 +23,7 @@ export function openMenu(controller, anchor, {label, entries, select}) {
     menu.entries = entries;
     controller._menuSelect = select;
     controller._menuAnchor = anchor;
-    return menu.openFor(anchor);
+    return menu.openFor(anchor, {side, align});
 }
 
 export function closeMenu(controller) {

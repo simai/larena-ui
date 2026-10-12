@@ -433,8 +433,7 @@
     background-color: var(--sf-surface-container-hover);
   }
 
-  .sf-admin-nav-person:focus-visible,
-  .sf-admin-nav-theme:focus-visible {
+  .sf-admin-nav-person:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(-1 * var(--sf-focus--width));
   }
@@ -640,133 +639,9 @@
 
   /* ─── the profile menu ──────────────────────────────────────────────────── */
 
-  /* Above the person who opened it, on step 3 like every other surface that
-     floats here. Its width is its own, not the column's: wider than the first
-     column (f6), so «Безопасность учётной записи» and a row with its value read
-     whole, and as wide as its longest line up to g2, never past the window. */
-  .sf-admin-nav-account {
-    position: absolute;
-    z-index: 10;
-    inset-block-end: calc(100% - var(--sf-a4));
-    inset-inline-start: var(--sf-a4);
-    inline-size: max-content;
-    min-inline-size: var(--sf-f8);
-    max-inline-size: min(var(--sf-g2), calc(100vw - 2 * var(--sf-a4)));
-    max-block-size: var(--sf-g9);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sf-px);
-    overflow-y: auto;
-    padding: var(--sf-a4);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-elevation-3--surface);
-    box-shadow: var(--sf-elevation-3--shadow);
-  }
-
-  /* On a phone the column is the screen, and the menu takes its width. */
-  .sf-admin-nav[data-wide="false"] .sf-admin-nav-account {
-    inset-inline-end: var(--sf-a4);
-    inline-size: auto;
-    min-inline-size: 0;
-    max-inline-size: none;
-  }
-
-  .sf-admin-nav-account button.sf-admin-nav-row {
-    inline-size: 100%;
-    border: 0;
-    background: none;
-    font: inherit;
-    text-align: start;
-  }
-
-  .sf-admin-nav-account-who {
-    display: flex;
-    align-items: center;
-    gap: var(--sf-space-1\/2);
-    padding: var(--sf-a6) calc(var(--sf-px) + var(--sf-b4));
-  }
-
-  .sf-admin-nav-row-value {
-    flex: none;
-    max-inline-size: 45%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    color: var(--sf-on-surface-variant);
-    font-size: var(--sf-text-size-1\/3);
-  }
-
-  .sf-admin-nav-row-caption {
-    margin-inline-start: var(--sf-a4);
-    color: var(--sf-on-surface-variant);
-    font-size: var(--sf-text-size-1\/3);
-    font-weight: normal;
-  }
-
-  /* Signing out reads as the dangerous act it is (assignment, section 5). */
-  .sf-admin-nav-row--danger {
-    color: var(--sf-error);
-    --sf-icon--color: var(--sf-error);
-  }
-
-  .sf-admin-nav-themes {
-    display: flex;
-    margin: 0 var(--sf-a4) var(--sf-a4);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border-radius: var(--sf-radius--ui);
-    overflow: hidden;
-  }
-
-  .sf-admin-nav-theme {
-    flex: 1 1 0;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    min-block-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6) - 2 * var(--sf-px));
-    border: 0;
-    background: none;
-    color: var(--sf-on-surface-variant);
-    cursor: pointer;
-    --sf-icon--color: var(--sf-on-surface-variant);
-  }
-
-  .sf-admin-nav-theme + .sf-admin-nav-theme {
-    border-inline-start: var(--sf-px) solid var(--sf-outline-variant);
-  }
-
-  .sf-admin-nav-theme:hover {
-    background-color: var(--sf-surface-container-hover);
-  }
-
-  .sf-admin-nav-theme[data-on="true"] {
-    background-color: var(--sf-secondary-container);
-    --sf-icon--color: var(--sf-on-secondary-container);
-  }
-
-  .sf-admin-nav-account-find {
-    padding: 0 0 var(--sf-a4);
-  }
-
-  /* The list scrolls, not the menu: twenty-seven languages in a menu that
-     grows upward from the bottom of the screen ran off the top of it. Sixteen
-     rem is eight rows. */
-  .sf-admin-nav-account-list {
-    max-block-size: var(--sf-f6);
-    overflow-y: auto;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .sf-admin-nav-account-note {
-    margin: var(--sf-a4) 0 0;
-    padding: var(--sf-a6) calc(var(--sf-px) + var(--sf-b4)) var(--sf-a4);
-    border-block-start: var(--sf-px) solid var(--sf-outline-variant);
-    color: var(--sf-on-surface-variant);
-    font-size: var(--sf-text-size-1\/3);
-    line-height: var(--sf-text-height-1\/3);
-  }
+  /* The Framework's standard menu (js/navigation/account.js): its surface,
+     width (f8 up to g2), rows, theme choice and language search are the
+     menu's own. Only the person button that opens it is drawn here. */
 
   /* ─── the edit mode ─────────────────────────────────────────────────────── */
 

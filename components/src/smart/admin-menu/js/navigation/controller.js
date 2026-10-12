@@ -207,9 +207,6 @@ export class NavigationController {
         this.palette = {open: false, query: "", groups: [], scope: "", active: 0, loading: false, sequence: 0};
         this._paletteOpener = null;
         this._paletteTimer = null;
-        // The profile menu at the bottom: open or not, which of its three views
-        // is showing, and what was typed into «Найти язык».
-        this.account = {open: false, view: "menu", query: ""};
         // The edit mode: on or off, what is being renamed or added, the row whose
         // ⋯ is open, the profile list in the banner, and what the last save said.
         this.edit = {on: false, renaming: null, adding: null, rowMenu: null, profiles: false, naming: null, message: ""};
@@ -232,7 +229,6 @@ export class NavigationController {
             const path = event.composedPath();
             const within = (name) => path.some((node) => node?.classList?.contains?.(name));
             if (this.sites.open && !within("sf-admin-nav-site")) this.closeSites();
-            if (this.account.open && !within("sf-admin-nav-account")) this.closeAccount();
         };
         this._onKeyDown = (event) => {
             // ⌘K / Ctrl+K opens the palette from anywhere on the page, in every
@@ -249,14 +245,6 @@ export class NavigationController {
                 event.preventDefault();
                 event.stopPropagation();
                 this.closePalette();
-                return;
-            }
-            if (event.key === "Escape" && this.account.open) {
-                event.stopPropagation();
-                // Esc steps back out of the language or profile list first, then
-                // closes the menu: the same way out as the arrow on the screen.
-                if (this.account.view !== "menu") this.accountView("menu");
-                else this.closeAccount({focusTrigger: true});
                 return;
             }
             if (event.key === "Escape" && this.sites.open) {
@@ -599,63 +587,6 @@ export class NavigationController {
 
     // ─── the profile menu ────────────────────────────────────────────────────
 
-    toggleAccount() {
-        if (this.account.open) this.closeAccount({focusTrigger: true});
-        else this.openAccount();
-    }
-
-    openAccount() {
-        this.closeSites();
-        this.account = {open: true, view: "menu", query: ""};
-        this.update("account");
-        this.focusInAccount();
-    }
-
-    closeAccount({focusTrigger = false} = {}) {
-        if (!this.account.open) return;
-        this.account = {...this.account, open: false};
-        this.update("account");
-        if (focusTrigger) this.element.querySelector(".sf-admin-nav-person")?.focus?.();
-    }
-
-    accountView(view) {
-        this.account = {...this.account, view, query: ""};
-        this.update("account");
-        this.focusInAccount();
-    }
-
-    focusInAccount(attempt = 0) {
-        if (!this.account.open) return;
-        // The search where there is one -- a person opened the languages to find
-        // one -- and otherwise the first thing in the menu.
-        const target = this.element.querySelector(".sf-admin-nav-account input")
-            ?? (this.account.view === "language"
-                ? null
-                : this.element.querySelector(".sf-admin-nav-account button, .sf-admin-nav-account a"));
-        if (!target) {
-            if (attempt < 60) setTimeout(() => this.focusInAccount(attempt + 1), 50);
-            return;
-        }
-        target.focus();
-    }
-
-    setLanguageQuery(value) {
-        this.account = {...this.account, query: String(value ?? "")};
-        this.update("account");
-    }
-
-    // The languages the host offers, matched against both names: a person who
-    // reads neither script still finds «Deutsch» by typing «German».
-    languages() {
-        const all = this.navigation?.person?.languages ?? [];
-        const needle = this.account.query.trim().toLowerCase();
-        return needle
-            ? all.filter((entry) => entry.native.toLowerCase().includes(needle)
-                || entry.english.toLowerCase().includes(needle)
-                || entry.code.toLowerCase().startsWith(needle))
-            : all;
-    }
-
     currentLanguage() {
         const code = this.navigation?.person?.language;
         return (this.navigation?.person?.languages ?? []).find((entry) => entry.code === code) ?? null;
@@ -675,28 +606,22 @@ export class NavigationController {
     async chooseLanguage(code) {
         globalThis.SF?.language?.use?.(code);
         this.navigation = {...this.navigation, person: {...this.navigation.person, language: code}};
-        this.accountView("menu");
         if (!this.offers("preferences")) return;
         const answer = await this.raise("preference.language", {language: code});
         if (answer.answer === "applied" && answer.reload === true) globalThis.location?.reload?.();
     }
 
     async chooseProfile(key) {
-        if (key === this.navigation?.profiles?.current) {
-            this.accountView("menu");
-            return;
-        }
+        if (key === this.navigation?.profiles?.current) return;
         const answer = await this.raise("view.profile", {profile: key});
         if (answer.answer === "applied" && answer.navigation) {
             this.accept({...answer.navigation, answer: "applied"}, this.sequence);
         }
-        this.accountView("menu");
     }
 
     async signOut() {
         const answer = await this.raise("session.sign-out", {});
         if (answer.answer !== "applied") return;
-        this.closeAccount();
         this.element.dispatchEvent(new CustomEvent("sf-admin-menu-navigate", {
             bubbles: true,
             composed: true,
@@ -729,7 +654,7 @@ export class NavigationController {
     // were looking at when they have none.
     async startEdit() {
         if (!this.canEdit()) return;
-        this.closeAccount();
+        closeMenu(this);
         if (!this.mayEdit()) {
             let personal = this.navigation.profiles.list.find((entry) => entry.kind === "personal");
             if (!personal) {
@@ -1090,7 +1015,6 @@ export class NavigationController {
             sites: this.sites,
             palette: this.palette,
             shortcut: PALETTE_SHORTCUT,
-            account: this.account,
             edit: this.edit,
         };
     }

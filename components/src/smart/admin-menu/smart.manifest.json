@@ -796,11 +796,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/navigation.css",
-        "sha256": "2965a87a234e06d51287beec33799e53864d66c4c5f5467ebf0e8cafeeaa570f"
+        "sha256": "07fc9a41338a41583620e19974a4c03637f6ff416eb5cfd1183a377d0528f373"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/template.js",
-        "sha256": "0d5096df9a063b7ef7398d01171b4227fc0a834c9ed2b7497afc06b7f761b5b4"
+        "sha256": "64b6f73c349f90bd5443ed6428e4436762e28160ad723f75586aff56f1add09f"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/palette.js",
@@ -808,7 +808,7 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/account.js",
-        "sha256": "15742360da792660f7b442c27258d2e46d8c91e2ec1c067ec09391430abe0cd3"
+        "sha256": "115e16fdf28218e2b568b41249cada57d3e108c961b595188c7322ddb3054e63"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/edit.js",
@@ -816,11 +816,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/controller.js",
-        "sha256": "f3b4b576a8263522923d3d1929a160fa1e53f8ebdea10e325227b25263b3301b"
+        "sha256": "65478e081f8750b65c284f93b08d63a693b0b1e9e52a482d71d3c8176d081f00"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/menu.js",
-        "sha256": "493554a01d1bc54136ebecaa46d7f0beafd3cbb1c7f00d0e66c516ad12b00763"
+        "sha256": "ecf945f3fcda1f938bfc6f9a71ac5e74e50b64da07319189c402e88a00fee007"
       },
       {
         "path": "src/component/admin-menu/scss/_css__admin_menu.scss",

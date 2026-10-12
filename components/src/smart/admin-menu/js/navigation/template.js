@@ -2,7 +2,7 @@ import {html, nothing} from "lit";
 import "./navigation.css";
 import {getInitials} from "../../../helpers/text";
 import {renderPalette, renderSearchRow} from "./palette";
-import {renderAccount, renderPersonButton} from "./account";
+import {renderPersonButton} from "./account";
 import {renderEditBanner, renderEditRoots, renderEditRows} from "./edit";
 
 // The two columns, drawn in the element's own light DOM like every other Smart
@@ -156,7 +156,6 @@ function renderBottom(context) {
                         text=${String(notifications.unread)}></sf-badge>` : nothing}`}
         </div>` : nothing}
         ${renderPersonButton(context)}
-        ${renderAccount(context)}
     </div>`;
 }
 
