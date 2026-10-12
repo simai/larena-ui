@@ -117,25 +117,22 @@ function renderConfigureBar(context) {
     // layer control because it is the larger question: which arrangement, and
     // only then whose copy of it (owner, 2026-10-09).
     const profiles = context.viewProfiles ?? [];
+    const current = profiles.find((profile) => profile.id === context.viewProfile);
     const chooser = profiles.length > 1
         ? html`
-            <sf-dropdown
+            <sf-button
                     size="1"
-                    appearance="outlined"
+                    appearance="outline"
+                    scheme="on-surface"
+                    icon-right="expand_more"
                     data-action="view-profile"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
                     aria-label=${context.viewProfileLabel}
-                    value=${context.viewProfile ?? ''}
-                    .items=${profiles.map((profile) => ({
-                        value: profile.id,
-                        label: profile.label,
-                        // Whose it is, said once beside the name rather than in a
-                        // second control: a shared view is everyone's, a personal
-                        // one is this person's.
-                        description: profile.shared ? context.sharedLayerText : context.personalLayerText,
-                    }))}
-                    @change=${(event) => context.component.selectViewProfile(
-                            event.detail?.value ?? event.target?.value ?? '')}
-            ></sf-dropdown>`
+                    text=${`${context.viewProfileLabel}: ${current?.label ?? ''}`}
+                    @click=${(event) => context.component.openViewProfileMenu(
+                            event.currentTarget.querySelector('button') ?? event.currentTarget)}
+            ></sf-button>`
         : nothing;
 
     return html`
@@ -975,38 +972,58 @@ function renderUnplaced(context) {
 function renderMenuControl(context) {
     const items = context.panelMenuItems;
     const host = context.hasHostSlot('menu') ? context.hostSlot('menu') : null;
-    if (!items.length && !host) return nothing;
+    // The views are chosen from this menu too, so more than one of them is a
+    // reason for it to stand even with nothing else in it.
+    const views = !context.configuring && (context.viewProfiles?.length ?? 0) > 1;
+    if (!items.length && !host && !views) return nothing;
 
     // Always the menu, never the one item drawn in its place. The place is the
     // panel's own: what belongs in it depends on the task, and a consumer that
     // slots its items into `menu` finds the same «\u2026» wherever it looks --
     // which it could not when one item meant a different glyph in that corner
     // (owner, 2026-10-08).
+    // A host that slots its own items keeps the surface it slots them into;
+    // otherwise the «⋯» opens the Framework's standard menu (owner, 2026-10-12).
+    if (host) {
+        return html`
+            <sf-popover placement="bottom-end" role="menu" label=${context.menuLabel}>
+                <sf-icon-button
+                        slot="trigger"
+                        appearance="link"
+                        scheme="on-surface"
+                        size="1"
+                        icon="more_horiz"
+                        data-action="menu"
+                        aria-label=${context.menuLabel}
+                ></sf-icon-button>
+                <div slot="content" class="flex flex-col items-cross-stretch p-1/2">
+                    ${items.map((item) => html`
+                        <sf-button
+                                appearance="link"
+                                size="1"
+                                scheme="on-surface"
+                                text=${item.name}
+                                icon-left=${item.icon}
+                                data-menu-item=${item.id}
+                                @click=${() => context.component.chooseMenuItem(item.id)}
+                        ></sf-button>`)}
+                    ${host}
+                </div>
+            </sf-popover>
+        `;
+    }
     return html`
-        <sf-popover placement="bottom-end" role="menu" label=${context.menuLabel}>
-            <sf-icon-button
-                    slot="trigger"
-                    appearance="link"
-                    scheme="on-surface"
-                    size="1"
-                    icon="more_horiz"
-                    data-action="menu"
-                    aria-label=${context.menuLabel}
-            ></sf-icon-button>
-            <div slot="content" class="flex flex-col items-cross-stretch p-1/2">
-                ${items.map((item) => html`
-                    <sf-button
-                            appearance="link"
-                            size="1"
-                            scheme="on-surface"
-                            text=${item.name}
-                            icon-left=${item.icon}
-                            data-menu-item=${item.id}
-                            @click=${() => context.component.chooseMenuItem(item.id)}
-                    ></sf-button>`)}
-                ${host ?? nothing}
-            </div>
-        </sf-popover>
+        <sf-icon-button
+                appearance="link"
+                scheme="on-surface"
+                size="1"
+                icon="more_horiz"
+                data-action="menu"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-label=${context.menuLabel}
+                @click=${(event) => context.component.openPanelMenu(event.currentTarget.querySelector('button') ?? event.currentTarget)}
+        ></sf-icon-button>
     `;
 }
 

@@ -1006,6 +1006,86 @@ class SfPropertyView extends SfBaseElement {
         return items;
     }
 
+    // ─── the standard menu (owner, 2026-10-12) ──────────────────────────────
+    // The «⋯» and the view chooser open the Framework's standard menu: one
+    // sf-context-menu beside the page, filled for whichever control asked.
+    async openStandardMenu(anchor, {label, entries, select, align = "end"}) {
+        if (!(anchor instanceof Element)) return null;
+        // The panel did not draw a menu before, so its rule does not fetch one;
+        // the Loader is asked for it the first time it is wanted.
+        if (!customElements.get("sf-context-menu")) {
+            globalThis.SF?.Loader?.ensureSmartElementLoaded?.("sf-context-menu");
+            await Promise.race([
+                customElements.whenDefined("sf-context-menu"),
+                new Promise((settle) => setTimeout(settle, 3000)),
+            ]);
+        }
+        let menu = this._standardMenu;
+        if (!menu?.isConnected) {
+            menu = document.createElement("sf-context-menu");
+            menu.setAttribute("popup", "");
+            menu.dataset.sfPropertyViewMenu = "";
+            menu.addEventListener("sf-context-menu-select", (event) => this._standardMenuSelect?.(event.detail?.id));
+            (this.closest("dialog[open]") || document.body).append(menu);
+            this._standardMenu = menu;
+        }
+        if (menu.isOpen && this._standardMenuAnchor === anchor) {
+            menu.close();
+            return null;
+        }
+        menu.setAttribute("aria-label", label ?? "");
+        menu.entries = entries;
+        this._standardMenuSelect = select;
+        this._standardMenuAnchor = anchor;
+        return menu.openFor(anchor, {align});
+    }
+
+    // The views as radio rows: which one is in use, and whose it is.
+    viewProfileEntries() {
+        const current = this.viewProfile;
+        return this.viewProfiles.map((profile) => ({
+            id: `view-profile:${profile.id}`, text: profile.label, kind: "radio", checked: profile.id === current,
+            icon: profile.shared ? "group" : "person",
+            caption: profile.shared ? this.sharedLayerText : this.personalLayerText,
+        }));
+    }
+
+    openPanelMenu(anchor) {
+        const entries = [];
+        const profiles = this.viewProfiles;
+        // The view is chosen from the menu as the admin menu's profile is: a
+        // submenu of the views, beside what can be done to the view (owner,
+        // 2026-10-12). While arranging, the bar at the foot carries the choice.
+        if (profiles.length > 1 && !this.configuring) {
+            const current = profiles.find((profile) => profile.id === this.viewProfile);
+            entries.push({
+                id: "view-profile", text: this.viewProfileLabel, icon: "view_sidebar",
+                value: current?.label ?? "", submenu: this.viewProfileEntries(),
+            });
+        }
+        const items = this.panelMenuItems;
+        if (entries.length && items.length) entries.push({type: "separator"});
+        entries.push(...items.map((item) => ({id: item.id, text: item.name, icon: item.icon})));
+        if (!entries.length) return null;
+        return this.openStandardMenu(anchor, {
+            label: this.menuLabel, entries,
+            select: (id) => this._chooseStandardEntry(id),
+        });
+    }
+
+    openViewProfileMenu(anchor) {
+        return this.openStandardMenu(anchor, {
+            label: this.viewProfileLabel, entries: this.viewProfileEntries(), align: "start",
+            select: (id) => this._chooseStandardEntry(id),
+        });
+    }
+
+    _chooseStandardEntry(id) {
+        const value = String(id ?? "");
+        if (value.startsWith("view-profile:")) return this.selectViewProfile(value.slice("view-profile:".length));
+        return this.chooseMenuItem(value);
+    }
+
     chooseMenuItem(id) {
         if (id === "configure") return this.startConfiguringView();
         if (id === "reset") return this.resetView();
@@ -1182,6 +1262,9 @@ class SfPropertyView extends SfBaseElement {
     }
 
     onDisconnected() {
+        this._standardMenu?.close?.({restoreFocus: false});
+        this._standardMenu?.remove();
+        this._standardMenu = null;
         // Once per connection, so an element moved in the DOM asks again.
         this._portRequested = false;
         const at = openPanels.indexOf(this);
