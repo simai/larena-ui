@@ -872,7 +872,10 @@
     min-block-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
     padding: 0 var(--sf-a4);
     border-radius: var(--sf-radius--ui);
-    background-color: var(--sf-surface-0);
+    /* The column's own colour: the first column is surface-1 and the second
+       surface-0, and a row painted surface-0 stood out as a strip in the
+       first (owner, 2026-10-12). Only hover marks a row. */
+    background-color: transparent;
   }
 
   .sf-admin-nav-edit-row:hover {

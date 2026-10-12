@@ -286,7 +286,7 @@ try {
       shown: Boolean(toast), duration: toast?.getAttribute('duration') ?? null,
       closable: toast?.getAttribute('closable') ?? null,
       title: toast?.getAttribute('title') ?? null,
-      code: toast?.getAttribute('supporting-text') ?? null,
+      code: toast?.getAttribute('data-sf-code') ?? null,
       coversToolbar: toolbar ? overlaps(toolbar.getBoundingClientRect()) : null,
       coversAControl: boxes.some((one) => overlaps(one)),
       position: root ? getComputedStyle(root.parentElement ?? root).position : null,

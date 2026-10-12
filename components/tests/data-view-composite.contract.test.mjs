@@ -180,9 +180,11 @@ test('nothing found says so in the table, and a refusal says so in a notice', as
   // the card. The panel covered the search, the create button and the filters,
   // which is worse than the shifted table it was avoiding.
   assert.equal(toast.tagName, 'SF-TOAST');
-  // A sentence, not a reason code -- the code is the second line.
+  // A sentence, not a reason code -- the code is kept for the inspector and
+  // is not shown.
   assert.equal(toast.getAttribute('title'), 'That action is not available for the chosen record.');
-  assert.equal(toast.getAttribute('supporting-text'), 'action-not-allowed');
+  assert.equal(toast.getAttribute('supporting-text'), null);
+  assert.equal(toast.getAttribute('data-sf-code'), 'action-not-allowed');
   assert.equal(toast.getAttribute('closable'), 'true');
   // It goes away by itself as well as by its close button.
   assert.equal(toast.getAttribute('duration'), '7000');

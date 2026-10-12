@@ -351,7 +351,7 @@ try {
     return {
       shown: Boolean(alert), moved: region() - before,
       title: alert?.getAttribute('title') ?? null,
-      code: alert?.getAttribute('supporting-text') ?? null,
+      code: alert?.getAttribute('data-sf-code') ?? null,
       text: (alert?.textContent ?? '').replace(/\s+/gu, ' ').trim().slice(0, 80),
       overlaps: box ? box.top <= before + 1 : null,
     };

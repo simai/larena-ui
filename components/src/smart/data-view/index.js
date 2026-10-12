@@ -216,7 +216,9 @@ class SfDataView extends HTMLElement {
               inset-block-end: var(--sf-space-3);
               inset-inline-end: var(--sf-space-3);
               max-inline-size: var(--sf-g0);
-              z-index: var(--sf-z-index-9, 90);
+              /* One above the menus: they share the top step, and a refusal
+                 answering a menu choice opened under the menu that asked. */
+              z-index: calc(var(--sf-z-index-9, 90) + 1);
             }
             /* The band of bulk controls is the last strip of the card and holds
                the bottom of the window while the card runs past it. It is
@@ -349,13 +351,14 @@ class SfDataView extends HTMLElement {
         toast.setAttribute("close-label", pageText(DATA_VIEW_TEXT, "closeNoticeLabel", this));
         toast.setAttribute("role", kind === "error" ? "alert" : "status");
         toast.setAttribute("title", text);
-        // Long enough to read a sentence and a code, and it can be closed at
-        // once. A message that stays until it is dismissed ends up covering
-        // something, which is how the overlay before it went wrong.
+        // Long enough to read a sentence, and it can be closed at once. A
+        // message that stays until it is dismissed ends up covering something,
+        // which is how the overlay before it went wrong.
         toast.setAttribute("duration", "7000");
-        // The code is for the people who read codes; the sentence above is for
-        // everyone else. It is a second line, not the message.
-        if (code) toast.setAttribute("supporting-text", code);
+        // The code is for the people who read codes, and they read it in the
+        // inspector: shown as a second line it was a raw identifier under a
+        // sentence, which the owner read as noise (2026-10-12).
+        if (code) toast.setAttribute("data-sf-code", code);
         toast.addEventListener("sf-toast-close", () => this.notify(""));
         band.append(toast);
         return this;
