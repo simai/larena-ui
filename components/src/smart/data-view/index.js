@@ -771,7 +771,7 @@ class SfDataView extends HTMLElement {
                 <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
                 <sf-dropdown data-sf-bulk="actions" size="1" type="outlined" search="false" mode="select"></sf-dropdown>
                 <sf-button data-sf-bulk="apply" size="1" type="default" scheme="primary"></sf-button>
-                <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
+                <span class="sf-pagination-actions-separator" aria-hidden="true" data-sf-bulk="for-all-separator"></span>
                 <sf-checkbox data-sf-bulk="for-all"></sf-checkbox>
                 <sf-icon-button data-sf-bulk="clear" class="sf-pagination-actions-clear" size="1" type="link" scheme="on-surface" icon="close"></sf-icon-button>`;
             band.querySelector('[data-sf-bulk="apply"]')
@@ -802,6 +802,9 @@ class SfDataView extends HTMLElement {
         chosen(parts["for-all"], "label", forAllLabel);
         chosen(parts["for-all"], "checked", Boolean(pagination.actionForAll));
         parts["for-all"].hidden = !pagination.showActionForAll;
+        // Its separator goes with it, or the band ends on a rule before the
+        // close button.
+        parts["for-all-separator"].hidden = !pagination.showActionForAll;
         chosen(parts.clear, "title", pagination.clearSelectionLabel);
         chosen(parts.clear, "aria-label", pagination.clearSelectionLabel);
 

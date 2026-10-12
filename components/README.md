@@ -28,6 +28,9 @@ the `layout.scope` routing contract.
 The history of these files before the move is in `simai/ui-source-pro`
 (archived), and before that in `simai/ui-source`.
 
+The owner's decisions about the admin screens, and what each asks of a Larena
+host, are kept in `docs/developer/admin-decisions.md`.
+
 ## Built against a pinned ui-source
 
 The components import the free Framework by relative path
