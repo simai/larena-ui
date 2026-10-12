@@ -8,6 +8,27 @@ in `simai/ui-admin` under `src/` and `src/ports/`.
 Newest first. Framework pair and package revision in brackets where a decision
 shipped in one.
 
+## 2026-10-12 — speed (ui-e26fc47c16d6, larena-87b345c3cf0c)
+
+**Pages include the minified core:** `core.min.js` and `core.min.css`. The
+Framework's Loader fetches minified bundles by itself; a page being debugged
+asks for the readable ones with `?sf-debug` or `data-sf-debug` on `<html>`.
+
+**Versioned paths are cached for good.** Every Framework pair and package build
+has a directory of its own (`/distr/ui-<id>/`, `/distr-larena/larena-<id>/`),
+so their files never change. Serve them with
+`Cache-Control: public, max-age=31536000, immutable`; HTML pages keep no long
+cache. Without it a warm load revalidates about a hundred files. The polygon
+does this in its Caddy site block:
+
+```
+@versioned path /distr/ui-* /distr-larena/* /assets/*
+header @versioned Cache-Control "public, max-age=31536000, immutable"
+```
+
+**A list's first load shows skeleton rows** -- the Framework's `sf-skeleton` --
+until the host answers; a re-query over rows on screen dims them as before.
+
 ## 2026-10-12 — the quick-fix round (ui-e25d2bda02e6, larena-312e698ce941)
 
 **No count beside the page heading.** The table's footer already reports the
