@@ -114,7 +114,6 @@
 
   .sf-admin-nav-row:focus-visible,
   .sf-admin-nav-site-trigger:focus-visible,
-  .sf-admin-nav-site-option:focus-visible,
   .sf-admin-nav-star:focus-visible,
   .sf-admin-nav-link-button:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -239,8 +238,7 @@
     border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
 
-  .sf-admin-nav-site-trigger,
-  .sf-admin-nav-site-option {
+  .sf-admin-nav-site-trigger {
     display: flex;
     align-items: center;
     gap: var(--sf-space-1\/2);
@@ -255,8 +253,7 @@
     cursor: pointer;
   }
 
-  .sf-admin-nav-site-trigger:not(:disabled):hover,
-  .sf-admin-nav-site-option:hover {
+  .sf-admin-nav-site-trigger:not(:disabled):hover {
     background-color: var(--sf-surface-container-hover);
   }
 
@@ -316,41 +313,13 @@
     line-height: var(--sf-text-height-1\/3);
   }
 
-  .sf-admin-nav-site-chevron,
-  .sf-admin-nav-site-check {
+  .sf-admin-nav-site-chevron {
     flex: none;
     --sf-icon--color: var(--sf-on-surface-variant);
   }
 
-  .sf-admin-nav-site-list {
-    position: absolute;
-    z-index: 10;
-    inset-block-start: calc(100% - var(--sf-space-1\/4));
-    inset-inline-start: var(--sf-space-1\/2);
-    inline-size: var(--sf-g0);
-    max-block-size: var(--sf-g6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--sf-space-1\/4);
-    padding: var(--sf-space-1\/2);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border-radius: var(--sf-radius--surface);
-    /* It floats, so it stands on a step: that step's surface and shadow
-       together, the way the table's floating menus do. */
-    background-color: var(--sf-elevation-3--surface);
-    box-shadow: var(--sf-elevation-3--shadow);
-  }
 
-  .sf-admin-nav-site-options {
-    flex: 1 1 auto;
-    min-block-size: 0;
-    overflow-y: auto;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
 
-  .sf-admin-nav-site-more,
   .sf-admin-nav-link-button {
     padding: var(--sf-space-1\/4) var(--sf-space-1\/2);
     border: 0;
@@ -362,7 +331,6 @@
     cursor: pointer;
   }
 
-  .sf-admin-nav-site-manage,
   .sf-admin-nav-action {
     display: flex;
     align-items: center;
@@ -374,13 +342,8 @@
     --sf-icon--color: var(--sf-primary);
   }
 
-  .sf-admin-nav-site-manage {
-    border-block-start: var(--sf-px) solid var(--sf-outline-variant);
-    border-radius: 0;
-  }
 
-  .sf-admin-nav-action:hover,
-  .sf-admin-nav-site-manage:hover {
+  .sf-admin-nav-action:hover {
     background-color: var(--sf-surface-container-hover);
   }
 
@@ -640,8 +603,13 @@
   /* ─── the profile menu ──────────────────────────────────────────────────── */
 
   /* The Framework's standard menu (js/navigation/account.js): its surface,
-     width (f8 up to g2), rows, theme choice and language search are the
-     menu's own. Only the person button that opens it is drawn here. */
+     rows, theme choice and language search are the menu's own. Only the
+     person button that opens it is drawn here, and the floor of its width:
+     the navigation's menus are wider than the first column (f6), so
+     «Безопасность учётной записи» and a row with its value read whole. */
+  sf-context-menu[data-sf-admin-nav-menu] {
+    --sf-context-menu--min-inline-size: var(--sf-f8);
+  }
 
   /* ─── the edit mode ─────────────────────────────────────────────────────── */
 

@@ -36,17 +36,17 @@ const attention = (row) => {
 const mark = (site) => html`<span class="sf-admin-nav-mark" aria-hidden="true">${site?.mark || getInitials(site?.label ?? "")}</span>`;
 
 function renderSite(context) {
-    const {controller, navigation, text, sites, compact} = context;
+    const {controller, navigation, compact} = context;
     const site = navigation?.site?.current;
     if (!site) return nothing;
     const switchable = controller.canSwitchSite();
     const trigger = html`
         <button type="button" class="sf-admin-nav-site-trigger"
-            aria-haspopup=${switchable ? "listbox" : nothing}
-            aria-expanded=${switchable ? String(sites.open) : nothing}
+            aria-haspopup=${switchable ? "menu" : nothing}
+            aria-expanded=${switchable ? "false" : nothing}
             ?disabled=${!switchable}
             title=${compact ? site.label : nothing}
-            @click=${() => (sites.open ? controller.closeSites() : controller.openSites())}>
+            @click=${(event) => controller.openSites(event.currentTarget)}>
             ${mark(site)}
             ${compact ? nothing : html`
                 <span class="sf-admin-nav-site-text">
@@ -55,37 +55,7 @@ function renderSite(context) {
                 </span>
                 ${switchable ? icon("unfold_more", "sf-admin-nav-site-chevron") : nothing}`}
         </button>`;
-    return html`<div class="sf-admin-nav-site">
-        ${trigger}
-        ${sites.open ? renderSiteList(context) : nothing}
-    </div>`;
-}
-
-function renderSiteList(context) {
-    const {controller, navigation, text, sites} = context;
-    const current = navigation?.site?.current?.key;
-    return html`<div class="sf-admin-nav-site-list" role="dialog" aria-label=${text("chooseSite")}>
-        <sf-input class="sf-admin-nav-site-find" size="1/2" icon-start="search"
-            placeholder=${text("findSite")} value=${sites.query}
-            @input=${(event) => controller.searchSites(event.target?.value ?? event.detail?.value ?? "")}></sf-input>
-        <ul class="sf-admin-nav-site-options" role="listbox" aria-label=${text("chooseSite")}>
-            ${sites.items.map((site) => html`<li role="option" aria-selected=${String(site.key === current)}>
-                <button type="button" class="sf-admin-nav-site-option" @click=${() => controller.switchSite(site.key)}>
-                    ${mark(site)}
-                    <span class="sf-admin-nav-site-text">
-                        <span class="sf-admin-nav-site-label">${site.label}</span>
-                        ${site.caption ? html`<span class="sf-admin-nav-site-caption">${site.caption}</span>` : nothing}
-                    </span>
-                    ${site.key === current ? icon("check", "sf-admin-nav-site-check") : nothing}
-                </button>
-            </li>`)}
-        </ul>
-        ${sites.next !== null && sites.next !== undefined ? html`<button type="button" class="sf-admin-nav-site-more"
-            ?disabled=${sites.loading}
-            @click=${() => controller.searchSites(sites.query, {more: true})}>${text("moreSites")}</button>` : nothing}
-        ${navigation?.site?.manage_href ? html`<a class="sf-admin-nav-site-manage" href=${navigation.site.manage_href}>
-            ${icon("settings")}<span>${text("manageSites")}</span></a>` : nothing}
-    </div>`;
+    return html`<div class="sf-admin-nav-site">${trigger}</div>`;
 }
 
 // A row of the first column. A root with rows opens the second column and

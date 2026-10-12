@@ -14,7 +14,8 @@
 // which root is open, which section is unfolded, what they typed into «Найти в
 // разделе», whether the menu is on its rail. Every change leaves through the
 // port, and nothing the host said is kept past the next answer.
-import {closeMenu, removeMenu} from "./menu";
+import {closeMenu, openMenu, removeMenu, updateMenu} from "./menu";
+import {getInitials} from "../../../helpers/text";
 import {pageText} from "../../../../core/js/page-language";
 
 export const NAVIGATION_PORT = "simai.admin-navigation-port";
@@ -228,7 +229,6 @@ export class NavigationController {
         this._onDocumentPointer = (event) => {
             const path = event.composedPath();
             const within = (name) => path.some((node) => node?.classList?.contains?.(name));
-            if (this.sites.open && !within("sf-admin-nav-site")) this.closeSites();
         };
         this._onKeyDown = (event) => {
             // ⌘K / Ctrl+K opens the palette from anywhere on the page, in every
@@ -246,10 +246,6 @@ export class NavigationController {
                 event.stopPropagation();
                 this.closePalette();
                 return;
-            }
-            if (event.key === "Escape" && this.sites.open) {
-                event.stopPropagation();
-                this.closeSites({focusTrigger: true});
             }
         };
         document.addEventListener("pointerdown", this._onDocumentPointer, true);
@@ -542,18 +538,50 @@ export class NavigationController {
         return this.offers("site-switch") && (this.navigation?.site?.count ?? 1) > 1;
     }
 
-    async openSites() {
+    // The sites are the Framework's standard menu (owner, 2026-10-12): the
+    // same list with a search as the languages in the profile menu, searched by
+    // the host because an agency may have hundreds of sites.
+    async openSites(anchor) {
         if (!this.canSwitchSite()) return;
         this.sites = {...this.sites, open: true, query: "", items: [], next: null};
-        this.update("sites");
+        const opened = openMenu(this, anchor, {
+            label: this.text("chooseSite"),
+            entries: this.siteEntries(),
+            search: {placeholder: this.text("findSite"), empty: this.text("nothingFound"), remote: true},
+            onSearch: (query) => this.searchSites(query),
+            onClose: () => { this.sites = {...this.sites, open: false}; },
+            select: (id) => {
+                const [kind, key] = String(id ?? "").split(/:(.*)/su);
+                if (kind === "site") return this.switchSite(key);
+                if (kind === "more") return this.searchSites(this.sites.query, {more: true});
+                return null;
+            },
+        });
+        if (!opened) {
+            this.sites = {...this.sites, open: false};
+            return;
+        }
         await this.searchSites("");
-        this.element.querySelector(".sf-admin-nav-site-find input, .sf-admin-nav-site-find")?.focus?.();
     }
 
-    closeSites({focusTrigger = false} = {}) {
+    siteEntries() {
+        const current = this.navigation?.site?.current?.key;
+        const entries = this.sites.items.map((site) => ({
+            id: `site:${site.key}`, text: site.label, caption: site.caption,
+            initials: site.mark || getInitials(site.label ?? ""),
+            kind: "radio", checked: site.key === current,
+        }));
+        if (this.sites.next !== null && this.sites.next !== undefined) {
+            entries.push({id: "more", text: this.text("moreSites"), icon: "expand_more", keepOpen: true, disabled: this.sites.loading});
+        }
+        const manage = this.navigation?.site?.manage_href;
+        if (manage) entries.push({type: "separator"}, {id: "manage", text: this.text("manageSites"), icon: "settings", href: manage});
+        return entries;
+    }
+
+    closeSites() {
+        if (this.sites.open) closeMenu(this);
         this.sites = {...this.sites, open: false};
-        this.update("sites");
-        if (focusTrigger) this.element.querySelector(".sf-admin-nav-site-trigger")?.focus?.();
     }
 
     // Asked of the host, a page at a time; never filtered here, because an
@@ -561,7 +589,6 @@ export class NavigationController {
     async searchSites(query, {more = false} = {}) {
         const sequence = ++this.sites.sequence;
         this.sites = {...this.sites, query, loading: true};
-        this.update("sites");
         const answer = await this.raise("sites.search", {query, cursor: more ? this.sites.next : null});
         if (sequence !== this.sites.sequence) return;
         if (answer.answer === "applied") {
@@ -574,7 +601,7 @@ export class NavigationController {
         } else {
             this.sites = {...this.sites, loading: false};
         }
-        this.update("sites");
+        if (this.sites.open) updateMenu(this, this.siteEntries());
     }
 
     async switchSite(key) {
