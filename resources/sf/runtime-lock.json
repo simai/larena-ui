@@ -1,62 +1,62 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-6960705a7e77-larena-8f6a9facf407",
-  "bundle_id": "ui-6960705a7e77-larena-8f6a9facf407-registry-772e8a8b-exact-git-tree-v2",
+  "pair_id": "ui-faa6b51d0a1c-larena-52ab5b2e3651",
+  "bundle_id": "ui-faa6b51d0a1c-larena-52ab5b2e3651-registry-9d089722-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-6960705a7e77",
+    "release": "ui-faa6b51d0a1c",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "6960705a7e77154a9f1d42c0705556e8434c78aa",
+    "commit": "faa6b51d0a1cda67034d886c3982eb76c70fe11a",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "1a83ee1cbd022e4a59129888b8b54aa31352bb2d43b12b74841a3d872990df4b",
-    "files": 7925
+    "sha256": "c2dd3d4e538dd7746d122906b9be7aa0e7cccb61879805b46900949d58f83d80",
+    "files": 8085
   },
   "larena": {
-    "release": "larena-8f6a9facf407",
+    "release": "larena-52ab5b2e3651",
     "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "8f6a9facf407063d1e0663c7a7b7fa2eadfffe59",
+    "commit": "52ab5b2e36511af4a263b79e0d98d2ed754fcfb3",
     "tree": "smart",
     "mount": "larena",
-    "sha256": "f96e05fdac0bafae52f43417f2759b6793d43a38e6e21e6f7299bbd0bd029b03",
+    "sha256": "f80503c655cfd46838975e368eba2523f695d8648e19a68a211189aa1751ed23",
     "files": 62,
-    "requires_framework": "ui-6960705a7e77",
+    "requires_framework": "ui-faa6b51d0a1c",
     "package_path": "components",
-    "package_tree": "790b4b43e33c602082a6ddf1b7eb33f4ae69a235",
+    "package_tree": "3181985c8443f8014fb5243d4a200fb30c805500",
     "framework_source": {
       "repository": "simai/ui-source",
-      "revision": "5b3f36b5098507a432a4ccb9898d957a14ace9ca"
+      "revision": "defad1b240d41bb99ac081c3f8f365637c502bb7"
     },
     "builder": {
       "repository": "simai/ui-builder",
-      "revision": "c19b7c4f891e0c75dd85114d876800fd749de18b"
+      "revision": "4f8a6db724aac80d5766dbbd8803203cbb9ba616"
     },
-    "manifest_sha256": "5fc574809d75e71a356975ccd806617c9573c91b07e21659da559b63101dad57",
-    "receipt_sha256": "fc27701223cb4c7437a1bdd323592faf7ae7c838fed74d1517850981611a9d2b"
+    "manifest_sha256": "f8c0ede67977f04d9d43a64ca5e2f7d54fe164bf67438ebe8bd9b3f8bf95bd3a",
+    "receipt_sha256": "d0e7f6891449af4c3310e482cb6e04c69b5163fe19334757b86505a7bfe2e110"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-6960705a7e77",
+    "compatibility_id": "ui-faa6b51d0a1c",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "772e8a8b6e3e14ba67d5fe1a4661a7f32f63b512569c9e426bc56b67866b01c4",
+    "file_sha256": "9d08972262e236750549fe83f34f808768f14e4837b4af1f5751553bc1efc49b",
     "source": {
       "tag": null,
-      "commit": "6c5ef81a942a4e39c683c2bc1d47dae33cd76908",
+      "commit": "4fa83f7e72f5b4799ff418e18d0cb13871b9968c",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "0580b50eddc85a100c3f69907c676bfd22499e9233db2256ef54285e35ab71f1",
+      "sha256": "2d40e27ded064fbfeaddae6b103aa5eec7b2f0a93d2eca95368d4d6695ffcbb4",
       "files": 2,
-      "tree_oid": "a95c77e3f3ec90a84fe60ee3c80aa7cca2974944"
+      "tree_oid": "17285b201b393b58805d43b0d1c2116c5f0eec67"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "47866e8ad77d568144cf3590bbba476d953008c2e7bbb745dc32dc2d6b85eafe"
+      "file_sha256": "64f6b941e8309b859d0a5c1ad3ee93f668ded9ddb0ee6da197deae7b73b151af"
     }
   },
   "boot": {
@@ -79,7 +79,8 @@
       "attributes": [
         "aria-label",
         "id",
-        "class"
+        "class",
+        "size"
       ],
       "package": "larena"
     },
@@ -144,7 +145,8 @@
         "filter-apply-text",
         "aria-label",
         "id",
-        "class"
+        "class",
+        "size"
       ],
       "package": "larena"
     },
@@ -239,7 +241,8 @@
         "first-label",
         "page-field-label",
         "id",
-        "class"
+        "class",
+        "size"
       ],
       "package": "framework"
     },
