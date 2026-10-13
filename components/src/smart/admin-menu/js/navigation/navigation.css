@@ -231,10 +231,21 @@
 
   /* ─── the site ──────────────────────────────────────────────────────────── */
 
+  /* The site and the person are rows of the same column: the same inset as the
+     rows (the scroll box's a4), and the mark and avatar 2rem, centred on the
+     axis of the rows' icons -- a px border, b4 and half an icon in. Doubled
+     paddings (space-1/2 around a button padded space-1/2) and a 2.5rem mark made
+     both a block twice as roomy as the rows, with their left edge on no line of
+     the column's (owner, 2026-10-13). */
+  .sf-admin-nav-first {
+    --sf-admin-nav-mark-size: var(--sf-c6);
+    --sf-admin-nav-mark-inset: calc(var(--sf-px) + var(--sf-b4) + (var(--sf-icon-size-2) - var(--sf-admin-nav-mark-size)) / 2);
+  }
+
   .sf-admin-nav-site {
     position: relative;
     flex: none;
-    padding: var(--sf-space-1\/2);
+    padding: var(--sf-a4);
     border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
 
@@ -243,7 +254,8 @@
     align-items: center;
     gap: var(--sf-space-1\/2);
     inline-size: 100%;
-    padding: var(--sf-space-1\/2);
+    padding-block: var(--sf-a4);
+    padding-inline: var(--sf-admin-nav-mark-inset);
     border: 0;
     border-radius: var(--sf-radius--ui);
     background: none;
@@ -270,8 +282,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    inline-size: var(--sf-d0);
-    block-size: var(--sf-d0);
+    inline-size: var(--sf-admin-nav-mark-size, var(--sf-c6));
+    block-size: var(--sf-admin-nav-mark-size, var(--sf-c6));
     border-radius: var(--sf-radius--ui);
     background-color: var(--sf-primary);
     color: var(--sf-on-primary);
@@ -372,7 +384,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--sf-px);
-    padding: var(--sf-space-1\/2);
+    padding: var(--sf-a4);
     border-block-start: var(--sf-px) solid var(--sf-outline-variant);
   }
 
@@ -381,7 +393,8 @@
     align-items: center;
     gap: var(--sf-space-1\/2);
     inline-size: 100%;
-    padding: var(--sf-space-1\/2);
+    padding-block: var(--sf-a4);
+    padding-inline: var(--sf-admin-nav-mark-inset);
     border: 0;
     border-radius: var(--sf-radius--ui);
     background: none;
@@ -410,8 +423,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    inline-size: var(--sf-d0);
-    block-size: var(--sf-d0);
+    inline-size: var(--sf-admin-nav-mark-size, var(--sf-c6));
+    block-size: var(--sf-admin-nav-mark-size, var(--sf-c6));
     border-radius: 50%;
     background-color: var(--sf-tertiary-container);
     color: var(--sf-on-tertiary-container);

@@ -1049,11 +1049,11 @@
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "2d6221844f96c0bb33638189a88ae134972730d5a9b1c550af445f4e713dc95d"
+        "sha256": "8bb451bfc342053b1501486de7abcc4ead791eb0d58ca575b6d0f7248bce2870"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
-        "sha256": "e32d8b157848d5f1b927b903367fa0826ed196f7a173d51be7e3c6ac7c479a90"
+        "sha256": "fb757b7e550b2349f85933cd71db11a3445dbb66014b27b22c430a7f69643225"
       },
       {
         "path": "src/smart/property-view/rule.js",

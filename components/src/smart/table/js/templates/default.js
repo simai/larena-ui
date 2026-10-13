@@ -907,6 +907,19 @@ export function renderTableTemplate(context) {
                 // as the host's own values do: this branch drew them in one
                 // line that ran out of the cell (owner, 2026-10-12).
                 if (Array.isArray(typed)) {
+                    // A person -- the avatar, then the name -- stays on one
+                    // line: wrapping put the avatar above a two-line name. The
+                    // name wraps beside it instead.
+                    if (typed[0]?.component?.type === 'avatar') {
+                        return html`
+                            <div class="flex flex-nowrap items-cross-center gap-1/3">
+                                ${renderCellItem(typed[0], context.component)}
+                                <span style="min-inline-size: 0">
+                                    ${typed.slice(1).map((item) => renderCellItem(item, context.component))}
+                                </span>
+                            </div>
+                        `;
+                    }
                     return html`
                         <div class="flex flex-wrap items-cross-center gap-1/3">
                             ${typed.map((item) => renderCellItem(item, context.component))}

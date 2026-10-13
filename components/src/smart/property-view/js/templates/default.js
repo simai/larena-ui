@@ -1055,6 +1055,13 @@ function renderPanelHead(context) {
     `;
 }
 
+// The edge controls stand on a raised surface, elevation 3 as a menu does: its
+// own fill and shadow, and the text role that goes with it. On --sf-surface-0
+// they were the page's darkest colour on a dimmed page in the dark theme and
+// could hardly be found (owner, 2026-10-13). Inline, because the button's own
+// appearance rule outranks any selector this sheet could write.
+const EDGE_SURFACE = '--sf-icon-button--background-color: var(--sf-elevation-3--surface); --sf-on-surface-variant: var(--sf-on-elevation-3--variant); box-shadow: var(--sf-elevation-3--shadow)';
+
 // Round, and on the panel's outer edge rather than inside its head: in a stack
 // each panel keeps its own set visible past the one above it, which is what the
 // mockup shows and what a row inside the head cannot do.
@@ -1065,7 +1072,7 @@ function renderPanelControls(context) {
             <sf-icon-button
                     appearance="tonal"
                     scheme="on-surface"
-                    root-style="--sf-icon-button--background-color: var(--sf-surface-0)"
+                    root-style=${EDGE_SURFACE}
                     size="1"
                     icon="close"
                     data-action="close"
@@ -1078,7 +1085,7 @@ function renderPanelControls(context) {
                         <sf-icon-button
                                 appearance="tonal"
                                 scheme="on-surface"
-                                root-style="--sf-icon-button--background-color: var(--sf-surface-0)"
+                                root-style=${EDGE_SURFACE}
                                 size="1"
                                 icon=${context.addressCopied ? 'check' : 'link'}
                                 aria-label=${context.addressCopied ? context.linkCopiedLabel : context.copyLinkLabel}
@@ -1093,7 +1100,7 @@ function renderPanelControls(context) {
                         <sf-icon-button
                                 appearance="tonal"
                                 scheme="on-surface"
-                                root-style="--sf-icon-button--background-color: var(--sf-surface-0)"
+                                root-style=${EDGE_SURFACE}
                                 size="1"
                                 icon="open_in_full"
                                 aria-label=${context.openFullLabel}

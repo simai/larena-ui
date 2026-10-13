@@ -61,7 +61,19 @@ function renderSite(context) {
 // A row of the first column. A root with rows opens the second column and
 // carries ›; a root with none is a page and opens it (assignment, section 1).
 function renderFirstRow(context, row) {
-    const {controller, compact, openRoot} = context;
+    const {controller, compact, openRoot, text} = context;
+    // A person's own rows at the top level: a line, a heading, a link, as in a
+    // root's column. The top level had no add, so it never met them.
+    if (row.kind === "divider") return html`<hr class="sf-admin-nav-divider">`;
+    if (row.kind === "heading") return compact ? nothing : html`<div class="sf-admin-nav-heading">${row.label}</div>`;
+    if (row.kind === "link") {
+        return html`<a class="sf-admin-nav-row sf-admin-nav-row--first" href=${row.href ?? "#"} target="_blank" rel="noopener"
+            title=${compact ? row.label : nothing} aria-label=${compact ? row.label : nothing}>
+            ${icon(row.icon, "sf-admin-nav-row-icon")}
+            ${compact ? nothing : html`<span class="sf-admin-nav-row-label">${row.label}</span>
+                ${icon("north_east", "sf-admin-nav-row-chevron")}<span class="sr-only">, ${text("external")}</span>`}
+        </a>`;
+    }
     const opens = row.kind === "root";
     const open = opens && openRoot?.key === row.key;
     const current = opens ? controller.holdsCurrent(row) : controller.isCurrent(row.key);

@@ -104,9 +104,14 @@ export function renderEditBanner(context) {
 function openRowMenu(context, row, anchor) {
     const {controller, text} = context;
     const renamed = row.package_label && row.label !== row.package_label;
+    // Every row's menu says something: a divider's had nothing to offer that was
+    // not its own (a package's line cannot be renamed or deleted), so its ⋯ did
+    // nothing at all. Showing and hiding is in it for every row, and a line of
+    // one's own can be deleted; it moves by its handle like any row.
     const entries = [
         row.kind !== "divider" ? {id: "rename", text: text("rename"), icon: "edit"} : null,
         renamed ? {id: "package-name", text: text("packageName"), icon: "undo"} : null,
+        {id: "visibility", text: row.hidden ? text("show") : text("hide"), icon: row.hidden ? "visibility" : "visibility_off"},
         row.own ? {id: "delete", text: text("deleteRow"), icon: "delete", danger: true} : null,
     ].filter(Boolean);
     if (!entries.length) return null;
@@ -118,6 +123,7 @@ function openRowMenu(context, row, anchor) {
                 return controller.update("edit");
             }
             if (id === "package-name") return controller.returnPackageName(row.key);
+            if (id === "visibility") return controller.toggleHidden(row.key);
             if (id === "delete") return controller.removeOwnRow(row.key);
             return null;
         },
@@ -169,10 +175,14 @@ function renderEditRow(context, row, {draggable = true} = {}) {
 // outside the edit mode, because it is not the site's.
 export function renderEditRoots(context, siteRoots, installRoots) {
     const {text} = context;
+    // The top level takes a line, a heading or a link of one's own, as a
+    // root's column does: it had no add, so its first line had no way back once
+    // it was deleted (owner, 2026-10-13).
     return html`<sf-sortable id=${`${LIST_ID}roots`} group="admin-nav-roots" label=${text("editMenu")}
         class="sf-admin-nav-edit-list">
         ${siteRoots.map((row) => renderEditRow(context, row))}
     </sf-sortable>
+    ${renderAdd(context, {key: "roots"})}
     ${installRoots.length ? html`<hr class="sf-admin-nav-divider">
         ${installRoots.map((row) => renderEditRow(context, row, {draggable: false}))}` : nothing}`;
 }

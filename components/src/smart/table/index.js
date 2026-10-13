@@ -26,6 +26,9 @@ const TABLE_TEXT = {
         searchPlaceholder: "Search",
         createText: "Create",
         pinColumnLabel: "Pin the column",
+        templateMoveLabel: "Move the template",
+        templatePinLabel: "Keep the template at the top",
+        templateActionsLabel: "Template actions",
         unpinColumnLabel: "Unpin the column",
         loadingText: "Loading",
         emptyText: "No data",
@@ -95,6 +98,9 @@ const TABLE_TEXT = {
         searchPlaceholder: "Поиск",
         createText: "Создать",
         pinColumnLabel: "Закрепить столбец",
+        templateMoveLabel: "Переместить шаблон",
+        templatePinLabel: "Закрепить шаблон сверху",
+        templateActionsLabel: "Действия с шаблоном",
         unpinColumnLabel: "Открепить столбец",
         loadingText: "Загрузка данных",
         emptyText: "Нет данных",
@@ -513,7 +519,7 @@ class SfTable extends SfBaseElement {
                 props: {
                     position: 'end',
                     rootClass: 'content-main-between',
-                    size: 1,
+                    size: this.size,
                     '@change': (event) => {
                         const checked = Boolean(event.target.checked);
                         // Marking the page leaves no single row as the anchor a
@@ -538,7 +544,7 @@ class SfTable extends SfBaseElement {
                 props: {
                     position: 'end',
                     rootClass: 'content-main-between',
-                    size: 1,
+                    size: this.size,
 
                 },
             },
@@ -773,19 +779,20 @@ class SfTable extends SfBaseElement {
 
     renderToolbarActionsContextMenu(data) {
         const {x, y} = data;
-        const items = this.getToolbarActions().map((action) => ({
-            component: "sf-button",
-            props: {
-                appearance: "link",
-                scheme: "on-surface",
-                text: action.label,
-                ...(action.icon ? {iconStart: action.icon} : {}),
-                "@click": () => {
-                    this.closeContextMenu();
-                    this.requestToolbarAction(action.id);
-                },
-            },
+        // The standard menu's entries, not link buttons: a link button in a
+        // menu drew centred text on a light block that looked like no other
+        // menu in the admin (owner, 2026-10-13).
+        const actions = this.getToolbarActions();
+        const entries = actions.map((action) => ({
+            id: String(action.id),
+            text: action.label,
+            ...(action.icon ? {icon: action.icon} : {}),
         }));
+        const select = (event) => {
+            const action = actions.find((item) => String(item.id) === event.detail?.id);
+            this.closeContextMenu();
+            if (action) this.requestToolbarAction(action.id);
+        };
         return html`
             <sf-context-menu
                     :key=${x + y}
@@ -797,7 +804,8 @@ class SfTable extends SfBaseElement {
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
           "
                     data-context-main-menu
-                    .items=${items}
+                    .entries=${entries}
+                    @sf-context-menu-select=${select}
             ></sf-context-menu>
         `;
     }
@@ -813,16 +821,16 @@ class SfTable extends SfBaseElement {
             this.setSort(key, direction);
             this.dispatchTableEvent('sf-table-sort-change', Object.freeze({key, direction}));
         };
-        const option = (text, key, direction) => ({
-            component: "sf-button",
-            props: {
-                appearance: "link",
-                scheme: current.key === key && current.direction === direction ? "primary" : "on-surface",
-                text,
-                "aria-pressed": String(current.key === key && current.direction === direction),
-                "@click": () => choose(key, direction),
-            },
-        });
+        const choices = new Map();
+        const option = (text, key, direction) => {
+            const id = `${key ?? ''}:${direction ?? ''}`;
+            choices.set(id, [key, direction]);
+            return {id, text, kind: 'radio', checked: current.key === key && current.direction === direction};
+        };
+        const select = (event) => {
+            const choice = choices.get(event.detail?.id);
+            if (choice) choose(...choice);
+        };
         const sortable = this.getColumns().filter((column) => column?.sortable && !column.system
             && !["select", "settings", "actions"].includes(column.key));
         const items = [
@@ -843,25 +851,21 @@ class SfTable extends SfBaseElement {
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
           "
                     data-context-main-menu
-                    .items=${items}
+                    .entries=${items}
+                    @sf-context-menu-select=${select}
             ></sf-context-menu>
         `;
     }
 
     renderCreateContextMenu(data) {
         const {x, y} = data;
-        const items = this.state.createItems.map((item) => ({
-            component: "sf-button",
-            props: {
-                appearance: "link",
-                scheme: "on-surface",
-                text: item.name,
-                "@click": () => {
-                    this.closeContextMenu();
-                    this.requestCreateIntent(item.id);
-                },
-            },
-        }));
+        const createItems = this.state.createItems;
+        const entries = createItems.map((item) => ({id: String(item.id), text: item.name}));
+        const select = (event) => {
+            const item = createItems.find((entry) => String(entry.id) === event.detail?.id);
+            this.closeContextMenu();
+            if (item) this.requestCreateIntent(item.id);
+        };
         return html`
             <sf-context-menu
                     :key=${x + y}
@@ -873,7 +877,8 @@ class SfTable extends SfBaseElement {
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
           "
                     data-context-main-menu
-                    .items=${items}
+                    .entries=${entries}
+                    @sf-context-menu-select=${select}
             ></sf-context-menu>
         `;
     }
@@ -2518,7 +2523,7 @@ class SfTable extends SfBaseElement {
                                     }}
                             ></sf-input>
                             <div class="flex flex-col gap-1/2">
-                                <sf-checkbox
+                                <sf-checkbox size=${this.size}
                                         name="template_default"
                                         position="end"
                                         root-class="content-main-between"
@@ -2526,7 +2531,7 @@ class SfTable extends SfBaseElement {
                                         ?checked=${template.data.template_default}
                                         label="${this.text('makeDefaultLabel')}"
                                 ></sf-checkbox>
-                                <sf-checkbox
+                                <sf-checkbox size=${this.size}
                                         name="template_save_for_all"
                                         position="end"
                                         root-class="content-main-between"
@@ -2538,13 +2543,13 @@ class SfTable extends SfBaseElement {
                     </div>
                 </div>
                 <div class="sf-table-context-bottom flex gap-1/3">
-                    <sf-button @click="${() => {
+                    <sf-button size=${this.size} @click="${() => {
                         this.tempSettings = null;
                         this.requestComponentUpdate('table')
                     }
-                    }" type="outline" scheme="on-surface" root-class="flex-1"
+                    }" appearance="outline" scheme="on-surface" root-class="flex-1"
                                text="${this.text('resetText')}"></sf-button>
-                    <sf-button
+                    <sf-button size=${this.size}
                             ?disabled=${this.state.saveInputValue.length === 0}
                             @click="${() => {
                                 this.saveFilterTemplate();
@@ -3165,7 +3170,9 @@ class SfTable extends SfBaseElement {
                 && this.isColumnPinned(entry.column) === next);
         const order = next
             ? Math.max(0, ...group.map((entry) => entry.order)) + 10
-            : Math.min(...group.map((entry) => entry.order), 10) - 10;
+            // Never below 0: the host refuses a negative order, and a loose
+            // column already at 0 made an unpin send -10 and fail.
+            : Math.max(0, Math.min(...group.map((entry) => entry.order), 10) - 10);
 
         this.patchTempColumnSettings(col.key, {pinned: next, order});
         // The patch is a plain property, so nothing re-rendered and the pin kept
@@ -3215,7 +3222,7 @@ class SfTable extends SfBaseElement {
             const data = {
                 type: "checkbox",
                 props: {
-                    size: 1,
+                    size: this.size,
                     label: field.label,
                     position: 'end',
                     rootClass: 'content-main-between',
@@ -3575,7 +3582,7 @@ class SfTable extends SfBaseElement {
                 const data = {
                     type: "radio",
                     props: {
-                        size: 1,
+                        size: this.size,
                         label: col.label,
                         name: 'filter_templates',
                         checked: selectedTemplateKey
@@ -3590,10 +3597,10 @@ class SfTable extends SfBaseElement {
             } else {
                 component = html`
                     <div class="flex items-cross-center gap-1/4 flex-1">
-                        <sf-input ${ref(this.refs.renameInput)} root-class="flex-1"
+                        <sf-input size=${this.size} ${ref(this.refs.renameInput)} root-class="flex-1"
                                   default-value="${col.label}"></sf-input>
                         <div class="flex items-cross-center flex-none">
-                            <sf-icon-button segment="start" appearance="outline" scheme="on-surface" @click="${() => {
+                            <sf-icon-button size=${this.size} segment="start" appearance="outline" scheme="on-surface" @click="${() => {
                                 this.set((prevState) => ({
                                     filter: {
                                         ...(prevState.filter || {}),
@@ -3602,7 +3609,7 @@ class SfTable extends SfBaseElement {
                                 }));
                             }}"
                                             icon="close"></sf-icon-button>
-                            <sf-icon-button segment="end" icon="check" @click="${() => {
+                            <sf-icon-button size=${this.size} segment="end" icon="check" @click="${() => {
                                 const name = this.refs.renameInput.value?.value;
                                 this.saveFilterTemplatePatch(col.key, {
                                     label: name,
@@ -3627,12 +3634,12 @@ class SfTable extends SfBaseElement {
                         data-pinned="${col.pinned ? "1" : "0"}"
                 >
                     ${!isActiveEdit ? html`
-                        <sf-icon-button
+                        <sf-icon-button size=${this.size}
                                 id="${this.getInstanceId()}--template-move--${col.key}"
                                 appearance="link"
                                 data-move
                                 scheme="on-surface"
-                                aria-label="Set order"
+                                aria-label=${`${this.text("templateMoveLabel")}: ${col.label}`}
                                 icon="drag_indicator"
                                 root-class="cursor-move"
                         ></sf-icon-button>` : nothing}
@@ -3644,7 +3651,7 @@ class SfTable extends SfBaseElement {
                                     data-keep
                                     size="1/3"
                                     scheme="on-surface"
-                                    aria-label="Keep item"
+                                    aria-label=${`${this.text("templatePinLabel")}: ${col.label}`}
                                     ?filled="${col.pinned}"
                                     root-class="${col.pinned ? 'sf-button-pinned' : ''}"
                                     icon="keep"
@@ -3654,12 +3661,12 @@ class SfTable extends SfBaseElement {
                                         });
                                     }}
                             ></sf-icon-button>
-                            <sf-icon-button
+                            <sf-icon-button size=${this.size}
                                     appearance="link"
                                     data-settings
                                     data-context-submenu-anchor="${col.key}"
                                     scheme="on-surface"
-                                    aria-label="Item Settings"
+                                    aria-label=${`${this.text("templateActionsLabel")}: ${col.label}`}
                                     icon="more_vert"
                                     @click=${(event) => {
                                         this.openContextSubmenu(event, {
@@ -3692,7 +3699,7 @@ class SfTable extends SfBaseElement {
                     position="${position || ""}"
             >
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
-                    <sf-tabs items="${contextItems}" type="underline">
+                    <sf-tabs size=${this.size} items="${contextItems}" type="underline">
                         <div slot="panel-0" class="flex">
                             <div
                                     class="sf-context-menu-columns flex flex-col gap-1/4 overflow-auto flex-1"
@@ -3715,7 +3722,7 @@ class SfTable extends SfBaseElement {
 
                     </sf-tabs>
                     <div class="sf-table-context-bottom flex gap-1/3">
-                        <sf-button @click="${() => {
+                        <sf-button size=${this.size} @click="${() => {
                             // Reset means the defaults, not "forget what I just
                             // typed here": the draft goes, and the host is asked
                             // to clear the person's own layer — order, widths,
@@ -3725,9 +3732,9 @@ class SfTable extends SfBaseElement {
                             this.requestComponentUpdate('table');
                             this.requestColumnSettingsReset();
                         }
-                        }" type="outline" scheme="on-surface" root-class="flex-1"
+                        }" appearance="outline" scheme="on-surface" root-class="flex-1"
                                    text="${this.text('resetText')}"></sf-button>
-                        <sf-button @click="${() => {
+                        <sf-button size=${this.size} @click="${() => {
                             const tempFilter = this.tempSettings?.filter;
 
                             if (tempFilter) {
@@ -3825,22 +3832,22 @@ class SfTable extends SfBaseElement {
                     root-class="sf-table-context-menu flex flex-col"
                     position="${position || ""}"
             >
-                <div class="flex flex-col flex-1 p-top-3" slot="content">
+                <div class="flex flex-col flex-1 ${this.size === "1/2" ? "p-top-1" : "p-top-3"}" slot="content">
                     <div class="sf-table-context-main">
                         <div class="sf-table-tags-search flex flex-col">
-                            <div class="flex flex-col p-bottom-3">
+                            <div class="flex flex-col ${this.size === "1/2" ? "p-bottom-1" : "p-bottom-3"}">
                                 ${this.renderFilterControl(field)}
                             </div>
                         </div>
                     </div>
                     <div class="sf-table-context-bottom flex gap-1/3">
-                        <sf-button @click="${() => {
+                        <sf-button size=${this.size} @click="${() => {
                             this.tempSettings = null;
                             this.requestComponentUpdate('table')
                         }
-                        }" type="outline" scheme="on-surface" root-class="flex-1"
+                        }" appearance="outline" scheme="on-surface" root-class="flex-1"
                                    text="${this.text('resetText')}"></sf-button>
-                        <sf-button @click="${() => {
+                        <sf-button size=${this.size} @click="${() => {
                             const tempFilter = this.tempSettings?.filter;
 
                             if (tempFilter) {
@@ -4006,8 +4013,8 @@ class SfTable extends SfBaseElement {
                          they stood when the window was opened, applied at once
                          and announced once. -->
                     <div class="sf-table-context-bottom flex gap-1/3">
-                        <sf-button @click="${() => this.restoreColumnSettingsOnOpen()}"
-                                   type="outline" scheme="on-surface" root-class="flex-1"
+                        <sf-button size=${this.size} @click="${() => this.restoreColumnSettingsOnOpen()}"
+                                   appearance="outline" scheme="on-surface" root-class="flex-1"
                                    text="${this.text('resetText')}"></sf-button>
                     </div>
                 </div>
@@ -4070,7 +4077,7 @@ class SfTable extends SfBaseElement {
                     position="${position || "right"}"
             >
                 <div class="flex flex-col flex-1" slot="content">
-                    <sf-button appearance="link" scheme="on-surface" icon-start="edit" text="${this.text('renameText')}" @click="${() => {
+                    <sf-button size=${this.size} appearance="link" scheme="on-surface" icon-start="edit" text="${this.text('renameText')}" @click="${() => {
                         this.set((prevState) => ({
                             filter: {
                                 ...(prevState.filter || {}),
@@ -4082,14 +4089,14 @@ class SfTable extends SfBaseElement {
                             },
                         }));
                     }}"></sf-button>
-                    <sf-button appearance="link" scheme="on-surface" icon-start="${isDefaultTemplate ? 'remove' : 'check'}"
+                    <sf-button size=${this.size} appearance="link" scheme="on-surface" icon-start="${isDefaultTemplate ? 'remove' : 'check'}"
                                text="${isDefaultTemplate ? this.text('defaultTemplateText') : this.text('makeDefaultLabel')}" @click="${() => {
                         this.changeTempFilterTemplateSettings(template.key, {
                             default: !template.default,
                         });
                         this.closeContextSubmenu();
                     }}"></sf-button>
-                    <sf-button appearance="link" scheme="on-surface" icon-start="delete" @click="${() => {
+                    <sf-button size=${this.size} appearance="link" scheme="on-surface" icon-start="delete" @click="${() => {
                         this.patchTempFilterTemplateSettings(template.key, {
                             deleted: !isDeleted,
                         });
@@ -4151,7 +4158,7 @@ class SfTable extends SfBaseElement {
             const data = {
                 type: "checkbox",
                 props: {
-                    size: 1,
+                    size: this.size,
                     label: action.name,
                     position: 'end',
                     rootClass: 'content-main-between',
