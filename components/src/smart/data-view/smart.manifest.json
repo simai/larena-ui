@@ -164,6 +164,86 @@
           "1"
         ],
         "description": "The step of the size ladder the view's controls take, handed to its table, its page row and its selection band: 1, or the dense 1/2 of an admin."
+      },
+      "column-search-placeholder": {
+        "type": "string",
+        "description": "Passed on as column-search-placeholder to the table the view draws; absent, the table's own word for the page language applies."
+      },
+      "column-search-empty-text": {
+        "type": "string",
+        "description": "Passed on as column-search-empty-text to the table the view draws; absent, the table's own word for the page language applies."
+      },
+      "column-move-label": {
+        "type": "string",
+        "description": "Passed on as column-move-label to the table the view draws; absent, the table's own word for the page language applies."
+      },
+      "filter-apply-text": {
+        "type": "string",
+        "description": "Passed on as filter-apply-text to the table the view draws; absent, the table's own word for the page language applies."
+      },
+      "show-more-text": {
+        "type": "string",
+        "description": "Passed on as show-more-text to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "selected-label": {
+        "type": "string",
+        "description": "Passed on as selected-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "total-label": {
+        "type": "string",
+        "description": "Passed on as total-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "pages-label": {
+        "type": "string",
+        "description": "Passed on as pages-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "first-label": {
+        "type": "string",
+        "description": "Passed on as first-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "previous-label": {
+        "type": "string",
+        "description": "Passed on as previous-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "page-label": {
+        "type": "string",
+        "description": "Passed on as page-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "next-label": {
+        "type": "string",
+        "description": "Passed on as next-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "last-label": {
+        "type": "string",
+        "description": "Passed on as last-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "page-field-label": {
+        "type": "string",
+        "description": "Passed on as page-field-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "action-choose-label": {
+        "type": "string",
+        "description": "Passed on as action-choose-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "actions-label": {
+        "type": "string",
+        "description": "Passed on as actions-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "actions-region-label": {
+        "type": "string",
+        "description": "Passed on as actions-region-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "clear-selection-label": {
+        "type": "string",
+        "description": "Passed on as clear-selection-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "page-size-label": {
+        "type": "string",
+        "description": "Passed on as page-size-label to the pagination the view draws; absent, the pagination's own word for the page language applies."
+      },
+      "pagination-aria-label": {
+        "type": "string",
+        "description": "Passed on as aria-label to the pagination the view draws (the view's own aria-label names the view)."
       }
     }
   },
@@ -670,7 +750,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "e2160ca82e97b742d998ceef993470988b5b0f13bbb4a702a57e8ec51bcf8534"
+        "sha256": "d6776e8653c2b90923a99adf158c6a385d642739014c61f50b7c6d278e3215ad"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

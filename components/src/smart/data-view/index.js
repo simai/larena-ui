@@ -143,6 +143,13 @@ const DATA_VIEW_TEXT = {
 // instead of inferred from the toolbar, so a consumer who does want a selection
 // in an embedded list can ask for it -- `chrome="select"` -- rather than having to
 // turn the whole toolbar back on to get a checkbox.
+// Words the view passes on to the table and the pagination it draws.
+const TABLE_LABELS = ["column-search-placeholder", "column-search-empty-text", "column-move-label", "filter-apply-text"];
+const PAGINATION_LABELS = ["show-more-text", "selected-label", "total-label", "pages-label", "first-label",
+    "previous-label", "page-label", "next-label", "last-label", "page-field-label", "action-choose-label",
+    "actions-label", "actions-region-label", "clear-selection-label", "page-size-label"];
+const LABEL_ATTRIBUTES = [...TABLE_LABELS, ...PAGINATION_LABELS, "pagination-aria-label"];
+
 const CHROME_PARTS = ["toolbar", "pagination", "select", "settings"];
 
 // Writes that cannot have changed a row, so the view does not re-query after
@@ -528,7 +535,30 @@ class SfDataView extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["chrome", "row-cap", "aria-label", "size"];
+        return ["chrome", "row-cap", "aria-label", "size", ...LABEL_ATTRIBUTES];
+    }
+
+    // The words of the table and the pagination the view draws itself, written
+    // on the view and passed on: a host that let the view draw its own table
+    // had no way to word it, so a list inside the CMS settings spoke the
+    // fallback words (Larena, 2026-10-13). A word the view is not given is left
+    // to the part's own default; one that is removed is removed there too.
+    _forwardLabels() {
+        this._forwarded ??= new Set();
+        const pass = (target, from, to = from) => {
+            if (!target?.setAttribute) return;
+            const value = this.getAttribute(from);
+            const key = `${target.localName}:${to}`;
+            if (value === null) {
+                if (this._forwarded.delete(key)) target.removeAttribute(to);
+                return;
+            }
+            target.setAttribute(to, value);
+            this._forwarded.add(key);
+        };
+        for (const name of TABLE_LABELS) pass(this.table, name);
+        for (const name of PAGINATION_LABELS) pass(this.pagination, name);
+        pass(this.pagination, "pagination-aria-label", "aria-label");
     }
 
     attributeChangedCallback(name, previous, next) {
@@ -1112,6 +1142,7 @@ class SfDataView extends HTMLElement {
         // the default, which is to draw the band.
         this.pagination?.setAttribute?.("bottom", "false");
         this.pagination?.setAttribute?.("size", this.size);
+        this._forwardLabels();
         const table = this.table;
         if (table) {
             // The two chrome columns. Written as attributes rather than left to the
