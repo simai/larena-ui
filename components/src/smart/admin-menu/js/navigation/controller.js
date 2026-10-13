@@ -720,6 +720,9 @@ export class NavigationController {
     async startEdit() {
         if (!this.canEdit()) return;
         closeMenu(this);
+        // The edit mode chooses a row's glyph with the grid dropdown, which the
+        // menu fetches when it is first needed rather than with every page.
+        globalThis.SF?.Loader?.ensureSmartElementLoaded?.("sf-dropdown");
         if (!this.mayEdit()) {
             let personal = this.navigation.profiles.list.find((entry) => entry.kind === "personal");
             if (!personal) {
