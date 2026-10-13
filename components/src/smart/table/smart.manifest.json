@@ -165,6 +165,21 @@
         "type": "boolean",
         "default": true
       },
+      "creatable": {
+        "type": "boolean",
+        "default": true,
+        "description": "The create button and its menu of kinds, inside actions. A data view turns it off for a host on port 1.10.0 that does not announce create-record."
+      },
+      "filter-templates": {
+        "type": "boolean",
+        "default": true,
+        "description": "The button that saves the filter as a template. A data view turns it off when the host keeps no saved views."
+      },
+      "settings-menu": {
+        "type": "boolean",
+        "default": true,
+        "description": "The gear in the head of the settings column, which opens the column settings. Off, the column still carries each row's menu. A data view turns it off for a host on port 1.10.0 that does not announce personal-column-settings."
+      },
       "pagin": {
         "type": "boolean",
         "default": false
@@ -1548,11 +1563,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "75751229fdf885e688fd70855563aacbb183ecdf63969f98878119b1416a9f83"
+        "sha256": "7f8017cd14cc8d69b0c3c9605b78dfc1a62664f814dd58f6eaa40a77a5d60232"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "8762c61d5ba6c9d33f49685bb62c13e1e6f4f9c681c1cff4972eede0d87a6e2a"
+        "sha256": "50b2c459d941609ad8207a36ea1dcc3e3da07cf78640aaf8202564666640f083"
       },
       {
         "path": "src/smart/table/js/templates/default.css",

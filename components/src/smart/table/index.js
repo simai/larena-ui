@@ -229,6 +229,17 @@ class SfTable extends SfBaseElement {
             actions: {type: Boolean, default: true},
             // The row action column alone; the create button still follows actions.
             rowActions: {attribute: "row-actions", type: Boolean, default: true},
+            // The create button and its menu of kinds, inside actions: a data view
+            // turns it off for a host on port 1.10.0 that does not announce
+            // create-record, so nothing is offered that nobody would answer.
+            creatable: {type: Boolean, default: true},
+            // The button that saves the filter as a template. A data view turns it
+            // off when the host keeps no saved views: a template saved there went
+            // nowhere and was gone on the next load.
+            filterTemplates: {attribute: "filter-templates", type: Boolean, default: true},
+            // The gear in the head of the settings column, which opens the column
+            // settings. Off, the column still carries each row's menu.
+            settingsMenu: {attribute: "settings-menu", type: Boolean, default: true},
             filterText: {attribute: "filter-text", default: "Filter"},
             clearText: {attribute: "clear-text", default: "Clear"},
             searchPlaceholder: {attribute: "search-placeholder", default: "Search"},

@@ -76,7 +76,7 @@ function renderListToolbar(context) {
                             aria-haspopup="menu"
                             @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'list-sort'})}
                     ></sf-icon-button>` : nothing}
-                ${context.actions ? html`
+                ${context.actions && context.creatable ? html`
                     <sf-icon-button
                             size="1"
                             appearance="outline"
@@ -129,7 +129,7 @@ function renderToolbar(context) {
                             appearance="default"
                             scheme="primary"
                             text=${context.filterText}
-                            segment="start"
+                            segment=${context.filterTemplates ? 'start' : nothing}
                             icon-start="filter_list"
                             @click=${(e) => {
                                 context.component.openContextMenu(e, {
@@ -138,6 +138,7 @@ function renderToolbar(context) {
                                 })
                             }}
                     ></sf-button>
+                    ${context.filterTemplates ? html`
                     <sf-icon-button
                             size="1"
                             appearance="default"
@@ -153,7 +154,7 @@ function renderToolbar(context) {
                                     parent: true
                                 })
                             }}
-                    ></sf-icon-button>
+                    ></sf-icon-button>` : nothing}
                 </div>
                 ${activeFilterTags.map(([k, tag]) => {
                     const filterValue = filterValues?.[k] || {};
@@ -253,7 +254,7 @@ function renderToolbar(context) {
           </span>
                 </sf-input>
 
-                ${context.actions
+                ${context.actions && context.creatable
                         ? html`
                             <div class="flex items-cross-center">
                                 <sf-button
@@ -322,6 +323,12 @@ function renderHeadLabel(context, column) {
     // over them («Дей / ствия»): it is named for assistive technology only.
     if (column.key === 'actions' && !column.component) {
         return html`<span class="sf-table-visually-hidden">${column.label}</span>`;
+    }
+    // The gear opens the column settings; without them (settings-menu="false",
+    // a host that saves no personal settings) the column keeps its row menus and
+    // its heading is only a name.
+    if (column.key === 'settings' && context.settingsMenu === false) {
+        return html`<span class="sf-table-visually-hidden">${context.component.text('settingsColumnLabel')}</span>`;
     }
     const content = column.component
         ? context.component.renderSmartElement(column.component.type, column.component.props)

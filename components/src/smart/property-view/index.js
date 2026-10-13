@@ -27,7 +27,7 @@ import {writeText} from "../../component/clipboard/js/index";
 // keeps its list -- a guard naming a narrower set than the published versions is
 // a component refusing a host it asked to move. The contract test beside this
 // file compares the list with the manifest.
-const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0"];
+const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0"];
 
 // Every panel open on the page, in the order they were opened. A stack is not one
 // state held for several records: each window is its own element with its own

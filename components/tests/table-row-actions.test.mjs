@@ -28,8 +28,9 @@ test('the row action column shows by default', () => {
 test('row-actions false hides only the row action column', () => {
     assert.deepEqual(keys(table({rowActions: false})), ['settings']);
     assert.match(source, /rowActions: \{attribute: "row-actions", type: Boolean, default: true\}/);
-    // The create button stays behind actions alone.
-    assert.match(template, /\$\{context\.actions\s*\?/, 'the create button follows actions');
+    // The create button stays behind actions, and behind creatable, which a
+    // data view turns off for a host that does not announce create-record.
+    assert.match(template, /\$\{context\.actions && context\.creatable\s*\?/, 'the create button follows actions');
     assert.ok(!template.includes('rowActions'), 'the create button does not follow row-actions');
 });
 

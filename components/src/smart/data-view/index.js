@@ -43,7 +43,21 @@ function projectColumn(column) {
     return projected;
 }
 
-const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0"];
+const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0"];
+
+// Creating a record and saving personal column settings became capabilities in
+// port 1.10.0. A host that declares an earlier version was offered both without
+// announcing them and keeps that; a host on 1.10.0 is offered them only when it
+// announces them, so a page is never given a control nobody would answer.
+const BASELINE_UNTIL_1_10 = new Set(["create-record", "personal-column-settings"]);
+const portAtLeast = (version, minimum) => {
+    const parts = (value) => String(value ?? "").split(".").map((part) => Number.parseInt(part, 10) || 0);
+    const [a, b] = [parts(version), parts(minimum)];
+    for (let index = 0; index < 3; index += 1) {
+        if ((a[index] ?? 0) !== (b[index] ?? 0)) return (a[index] ?? 0) > (b[index] ?? 0);
+    }
+    return true;
+};
 const DATA_VIEW_TEXT = {
     en: {
         showAll: "Show all",
@@ -539,6 +553,15 @@ class SfDataView extends HTMLElement {
         }));
     }
 
+    // Whether the host offers a capability: announced, or -- for the two that
+    // were baseline before port 1.10.0 -- implied by an earlier version.
+    hostOffers(capability) {
+        const port = this.hostPort;
+        if (!port) return false;
+        if (port.capabilities?.includes?.(capability)) return true;
+        return BASELINE_UNTIL_1_10.has(capability) && !portAtLeast(port.version, "1.10.0");
+    }
+
     async _raise(intent, payload, {query = false} = {}) {
         if (!this.hostPort) {
             this._setState("error", pageText(DATA_VIEW_TEXT, "statePortNotConnected", this));
@@ -551,8 +574,9 @@ class SfDataView extends HTMLElement {
             "settings.save_shared": "shared-column-settings", "bulk.apply_under_filter": "bulk-under-filter",
             "record.open": "row-actions", "record.mutate": "row-actions",
             "tree.expand": "tree", "node.targets": "tree-move", "node.move": "tree-move",
+            "view.create_record": "create-record", "settings.save_personal": "personal-column-settings",
         }[intent];
-        if (capability && !this.hostPort.capabilities?.includes(capability)) {
+        if (capability && !this.hostOffers(capability)) {
             const answer = {answer: "unavailable", reason: "capability-not-provided"};
             this._showAnswer(intent, answer);
             return answer;
@@ -1097,6 +1121,13 @@ class SfDataView extends HTMLElement {
                 table.setAttribute("layout", this.renders("toolbar") ? "auto" : "table");
             }
             table.setAttribute("settings", this.renders("settings") ? "true" : "false");
+            // The column settings, without the column: it also carries each
+            // row's menu, which is the host's row-actions, not this.
+            table.setAttribute("settings-menu", this.hostOffers("personal-column-settings") ? "true" : "false");
+            table.setAttribute("creatable", this.hostOffers("create-record") ? "true" : "false");
+            // A filter template is a saved view the table keeps by itself; in a
+            // view it went nowhere, so it is offered where the host keeps views.
+            table.setAttribute("filter-templates", this.hostOffers("saved-views") ? "true" : "false");
             // Row actions are the host's to claim. The intent was already
             // refused without the capability -- answered «unavailable» without
             // the host being called -- but the column and its buttons were drawn
@@ -1142,7 +1173,10 @@ class SfDataView extends HTMLElement {
             // In a tree, move and create are the view's own actions and named
             // by it, unless the host's catalogue names them.
             const treeActions = this.treeMode === "tree"
-                ? {move: pageText(DATA_VIEW_TEXT, "moveAction", this), create: pageText(DATA_VIEW_TEXT, "createChildAction", this)}
+                ? {
+                    move: pageText(DATA_VIEW_TEXT, "moveAction", this),
+                    ...(this.hostOffers("create-record") ? {create: pageText(DATA_VIEW_TEXT, "createChildAction", this)} : {}),
+                }
                 : {};
             const single = (id) => {
                 const entry = catalog.get(id) ?? (treeActions[id] ? {id, label: treeActions[id]} : null);
