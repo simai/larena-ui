@@ -9,6 +9,11 @@
 // «Код решения» over three lines and cannot hold a date. The consumer asked for
 // a floor and for the horizontal scroll to take over (Larena, 2026-10-06), and
 // the admin reference showed it happening (owner, 2026-10-09).
+//
+// Since 2026-10-13 a column is as wide as its content on one line (owner): the
+// measure is no longer a fixed floor but that nothing in a data column wraps --
+// its heading and its values each stay on one line -- and that the table
+// scrolls when the columns do not fit.
 import {resolve, join} from 'node:path';
 import {existsSync} from 'node:fs';
 import {chromium} from 'playwright';
@@ -70,6 +75,25 @@ try {
     const widths = [...table.querySelectorAll('thead th')]
       .filter((th) => data.has(th.dataset.key))
       .map((th) => Math.round(th.getBoundingClientRect().width));
+    // The most lines any one text in a cell takes: a text's boxes at distinct
+    // heights. Element boxes are left out -- a button around a heading is
+    // taller than its text without the text wrapping.
+    const lines = (cell) => {
+      const walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT);
+      let most = 0;
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (!node.textContent.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const rows = new Set([...range.getClientRects()].filter((r) => r.width > 0).map((r) => Math.round(r.top)));
+        most = Math.max(most, rows.size);
+      }
+      return most;
+    };
+    const wrapped = [...table.querySelectorAll('thead th, tbody td')]
+      .filter((cell) => data.has(cell.dataset.key))
+      .filter((cell) => lines(cell) > 1)
+      .map((cell) => `${cell.tagName.toLowerCase()}:${cell.dataset.key}`);
     let node = table.parentElement;
     let scroller = null;
     while (node && node !== document.body) {
@@ -79,6 +103,7 @@ try {
     return {
       floor: Math.round(floor),
       dataWidths: widths,
+      wrapped,
       scrollBy: scroller ? scroller.scrollWidth - scroller.clientWidth : 0,
     };
   });
@@ -90,9 +115,8 @@ try {
     failures.push({said: 'the table declares no column floor', floor: measured.floor});
   }
 
-  const narrow = measured.dataWidths.filter((width) => width < measured.floor - 1);
-  if (narrow.length) {
-    failures.push({said: 'a data column is narrower than the floor', floor: measured.floor, widths: measured.dataWidths});
+  if (measured.wrapped.length) {
+    failures.push({said: 'a data column wraps its heading or its value', wrapped: measured.wrapped, widths: measured.dataWidths});
   }
   // The point of the floor is that the table scrolls rather than squeezing: in
   // 420px five columns at the floor cannot fit, so it has to.
