@@ -251,6 +251,13 @@
     width: auto !important;
   }
 
+  sf-table .sf-table-cell-clip {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   sf-table table {
     border-spacing: var(--sf-table--cell-spacing);
   }

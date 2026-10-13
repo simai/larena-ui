@@ -59,8 +59,10 @@ try {
       {key: 'section', label: 'Раздел'},
       {key: 'status', label: 'Статус'},
       {key: 'updated', label: 'Обновлено'},
+      {key: 'summary', label: 'Описание', propertyType: 'text'},
     ]);
-    table.setRows([{id: '1', title: 'Раз', code: 'simai.one', section: 'Первый', status: 'В работе', updated: '2026-12-25'}]);
+    table.setRows([{id: '1', title: 'Раз', code: 'simai.one', section: 'Первый', status: 'В работе', updated: '2026-12-25',
+      summary: 'Модуль закрывает весь путь обращения: приём, распределение, ответ и оценку, с отчётами по каждому шагу'}]);
   });
   await page.waitForFunction(() => document.querySelectorAll('#t tbody tr').length === 1, null, {timeout: 8000});
 
@@ -71,7 +73,7 @@ try {
     // The data columns by name. Taking the last five once counted the actions
     // column among them, which passed only while that column was held at the
     // floor too -- it is as wide as its buttons now.
-    const data = new Set(['title', 'code', 'section', 'status', 'updated']);
+    const data = new Set(['title', 'code', 'section', 'status', 'updated', 'summary']);
     const widths = [...table.querySelectorAll('thead th')]
       .filter((th) => data.has(th.dataset.key))
       .map((th) => Math.round(th.getBoundingClientRect().width));
@@ -104,6 +106,12 @@ try {
       floor: Math.round(floor),
       dataWidths: widths,
       wrapped,
+      // A long text is cut to one line at the column's cap, its whole in the title.
+      summary: (() => {
+        const cell = table.querySelector('tbody td[data-key="summary"] .sf-table-cell-clip');
+        return cell ? {clipped: cell.scrollWidth > cell.clientWidth, title: cell.title.length,
+          width: Math.round(cell.closest('td').getBoundingClientRect().width)} : null;
+      })(),
       scrollBy: scroller ? scroller.scrollWidth - scroller.clientWidth : 0,
     };
   });
@@ -115,6 +123,9 @@ try {
     failures.push({said: 'the table declares no column floor', floor: measured.floor});
   }
 
+  if (!measured.summary?.clipped || measured.summary.title < 50) {
+    failures.push({said: 'a long text is not cut to one line with its whole in the title', summary: measured.summary});
+  }
   if (measured.wrapped.length) {
     failures.push({said: 'a data column wraps its heading or its value', wrapped: measured.wrapped, widths: measured.dataWidths});
   }

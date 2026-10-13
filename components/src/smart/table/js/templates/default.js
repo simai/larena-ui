@@ -432,6 +432,10 @@ function toColumnSize(value) {
 //
 // System columns are not in it: select, settings and actions are sized for what
 // they hold and are not text anyone reads.
+// Field types whose values are prose rather than a name or a code: drawn on one
+// line in a row (see renderCellValue).
+const LONG_TEXT_TYPES = new Set(['text', 'textarea', 'markdown', 'html']);
+
 const SYSTEM_COLUMNS = new Set(['select', 'settings', 'actions']);
 
 // The first load draws the rows it is waiting for, in the Framework's skeleton
@@ -892,6 +896,16 @@ export function renderTableTemplate(context) {
 
         if (value === null || typeof value === "undefined") {
             return nothing;
+        }
+
+        // A long text -- a description, a note -- is one line in a row, cut
+        // with an ellipsis; the whole of it is in the title for the pointer and
+        // in the text for a screen reader. Wrapped, one description made its row
+        // three lines tall in a list of one-line rows (owner, 2026-10-13).
+        if (LONG_TEXT_TYPES.has(column.propertyType ?? column.property_type ?? column.type)
+                && (typeof value === "string" || typeof value === "number")) {
+            const text = String(value);
+            return html`<span class="sf-table-cell-clip" title=${text}>${text}</span>`;
         }
 
         // The renderer set is asked before the shapes below, because a typed

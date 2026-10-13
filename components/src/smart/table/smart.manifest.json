@@ -1576,11 +1576,11 @@
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "239c3bbedc3da813f2131fe8c52f9f4177f2a17b5acb601cd6c581ec76308d2b"
+        "sha256": "f81a1e3a1c08c7b7f3b284795cf399ac11311acabc61c46360c9e215b371e6cb"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "5d4e7ff8971d408d05b16b128211a0ea72144cfd2afaba336e870c5c794ecc38"
+        "sha256": "6d274435dc4a437a87b5f0c7ceefedf20bd9a31652c9ef6cf460097a6aeb1a43"
       },
       {
         "path": "src/smart/helpers/option-badge.js",
