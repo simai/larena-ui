@@ -1572,15 +1572,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "76df6b4732ce0e1dac4c0b22385d7e5af97dda595da66f411e9a7d413e359b18"
+        "sha256": "e8018c16d5a767bac5127991e966ba1d24e3ee9f874990419ffe4d5da39aea55"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "f81a1e3a1c08c7b7f3b284795cf399ac11311acabc61c46360c9e215b371e6cb"
+        "sha256": "d29309b95bc40066bf4d2c6760f9c780cec416e48c88f1320d49f5b5a20bdb3c"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "6d274435dc4a437a87b5f0c7ceefedf20bd9a31652c9ef6cf460097a6aeb1a43"
+        "sha256": "44a87e092a7f7bca76b06f79b3fe17d8dc6a2ba4950e2e1fb4cd35b2dc0bc75f"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

@@ -2347,6 +2347,10 @@ class SfTable extends SfBaseElement {
         return `${Math.min(width, this.columnWidthCap())}px`;
     }
 
+    get hasContentWidths() {
+        return Boolean(this._contentWidths?.size);
+    }
+
     columnWidthCap() {
         const raw = getComputedStyle(this).getPropertyValue('--sf-table--column-max-inline-size').trim();
         const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;

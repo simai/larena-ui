@@ -241,6 +241,15 @@
   /* The moment the table is measured for its content widths (see
      measureContentWidths): laid out by content at its widest, with no column
      width of its own. It is never painted like this. */
+  /* Once the columns carry their content widths the table is as wide as their
+     sum, and never narrower than its box. As wide as its content (w-max) it
+     took a long text's whole length and gave the surplus to that column, past
+     the cap it had been given. A fixed table is the greater of its width and
+     its columns' sum, so a width of 0 leaves the sum to decide. */
+  sf-table table.sf-table-content-sized {
+    inline-size: 0;
+  }
+
   sf-table table.sf-table-measuring {
     table-layout: auto !important;
     inline-size: max-content !important;

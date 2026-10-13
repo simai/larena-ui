@@ -1011,7 +1011,7 @@ export function renderTableTemplate(context) {
                     ${context.list ? renderList() : html`
                     <table
                             ${ref(context.component.refs.table)}
-                            class="table border-separate border-spacing-0 min-w-full w-max table-fixed transition"
+                            class="table border-separate border-spacing-0 min-w-full ${context.component?.hasContentWidths ? 'sf-table-content-sized' : 'w-max'} table-fixed transition"
                             role=${context.component.isTree?.() ? 'treegrid' : nothing}
                             aria-label=${context.ariaLabel || nothing}
                     >
