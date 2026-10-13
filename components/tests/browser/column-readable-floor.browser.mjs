@@ -114,8 +114,10 @@ try {
         const box = table.querySelector('tbody td[data-key="tags"] .sf-table-cell-values');
         if (!box) return null;
         const more = box.querySelector('.sf-table-cell-more');
-        const tops = new Set([...box.children].filter((child) => !child.hidden && !child.classList.contains('sf-table-cell-folded'))
-          .map((child) => Math.round(child.getBoundingClientRect().top)));
+        // Each value's drawn box: sf-tag is display: contents, its child is the box.
+        const drawn = [...box.children].map((child) => (getComputedStyle(child).display === 'contents' ? child.firstElementChild : child))
+          .filter((one) => one && !one.classList.contains('sf-table-cell-folded') && one.getBoundingClientRect().width > 1);
+        const tops = new Set(drawn.map((one) => Math.round(one.getBoundingClientRect().top)));
         return {lines: tops.size, more: more && !more.hidden ? more.textContent : null, title: more?.title ?? '',
           fits: box.scrollWidth <= box.clientWidth + 1, read: box.textContent.includes('Отчёты')};
       })(),
