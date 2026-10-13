@@ -1153,7 +1153,7 @@ function renderSectionBar(context, section, count) {
 function renderSectionIcon(context, section) {
     const current = section.icon ? String(section.icon) : '';
     const options = context.sectionIconChoices.map((icon) => ({
-        type: 'icon',
+        kind: 'icon',
         size: '1',
         icon,
         text: icon,

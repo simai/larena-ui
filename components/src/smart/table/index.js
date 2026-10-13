@@ -346,9 +346,9 @@ class SfTable extends SfBaseElement {
                     component: {
                         type: 'icon-button',
                         props: {
-                            variant: 'icon',
+                            kind: 'icon',
                             size: '1',
-                            type: 'link',
+                            appearance: 'link',
                             scheme: 'on-surface',
                             icon: 'edit',
                             ariaLabel: this.text('editActionText'),
@@ -362,9 +362,9 @@ class SfTable extends SfBaseElement {
                     component: {
                         type: 'icon-button',
                         props: {
-                            variant: 'icon',
+                            kind: 'icon',
                             size: '1',
-                            type: 'link',
+                            appearance: 'link',
                             scheme: 'on-surface',
                             icon: 'visibility',
                             ariaLabel: this.text('viewActionText'),
@@ -379,9 +379,9 @@ class SfTable extends SfBaseElement {
                     component: {
                         type: 'icon-button',
                         props: {
-                            variant: 'icon',
+                            kind: 'icon',
                             size: '1',
-                            type: 'link',
+                            appearance: 'link',
                             scheme: 'on-surface',
                             icon: 'delete',
                             ariaLabel: this.text('deleteActionText'),
@@ -408,7 +408,7 @@ class SfTable extends SfBaseElement {
                 type: "icon-button",
                 props: {
                     size: "1",
-                    type: "link",
+                    appearance: "link",
                     scheme: "on-surface",
                     icon: "settings",
                     ariaLabel: this.text("settingsColumnLabel"),
@@ -760,10 +760,10 @@ class SfTable extends SfBaseElement {
         const items = this.getToolbarActions().map((action) => ({
             component: "sf-button",
             props: {
-                type: "link",
+                appearance: "link",
                 scheme: "on-surface",
                 text: action.label,
-                ...(action.icon ? {iconLeft: action.icon} : {}),
+                ...(action.icon ? {iconStart: action.icon} : {}),
                 "@click": () => {
                     this.closeContextMenu();
                     this.requestToolbarAction(action.id);
@@ -800,7 +800,7 @@ class SfTable extends SfBaseElement {
         const option = (text, key, direction) => ({
             component: "sf-button",
             props: {
-                type: "link",
+                appearance: "link",
                 scheme: current.key === key && current.direction === direction ? "primary" : "on-surface",
                 text,
                 "aria-pressed": String(current.key === key && current.direction === direction),
@@ -837,7 +837,7 @@ class SfTable extends SfBaseElement {
         const items = this.state.createItems.map((item) => ({
             component: "sf-button",
             props: {
-                type: "link",
+                appearance: "link",
                 scheme: "on-surface",
                 text: item.name,
                 "@click": () => {
@@ -2580,7 +2580,7 @@ class SfTable extends SfBaseElement {
             items = this.getActionRowItems(data.row || {}).map((action) => ({
                 component: "sf-button",
                 props: {
-                    type: "link",
+                    appearance: "link",
                     scheme: "on-surface",
                     text: action.name,
                     "@click": (event) => {
@@ -6141,7 +6141,7 @@ class SfTable extends SfBaseElement {
                     items: members.map((member) => ({
                         component: "sf-button",
                         props: {
-                            type: "link",
+                            appearance: "link",
                             scheme: member.danger ? "error" : "on-surface",
                             text: member.name,
                             "@click": () => {
@@ -6213,7 +6213,7 @@ class SfTable extends SfBaseElement {
                 type: "icon-button",
                 props: {
                     size: "1",
-                    type: "link",
+                    appearance: "link",
                     scheme: "on-surface",
                     icon: "menu",
                     ariaLabel: this.text("menuLabel"),

@@ -870,7 +870,7 @@ export function renderTableTemplate(context) {
                     type: "icon-button",
                     props: {
                         size: "1",
-                        type: "link",
+                        appearance: "link",
                         scheme: "on-surface",
                         icon: "menu",
                         ariaLabel: "Меню",

@@ -788,11 +788,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/admin-menu/index.js",
-        "sha256": "c2341dcbdf4e3f2f31d0062d6ad9e397630c3ee1ad8603505744ee60f8ea6a5c"
+        "sha256": "ea8128cc1ec4b8cabbb957b35e24e90cee7ff92c7f696592e3d56ccc1a2e8f06"
       },
       {
         "path": "src/smart/admin-menu/js/templates/default.js",
-        "sha256": "647451d8ba7ce80951182ee023210e716f2fa87758921e7d16f39c7af08cac23"
+        "sha256": "5d8c2cc975223e055670c4d74ab3caf7dc7d7b0fe4dbe65fc62e6eb72cb83ff0"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/navigation.css",

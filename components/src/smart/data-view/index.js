@@ -1149,11 +1149,11 @@ class SfDataView extends HTMLElement {
                 if (entry) {
                     return {
                         id, name: entry.label, danger: entry.danger === true, inline: false,
-                        component: {type: "button", props: {text: entry.label, type: "link", ...(entry.icon ? {icon: entry.icon} : {})}},
+                        component: {type: "button", props: {text: entry.label, appearance: "link", ...(entry.icon ? {icon: entry.icon} : {})}},
                     };
                 }
                 return known.find((action) => action.id === id) ?? {
-                    id, name: id, component: {type: "button", props: {text: id, type: "link"}},
+                    id, name: id, component: {type: "button", props: {text: id, appearance: "link"}},
                 };
             };
             const groups = new Map();
@@ -1167,7 +1167,7 @@ class SfDataView extends HTMLElement {
                 if (!groups.has(group)) {
                     const label = catalog.get(id).group_label ?? group;
                     const entry = {id: `group:${group}`, name: label, members: [], inline: false,
-                        component: {type: "button", props: {text: label, type: "link"}}};
+                        component: {type: "button", props: {text: label, appearance: "link"}}};
                     groups.set(group, entry);
                     listed.push(entry);
                 }

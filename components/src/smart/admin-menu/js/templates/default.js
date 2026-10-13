@@ -518,9 +518,9 @@ export function renderAdminMenuTemplate(context) {
                       {
                         component: "sf-button",
                         props: {
-                          type: "link",
+                          appearance: "link",
                           scheme: "on-surface",
-                          iconLeft: "save",
+                          iconStart: "save",
                           text: menuText("save"),
                           "@click": () => {
                             component.saveMenuSettings();
@@ -531,9 +531,9 @@ export function renderAdminMenuTemplate(context) {
                         ? [{
                             component: "sf-button",
                             props: {
-                              type: "link",
+                              appearance: "link",
                               scheme: "on-surface",
-                              iconLeft: context.settingsMode === "system" ? "person" : "groups",
+                              iconStart: context.settingsMode === "system" ? "person" : "groups",
                               text: context.settingsMode === "system"
                                 ? menuText("personalSettings")
                                 : menuText("systemSettings"),
@@ -546,9 +546,9 @@ export function renderAdminMenuTemplate(context) {
                       ...(context.persistenceMode === "external" ? [{
                         component: "sf-button",
                         props: {
-                          type: "link",
+                          appearance: "link",
                           scheme: "on-surface",
-                          iconLeft: "visibility",
+                          iconStart: "visibility",
                           text: menuText("hiddenItems"),
                           "@click": () => {
                             component.toggleHidden();
@@ -559,9 +559,9 @@ export function renderAdminMenuTemplate(context) {
                         ? [{
                         component: "sf-button",
                         props: {
-                          type: "link",
+                          appearance: "link",
                           scheme: "on-surface",
-                          iconLeft: "horizontal_rule",
+                          iconStart: "horizontal_rule",
                           text: menuText("addDivider"),
                           "@click": () => {
                             component.createDivider();
@@ -572,9 +572,9 @@ export function renderAdminMenuTemplate(context) {
                       {
                         component: "sf-button",
                         props: {
-                          type: "link",
+                          appearance: "link",
                           scheme: "on-surface",
-                          iconLeft: "refresh",
+                          iconStart: "refresh",
                           text: menuText("refreshState"),
                           "@click": () => component.refreshSettings(),
                         },
@@ -582,9 +582,9 @@ export function renderAdminMenuTemplate(context) {
                       {
                         component: "sf-button",
                         props: {
-                          type: "link",
+                          appearance: "link",
                           scheme: "on-surface",
-                          iconLeft: "restart_alt",
+                          iconStart: "restart_alt",
                           text: menuText("resetSettings"),
                           "@click": () => component.resetMenuSettings(),
                         },
@@ -592,9 +592,9 @@ export function renderAdminMenuTemplate(context) {
                       {
                         component: "sf-button",
                         props: {
-                          type: "link",
+                          appearance: "link",
                           scheme: "on-surface",
-                          iconLeft: "close",
+                          iconStart: "close",
                           text: menuText("cancel"),
                           "@click": () => component.cancelMenuSettings(),
                         },

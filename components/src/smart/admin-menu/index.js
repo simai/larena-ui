@@ -1834,9 +1834,9 @@ class SfAdminMenu extends SfBaseElement {
                 {
                     component: "sf-button",
                     props: {
-                        type: "link",
+                        appearance: "link",
                         scheme: "on-surface",
-                        iconLeft: "save",
+                        iconStart: "save",
                         text: this.translate("save"),
                         "@click": () => {
                             this.saveMenuSettings();
@@ -1846,9 +1846,9 @@ class SfAdminMenu extends SfBaseElement {
                 {
                     component: "sf-button",
                     props: {
-                        type: "link",
+                        appearance: "link",
                         scheme: "on-surface",
-                        iconLeft: `visibility${!tempVisible ? "_off" : ""}`,
+                        iconStart: `visibility${!tempVisible ? "_off" : ""}`,
                         text: this.translate(!tempVisible ? "hide" : "show"),
                         "@click": () => {
                             this.toggleItemVisibility(id, tempVisible);
