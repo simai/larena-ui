@@ -124,7 +124,7 @@ function renderConfigureBar(context) {
                     size="1"
                     appearance="outline"
                     scheme="on-surface"
-                    icon-right="expand_more"
+                    icon-end="expand_more"
                     data-action="view-profile"
                     aria-haspopup="menu"
                     aria-expanded="false"
@@ -686,7 +686,7 @@ function renderPhoneSectionHead(context) {
         <div class="sf-property-view-phone-head flex items-cross-center gap-2">
             <sf-icon-button
                     size="1"
-                    type="link"
+                    appearance="link"
                     icon="arrow_back"
                     data-action="phone-back"
                     aria-label=${context.backLabel}
@@ -1003,7 +1003,7 @@ function renderMenuControl(context) {
                                 size="1"
                                 scheme="on-surface"
                                 text=${item.name}
-                                icon-left=${item.icon}
+                                icon-start=${item.icon}
                                 data-menu-item=${item.id}
                                 @click=${() => context.component.chooseMenuItem(item.id)}
                         ></sf-button>`)}

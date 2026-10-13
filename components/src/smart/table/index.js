@@ -2486,7 +2486,7 @@ class SfTable extends SfBaseElement {
                         <form ${ref(this.refs.templateForm)} id="save_template" class="flex flex-col gap-1/2">
                             <sf-input
                                     size="1"
-                                    type="filled"
+                                    appearance="filled"
                                     placeholder="${this.text('templateNamePlaceholder')}"
                                     value="${this.state.saveInputValue}"
                                     name="template_name"
@@ -3064,7 +3064,7 @@ class SfTable extends SfBaseElement {
                     ${handle
                         ? html`<sf-icon-button
                                 size="1/2"
-                                type="link"
+                                appearance="link"
                                 scheme="on-surface"
                                 icon="drag_indicator"
                                 data-move
@@ -3080,7 +3080,7 @@ class SfTable extends SfBaseElement {
                          a list of twenty pins could not tell which were set. -->
                     <sf-icon-button
                         size="1/2"
-                        type="link"
+                        appearance="link"
                         scheme=${pinned ? "primary" : "on-surface"}
                         ?filled=${pinned}
                         icon="push_pin"
@@ -3462,7 +3462,7 @@ class SfTable extends SfBaseElement {
                 <div class="flex items-cross-center gap-1/2 min-w-0">
                     ${badge ? html`
                         <sf-badge
-                                type="tonal"
+                                appearance="tonal"
                                 scheme=${badge.scheme}
                                 root-style=${badge.rootStyle || nothing}
                                 icon=${option.icon || nothing}
@@ -3577,7 +3577,7 @@ class SfTable extends SfBaseElement {
                         <sf-input ${ref(this.refs.renameInput)} root-class="flex-1"
                                   default-value="${col.label}"></sf-input>
                         <div class="flex items-cross-center flex-none">
-                            <sf-icon-button segment="start" type="outline" scheme="on-surface" @click="${() => {
+                            <sf-icon-button segment="start" appearance="outline" scheme="on-surface" @click="${() => {
                                 this.set((prevState) => ({
                                     filter: {
                                         ...(prevState.filter || {}),
@@ -3613,7 +3613,7 @@ class SfTable extends SfBaseElement {
                     ${!isActiveEdit ? html`
                         <sf-icon-button
                                 id="${this.getInstanceId()}--template-move--${col.key}"
-                                type="link"
+                                appearance="link"
                                 data-move
                                 scheme="on-surface"
                                 aria-label="Set order"
@@ -3624,7 +3624,7 @@ class SfTable extends SfBaseElement {
                     ${!isActiveEdit ? html`
                         <div class="flex items-cross-center m-inline-start-auto gap-1/3">
                             <sf-icon-button
-                                    type="link"
+                                    appearance="link"
                                     data-keep
                                     size="1/3"
                                     scheme="on-surface"
@@ -3639,7 +3639,7 @@ class SfTable extends SfBaseElement {
                                     }}
                             ></sf-icon-button>
                             <sf-icon-button
-                                    type="link"
+                                    appearance="link"
                                     data-settings
                                     data-context-submenu-anchor="${col.key}"
                                     scheme="on-surface"
@@ -3966,7 +3966,7 @@ class SfTable extends SfBaseElement {
                     <label class="sf-table-column-search flex flex-col">
                         <sf-input
                             size="1"
-                            type="bordered"
+                            appearance="bordered"
                             root-class="sf-table-column-search-input"
                             name="sf_table_column_search"
                             .value=${query}
@@ -4054,7 +4054,7 @@ class SfTable extends SfBaseElement {
                     position="${position || "right"}"
             >
                 <div class="flex flex-col flex-1" slot="content">
-                    <sf-button type="link" scheme="on-surface" icon-left="edit" text="${this.text('renameText')}" @click="${() => {
+                    <sf-button appearance="link" scheme="on-surface" icon-start="edit" text="${this.text('renameText')}" @click="${() => {
                         this.set((prevState) => ({
                             filter: {
                                 ...(prevState.filter || {}),
@@ -4066,14 +4066,14 @@ class SfTable extends SfBaseElement {
                             },
                         }));
                     }}"></sf-button>
-                    <sf-button type="link" scheme="on-surface" icon-left="${isDefaultTemplate ? 'remove' : 'check'}"
+                    <sf-button appearance="link" scheme="on-surface" icon-start="${isDefaultTemplate ? 'remove' : 'check'}"
                                text="${isDefaultTemplate ? this.text('defaultTemplateText') : this.text('makeDefaultLabel')}" @click="${() => {
                         this.changeTempFilterTemplateSettings(template.key, {
                             default: !template.default,
                         });
                         this.closeContextSubmenu();
                     }}"></sf-button>
-                    <sf-button type="link" scheme="on-surface" icon-left="delete" @click="${() => {
+                    <sf-button appearance="link" scheme="on-surface" icon-start="delete" @click="${() => {
                         this.patchTempFilterTemplateSettings(template.key, {
                             deleted: !isDeleted,
                         });
@@ -4110,7 +4110,7 @@ class SfTable extends SfBaseElement {
                     ${data.submenu?.open ? this.renderContextSubmenu(data.submenu) : nothing}
                     ${this.isList && ["filter-settings", "tag-settings"].includes(data.menu) ? html`
                         <div class="sf-table-sheet-close">
-                            <sf-icon-button size="1" type="link" scheme="on-surface"
+                            <sf-icon-button size="1" appearance="link" scheme="on-surface"
                                             icon="close" aria-label=${this.text('closeText')}
                                             @click=${() => this.closeContextMenu()}></sf-icon-button>
                         </div>` : nothing}

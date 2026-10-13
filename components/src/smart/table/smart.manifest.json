@@ -1548,11 +1548,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "1733053cdc5b0584a20617e8962824dd9fc3e0dd42412f898be68e514eaa7422"
+        "sha256": "58627f14f7313d7fad70796f10a82ccd28bc318cd0145090f0be2fb9cf57672c"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "ad870e58e6aaffe5edd71d98a642dfce65782cb19d68d29702bdb4263037fb19"
+        "sha256": "7f3dd27809300d72ad7b1240607a4e70a3fe807923f43f67082e417f28935611"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
@@ -1572,7 +1572,7 @@
       },
       {
         "path": "src/smart/pagination/index.js",
-        "sha256": "5721824a5c478e3201b5dd602c9f0bd453391a6ca6ff5f456ed3d5ffec61a2d1"
+        "sha256": "759aace5a9a904da6b6c63891adc8507a23d1fb0b973023798cf505f4d11f479"
       }
     ],
     "generated_runtime": []

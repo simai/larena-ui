@@ -107,7 +107,7 @@ function renderBadge(item) {
 
   return html` <sf-badge
     size="1/3"
-    type="main"
+    appearance="main"
     scheme="primary"
     text="${item.badge}"
   ></sf-badge>`;
@@ -622,7 +622,7 @@ export function renderAdminMenuTemplate(context) {
                 ? menuText("conflict")
                 : settingsError || menuText("saveError")}</span>
               <sf-button
-                type="link"
+                appearance="link"
                 scheme="primary"
                 size="1/2"
                 text=${settingsStatus === "conflict" ? menuText("refreshState") : menuText("save")}
@@ -688,7 +688,7 @@ export function renderAdminMenuTemplate(context) {
         ${!context.compact
           ? html` <sf-input
               size="1"
-              type="filled"
+              appearance="filled"
               @input=${(event) => {
                 component.search(event.target.value);
               }}
@@ -726,7 +726,7 @@ export function renderAdminMenuTemplate(context) {
             ? html`<sf-icon-button
                 data-sf-admin-search-toggle
                 root-class="sf-admin-menu-search-toggle"
-                type="link"
+                appearance="link"
                 scheme="on-surface"
                 icon="search"
                 title=${context.searchLabel}
@@ -795,7 +795,7 @@ export function renderAdminMenuTemplate(context) {
         ${showSettings
           ? html` <sf-icon-button
               id="${item.panelId}_move"
-              type="link"
+              appearance="link"
               data-move
               scheme="on-surface"
               aria-label="Set order"
@@ -817,7 +817,7 @@ export function renderAdminMenuTemplate(context) {
         ${showSettings
           ? html` <sf-icon-button
               id="${item.panelId}_settings"
-              type="link"
+              appearance="link"
               @click=${(event) =>
                 component.openContextMenu(event, {
                   tempVisible: isTempVisible,
@@ -869,7 +869,7 @@ export function renderAdminMenuTemplate(context) {
         ${showSettings
           ? html` <sf-icon-button
               id="${item.panelId}_move"
-              type="link"
+              appearance="link"
               data-move
               scheme="on-surface"
               aria-label="Set order"
@@ -883,7 +883,7 @@ export function renderAdminMenuTemplate(context) {
         ${showSettings
           ? html` <sf-icon-button
               id="${item.panelId}_settings"
-              type="link"
+              appearance="link"
               @click=${(event) =>
                 component.openContextMenu(event, {
                   tempVisible: isTempVisible,

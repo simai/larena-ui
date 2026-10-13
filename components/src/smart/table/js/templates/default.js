@@ -43,7 +43,7 @@ function renderListToolbar(context) {
                 <sf-input
                         size="1"
                         root-class="sf-search-input flex-1 min-w-0"
-                        type="bordered"
+                        appearance="bordered"
                         value="${value}"
                         placeholder=${context.searchPlaceholder}
                         name="sf_table_search"
@@ -56,7 +56,7 @@ function renderListToolbar(context) {
                 <span class="sf-table-list-filter">
                     <sf-icon-button
                             size="1"
-                            type=${active.length ? 'default' : 'outline'}
+                            appearance=${active.length ? 'default' : 'outline'}
                             scheme="primary"
                             icon="filter_list"
                             aria-label=${active.length
@@ -69,7 +69,7 @@ function renderListToolbar(context) {
                 ${context.component.getColumns().some((column) => column?.sortable && !column.system) ? html`
                     <sf-icon-button
                             size="1"
-                            type=${state.sort?.key ? 'default' : 'outline'}
+                            appearance=${state.sort?.key ? 'default' : 'outline'}
                             scheme=${state.sort?.key ? 'primary' : 'on-surface'}
                             icon="swap_vert"
                             aria-label=${context.component.text('sortLabel')}
@@ -79,7 +79,7 @@ function renderListToolbar(context) {
                 ${context.actions ? html`
                     <sf-icon-button
                             size="1"
-                            type="outline"
+                            appearance="outline"
                             scheme="on-surface"
                             icon="add"
                             aria-label=${context.createText}
@@ -100,7 +100,7 @@ function renderListToolbar(context) {
                                     @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'tag-settings', fieldKey: k, anchorSelector: '.sf-tag'})}
                             ></sf-tag>`;
                     })}
-                    <sf-button size="1" type="link" scheme="on-surface" text=${context.clearText}
+                    <sf-button size="1" appearance="link" scheme="on-surface" text=${context.clearText}
                                @click="${() => context.component.removeFilterTag()}"></sf-button>
                 </div>` : nothing}
         </div>
@@ -126,11 +126,11 @@ function renderToolbar(context) {
                 <div class="flex items-cross-center">
                     <sf-button
                             size="1"
-                            type="default"
+                            appearance="default"
                             scheme="primary"
                             text=${context.filterText}
                             segment="start"
-                            icon-left="filter_list"
+                            icon-start="filter_list"
                             @click=${(e) => {
                                 context.component.openContextMenu(e, {
                                     type: 'bottom',
@@ -140,7 +140,7 @@ function renderToolbar(context) {
                     ></sf-button>
                     <sf-icon-button
                             size="1"
-                            type="default"
+                            appearance="default"
                             scheme="primary"
                             aria-label="Сохранить шаблон фильтра"
                             ?disabled=${!activeFilterTags.length}
@@ -194,7 +194,7 @@ function renderToolbar(context) {
                     ${hasUnsavedFilterDataChanges ? html`
                         <sf-button
                                 size="1"
-                                type="default"
+                                appearance="default"
                                 scheme="primary"
                                 text="Сохранить"
                                 @click="${() => context.component.saveCurrentFilterTemplateData()}"
@@ -203,7 +203,7 @@ function renderToolbar(context) {
                     ${activeFilterTags.length ? html`
                         <sf-button
                                 size="1"
-                                type="outline"
+                                appearance="outline"
                                 scheme="on-surface"
                                 text=${context.clearText}
                                 @click="${() => context.component.removeFilterTag()}"
@@ -216,7 +216,7 @@ function renderToolbar(context) {
                 <sf-input
                         size="1"
                         root-class="sf-search-input m-inline-start-auto"
-                        type="bordered"
+                        appearance="bordered"
                         value="${value}"
                         placeholder=${context.searchPlaceholder}
                         name="sf_table_search"
@@ -236,7 +236,7 @@ function renderToolbar(context) {
           <span slot="right">
                 <sf-icon-button
                         size="1"
-                        type="link"
+                        appearance="link"
                         scheme="on-surface"
                         icon=${value.length ? 'close' : 'search'}
                         aria-label=${value.length ? 'Очистить поиск' : 'Поиск'}
@@ -258,7 +258,7 @@ function renderToolbar(context) {
                             <div class="flex items-cross-center">
                                 <sf-button
                                         size="1"
-                                        type="outline"
+                                        appearance="outline"
                                         scheme="on-surface"
                                         text=${context.createText}
                                         segment=${state.createItems?.length ? 'start' : nothing}
@@ -267,7 +267,7 @@ function renderToolbar(context) {
                                 ${state.createItems?.length ? html`
                                     <sf-icon-button
                                             size="1"
-                                            type="outline"
+                                            appearance="outline"
                                             scheme="primary"
                                             segment="end"
                                             icon="keyboard_arrow_down"
@@ -293,7 +293,7 @@ function renderToolbar(context) {
                         ? html`
                             <sf-icon-button
                                     size="1"
-                                    type="outline"
+                                    appearance="outline"
                                     scheme="primary"
                                     icon="more_vert"
                                     aria-label="Действия с представлением"
@@ -601,7 +601,7 @@ export function renderTableTemplate(context) {
                     <div class="flex flex-col items-cross-start gap-1/2" role="alert">
                         <span>${context.errorText}</span>
                         <sf-button
-                                type="outline"
+                                appearance="outline"
                                 scheme="on-surface"
                                 size="1"
                                 text=${context.retryText}
@@ -665,7 +665,7 @@ export function renderTableTemplate(context) {
             return html`<div class="sf-table-state p-2" data-state=${dataState}>${
                 dataState === 'error'
                         ? html`<div class="flex flex-col items-cross-start gap-1/2" role="alert"><span>${context.errorText}</span>
-                               <sf-button type="outline" scheme="on-surface" size="1" text=${context.retryText}
+                               <sf-button appearance="outline" scheme="on-surface" size="1" text=${context.retryText}
                                           @click=${() => context.component.requestRetry()}></sf-button></div>`
                         : html`<span>${context.emptyText}</span>`}</div>`;
         }
