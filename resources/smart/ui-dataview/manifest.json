@@ -30,6 +30,71 @@
         "minLength": 1,
         "maxLength": 100,
         "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      },
+      "column-search-placeholder": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "column-search-empty-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "column-move-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "filter-apply-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "filter-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "clear-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "search-placeholder": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "loading-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "empty-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "error-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "retry-text": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "pin-column-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      },
+      "unpin-column-label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
       }
     },
     "required": [
