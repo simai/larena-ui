@@ -186,7 +186,7 @@
       "close-label": {
         "type": "string",
         "default": "Close",
-        "description": "The accessible name of the panel's close control. The host translates it."
+        "description": "The accessible name of the panel's close control. Defaults to the word for the page's language; the attribute overrides it."
       },
       "collection": {
         "type": "string",
@@ -241,7 +241,7 @@
       "edit-text": {
         "type": "string",
         "default": "edit",
-        "description": "The caption that opens a group for editing. The host translates it."
+        "description": "The caption that opens a group for editing. Defaults to the word for the page's language; the attribute overrides it."
       },
       "empty-record-text": {
         "type": "string",
@@ -251,7 +251,7 @@
       "empty-text": {
         "type": "string",
         "default": "not filled in",
-        "description": "What an empty value reads as. The host translates it, as every caption in the Framework is the host's."
+        "description": "What an empty value reads as. Defaults to the word for the page's language; the attribute overrides it."
       },
       "errors-text": {
         "type": "string",
@@ -446,7 +446,7 @@
       "sections-label": {
         "type": "string",
         "default": "Sections",
-        "description": "The accessible name of the section list. The host translates it."
+        "description": "The accessible name of the section list. Defaults to the word for the page's language; the attribute overrides it."
       },
       "shared-layer-text": {
         "type": "string",
