@@ -442,7 +442,9 @@
   /* A table at the dense step opens its windows at that step too: the insets
      are the 1/2 menu item's and the vertical rhythm one space step lower. The
      controls inside take the table's size in the template; with the insets of
-     step 1 around them the windows still read a step larger than the list. */
+     step 1 around them the windows still read a step larger than the list.
+     The windows are drawn at the end of the body, outside sf-table, so the
+     table marks them --dense rather than this sheet reading sf-table[size]. */
   /* Skeleton bars at the dense step are about the height of the row's
      lowercase letters, not of the whole text line: at a text line's height a
      bar read heavier than the text it stands for (owner, 2026-10-13). */
@@ -450,29 +452,26 @@
     --sf-skeleton-text--height: var(--sf-b0);
   }
 
-  sf-table[size="1/2"] .sf-table-context-menu {
-    --sf-table-context-menu--max-width: var(--sf-g0);
-  }
-  sf-table[size="1/2"] .sf-table-context-menu .sf-tabs-top-container {
+  .sf-table-context-menu.sf-table-context-menu--dense .sf-tabs-top-container {
     --sf-tabs-top-container--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
     --sf-tabs-top-container--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
     --sf-tabs-top-container--padding-top: var(--sf-space-1);
   }
-  sf-table[size="1/2"] .sf-table-context-menu .sf-table-context-top {
+  .sf-table-context-menu.sf-table-context-menu--dense .sf-table-context-top {
     --sf-table-context-top--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
     --sf-table-context-top--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
     --sf-table-context-top--padding-top: var(--sf-space-1);
   }
-  sf-table[size="1/2"] .sf-table-context-menu .sf-table-context-main {
+  .sf-table-context-menu.sf-table-context-menu--dense .sf-table-context-main {
     --sf-table-context-main--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
     --sf-table-context-main--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
   }
-  sf-table[size="1/2"] .sf-table-context-menu .sf-table-context-bottom {
+  .sf-table-context-menu.sf-table-context-menu--dense .sf-table-context-bottom {
     --sf-table-context-bottom--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
     --sf-table-context-bottom--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
     --sf-table-context-bottom--padding-bottom: var(--sf-space-1);
   }
-  sf-table[size="1/2"] .sf-table-context-menu .sf-context-menu-columns {
+  .sf-table-context-menu.sf-table-context-menu--dense .sf-context-menu-columns {
     --sf-context-menu-columns--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
     --sf-context-menu-columns--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
     --sf-context-menu-columns--padding-top: var(--sf-space-1);

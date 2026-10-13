@@ -2497,7 +2497,7 @@ class SfTable extends SfBaseElement {
             inset-block-start: calc(${y}px + calc(var(--sf-focus-outline-width) * 2));
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
           "
-                    root-class="sf-table-context-menu flex flex-col"
+                    root-class="sf-table-context-menu ${this.size === "1/2" ? "sf-table-context-menu--dense " : ""}flex flex-col"
                     data-context-main-menu
                     position="${position || ""}"
             >
@@ -3695,7 +3695,7 @@ class SfTable extends SfBaseElement {
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
             --sf-table-context-menu--max-block-size: calc(100dvh - ${y}px - var(--sf-space-4));
           "
-                    root-class="sf-table-context-menu flex flex-col"
+                    root-class="sf-table-context-menu ${this.size === "1/2" ? "sf-table-context-menu--dense " : ""}flex flex-col"
                     position="${position || ""}"
             >
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
@@ -3829,7 +3829,7 @@ class SfTable extends SfBaseElement {
             inset-block-start: calc(${y}px + calc(var(--sf-focus-outline-width) * 2));
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
           "
-                    root-class="sf-table-context-menu flex flex-col"
+                    root-class="sf-table-context-menu ${this.size === "1/2" ? "sf-table-context-menu--dense " : ""}flex flex-col"
                     position="${position || ""}"
             >
                 <div class="flex flex-col flex-1 ${this.size === "1/2" ? "p-top-1" : "p-top-3"}" slot="content">
@@ -3978,7 +3978,7 @@ class SfTable extends SfBaseElement {
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
             --sf-table-context-menu--max-block-size: calc(100dvh - ${y}px - var(--sf-space-4));
           "
-                    root-class="sf-table-context-menu flex flex-col"
+                    root-class="sf-table-context-menu ${this.size === "1/2" ? "sf-table-context-menu--dense " : ""}flex flex-col"
                     position="${position || ""}"
             >
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
