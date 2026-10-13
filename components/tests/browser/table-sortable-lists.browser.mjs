@@ -16,6 +16,8 @@ const styles = [
   'component/component/context-menu/css/context-menu.css',
   'component/component/checkbox/css/checkbox.css',
   'component/component/tabs/css/tabs.css',
+  'component/component/buttons/css/buttons.css', 'component/component/icon-buttons/css/icon-buttons.css',
+  'component/component/icons/css/icons.css',
   'smart/smart/table/css/table.css', 'smart/smart/sortable/css/sortable.css',
 ].map((p) => join(out, p));
 const modules = [
@@ -87,7 +89,7 @@ try {
   await page.waitForTimeout(300);
   const lists = await page.evaluate(() => [...document.querySelectorAll('sf-context-menu sf-sortable')]
     .map((list) => ({group: list.getAttribute('group'), rows: list.querySelectorAll('[data-sf-sortable-item]').length})));
-  const handle = page.locator('sf-context-menu [data-column-key="f2"] [data-sf-sortable-handle] button').first();
+  const handle = page.locator('sf-context-menu [data-column-key="f2"] [data-sf-sortable-handle]').first();
   const target = page.locator('sf-context-menu [data-column-key="f5"]').first();
   const from = await handle.boundingBox();
   const onto = await target.boundingBox();
