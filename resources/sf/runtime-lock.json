@@ -1,67 +1,67 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-40382a5fbd9f-larena-116c896aeba6",
-  "bundle_id": "ui-40382a5fbd9f-larena-116c896aeba6-registry-9de6f144-exact-git-tree-v2",
+  "pair_id": "ui-6960705a7e77-larena-8f6a9facf407",
+  "bundle_id": "ui-6960705a7e77-larena-8f6a9facf407-registry-772e8a8b-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-40382a5fbd9f",
+    "release": "ui-6960705a7e77",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "40382a5fbd9f5548b24adf4f14b9598134290a88",
+    "commit": "6960705a7e77154a9f1d42c0705556e8434c78aa",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "11dfac021a799f686425e93cfc563fe42b4ba5838bcfe1a94d6a83d5563a1fa0",
-    "files": 7893
+    "sha256": "1a83ee1cbd022e4a59129888b8b54aa31352bb2d43b12b74841a3d872990df4b",
+    "files": 7925
   },
   "larena": {
-    "release": "larena-116c896aeba6",
+    "release": "larena-8f6a9facf407",
     "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "116c896aeba67e220a819b1965896be5cd04faff",
+    "commit": "8f6a9facf407063d1e0663c7a7b7fa2eadfffe59",
     "tree": "smart",
     "mount": "larena",
-    "sha256": "1f9fb89f7db2b295cab97a9a2a4034ee8225c98a8e866f667e4648c2adb852d8",
-    "files": 66,
-    "requires_framework": "ui-40382a5fbd9f",
+    "sha256": "f96e05fdac0bafae52f43417f2759b6793d43a38e6e21e6f7299bbd0bd029b03",
+    "files": 62,
+    "requires_framework": "ui-6960705a7e77",
     "package_path": "components",
-    "package_tree": "160f7854c499a3c71dd82b0177903cf7a18ea1dc",
+    "package_tree": "790b4b43e33c602082a6ddf1b7eb33f4ae69a235",
     "framework_source": {
       "repository": "simai/ui-source",
-      "revision": "08c848fec518f6e9adcb20f0f9ccdc9981203c4f"
+      "revision": "5b3f36b5098507a432a4ccb9898d957a14ace9ca"
     },
     "builder": {
       "repository": "simai/ui-builder",
-      "revision": "412e55de40ffd95671b0b2abdcf09c86cab6a4fd"
+      "revision": "c19b7c4f891e0c75dd85114d876800fd749de18b"
     },
-    "manifest_sha256": "5fb6f153c3f1cbfcbdd7ec53ab20a71fd1e21974150d8eedeb79f98e02ab7c1b",
-    "receipt_sha256": "7dd1d34aa76a8c324a0c1b89880c9b4153d3a9151e69f63daaf78e78dd2a5e8b"
+    "manifest_sha256": "5fc574809d75e71a356975ccd806617c9573c91b07e21659da559b63101dad57",
+    "receipt_sha256": "fc27701223cb4c7437a1bdd323592faf7ae7c838fed74d1517850981611a9d2b"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-40382a5fbd9f",
+    "compatibility_id": "ui-6960705a7e77",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "9de6f1442b409dc10c2daca38fb988f932ded62553122d2dd011844f43c012bc",
+    "file_sha256": "772e8a8b6e3e14ba67d5fe1a4661a7f32f63b512569c9e426bc56b67866b01c4",
     "source": {
       "tag": null,
-      "commit": "a6c148106bbb9d68a312c7467113920ebbbe939e",
+      "commit": "6c5ef81a942a4e39c683c2bc1d47dae33cd76908",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "b973eed9ef65ad62171532bce29bd5f2ef0386375c145167ef9a95de2d20f0f1",
+      "sha256": "0580b50eddc85a100c3f69907c676bfd22499e9233db2256ef54285e35ab71f1",
       "files": 2,
-      "tree_oid": "04a0182e0e5aaf9f8e474358a578ee14ed25cb34"
+      "tree_oid": "a95c77e3f3ec90a84fe60ee3c80aa7cca2974944"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "08db4cccad4dbbfa7f9832ed6155e0f91a865cff49795ad205d132519a421580"
+      "file_sha256": "47866e8ad77d568144cf3590bbba476d953008c2e7bbb745dc32dc2d6b85eafe"
     }
   },
   "boot": {
-    "css": "ui/distr/core/css/core.css",
-    "javascript": "ui/distr/core/js/core.js",
+    "css": "ui/distr/core/css/core.min.css",
+    "javascript": "ui/distr/core/js/core.min.js",
     "smart_base": "ui/distr/core/js/smart-base.js",
     "ui_base": "ui/distr/",
     "smart_base_path": "ui/distr/smart/",
@@ -71,7 +71,7 @@
     "sf-data-view": {
       "source": "larena/smart/data-view",
       "javascript": "larena/smart/data-view/js/data-view.js",
-      "css": null,
+      "css": "larena/smart/data-view/css/data-view.css",
       "requires": [
         "sf-table",
         "sf-pagination"
