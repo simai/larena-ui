@@ -2344,6 +2344,24 @@ class SfTable extends SfBaseElement {
     // Folds the values of a multi-value cell that do not fit its line into
     // «+N» (see renderCellValues in the template).
     fitCellValues() {
+        // A value that is an element not yet drawn -- its module still on the
+        // way, as the Loader brings parts when they are first used -- has no
+        // width yet, so the line is measured again once it has one.
+        const pending = new Set();
+        for (const item of this.querySelectorAll('tbody .sf-table-cell-values > :not(.sf-table-cell-more)')) {
+            if (item.localName.includes('-') && (!customElements.get(item.localName) || !item.getBoundingClientRect().width)) {
+                pending.add(item.localName);
+            }
+        }
+        if (pending.size && (this._fitRetries ?? 0) < 3) {
+            this._fitRetries = (this._fitRetries ?? 0) + 1;
+            const token = (this._fitToken = (this._fitToken ?? 0) + 1);
+            Promise.all([...pending].map((name) => customElements.whenDefined(name)))
+                .then(() => new Promise((settle) => requestAnimationFrame(() => requestAnimationFrame(settle))))
+                .then(() => { if (token === this._fitToken && this.isConnected) this.fitCellValues(); });
+        } else if (!pending.size) {
+            this._fitRetries = 0;
+        }
         for (const box of this.querySelectorAll('tbody .sf-table-cell-values')) {
             const more = box.querySelector(':scope > .sf-table-cell-more');
             const items = [...box.children].filter((child) => child !== more);
