@@ -2338,9 +2338,21 @@ class SfTable extends SfBaseElement {
         return changed;
     }
 
+    // In pixels, capped here rather than with min() in the column's width: a
+    // fixed-layout table read min(784px, 20rem) as no fixed width at all and
+    // gave that column the whole of the table's spare room.
     contentWidth(column) {
         const width = this._contentWidths?.get(column?.key);
-        return width ? `min(${width}px, var(--sf-table--column-max-inline-size))` : '';
+        if (!width) return '';
+        return `${Math.min(width, this.columnWidthCap())}px`;
+    }
+
+    columnWidthCap() {
+        const raw = getComputedStyle(this).getPropertyValue('--sf-table--column-max-inline-size').trim();
+        const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+        const value = Number.parseFloat(raw);
+        if (!Number.isFinite(value) || value <= 0) return 320;
+        return raw.endsWith('rem') ? value * root : value;
     }
 
     columnTakesFloor(column) {
