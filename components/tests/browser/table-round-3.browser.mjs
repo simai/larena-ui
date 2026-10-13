@@ -346,12 +346,16 @@ try {
     // Round three made the notice an alert above the table; on 2026-10-05 the
     // owner asked for one that covers no control, so it is a toast. What round
     // three asked of it stands: a sentence, the code beside it, and no shift.
-    const alert = document.querySelector('sf-data-view > [slot="notice"] sf-toast');
+    // The page's notification area since SF.notify (2026-10-13); the band over
+    // the card on an older Framework. The code travels in the record's source.
+    const alert = document.querySelector('.sf-notifications .sf-toast')
+      ?? document.querySelector('sf-data-view > [slot="notice"] sf-toast');
     const box = alert?.querySelector('.sf-toast')?.getBoundingClientRect?.() ?? alert?.getBoundingClientRect?.();
     return {
       shown: Boolean(alert), moved: region() - before,
       title: alert?.getAttribute('title') ?? null,
-      code: alert?.getAttribute('data-sf-code') ?? null,
+      code: alert?.getAttribute('data-sf-code')
+        ?? (window.SF?.notifications?.history?.()[0]?.source ?? '').replace(/^sf-data-view:/u, '') ?? null,
       text: (alert?.textContent ?? '').replace(/\s+/gu, ' ').trim().slice(0, 80),
       overlaps: box ? box.top <= before + 1 : null,
     };

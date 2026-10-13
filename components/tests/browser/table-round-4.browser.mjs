@@ -283,16 +283,19 @@ try {
       .map((one) => (one.querySelector('button, input') ?? one).getBoundingClientRect());
     table.requestActionIntent('publish', ['1']);
     await new Promise((done) => setTimeout(done, 700));
-    const toast = document.querySelector('sf-data-view > [slot="notice"] sf-toast');
+    // The page's notification area since SF.notify (2026-10-13); the band over
+    // the card on an older Framework.
+    const toast = document.querySelector('.sf-notifications .sf-toast')
+      ?? document.querySelector('sf-data-view > [slot="notice"] sf-toast');
     const root = toast?.querySelector('.sf-toast') ?? toast;
     const box = root?.getBoundingClientRect();
     const overlaps = (other) => box && other
       && !(box.bottom <= other.top || box.top >= other.bottom || box.right <= other.left || box.left >= other.right);
     return {
-      shown: Boolean(toast), duration: toast?.getAttribute('duration') ?? null,
+      shown: Boolean(toast), duration: toast?.getAttribute('duration') ?? toast?.dataset.duration ?? null,
       closable: toast?.getAttribute('closable') ?? null,
-      title: toast?.getAttribute('title') ?? null,
-      code: toast?.getAttribute('data-sf-code') ?? null,
+      title: toast?.getAttribute('title') ?? toast?.querySelector('.sf-toast-title, .sf-toast-text')?.textContent.trim() ?? null,
+      code: toast?.getAttribute('data-sf-code') ?? window.SF?.notifications?.history?.()[0]?.source ?? null,
       coversToolbar: toolbar ? overlaps(toolbar.getBoundingClientRect()) : null,
       coversAControl: boxes.some((one) => overlaps(one)),
       position: root ? getComputedStyle(root.parentElement ?? root).position : null,

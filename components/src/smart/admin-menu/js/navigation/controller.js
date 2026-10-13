@@ -104,16 +104,18 @@ export const NAVIGATION_TEXT = {
         more: "More",
         rename: "Rename",
         chooseIcon: "Choose an icon",
+        addSection: "Section",
+        newSection: "New section",
         packageName: "Return the package's name",
         deleteRow: "Delete",
         drag: "Move",
         add: "Add",
         addDivider: "Divider",
-        addHeading: "Group label",
+        addHeading: "Subheading",
         addLink: "Link",
         linkLabel: "Name",
         linkHref: "Address",
-        newHeading: "New group",
+        newHeading: "Subheading",
         conflict: "The menu was changed elsewhere. This is what is saved now.",
         personalName: "Personal",
     },
@@ -173,16 +175,18 @@ export const NAVIGATION_TEXT = {
         more: "Ещё",
         rename: "Переименовать",
         chooseIcon: "Выбрать иконку",
+        addSection: "Раздел",
+        newSection: "Новый раздел",
         packageName: "Вернуть название пакета",
         deleteRow: "Удалить",
         drag: "Переместить",
         add: "Добавить",
         addDivider: "Разделитель",
-        addHeading: "Подпись группы",
+        addHeading: "Подзаголовок",
         addLink: "Ссылка",
         linkLabel: "Название",
         linkHref: "Адрес",
-        newHeading: "Новая группа",
+        newHeading: "Подзаголовок",
         conflict: "Меню изменили в другом месте. Показано то, что сохранено сейчас.",
         personalName: "Персональный",
     },
@@ -873,13 +877,18 @@ export class NavigationController {
         const key = `own.${Date.now().toString(36)}`;
         const row = {
             key, kind, level: "site", own: true, hidden: false, package_label: null,
-            label: kind === "divider" ? null : (label || this.text("newHeading")),
-            icon: kind === "link" ? "open_in_new" : null,
+            label: kind === "divider" ? null : (label || this.text(kind === "root" ? "newSection" : "newHeading")),
+            icon: kind === "link" ? "open_in_new" : kind === "root" ? "folder" : null,
             href: kind === "link" ? href : null,
             attention: null, badge: null, shortcut: null, action: null,
+            ...(kind === "root" ? {children: []} : {}),
         };
         return this.change((items) => this.listOf(items, parent)?.push(row)).then((saved) => {
-            if (saved && kind === "heading") {
+            if (saved && kind === "root") {
+                this.openRoot = key;
+                this.edit = {...this.edit, renaming: key};
+                this.update("edit");
+            } else if (saved && kind === "heading") {
                 this.edit = {...this.edit, renaming: key};
                 this.update("edit");
             }

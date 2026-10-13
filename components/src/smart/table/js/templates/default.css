@@ -586,9 +586,27 @@
     box-shadow: var(--sf-elevation-3--shadow);
   }
 
-  .sf-table-context-menu .sf-settings-context-menu-item.drag-placeholder {
-    opacity: 0.32;
+  /* Where a dragged row will land: the Framework's silhouette (sf-sortable
+     preview="silhouette"), an outline of its size with a faint fill, the same
+     in every list the admin reorders (owner, 2026-10-13). A placeholder at a
+     third of the row's opacity read as a ghost of the row, not as a place. */
+  .sf-table-context-menu .sf-settings-context-menu-item.drag-placeholder,
+  sf-table .drag-placeholder {
+    box-sizing: border-box;
+    border: var(--sf-px) dashed var(--sf-outline-primary);
+    border-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary-transparent-select);
     pointer-events: none;
+  }
+  .sf-table-context-menu .sf-settings-context-menu-item.drag-placeholder > *,
+  sf-table .drag-placeholder > * {
+    visibility: hidden;
+  }
+
+  /* The column a dragged heading will take, in the head and down the rows. */
+  sf-table .is-column-drag-placeholder-cell {
+    background-color: var(--sf-primary-transparent-select);
+    box-shadow: inset var(--sf-px) 0 0 var(--sf-outline-primary), inset calc(-1 * var(--sf-px)) 0 0 var(--sf-outline-primary);
   }
 
   /* A tree row (data view port 1.8.0): the first data cell is indented by the

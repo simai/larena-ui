@@ -227,6 +227,10 @@ function renderAdd(context, root) {
     const choose = (anchor) => openMenu(controller, anchor, {
         label: text("add"),
         entries: [
+            // A section of one's own, at the top level only: a row with its
+            // own column, where links, headings and lines are added as in any
+            // root's (owner, 2026-10-13).
+            ...(root.key === "roots" ? [{id: "root", text: text("addSection"), icon: "folder"}] : []),
             {id: "divider", text: text("addDivider"), icon: "horizontal_rule"},
             {id: "heading", text: text("addHeading"), icon: "title"},
             {id: "link", text: text("addLink"), icon: "link"},

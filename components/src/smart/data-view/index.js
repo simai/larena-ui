@@ -359,6 +359,27 @@ class SfDataView extends HTMLElement {
     // Shown over the card, not in it. `role` follows what happened: an error is
     // an alert, a refusal is a message.
     notify(text, {kind = "error", code = ""} = {}) {
+        // The page's one notification area (SF.notify, Framework
+        // ui-82fc0ba882ba): the view's messages go where every other message
+        // goes, and a notification centre records them from sf-notification
+        // (owner, 2026-10-13). A clear closes the view's last message there.
+        // A Framework without SF.notify keeps the band over the card.
+        if (typeof globalThis.SF?.notify === "function") {
+            if (!text) {
+                this._notifyHandle?.close?.();
+                this._notifyHandle = null;
+                return this;
+            }
+            this._notifyHandle = globalThis.SF.notify({
+                status: kind === "error" ? "error" : "warning",
+                title: text,
+                // Long enough to read a sentence, as the band's was.
+                duration: 7000,
+                source: code ? `sf-data-view:${code}` : "sf-data-view",
+                key: code ? `sf-data-view:${code}` : undefined,
+            });
+            return this;
+        }
         const band = this.noticeBand;
         band.replaceChildren();
         if (!text) {

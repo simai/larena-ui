@@ -812,11 +812,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/edit.js",
-        "sha256": "25e021bc9e83e5de607f779ad4ff3a6bbb94289b89ce82075d09695dc6e18e3e"
+        "sha256": "24672d39e431e01331c160be5b56fd7ac87d6f17ccd2f3ea92b51f182a0bbd5b"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/controller.js",
-        "sha256": "c35345247d0c9e30f92261e9183443e8406c0fd0c8fe9c6ca6988bf43b648061"
+        "sha256": "35bc0076c5d44c57697e979afea700f5fa3deac1261fe114a2e112a618ace95a"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/menu.js",
