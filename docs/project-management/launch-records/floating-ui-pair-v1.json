@@ -331,6 +331,10 @@
     ".gitattributes",
     "LICENSE",
     "tools/larena-scope-check.php",
-    "src/Runtime/SfElementBackendRenderer.php"
+    "src/Runtime/SfElementBackendRenderer.php",
+    "tests/Unit/MinimalCmsDependencyContractTest.php",
+    "assets.yaml",
+    "src/Contracts/UiResourcePackManifest.php",
+    "tests/Unit/UiContractTest.php"
   ]
 }

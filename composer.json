@@ -13,7 +13,8 @@
     "illuminate/console": "^13.0",
     "php": "^8.3",
     "larena/core": "dev-main",
-    "larena/dataview": "dev-main"
+    "larena/dataview": "dev-main",
+    "larena/layout": "dev-main"
   },
   "repositories": [
     {
@@ -56,7 +57,6 @@
     }
   },
   "require-dev": {
-    "larena/layout": "dev-main",
     "phpstan/phpstan": "^2.0"
   },
   "scripts": {

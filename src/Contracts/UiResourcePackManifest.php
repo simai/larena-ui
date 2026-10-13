@@ -422,51 +422,6 @@ final readonly class UiResourcePackManifest
     ];
 
     /**
-     * Compatibility preview styles that used to be linked from root
-     * public/larena assets. They stay in the shared package stylesheet until
-     * the corresponding root compatibility renderers are retired or moved.
-     *
-     * @var array<string, array{
-     *     carrier_key: string,
-     *     asset_key: string,
-     *     kind: UiAssetKind,
-     *     custom_element: string,
-     *     resource_path: string,
-     *     source_backed_status: string,
-     *     final_path_owned_by_core_assets: true
-     * }>
-     */
-    public const ROOT_COMPATIBILITY_PREVIEW_STYLE_ASSETS = [
-        'internal_artifact_preview' => [
-            'carrier_key' => 'root.compat.internal_artifact_preview.styles',
-            'asset_key' => 'root.preview.internal_artifact.css',
-            'kind' => UiAssetKind::Css,
-            'custom_element' => 'root-internal-artifact-preview',
-            'resource_path' => 'resources/assets/admin-foundation/preview.css',
-            'source_backed_status' => 'larena_owned_root_compatibility_preview_style',
-            'final_path_owned_by_core_assets' => true,
-        ],
-        'file_operation_guarded_flow' => [
-            'carrier_key' => 'root.compat.file_operation_guarded_flow.styles',
-            'asset_key' => 'root.preview.file_operation_guarded_flow.css',
-            'kind' => UiAssetKind::Css,
-            'custom_element' => 'root-file-operation-guarded-flow',
-            'resource_path' => 'resources/assets/admin-foundation/preview.css',
-            'source_backed_status' => 'larena_owned_root_compatibility_preview_style',
-            'final_path_owned_by_core_assets' => true,
-        ],
-        'guarded_data_content_runtime_bridge' => [
-            'carrier_key' => 'root.compat.guarded_data_content_runtime_bridge.styles',
-            'asset_key' => 'root.preview.guarded_data_content_runtime_bridge.css',
-            'kind' => UiAssetKind::Css,
-            'custom_element' => 'root-guarded-data-content-runtime-bridge',
-            'resource_path' => 'resources/assets/admin-foundation/preview.css',
-            'source_backed_status' => 'larena_owned_root_compatibility_preview_style',
-            'final_path_owned_by_core_assets' => true,
-        ],
-    ];
-
-    /**
      * Minimal Larena-owned fallback modules for custom elements required by the
      * admin browser smoke. They are package resources, not root app runtime.
      *
@@ -685,15 +640,6 @@ final readonly class UiResourcePackManifest
             'admin-foundation-preview-style:package-owned-legacy-preview-cleanup',
         ];
 
-        foreach (self::ROOT_COMPATIBILITY_PREVIEW_STYLE_ASSETS as $asset) {
-            $requirements[] = new UiAssetRequirement(
-                $asset['asset_key'],
-                $asset['kind'],
-                true,
-            );
-            $explain[] = 'root-compatibility-preview-style:' . $asset['asset_key'];
-        }
-
         return new UiAssetGraph(
             $requirements,
             $explain,
@@ -779,18 +725,6 @@ final readonly class UiResourcePackManifest
                 'final_path_owned_by_core_assets' => true,
             ],
         ];
-
-        foreach (self::ROOT_COMPATIBILITY_PREVIEW_STYLE_ASSETS as $asset) {
-            $assets[] = [
-                'carrier_key' => $asset['carrier_key'],
-                'asset_key' => $asset['asset_key'],
-                'kind' => $asset['kind']->value,
-                'custom_element' => $asset['custom_element'],
-                'resource_path' => $asset['resource_path'],
-                'source_backed_status' => $asset['source_backed_status'],
-                'final_path_owned_by_core_assets' => true,
-            ];
-        }
 
         return $assets;
     }
@@ -991,15 +925,6 @@ final readonly class UiResourcePackManifest
                     'path' => self::ADMIN_FOUNDATION_PREVIEW_STYLE_ASSET['resource_path'],
                     'load' => 'critical',
                 ],
-                ...array_map(
-                    static fn (array $asset): array => [
-                        'key' => $asset['asset_key'],
-                        'kind' => $asset['kind']->value,
-                        'path' => $asset['resource_path'],
-                        'load' => 'critical',
-                    ],
-                    array_values(self::ROOT_COMPATIBILITY_PREVIEW_STYLE_ASSETS),
-                ),
             ],
             'policy' => [
                 'local_only' => true,
