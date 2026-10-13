@@ -89,6 +89,13 @@
     padding-block: var(--sf-space-1);
   }
 
+  /* At step 1/2 a row is the ladder's: the 32px controls it holds and the step's
+     own vertical space around them -- a 45px row beside the admin menu's 32px
+     items, where step 1 keeps its 73. */
+  sf-table[size="1/2"] > * .table > :not(caption) > * > * {
+    padding-block: var(--sf-ui-1\/2--space-y);
+  }
+
   .sf-table-context-menu {
     max-width: var(--sf-table-context-menu--max-width, var(--sf-g2));
     width: var(--sf-table-context-menu--available-inline-size, 100%);

@@ -240,6 +240,11 @@ class SfTable extends SfBaseElement {
             // The gear in the head of the settings column, which opens the column
             // settings. Off, the column still carries each row's menu.
             settingsMenu: {attribute: "settings-menu", type: Boolean, default: true},
+            // The step of the size ladder the table's own controls take: its
+            // toolbar, its row boxes and menus, its filters and context menus.
+            // 1/2 is the dense admin step -- 32px controls, 14/20 text, the
+            // height of the admin menu beside it -- and the rows follow.
+            size: {default: "1", values: ["1/2", "1"]},
             filterText: {attribute: "filter-text", default: "Filter"},
             clearText: {attribute: "clear-text", default: "Clear"},
             searchPlaceholder: {attribute: "search-placeholder", default: "Search"},
@@ -2496,7 +2501,7 @@ class SfTable extends SfBaseElement {
                     <div class="sf-table-context-main">
                         <form ${ref(this.refs.templateForm)} id="save_template" class="flex flex-col gap-1/2">
                             <sf-input
-                                    size="1"
+                                    size=${this.size}
                                     appearance="filled"
                                     placeholder="${this.text('templateNamePlaceholder')}"
                                     value="${this.state.saveInputValue}"
@@ -3051,7 +3056,7 @@ class SfTable extends SfBaseElement {
             const isChecked = typeof checked === "function" ? Boolean(checked(col)) : Boolean(checked);
             const box = html`
                 <sf-checkbox
-                    size="1"
+                    size=${this.size}
                     label=${col.label}
                     position="end"
                     root-class="content-main-between"
@@ -3485,7 +3490,7 @@ class SfTable extends SfBaseElement {
                     `}
                 </div>
                 <sf-checkbox
-                        size="1"
+                        size=${this.size}
                         position="end"
                         root-class="content-main-between"
                         ?checked=${selected.has(value)}
@@ -3514,7 +3519,7 @@ class SfTable extends SfBaseElement {
         if (option.imageUrl) {
             return html`
                 <sf-avatar
-                        size="1"
+                        size=${this.size}
                         image-url="${option.imageUrl}"
                         title="${option.title || option.label || ''}"
                 ></sf-avatar>
@@ -3523,7 +3528,7 @@ class SfTable extends SfBaseElement {
 
         return html`
             <sf-avatar
-                    size="1"
+                    size=${this.size}
                     title="${option.avatarText || option.title || option.label || ''}"
             ></sf-avatar>
         `;
@@ -3976,7 +3981,7 @@ class SfTable extends SfBaseElement {
                          fields, and scrolling for one is not an answer. -->
                     <label class="sf-table-column-search flex flex-col">
                         <sf-input
-                            size="1"
+                            size=${this.size}
                             appearance="bordered"
                             root-class="sf-table-column-search-input"
                             name="sf_table_column_search"
@@ -4121,7 +4126,7 @@ class SfTable extends SfBaseElement {
                     ${data.submenu?.open ? this.renderContextSubmenu(data.submenu) : nothing}
                     ${this.isList && ["filter-settings", "tag-settings"].includes(data.menu) ? html`
                         <div class="sf-table-sheet-close">
-                            <sf-icon-button size="1" appearance="link" scheme="on-surface"
+                            <sf-icon-button size=${this.size} appearance="link" scheme="on-surface"
                                             icon="close" aria-label=${this.text('closeText')}
                                             @click=${() => this.closeContextMenu()}></sf-icon-button>
                         </div>` : nothing}
@@ -5803,6 +5808,24 @@ class SfTable extends SfBaseElement {
                 submenu: null,
             },
         }));
+    }
+
+    // Every element the table draws goes through here -- its own controls,
+    // the row menus, the select boxes, a host's row actions -- and each was
+    // written for the ladder's step 1. A table at another step draws them at
+    // its own: a size of 1 becomes the table's. An element that names no size
+    // keeps its own default -- a badge's is 1/3, a tag's 1/2 -- which a table at
+    // a smaller step would otherwise have grown.
+    renderSmartElement(type, props = {}) {
+        const size = this.size;
+        if (size !== "1" && props && String(props.size) === "1") {
+            return super.renderSmartElement(type, {...props, size});
+        }
+        return super.renderSmartElement(type, props);
+    }
+
+    get size() {
+        return this.getEnumAttr("size", ["1/2", "1"], "1");
     }
 
     getSelectColumn() {

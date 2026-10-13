@@ -155,6 +155,15 @@
         "type": "string",
         "default": "",
         "description": "The group inside that composite this list stands in, sent with the host-port request."
+      },
+      "size": {
+        "type": "string",
+        "default": "1",
+        "enum": [
+          "1/2",
+          "1"
+        ],
+        "description": "The step of the size ladder the view's controls take, handed to its table, its page row and its selection band: 1, or the dense 1/2 of an admin."
       }
     }
   },
@@ -661,7 +670,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "470740d566fb8819b108ae42044b18663e793eb25c52bdcf07a7002b90a94328"
+        "sha256": "e2160ca82e97b742d998ceef993470988b5b0f13bbb4a702a57e8ec51bcf8534"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

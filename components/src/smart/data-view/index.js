@@ -520,8 +520,15 @@ class SfDataView extends HTMLElement {
     // first projection saw no `chrome` at all and drew the full page chrome -- a
     // consumer reported the fallback «Поиск / Сохранить вид» form standing inside a
     // group that had asked for no chrome, until data arrived and projected again.
+    // The step of the size ladder the view's controls take, handed to the table,
+    // the page row and the selection band: 1, or the admin's dense 1/2, where the
+    // view stands beside the admin menu's 32px rows (owner, 2026-10-13).
+    get size() {
+        return this.getAttribute("size") === "1/2" ? "1/2" : "1";
+    }
+
     static get observedAttributes() {
-        return ["chrome", "row-cap", "aria-label"];
+        return ["chrome", "row-cap", "aria-label", "size"];
     }
 
     attributeChangedCallback(name, previous, next) {
@@ -809,15 +816,16 @@ class SfDataView extends HTMLElement {
         }
         for (const node of band.querySelectorAll("[data-sf-bulk]")) {
             parts[node.dataset.sfBulk] = node;
+            if (node.localName.startsWith("sf-")) chosen(node, "size", this.size);
         }
         parts.count.textContent = `${pagination.selectedLabel} ${selected.length}`;
         chosen(parts.actions, "value", action);
         chosen(parts.actions, "placeholder", pagination.actionChooseLabel);
         chosen(parts.actions, "aria-label", pagination.actionsLabel);
         parts.actions.options = [
-            {type: "text", size: "1", text: pagination.actionChooseLabel, value: "", selected: !action},
+            {type: "text", size: this.size, text: pagination.actionChooseLabel, value: "", selected: !action},
             ...actions.map((item) => ({
-                type: "text", size: "1", text: item.text, value: item.value,
+                type: "text", size: this.size, text: item.text, value: item.value,
                 selected: item.value === action, disabled: Boolean(item.disabled),
             })),
         ];
@@ -1103,6 +1111,7 @@ class SfDataView extends HTMLElement {
         // false value by removing the attribute — and a removed `bottom` means
         // the default, which is to draw the band.
         this.pagination?.setAttribute?.("bottom", "false");
+        this.pagination?.setAttribute?.("size", this.size);
         const table = this.table;
         if (table) {
             // The two chrome columns. Written as attributes rather than left to the
@@ -1120,6 +1129,7 @@ class SfDataView extends HTMLElement {
             if (!table.getAttribute?.("data-sf-host-layout")) {
                 table.setAttribute("layout", this.renders("toolbar") ? "auto" : "table");
             }
+            table.setAttribute("size", this.size);
             table.setAttribute("settings", this.renders("settings") ? "true" : "false");
             // The column settings, without the column: it also carries each
             // row's menu, which is the host's row-actions, not this.

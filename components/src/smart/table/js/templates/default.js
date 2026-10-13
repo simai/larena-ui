@@ -41,7 +41,7 @@ function renderListToolbar(context) {
              data-sf-filter-tags="${active.length ? '1' : '0'}">
             <div class="flex items-cross-center gap-1/3 min-w-0">
                 <sf-input
-                        size="1"
+                        size=${context.size}
                         root-class="sf-search-input flex-1 min-w-0"
                         appearance="bordered"
                         value="${value}"
@@ -55,7 +55,7 @@ function renderListToolbar(context) {
                 ></sf-input>
                 <span class="sf-table-list-filter">
                     <sf-icon-button
-                            size="1"
+                            size=${context.size}
                             appearance=${active.length ? 'default' : 'outline'}
                             scheme="primary"
                             icon="filter_list"
@@ -68,7 +68,7 @@ function renderListToolbar(context) {
                 </span>
                 ${context.component.getColumns().some((column) => column?.sortable && !column.system) ? html`
                     <sf-icon-button
-                            size="1"
+                            size=${context.size}
                             appearance=${state.sort?.key ? 'default' : 'outline'}
                             scheme=${state.sort?.key ? 'primary' : 'on-surface'}
                             icon="swap_vert"
@@ -78,7 +78,7 @@ function renderListToolbar(context) {
                     ></sf-icon-button>` : nothing}
                 ${context.actions && context.creatable ? html`
                     <sf-icon-button
-                            size="1"
+                            size=${context.size}
                             appearance="outline"
                             scheme="on-surface"
                             icon="add"
@@ -94,13 +94,13 @@ function renderListToolbar(context) {
                         const filterValue = filterValues?.[k] || {};
                         const count = Array.isArray(filterValue.values) ? filterValue.values.length : tag.count || '';
                         return html`
-                            <sf-tag type="default" size="1" text='${tag.label}' interactive closable :key=${k}
+                            <sf-tag type="default" size=${context.size} text='${tag.label}' interactive closable :key=${k}
                                     root-class="active" count='${count}'
                                     @close="${() => context.component.removeFilterTag(k)}"
                                     @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'tag-settings', fieldKey: k, anchorSelector: '.sf-tag'})}
                             ></sf-tag>`;
                     })}
-                    <sf-button size="1" appearance="link" scheme="on-surface" text=${context.clearText}
+                    <sf-button size=${context.size} appearance="link" scheme="on-surface" text=${context.clearText}
                                @click="${() => context.component.removeFilterTag()}"></sf-button>
                 </div>` : nothing}
         </div>
@@ -125,7 +125,7 @@ function renderToolbar(context) {
             <div class="sf-table-toolbar-start flex items-cross-center gap-1/3 flex-wrap min-w-0">
                 <div class="flex items-cross-center">
                     <sf-button
-                            size="1"
+                            size=${context.size}
                             appearance="default"
                             scheme="primary"
                             text=${context.filterText}
@@ -140,7 +140,7 @@ function renderToolbar(context) {
                     ></sf-button>
                     ${context.filterTemplates ? html`
                     <sf-icon-button
-                            size="1"
+                            size=${context.size}
                             appearance="default"
                             scheme="primary"
                             aria-label="Сохранить шаблон фильтра"
@@ -170,7 +170,7 @@ function renderToolbar(context) {
                         <div class="sf-table-tags">
                             <sf-tag
                                     type="default"
-                                    size="1"
+                                    size=${context.size}
                                     text='${tag.label}'
                                     interactive
                                     closable
@@ -194,7 +194,7 @@ function renderToolbar(context) {
                 ${activeFilterTags.length || hasUnsavedFilterDataChanges ? html`
                     ${hasUnsavedFilterDataChanges ? html`
                         <sf-button
-                                size="1"
+                                size=${context.size}
                                 appearance="default"
                                 scheme="primary"
                                 text="Сохранить"
@@ -203,7 +203,7 @@ function renderToolbar(context) {
                     ` : nothing}
                     ${activeFilterTags.length ? html`
                         <sf-button
-                                size="1"
+                                size=${context.size}
                                 appearance="outline"
                                 scheme="on-surface"
                                 text=${context.clearText}
@@ -215,7 +215,7 @@ function renderToolbar(context) {
 
             <div class="sf-table-toolbar-end flex items-cross-center gap-1/3 flex-wrap flex-auto min-w-0">
                 <sf-input
-                        size="1"
+                        size=${context.size}
                         root-class="sf-search-input m-inline-start-auto"
                         appearance="bordered"
                         value="${value}"
@@ -236,7 +236,7 @@ function renderToolbar(context) {
                 >
           <span slot="right">
                 <sf-icon-button
-                        size="1"
+                        size=${context.size}
                         appearance="link"
                         scheme="on-surface"
                         icon=${value.length ? 'close' : 'search'}
@@ -258,7 +258,7 @@ function renderToolbar(context) {
                         ? html`
                             <div class="flex items-cross-center">
                                 <sf-button
-                                        size="1"
+                                        size=${context.size}
                                         appearance="outline"
                                         scheme="on-surface"
                                         text=${context.createText}
@@ -267,7 +267,7 @@ function renderToolbar(context) {
                                 ></sf-button>
                                 ${state.createItems?.length ? html`
                                     <sf-icon-button
-                                            size="1"
+                                            size=${context.size}
                                             appearance="outline"
                                             scheme="primary"
                                             segment="end"
@@ -293,7 +293,7 @@ function renderToolbar(context) {
                 ${context.settings && state.toolbarActions?.length
                         ? html`
                             <sf-icon-button
-                                    size="1"
+                                    size=${context.size}
                                     appearance="outline"
                                     scheme="primary"
                                     icon="more_vert"
@@ -610,7 +610,7 @@ export function renderTableTemplate(context) {
                         <sf-button
                                 appearance="outline"
                                 scheme="on-surface"
-                                size="1"
+                                size=${context.size}
                                 text=${context.retryText}
                                 @click=${() => context.component.requestRetry()}
                         ></sf-button>
@@ -672,7 +672,7 @@ export function renderTableTemplate(context) {
             return html`<div class="sf-table-state p-2" data-state=${dataState}>${
                 dataState === 'error'
                         ? html`<div class="flex flex-col items-cross-start gap-1/2" role="alert"><span>${context.errorText}</span>
-                               <sf-button appearance="outline" scheme="on-surface" size="1" text=${context.retryText}
+                               <sf-button appearance="outline" scheme="on-surface" size=${context.size} text=${context.retryText}
                                           @click=${() => context.component.requestRetry()}></sf-button></div>`
                         : html`<span>${context.emptyText}</span>`}</div>`;
         }
@@ -976,7 +976,7 @@ export function renderTableTemplate(context) {
                     ${resolvedDataState(context) === 'loading' && (context.component.getTableData()?.rows?.length ?? 0) > 0
                         ? html`
                             <div class="sf-table-busy" role="status">
-                                <sf-spinner size="1" label="" aria-label=${context.loadingText}></sf-spinner>
+                                <sf-spinner size=${context.size} label="" aria-label=${context.loadingText}></sf-spinner>
                             </div>
                         `
                         : nothing}

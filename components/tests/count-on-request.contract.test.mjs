@@ -71,7 +71,7 @@ test('the three answers to "how many" are rendered, and nothing else is', async 
   const markup = await read('src/smart/pagination/js/templates/default.js');
 
   assert.match(markup, /\$\{context\.countKnown\s*\? html`[\s\S]*?\$\{context\.totalLabel\} \$\{context\.total\}/u, 'the number');
-  assert.match(markup, /context\.counting[\s\S]*?<sf-spinner size="1" aria-label=\$\{context\.countingLabel\}/u, 'a short wait');
+  assert.match(markup, /context\.counting[\s\S]*?<sf-spinner size=\$\{context\.size\} aria-label=\$\{context\.countingLabel\}/u, 'a short wait');
   assert.match(
     markup,
     /context\.canCount[\s\S]*?class="sf-pagination-count-request"[\s\S]*?text=\$\{context\.showCountLabel\}[\s\S]*?@click=\$\{\(\) => component\.requestCount\("total"\)\}/u,

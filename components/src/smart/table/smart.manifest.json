@@ -318,6 +318,15 @@
         "type": "number",
         "default": 3,
         "description": "How many fields a record shows under its title in the compact list, chosen by the columns' priority."
+      },
+      "size": {
+        "type": "string",
+        "default": "1",
+        "enum": [
+          "1/2",
+          "1"
+        ],
+        "description": "The step of the size ladder the table's controls and rows take: 1, or the dense 1/2 -- 32px controls, 14/20 text, rows of the step's height. A size of 1 written on an element the table draws becomes the table's."
       }
     }
   },
@@ -1563,15 +1572,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "7f8017cd14cc8d69b0c3c9605b78dfc1a62664f814dd58f6eaa40a77a5d60232"
+        "sha256": "3acf62200d89cb77adf45ecd451196c7b42933224a0eb77ae89aea3ce2d0fc1b"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "50b2c459d941609ad8207a36ea1dcc3e3da07cf78640aaf8202564666640f083"
+        "sha256": "095b517f429dd206384042741ba26b4196d30cca27c9e9558332208689c875dc"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "e4d021c7c64c930405223375754a607d0bedfc114fd12bc0f1eacf0ce1448f6a"
+        "sha256": "1dfc3a28ecbfabd12be6b72dfe0541ab37d602d9e9b7b465b2bb8d6668521391"
       },
       {
         "path": "src/smart/helpers/option-badge.js",
@@ -1587,7 +1596,7 @@
       },
       {
         "path": "src/smart/pagination/index.js",
-        "sha256": "759aace5a9a904da6b6c63891adc8507a23d1fb0b973023798cf505f4d11f479"
+        "sha256": "5bd5a0bb2a26c582d436f25d0cc428017bbc20370a614a0a8bafcf74c9f43a34"
       }
     ],
     "generated_runtime": []
