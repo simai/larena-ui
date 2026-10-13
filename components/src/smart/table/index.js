@@ -202,6 +202,13 @@ function checkedRecordIds(value) {
 // portal are all derived from this counter, never from the component name.
 let tableInstances = 0;
 
+// The box a cell value is drawn in: a Smart element that is display: contents
+// (sf-tag) has none of its own, so its first child is the one measured and
+// folded.
+function cellValueBox(item) {
+    return getComputedStyle(item).display === 'contents' ? (item.firstElementChild ?? item) : item;
+}
+
 class SfTable extends SfBaseElement {
     static get sfPorts() {
         return SF_TABLE_PORTS;
@@ -2349,7 +2356,7 @@ class SfTable extends SfBaseElement {
         // width yet, so the line is measured again once it has one.
         const pending = new Set();
         for (const item of this.querySelectorAll('tbody .sf-table-cell-values > :not(.sf-table-cell-more)')) {
-            if (item.localName.includes('-') && (!customElements.get(item.localName) || !item.getBoundingClientRect().width)) {
+            if (item.localName.includes('-') && (!customElements.get(item.localName) || !cellValueBox(item).getBoundingClientRect().width)) {
                 pending.add(item.localName);
             }
         }
@@ -2365,7 +2372,7 @@ class SfTable extends SfBaseElement {
         for (const box of this.querySelectorAll('tbody .sf-table-cell-values')) {
             const more = box.querySelector(':scope > .sf-table-cell-more');
             const items = [...box.children].filter((child) => child !== more);
-            for (const item of items) item.classList.remove('sf-table-cell-folded');
+            for (const item of items) cellValueBox(item).classList.remove('sf-table-cell-folded');
             if (!more) continue;
             more.hidden = true;
             more.removeAttribute('title');
@@ -2376,7 +2383,7 @@ class SfTable extends SfBaseElement {
             more.textContent = `+${items.length}`;
             const folded = [];
             for (let at = items.length - 1; at > 0 && box.scrollWidth > box.clientWidth + 1; at -= 1) {
-                items[at].classList.add('sf-table-cell-folded');
+                cellValueBox(items[at]).classList.add('sf-table-cell-folded');
                 folded.unshift(items[at]);
                 more.textContent = `+${folded.length}`;
             }

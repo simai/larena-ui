@@ -265,11 +265,14 @@
     min-inline-size: 0;
     overflow: hidden;
   }
-  sf-table .sf-table-cell-values > * {
+  /* Values keep their width; one drawn by an element that is display:
+     contents (sf-tag) is its child's box. */
+  sf-table .sf-table-cell-values > *,
+  sf-table .sf-table-cell-values > * > * {
     flex: none;
   }
   /* A folded value leaves the line but not the text: visually hidden, read. */
-  sf-table .sf-table-cell-values > .sf-table-cell-folded {
+  sf-table .sf-table-cell-values .sf-table-cell-folded {
     position: absolute;
     inline-size: 1px;
     block-size: 1px;
