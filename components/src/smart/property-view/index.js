@@ -15,6 +15,7 @@
 // shadow boundary. sf-data-view avoids this by slotting its children and says so
 // beside the slot. A consumer found it on their stand.
 import SfBaseElement from "../../core/js/smart-base";
+import {ICON_CHOICES} from "./js/icon-choices.js";
 import {pageText} from "../../core/js/page-language";
 import {renderPropertyViewTemplate} from "./js/templates/default";
 // The Framework's own copy, with its fallback for a browser that refuses the
@@ -242,32 +243,7 @@ const PROPERTY_VIEW_TEXT = {
     },
 };
 
-const SECTION_ICONS = Object.freeze([
-    "folder", "folder_open", "topic", "home", "dashboard",
-    "apartment", "store", "storefront", "business_center", "work",
-    "badge", "person", "group", "groups", "account_circle",
-    "manage_accounts", "supervisor_account", "contacts", "school", "menu_book",
-    "assignment", "task", "description", "article", "note_alt",
-    "edit_note", "draft", "receipt", "receipt_long", "request_quote",
-    "inventory_2", "category", "label", "sell", "local_offer",
-    "shopping_cart", "shopping_bag", "payments", "savings", "credit_card",
-    "account_balance", "calculate", "percent", "trending_up", "analytics",
-    "insights", "monitoring", "bar_chart", "pie_chart", "table_chart",
-    "schedule", "event", "today", "calendar_month", "date_range",
-    "history", "alarm", "timer", "update", "hourglass_top",
-    "mail", "outgoing_mail", "chat", "forum", "sms",
-    "call", "phone_in_talk", "contact_support", "campaign", "notifications",
-    "language", "public", "place", "map", "location_on",
-    "travel_explore", "flight", "local_shipping", "route", "directions",
-    "settings", "tune", "build", "construction", "handyman",
-    "code", "terminal", "data_object", "api", "bug_report",
-    "database", "storage", "cloud", "backup", "sync",
-    "folder_zip", "upload_file", "download", "attach_file", "link",
-    "lock", "lock_open", "shield", "verified_user", "key",
-    "admin_panel_settings", "policy", "gavel", "fingerprint", "visibility",
-    "palette", "format_paint", "image", "photo_library", "collections",
-    "movie", "play_circle", "mic", "headphones", "brush",
-]);
+const SECTION_ICONS = ICON_CHOICES;
 
 class SfPropertyView extends SfBaseElement {
     static get props() {

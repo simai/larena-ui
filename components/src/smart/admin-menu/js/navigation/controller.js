@@ -103,6 +103,7 @@ export const NAVIGATION_TEXT = {
         hide: "Hide",
         more: "More",
         rename: "Rename",
+        chooseIcon: "Choose an icon",
         packageName: "Return the package's name",
         deleteRow: "Delete",
         drag: "Move",
@@ -171,6 +172,7 @@ export const NAVIGATION_TEXT = {
         hide: "Скрыть",
         more: "Ещё",
         rename: "Переименовать",
+        chooseIcon: "Выбрать иконку",
         packageName: "Вернуть название пакета",
         deleteRow: "Удалить",
         drag: "Переместить",
@@ -331,10 +333,20 @@ export class NavigationController {
             // holds the current row shows its column, as a person who came
             // through it last left it. Only on the first answer -- a root the
             // person closed stays closed when the menu is read again.
+            // The second column is shown as the person left it, on every page:
+            // opened by the page it moved -- open on one page, closed on the
+            // next, open again on a record reached through a link -- and that
+            // was the menu jumping (owner, 2026-10-13). Only a person who never
+            // chose is shown the root that holds the page.
             if (first && this.wide && !this.openRoot && !answer.person?.compact) {
-                const holder = this.roots().find((root) => this.holdsCurrent(root)
-                    && root.key !== answer.current && (root.children ?? []).length > 0);
-                if (holder) this.openRoot = holder.key;
+                const remembered = this.rememberedRoot();
+                if (remembered !== undefined) {
+                    this.openRoot = remembered && this.roots().some((root) => root.key === remembered) ? remembered : null;
+                } else {
+                    const holder = this.roots().find((root) => this.holdsCurrent(root)
+                        && root.key !== answer.current && (root.children ?? []).length > 0);
+                    if (holder) this.openRoot = holder.key;
+                }
             }
             this.status = "ready";
             this.message = "";
@@ -452,13 +464,39 @@ export class NavigationController {
             this.filter = "";
             if (!this.wide) this.screen = "second";
         }
+        if (this.wide) this.rememberRoot(this.openRoot);
         this.update("root");
     }
 
     hideColumn() {
         this.openRoot = null;
         this.screen = "first";
+        if (this.wide) this.rememberRoot(null);
         this.update("root");
+    }
+
+    // Which root's column the person left open, per site, in this browser:
+    // undefined when they never chose, "" when they closed it. A preference of
+    // the person's view rather than the host's data, so it is the browser's.
+    rootMemoryKey() {
+        return `sf-admin-menu:open-root:${this.navigation?.site?.current?.key ?? ""}`;
+    }
+
+    rememberedRoot() {
+        try {
+            const value = globalThis.localStorage?.getItem(this.rootMemoryKey());
+            return value === null || value === undefined ? undefined : value;
+        } catch {
+            return undefined;
+        }
+    }
+
+    rememberRoot(key) {
+        try {
+            globalThis.localStorage?.setItem(this.rootMemoryKey(), key ?? "");
+        } catch {
+            // A browser that keeps nothing shows the page's root, as before.
+        }
     }
 
     back() {
@@ -795,6 +833,17 @@ export class NavigationController {
         return this.change((items) => {
             const found = this.findIn(items, key);
             if (found) found.row.label = text;
+        });
+    }
+
+    // A row's glyph, chosen in the edit mode from the same list as a record
+    // section's (owner, 2026-10-13); saved in the profile with the row.
+    setRowIcon(key, icon) {
+        const next = String(icon ?? "").trim();
+        if (!next) return this.update("edit");
+        return this.change((items) => {
+            const found = this.findIn(items, key);
+            if (found) found.row.icon = next;
         });
     }
 

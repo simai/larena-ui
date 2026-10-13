@@ -35,7 +35,7 @@ const TABLE_TEXT = {
         errorText: "The data could not be loaded",
         retryText: "Try again",
         columnMoveLabel: "Move the column",
-        filterApplyText: "Apply the filter",
+        filterApplyText: "Apply",
         columnSearchPlaceholder: "Search the fields",
         columnSearchEmptyText: "No field matches",
         editActionText: "Edit",
@@ -107,7 +107,7 @@ const TABLE_TEXT = {
         errorText: "Не удалось загрузить данные",
         retryText: "Повторить",
         columnMoveLabel: "Переместить столбец",
-        filterApplyText: "Применить фильтр",
+        filterApplyText: "Применить",
         columnSearchPlaceholder: "Поиск по полям",
         columnSearchEmptyText: "Поля не найдены",
         editActionText: "Редактировать",
@@ -315,7 +315,7 @@ class SfTable extends SfBaseElement {
             },
             filterApplyText: {
                 attribute: "filter-apply-text",
-                default: "Apply the filter",
+                default: "Apply",
             },
             columnSearchPlaceholder: {
                 attribute: "column-search-placeholder",
@@ -3594,6 +3594,10 @@ class SfTable extends SfBaseElement {
     // the table owns the state.
     renderFilterControl(field = {}) {
         return renderFilterField(field, {
+            // The filter controls take this size: the host built here had none,
+            // so the search field in a field's window stayed at 1 beside
+            // buttons at 1/2.
+            size: this.size,
             getFilterControlValue: (key) => this.getFilterControlValue(key),
             patchTempFilterValue: (key, patch) => this.patchTempFilterValue(key, patch),
             getFilterOperatorLabel: (operator) => this.getFilterOperatorLabel(operator),

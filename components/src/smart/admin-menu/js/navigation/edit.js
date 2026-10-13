@@ -1,4 +1,5 @@
 import {html, nothing} from "lit";
+import {ICON_CHOICES} from "../../../property-view/js/icon-choices.js";
 import {LIST_ID} from "./controller";
 import {openMenu} from "./menu";
 
@@ -140,6 +141,22 @@ function renderRenaming(context, row) {
     </form>`;
 }
 
+// The row's glyph as a chooser: the glyph itself opens a grid of the admin's
+// icons with a search, the dropdown a record section's glyph is chosen with.
+function renderIconChooser(context, row) {
+    const {controller, text} = context;
+    const current = row.icon ? String(row.icon) : "";
+    const options = ICON_CHOICES.map((name) => ({kind: "icon", size: "1", icon: name, text: name, value: name,
+        ariaLabel: name, selected: name === current}));
+    return html`<sf-dropdown class="sf-admin-nav-edit-icon" size="1/2" layout="grid" columns="6" search="true"
+        search-placeholder=${text("chooseIcon")} aria-label=${`${text("chooseIcon")}: ${row.label ?? ""}`}
+        value=${current} .options=${options}
+        @change=${(event) => controller.setRowIcon(row.key, event.detail?.value ?? "")}>
+        <sf-icon-button slot="trigger" size="1/2" appearance="link" scheme="on-surface" icon=${current || "add_photo_alternate"}
+            title=${text("chooseIcon")} aria-label=${`${text("chooseIcon")}: ${row.label ?? ""}`}></sf-icon-button>
+    </sf-dropdown>`;
+}
+
 // One editable row: the handle, what it is, and its eye and ⋯. A divider is a
 // line with the same controls, so it can be moved and hidden like a row.
 function renderEditRow(context, row, {draggable = true} = {}) {
@@ -147,12 +164,12 @@ function renderEditRow(context, row, {draggable = true} = {}) {
     const name = row.kind === "divider" ? text("addDivider") : row.label;
     // A root still opens its column in the edit mode: its rows are edited there.
     const label = row.kind === "root"
-        ? html`<button type="button" class="sf-admin-nav-edit-open" aria-expanded=${String(openRoot?.key === row.key)}
+        ? html`${renderIconChooser(context, row)}<button type="button" class="sf-admin-nav-edit-open" aria-expanded=${String(openRoot?.key === row.key)}
             data-open=${openRoot?.key === row.key ? "true" : nothing}
             @click=${() => controller.openRootColumn(row.key)}>
-            ${icon(row.icon)}<span class="sf-admin-nav-row-label">${row.label}</span>
+            <span class="sf-admin-nav-row-label">${row.label}</span>
             ${icon("chevron_right", "sf-admin-nav-row-chevron")}</button>`
-        : html`${row.kind === "heading" ? nothing : icon(row.icon)}
+        : html`${row.kind === "heading" ? nothing : renderIconChooser(context, row)}
             <span class="sf-admin-nav-row-label" data-heading=${row.kind === "heading" ? "true" : nothing}>${row.label}</span>`;
     return html`<div class="sf-admin-nav-edit-row" data-sf-sortable-item=${draggable ? row.key : nothing}
         data-hidden=${row.hidden ? "true" : nothing} data-kind=${row.kind}>
@@ -189,7 +206,9 @@ export function renderEditRoots(context, siteRoots, installRoots) {
 
 function renderAdd(context, root) {
     const {controller, text, edit} = context;
-    if (edit.adding === "link") {
+    // The link form opens in the list it was asked for: one flag for both
+    // columns showed it in the top level and in the open root at once.
+    if (edit.adding === `link:${root.key}`) {
         let label = "";
         let href = "";
         return html`<form class="sf-admin-nav-edit-form" @submit=${(event) => {
@@ -214,7 +233,7 @@ function renderAdd(context, root) {
         ],
         select: (id) => {
             if (id === "link") {
-                controller.edit = {...controller.edit, adding: "link"};
+                controller.edit = {...controller.edit, adding: `link:${root.key}`};
                 return controller.update("edit");
             }
             return controller.addOwnRow(root.key, id);

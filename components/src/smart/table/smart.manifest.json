@@ -296,7 +296,7 @@
       },
       "filter-apply-text": {
         "type": "string",
-        "default": "Apply the filter",
+        "default": "Apply",
         "description": "Label of the filter window’s commit button; the number of conditions a press would change is appended to it while a draft is pending."
       },
       "layout": {
@@ -1572,7 +1572,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "eaddffd9367295fc03efa80b671581df1a2247b8de6275e2840dd44bd79f59a8"
+        "sha256": "27d8fc3611b9649134db2ad4be716cffdd91d13c0c6f76afee784d20600acbfc"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
@@ -1580,7 +1580,7 @@
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "8daff4a5bb4f96f940c8ab152bcbef7c8e9a54c9ecc4e485e5c9870c34c25fbc"
+        "sha256": "b978bbaac637b4ac0ce6a1bb891e65e5ebe9858265903117eb6393f87479dc3d"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

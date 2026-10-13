@@ -335,8 +335,10 @@ try {
   const filterPage = await open(900);
   await openWindow(filterPage, 'Фильтр');
   const quiet = await applyButton(filterPage);
-  if (quiet.text !== 'Применить фильтр') {
-    note({case: 'filter button names its object', got: quiet, expected: 'Применить фильтр with nothing pending'});
+  // One word: the window is the filter's, so «фильтр» said it twice and
+  // widened the window (owner, 2026-10-13).
+  if (quiet.text !== 'Применить') {
+    note({case: 'the apply button is one word', got: quiet, expected: 'Применить with nothing pending'});
   }
 
   // A draft: switch two fields on, through the window's own fields tab.
@@ -360,8 +362,8 @@ try {
       : 'the component cannot count pending conditions'};
   });
   const marked = await applyButton(filterPage);
-  if (pending.counted !== 2 || marked.text !== 'Применить фильтр (2)'
-      || marked.ariaLabel !== 'Применить фильтр: 2') {
+  if (pending.counted !== 2 || marked.text !== 'Применить (2)'
+      || marked.ariaLabel !== 'Применить: 2') {
     note({case: 'filter button shows what is pending', got: {pending, marked}, expected: 'two conditions counted, and said in the label and to a reader'});
   }
   // The label is the host's to translate.

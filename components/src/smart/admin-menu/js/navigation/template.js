@@ -166,10 +166,7 @@ function renderFirstColumn(context) {
         </div>
         ${renderBottom(context)}
         ${context.wide ? html`<div class="sf-admin-nav-foot">
-            ${!compact && controller.canEdit() ? html`<sf-icon-button size="1/2" appearance="ghost" scheme="on-surface"
-                icon="edit" aria-label=${text("configureMenu")} title=${text("configureMenu")}
-                @click=${() => controller.startEdit()}></sf-icon-button>
-            <span class="grow"></span>` : nothing}
+            <span class="grow"></span>
             <sf-icon-button size="1/2" appearance="ghost" scheme="on-surface"
                 icon=${compact ? "chevron_right" : "chevron_left"}
                 aria-label=${compact ? text("expand") : text("collapse")}

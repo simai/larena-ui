@@ -59,7 +59,14 @@ export function openAccountMenu(context, anchor) {
             },
         );
     }
-    if (controller.offers("menu-profiles") && profiles?.list?.length) {
+    // Configuring the menu sits with the menu profile, in the person's menu: a
+    // bare pen under the person said nothing of what it edits (owner,
+    // 2026-10-13).
+    const canEdit = controller.canEdit?.() && !context.compact;
+    const hasProfiles = controller.offers("menu-profiles") && profiles?.list?.length;
+    if (canEdit || hasProfiles) entries.push({type: "separator"});
+    if (canEdit) entries.push({id: "configure-menu", text: text("configureMenu"), icon: "edit"});
+    if (hasProfiles) {
         entries.push({
             id: "profile", text: text("menuProfile"), icon: "view_sidebar", value: currentProfile?.label ?? "",
             submenu: profiles.list.map((entry) => ({
@@ -79,6 +86,7 @@ export function openAccountMenu(context, anchor) {
             if (kind === "language") return controller.chooseLanguage(value);
             if (kind === "profile" && value) return controller.chooseProfile(value);
             if (kind === "sign-out") return controller.signOut();
+            if (kind === "configure-menu") return controller.startEdit();
             return null;
         },
     });
