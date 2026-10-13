@@ -17,6 +17,7 @@ const styles = [
   'core/core/css/utility.full.css',
   'component/component/tables/css/tables.css',
   'smart/smart/table/css/table.css',
+  'smart/smart/sortable/css/sortable.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js',
@@ -27,6 +28,7 @@ const modules = [
   'smart/smart/list-item/js/list-item.js',
   'smart/smart/dropdown/js/dropdown.js',
   'smart/smart/pagination/js/pagination.js',
+  'smart/smart/sortable/js/sortable.js',
   'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
@@ -55,18 +57,44 @@ try {
     handle.append(inner);
     document.body.append(handle);
     const found = table.getColumnResizeHandle?.(inner);
-    const header = document.createElement('th');
-    header.dataset.key = 'name';
-    header.append(handle);
-    return {
-      handleFromChild: found === handle,
-      // A header holding the handle is not a move target while the pointer is
-      // on the handle itself.
-      moveStepsAside: table.getColumnDragHeader?.(inner) === null,
-    };
+    handle.remove();
+    return {handleFromChild: found === handle};
   });
   if (!recognised.handleFromChild) note({case: 'resize handle', expected: 'found from a child of the handle'});
-  if (!recognised.moveStepsAside) note({case: 'resize handle', expected: 'the move handler steps aside'});
+
+  // 1b. A drag that starts on the handle resizes and does not move the column:
+  // the heading row's sortable (SF.Sortable.attach) is refused the start.
+  const grabbed = await open('<div style="width:900px"><sf-table id="m" toolbar="false" settings="false"></sf-table></div>');
+  const grip = await grabbed.evaluate(async () => {
+    const table = document.getElementById('m');
+    table.setColumns?.([
+      {key: 'code', label: 'Code', width: 200},
+      {key: 'city', label: 'City', width: 200},
+      {key: 'zone', label: 'Zone', width: 200},
+    ]);
+    table.setRows?.([{id: '1', code: 'C', city: 'X', zone: 'Z'}]);
+    await new Promise((done) => setTimeout(done, 400));
+    const handle = table.querySelector('thead th[data-key="code"] [data-sf-column-resizer]');
+    const box = handle?.getBoundingClientRect();
+    return box ? {x: box.left + box.width / 2, y: box.top + box.height / 2} : null;
+  });
+  if (!grip) {
+    note({case: 'resize handle', expected: 'a handle on the Code heading'});
+  } else {
+    const order = () => grabbed.evaluate(() => [...document.querySelectorAll('#m thead th')].map((cell) => cell.dataset.key).join(','));
+    const before = await order();
+    await grabbed.mouse.move(grip.x, grip.y);
+    await grabbed.mouse.down();
+    let moving = false;
+    for (let step = 1; step <= 10; step += 1) {
+      await grabbed.mouse.move(grip.x + step * 30, grip.y + 2);
+      moving ||= await grabbed.evaluate(() => document.documentElement.hasAttribute('data-sf-sortable-active'));
+    }
+    await grabbed.mouse.up();
+    await grabbed.waitForTimeout(400);
+    if (moving || (await order()) !== before) note({case: 'resize handle', expected: 'the move handler steps aside'});
+  }
+  await grabbed.close();
 
   // 2. Appending keeps the rows that are already there, with their checked state.
   const kept = await page.evaluate(async () => {

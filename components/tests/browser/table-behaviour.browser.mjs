@@ -14,6 +14,7 @@ const styles = [
   'component/component/pagination/css/pagination.css',
   'component/component/inputs/css/inputs.css',
   'smart/smart/table/css/table.css',
+  'smart/smart/sortable/css/sortable.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js',
@@ -26,6 +27,7 @@ const modules = [
   'smart/smart/inputs/js/inputs.js',
   'smart/smart/spinner/js/spinner.js',
   'smart/smart/pagination/js/pagination.js',
+  'smart/smart/sortable/js/sortable.js',
   'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
