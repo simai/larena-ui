@@ -120,9 +120,14 @@
     pointer-events: auto;
   }
 
+  /* A window is as wide as what it holds, from the standard menu's floor to its
+     ceiling or the room the window has: every window was 24rem whatever it
+     held, and a list of two short field names stood with a third of the width
+     empty between the name and its checkbox (owner, 2026-10-14). */
   .sf-table-context-menu {
-    max-width: var(--sf-table-context-menu--max-width, var(--sf-g2));
-    width: var(--sf-table-context-menu--available-inline-size, 100%);
+    min-width: min(var(--sf-context-menu--min-inline-size, var(--sf-e8)), var(--sf-table-context-menu--available-inline-size, 100vw));
+    max-width: min(var(--sf-table-context-menu--max-width, var(--sf-g2)), var(--sf-table-context-menu--available-inline-size, 100vw));
+    width: max-content;
     /* A window as tall as its content puts its own buttons below the fold as
        soon as a site has fifteen fields, and the page has to be scrolled to
        reach them. The ceiling is the space left under the window's own top
@@ -166,9 +171,9 @@
      second copy of the arithmetic is how the two drift apart; the fallback keeps
      old runtimes rendering. */
   .sf-table-context-menu .sf-table-column-search {
-    --sf-table-column-search--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
-    --sf-table-column-search--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
-    --sf-table-column-search--padding-top: var(--sf-space-2);
+    --sf-table-column-search--padding-inline-end: var(--sf-context-menu--inset-end);
+    --sf-table-column-search--padding-inline-start: var(--sf-context-menu--inset-start);
+    --sf-table-column-search--padding-top: var(--sf-context-menu--block-space);
     padding-bottom: var(--sf-table-column-search--padding-bottom, 0);
     padding-top: var(--sf-table-column-search--padding-top);
     padding-inline-end: var(--sf-table-column-search--padding-inline-end);
@@ -432,52 +437,42 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-table-context-menu .sf-tabs-top-container {
-    --sf-tabs-top-container--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
-    --sf-tabs-top-container--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
-    --sf-tabs-top-container--padding-top: var(--sf-space-2);
+    --sf-tabs-top-container--padding-inline-end: var(--sf-context-menu--inset-end);
+    --sf-tabs-top-container--padding-inline-start: var(--sf-context-menu--inset-start);
+    --sf-tabs-top-container--padding-top: var(--sf-context-menu--block-space);
   }
   .sf-table-context-menu .sf-table-context-top {
-    --sf-table-context-top--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
-    --sf-table-context-top--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
-    --sf-table-context-top--padding-top: var(--sf-space-2);
+    --sf-table-context-top--padding-inline-end: var(--sf-context-menu--inset-end);
+    --sf-table-context-top--padding-inline-start: var(--sf-context-menu--inset-start);
+    --sf-table-context-top--padding-top: var(--sf-context-menu--block-space);
     padding-bottom: var(--sf-table-context-top--padding-bottom, 0);
     padding-top: var(--sf-table-context-top--padding-top);
     padding-inline-end: var(--sf-table-context-top--padding-inline-end);
     padding-inline-start: var(--sf-table-context-top--padding-inline-start);
   }
   .sf-table-context-menu .sf-table-context-main {
-    --sf-table-context-main--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
-    --sf-table-context-main--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
+    --sf-table-context-main--padding-inline-end: var(--sf-context-menu--inset-end);
+    --sf-table-context-main--padding-inline-start: var(--sf-context-menu--inset-start);
     padding-bottom: var(--sf-table-context-main--padding-bottom, 0);
     padding-top: var(--sf-table-context-main--padding-top,0);
     padding-inline-end: var(--sf-table-context-main--padding-inline-end);
     padding-inline-start: var(--sf-table-context-main--padding-inline-start);
   }
-  .sf-table-context-menu .sf-table-context-bottom {
-    --sf-table-context-bottom--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
-    --sf-table-context-bottom--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
-    --sf-table-context-bottom--padding-bottom: var(--sf-space-2);
-    padding-bottom: var(--sf-table-context-bottom--padding-bottom);
-    padding-top: var(--sf-table-context-bottom--padding-top, 0);
-    padding-inline-end: var(--sf-table-context-bottom--padding-inline-end);
-    padding-inline-start: var(--sf-table-context-bottom--padding-inline-start);
-  }
+  /* The window's buttons are the standard menu's footer
+     (.sf-context-menu-footer): its insets, separator and shared width. */
   .sf-table-context-menu .sf-context-menu-columns {
-    --sf-context-menu-columns--padding-inline-end: var(--sf-context-menu--item-inset-end-1, var(--sf-space-2));
-    --sf-context-menu-columns--padding-inline-start: var(--sf-context-menu--item-inset-start-1, var(--sf-space-2));
-    --sf-context-menu-columns--padding-top: var(--sf-space-2);
-    --sf-context-menu-columns--padding-bottom: var(--sf-space-2);
+    --sf-context-menu-columns--padding-inline-end: var(--sf-context-menu--inset-end);
+    --sf-context-menu-columns--padding-inline-start: var(--sf-context-menu--inset-start);
+    --sf-context-menu-columns--padding-top: var(--sf-context-menu--block-space);
+    --sf-context-menu-columns--padding-bottom: var(--sf-context-menu--block-space);
     padding-bottom: var(--sf-context-menu-columns--padding-bottom, 0);
     padding-top: var(--sf-context-menu-columns--padding-top);
     padding-inline-end: var(--sf-context-menu-columns--padding-inline-end);
     padding-inline-start: var(--sf-context-menu-columns--padding-inline-start);
   }
-  /* A table at the dense step opens its windows at that step too: the insets
-     are the 1/2 menu item's and the vertical rhythm one space step lower. The
-     controls inside take the table's size in the template; with the insets of
-     step 1 around them the windows still read a step larger than the list.
-     The windows are drawn at the end of the body, outside sf-table, so the
-     table marks them --dense rather than this sheet reading sf-table[size]. */
+  /* A table's windows are standard menus at the table's size (owner,
+     2026-10-14): their blocks take the menu's insets and block space, so a
+     window at 1/2 reads at the step of the list it belongs to. */
   /* Skeleton bars at the dense step are about the height of the row's
      lowercase letters, not of the whole text line: at a text line's height a
      bar read heavier than the text it stands for (owner, 2026-10-13). */
@@ -485,36 +480,21 @@
     --sf-skeleton-text--height: var(--sf-b0);
   }
 
+  /* The bar sits in a line of the row's text (the skeleton's own line box);
+     the controls' columns hold a block of a control's height. */
+  sf-table .sf-table-skeleton-control {
+    block-size: var(--sf-ui-1--control-height);
+  }
+
+  sf-table[size="1/2"] .sf-table-skeleton-control {
+    block-size: var(--sf-ui-1\/2--control-height);
+  }
+
   /* A window's own buttons keep their words on one line: a longer label
      («Применить фильтр» once) was two pixels wider than half the row and broke in two, making the
      buttons twice as tall as the controls above them. */
   .sf-table-context-menu .sf-table-context-bottom .sf-button-text-container {
     white-space: nowrap;
-  }
-  .sf-table-context-menu.sf-table-context-menu--dense .sf-tabs-top-container {
-    --sf-tabs-top-container--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
-    --sf-tabs-top-container--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
-    --sf-tabs-top-container--padding-top: var(--sf-space-1);
-  }
-  .sf-table-context-menu.sf-table-context-menu--dense .sf-table-context-top {
-    --sf-table-context-top--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
-    --sf-table-context-top--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
-    --sf-table-context-top--padding-top: var(--sf-space-1);
-  }
-  .sf-table-context-menu.sf-table-context-menu--dense .sf-table-context-main {
-    --sf-table-context-main--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
-    --sf-table-context-main--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
-  }
-  .sf-table-context-menu.sf-table-context-menu--dense .sf-table-context-bottom {
-    --sf-table-context-bottom--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
-    --sf-table-context-bottom--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
-    --sf-table-context-bottom--padding-bottom: var(--sf-space-1);
-  }
-  .sf-table-context-menu.sf-table-context-menu--dense .sf-context-menu-columns {
-    --sf-context-menu-columns--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
-    --sf-context-menu-columns--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
-    --sf-context-menu-columns--padding-top: var(--sf-space-1);
-    --sf-context-menu-columns--padding-bottom: var(--sf-space-1);
   }
   .sf-table-context-menu .sf-tabs-main-container {
     /* Lengths, for the same reason as the panel's own insets above. */

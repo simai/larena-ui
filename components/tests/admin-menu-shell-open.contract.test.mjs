@@ -6,17 +6,19 @@ const read = path => readFile(new URL(`../${path}`, import.meta.url), 'utf8');
 
 // Two findings from Larena's stand at 1296x714 (2026-10-12), against mockup v5.
 
-test('the profile menu has a width of its own, wider than the first column', async () => {
-  // Since 2026-10-12 it is the Framework's standard menu: the menu sizes to its
-  // content up to g2, and the navigation sets its floor above the first column.
-  // It took f4 once and cut «Текущий пользователь» and «Безопасность учётной записи».
+test('the profile menu and the site switcher open as wide as their button', async () => {
+  // Since 2026-10-14 (owner): the two menus that open from a full-width button
+  // of the first column are exactly that wide, a long line ending in an
+  // ellipsis; in the narrow rail, where the button is a picture, they are as
+  // wide as their lines. The f8 floor every menu here had is gone.
   const account = await read('src/smart/admin-menu/js/navigation/account.js');
-  assert.match(account, /openMenu\(controller, anchor, \{/u);
+  assert.match(account, /width: controller\.compact \? "content" : "trigger",/u);
+  const controller = await read('src/smart/admin-menu/js/navigation/controller.js');
+  assert.match(controller, /width: this\.compact \? "content" : "trigger",/u);
+  const menu = await read('src/smart/admin-menu/js/navigation/menu.js');
+  assert.match(menu, /menu\.openFor\(anchor, \{side, align, width\}\)/u);
   const styles = await read('src/smart/admin-menu/js/navigation/navigation.css');
-  assert.match(styles, /sf-context-menu\[data-sf-admin-nav-menu\] \{\s*--sf-context-menu--min-inline-size: var\(--sf-f8\);/u,
-    'wider than the first column, f6');
-  const menu = await read('src/component/context-menu/scss/_css__context_menu.scss');
-  assert.match(menu, /max-inline-size: min\(var\(--sf-context-menu--max-inline-size, var\(--sf-g2\)\)/u);
+  assert.doesNotMatch(styles, /--sf-context-menu--min-inline-size: var\(--sf-f8\)/u);
 });
 
 test('on a wide screen the first answer opens the root that holds the current row', async () => {

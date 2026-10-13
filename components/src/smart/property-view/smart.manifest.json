@@ -90,6 +90,7 @@
         "save-text",
         "sections-label",
         "show-rare",
+        "size",
         "template"
       ],
       "presentation": {
@@ -363,6 +364,12 @@
           "2",
           "full"
         ]
+      },
+      "size": {
+        "type": "string",
+        "enum": ["1", "1/2"],
+        "default": "1",
+        "description": "The view's size: its text, field labels, titles and controls. 1/2 matches a table at 1/2."
       },
       "panel-width": {
         "type": "string",
@@ -1045,15 +1052,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "d4a2cdbbc5f8c96babf17d2a90fda9948139195fd8abaffba834a23473076572"
+        "sha256": "3c9896284516fb23f8d83a47ab04116df1c9139fb1566a3bf2d60b5236857de7"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "8bb451bfc342053b1501486de7abcc4ead791eb0d58ca575b6d0f7248bce2870"
+        "sha256": "36418b6cd7193ed2f4171d04b310d86c0e838ce5e9b5fa7d4e25c02552c470b7"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
-        "sha256": "fb757b7e550b2349f85933cd71db11a3445dbb66014b27b22c430a7f69643225"
+        "sha256": "c99e743ea2352310d48026592f8896aecd1d52ea662d093ccdab94313c36f5dd"
       },
       {
         "path": "src/smart/property-view/rule.js",

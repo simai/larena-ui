@@ -13,7 +13,7 @@ async function standardMenuDefined() {
     return Boolean(customElements.get("sf-context-menu"));
 }
 
-export async function openMenu(controller, anchor, {label, entries, select, side = "block-end", align = "start", search = null, onSearch = null, onClose = null}) {
+export async function openMenu(controller, anchor, {label, entries, select, side = "block-end", align = "start", width = "content", search = null, onSearch = null, onClose = null}) {
     if (!(anchor instanceof Element)) return null;
     if (!(await standardMenuDefined())) return null;
     let menu = controller._menu;
@@ -45,7 +45,7 @@ export async function openMenu(controller, anchor, {label, entries, select, side
     controller._menuSearch = onSearch;
     controller._menuClose = onClose;
     controller._menuAnchor = anchor;
-    return menu.openFor(anchor, {side, align});
+    return menu.openFor(anchor, {side, align, width});
 }
 
 // Whether the shared menu is open for this anchor now.

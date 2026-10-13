@@ -27,21 +27,27 @@ function renderNaming(context, mode) {
     const {controller, text} = context;
     const current = controller.currentProfile();
     const kinds = newProfileKinds(controller);
-    let label = mode === "rename" ? current?.label ?? "" : "";
+    // The draft is the controller's, not this render's: a render while the form
+    // was open bound fresh handlers to an empty name, and «Создать» quietly
+    // did nothing with the name still on the screen (owner, 2026-10-14).
+    const draft = controller.edit.draft ?? {};
+    const label = draft.label ?? (mode === "rename" ? current?.label ?? "" : "");
     // Shared unless a personal one can still be made, in which case the person
     // chooses -- and only if they may share at all.
-    let sharedOn = !kinds.personal;
-    const submit = () => (mode === "rename"
-        ? controller.renameProfile(label)
-        : controller.createProfile(label, sharedOn));
-    return html`<form class="sf-admin-nav-edit-form" @submit=${(event) => { event.preventDefault(); submit(); }}>
-        <sf-input size="1/2" value=${label} placeholder=${text("linkLabel")}
-            @input=${(event) => { label = event.target?.value ?? event.detail?.value ?? ""; }}></sf-input>
-        ${mode === "new" && kinds.personal && kinds.shared ? html`<label class="sf-admin-nav-edit-check">
-            <input type="checkbox" @change=${(event) => { sharedOn = event.target.checked; }}>
-            <span>${text("sharedProfile")}</span></label>` : nothing}
+    const sharedOn = draft.shared ?? !kinds.personal;
+    const keep = (patch) => { controller.edit = {...controller.edit, draft: {...controller.edit.draft, ...patch}}; };
+    const submit = (form) => {
+        const typed = form?.querySelector("sf-input")?.value ?? label;
+        return mode === "rename" ? controller.renameProfile(typed) : controller.createProfile(typed, sharedOn);
+    };
+    return html`<form class="sf-admin-nav-edit-form" @submit=${(event) => { event.preventDefault(); submit(event.currentTarget); }}>
+        <sf-input size="1/2" .value=${label} placeholder=${text("profileName")}
+            @input=${(event) => keep({label: event.target?.value ?? event.detail?.value ?? ""})}></sf-input>
+        ${mode === "new" && kinds.personal && kinds.shared ? html`<sf-checkbox size="1/2" .checked=${sharedOn}
+            text=${text("sharedProfile")}
+            @change=${(event) => keep({shared: Boolean(event.target?.checked ?? event.detail?.checked)})}></sf-checkbox>` : nothing}
         <div class="sf-admin-nav-edit-actions">
-            <sf-button size="1/2" @click=${submit} text=${mode === "rename" ? text("save") : text("create")}></sf-button>
+            <sf-button size="1/2" @click=${(event) => submit(event.target.closest("form"))} text=${mode === "rename" ? text("save") : text("create")}></sf-button>
             <sf-button size="1/2" appearance="ghost" scheme="on-surface"
                 @click=${() => controller.startNaming(null)} text=${text("cancel")}></sf-button>
         </div>
@@ -146,7 +152,7 @@ function renderRenaming(context, row) {
 function renderIconChooser(context, row) {
     const {controller, text} = context;
     const current = row.icon ? String(row.icon) : "";
-    const options = ICON_CHOICES.map((name) => ({kind: "icon", size: "1", icon: name, text: name, value: name,
+    const options = ICON_CHOICES.map((name) => ({kind: "icon", icon: name, text: name, value: name,
         ariaLabel: name, selected: name === current}));
     return html`<sf-dropdown class="sf-admin-nav-edit-icon" size="1/2" layout="grid" columns="6" search="true"
         search-placeholder=${text("chooseIcon")} aria-label=${`${text("chooseIcon")}: ${row.label ?? ""}`}
@@ -195,7 +201,9 @@ export function renderEditRoots(context, siteRoots, installRoots) {
     // The top level takes a line, a heading or a link of one's own, as a
     // root's column does: it had no add, so its first line had no way back once
     // it was deleted (owner, 2026-10-13).
-    return html`<sf-sortable id=${`${LIST_ID}roots`} group="admin-nav-roots" label=${text("editMenu")}
+    // Rows move between the top level and the open section's column (owner,
+    // 2026-10-14); a section stays at the top level -- the menu is two deep.
+    return html`<sf-sortable id=${`${LIST_ID}roots`} group="admin-nav-roots" accepts="admin-nav-rows" label=${text("editMenu")}
         class="sf-admin-nav-edit-list">
         ${siteRoots.map((row) => renderEditRow(context, row))}
     </sf-sortable>
@@ -209,18 +217,24 @@ function renderAdd(context, root) {
     // The link form opens in the list it was asked for: one flag for both
     // columns showed it in the top level and in the open root at once.
     if (edit.adding === `link:${root.key}`) {
-        let label = "";
-        let href = "";
+        // Kept by the controller, so a refusal or a render leaves the form as
+        // it was typed; the address is checked before it is sent.
+        const draft = edit.draft ?? {};
+        const keep = (patch) => { controller.edit = {...controller.edit, draft: {...controller.edit.draft, ...patch}}; };
         return html`<form class="sf-admin-nav-edit-form" @submit=${(event) => {
             event.preventDefault();
-            if (label.trim() && href.trim()) controller.addOwnRow(root.key, "link", {label: label.trim(), href: href.trim()});
+            const [labelField, hrefField] = event.currentTarget.querySelectorAll("sf-input");
+            controller.addLink(root.key, labelField?.value ?? draft.label ?? "", hrefField?.value ?? draft.href ?? "");
         }}>
-            <sf-input size="1/2" placeholder=${text("linkLabel")} @input=${(event) => { label = event.target?.value ?? ""; }}></sf-input>
-            <sf-input size="1/2" placeholder=${text("linkHref")} @input=${(event) => { href = event.target?.value ?? ""; }}></sf-input>
+            <sf-input size="1/2" placeholder=${text("linkLabel")} .value=${draft.label ?? ""}
+                @input=${(event) => keep({label: event.target?.value ?? ""})}></sf-input>
+            <sf-input size="1/2" placeholder=${text("linkHref")} .value=${draft.href ?? ""}
+                @input=${(event) => keep({href: event.target?.value ?? ""})}></sf-input>
+            ${edit.linkError ? html`<p class="sf-admin-nav-edit-message" role="alert">${edit.linkError}</p>` : nothing}
             <div class="sf-admin-nav-edit-actions">
                 <sf-button size="1/2" @click=${(event) => event.target.closest("form")?.requestSubmit()} text=${text("add")}></sf-button>
                 <sf-button size="1/2" appearance="ghost" scheme="on-surface"
-                    @click=${() => { controller.edit = {...controller.edit, adding: null}; controller.update("edit"); }} text=${text("cancel")}></sf-button>
+                    @click=${() => { controller.edit = {...controller.edit, adding: null, draft: null, linkError: ""}; controller.update("edit"); }} text=${text("cancel")}></sf-button>
             </div>
         </form>`;
     }
@@ -237,7 +251,7 @@ function renderAdd(context, root) {
         ],
         select: (id) => {
             if (id === "link") {
-                controller.edit = {...controller.edit, adding: `link:${root.key}`};
+                controller.edit = {...controller.edit, adding: `link:${root.key}`, draft: null, linkError: ""};
                 return controller.update("edit");
             }
             return controller.addOwnRow(root.key, id);
@@ -250,7 +264,7 @@ function renderAdd(context, root) {
 
 export function renderEditRows(context, root) {
     const {text} = context;
-    return html`<sf-sortable id=${`${LIST_ID}${root.key}`} group=${`admin-nav-rows`} label=${root.label ?? text("editMenu")}
+    return html`<sf-sortable id=${`${LIST_ID}${root.key}`} group="admin-nav-rows" accepts="admin-nav-roots" label=${root.label ?? text("editMenu")}
         class="sf-admin-nav-edit-list">
         ${(root.children ?? []).map((row) => renderEditRow(context, row))}
     </sf-sortable>

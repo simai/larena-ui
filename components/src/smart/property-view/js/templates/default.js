@@ -34,8 +34,9 @@ function renderFieldValue(context, field, editing) {
             field,
             context.changed.has(key) ? context.changed.get(key) : field.value,
             editHost,
+            {size: context.size},
         )
-        : renderViewField(field, field.value, context.hostPort);
+        : renderViewField(field, field.value, context.hostPort, {size: context.size});
 
     const reference = ['record', 'relation', 'user'].includes(field.propertyType || field.type)
         && field.value && typeof field.value === 'object';
@@ -61,7 +62,7 @@ function renderFieldValue(context, field, editing) {
     // consumer read it as the value having been lost. Fall back to the view, so
     // the value is shown and plainly not editable yet.
     if (editing && (content === null || typeof content === 'undefined' || content === nothing)) {
-        const shown = renderViewField(field, field.value, context.hostPort);
+        const shown = renderViewField(field, field.value, context.hostPort, {size: context.size});
         if (shown !== null && typeof shown !== 'undefined' && shown !== nothing) {
             return html`<span class="sf-property-view-readonly color-on-surface-variant" data-readonly="true">${shown}</span>`;
         }
@@ -121,7 +122,7 @@ function renderConfigureBar(context) {
     const chooser = profiles.length > 1
         ? html`
             <sf-button
-                    size="1"
+                    size=${context.size}
                     appearance="outline"
                     scheme="on-surface"
                     icon-end="expand_more"
@@ -141,7 +142,7 @@ function renderConfigureBar(context) {
              aria-label=${context.configureText}>
             ${chooser}
             <sf-button-group
-                    size="1"
+                    size=${context.size}
                     scheme="primary"
                     data-action="layer"
                     aria-label=${context.configureText}
@@ -156,7 +157,7 @@ function renderConfigureBar(context) {
                         <span class="sf-property-view-reset-ask color-error">${context.resetViewAskText}</span>
                         <sf-button
                                 appearance="link"
-                                size="1"
+                                size=${context.size}
                                 status="error"
                                 text=${context.resetViewText}
                                 data-action="reset-view-confirm"
@@ -164,7 +165,7 @@ function renderConfigureBar(context) {
                         ></sf-button>
                         <sf-button
                                 appearance="outline"
-                                size="1"
+                                size=${context.size}
                                 text=${context.cancelConfiguringText}
                                 data-action="reset-view-cancel"
                                 @click=${() => context.component.cancelReset()}
@@ -176,21 +177,21 @@ function renderConfigureBar(context) {
                              mode was entered with; done keeps what is there. -->
                         <sf-button
                                 appearance="link"
-                                size="1"
+                                size=${context.size}
                                 text=${context.resetViewText}
                                 data-action="reset-view"
                                 @click=${() => context.component.askReset()}
                         ></sf-button>
                         <sf-button
                                 appearance="outline"
-                                size="1"
+                                size=${context.size}
                                 text=${context.cancelConfiguringText}
                                 data-action="cancel-configuring"
                                 @click=${() => context.component.cancelConfiguringView()}
                         ></sf-button>
                         <sf-button
                                 appearance="default"
-                                size="1"
+                                size=${context.size}
                                 text=${context.doneConfiguringText}
                                 data-action="done-configuring"
                                 @click=${() => context.component.stopConfiguringView()}
@@ -260,7 +261,6 @@ function renderFieldSettings(context, field, key) {
                                         value=${String(field.variant ?? '')}
                                         .options=${variants.map((variant) => ({
                                             type: 'text',
-                                            size: '1',
                                             text: variant.label ?? variant.text ?? String(variant.value ?? variant),
                                             value: String(variant.value ?? variant),
                                             selected: String(field.variant ?? '') === String(variant.value ?? variant),
@@ -632,7 +632,7 @@ function renderGroup(context, section, group) {
                         ? html`
                             <sf-button
                                     appearance="link"
-                                    size="1"
+                                    size=${context.size}
                                     text=${context.editText}
                                     data-action="edit"
                                     @click=${() => context.component.editGroup(String(section.key ?? ''), groupKey)}
@@ -685,7 +685,7 @@ function renderPhoneSectionHead(context) {
     return html`
         <div class="sf-property-view-phone-head flex items-cross-center gap-2">
             <sf-icon-button
-                    size="1"
+                    size=${context.size}
                     appearance="link"
                     icon="arrow_back"
                     data-action="phone-back"
@@ -811,7 +811,7 @@ function renderSectionTabs(context, sections) {
     return html`
         <sf-tabs
                 class="sf-property-view-tabs"
-                size="1"
+                size=${context.size}
                 active-index=${String(at)}
                 aria-label=${context.sectionsLabel}
                 items=${sections.map((section) => tabLabel(context, section)).join('|')}
@@ -823,13 +823,29 @@ function renderSectionTabs(context, sections) {
     `;
 }
 
-function renderActions(context) {
+// The type of a view at 1/2: a step down from 1 in every role, so the record
+// reads at the table's size. Variables rather than a class: the panel is drawn
+// in a drawer moved to the page's end, outside the element.
+function sizeStyle(context) {
+    if (context.size !== '1/2') return '';
+    return ' --sf-property-view--title-size: var(--sf-heading-5--size); --sf-property-view--title-height: var(--sf-heading-5--height);'
+        + ' --sf-property-view--group-size: var(--sf-text-medium--size); --sf-property-view--group-height: var(--sf-text-medium--height);'
+        + ' --sf-property-view--label-size: var(--sf-label-medium--size); --sf-property-view--label-height: var(--sf-label-medium--height);'
+        + ' --sf-property-view--value-size: var(--sf-text-small--size); --sf-property-view--value-height: var(--sf-text-small--height);';
+}
+
+function renderActions(context, {panel = false} = {}) {
     const removable = context.recordActions.includes('record.delete');
     // While the view is arranged the foot carries that mode's controls instead:
     // saving a record and arranging the view it is read in are two modes, and a
     // bar holding both would offer a save for something nobody was editing.
     if (context.configuring) return renderConfigureBar(context);
-    if (!context.editing && !removable) return nothing;
+    // A panel's foot holds every action on the record -- the host's own, slotted
+    // as `footer`, and the delete -- in one bar under the fields (owner,
+    // 2026-10-14). They were drawn in the scrolling body, the delete as one more
+    // section of it.
+    const hosted = panel && context.hasHostSlot('footer');
+    if (!context.editing && !removable && !hosted) return nothing;
 
     return html`
         <div class="sf-property-view-actions flex items-cross-center gap-2 flex-wrap" role="group">
@@ -837,7 +853,7 @@ function renderActions(context) {
                     ? html`
                         <sf-button
                                 appearance="default"
-                                size="1"
+                                size=${context.size}
                                 text=${context.saveText}
                                 data-action="save"
                                 ?disabled=${context.changed.size === 0}
@@ -845,7 +861,7 @@ function renderActions(context) {
                         ></sf-button>
                         <sf-button
                                 appearance="outline"
-                                size="1"
+                                size=${context.size}
                                 text=${context.cancelText}
                                 data-action="cancel"
                                 @click=${() => context.component.cancelEdit()}
@@ -858,12 +874,13 @@ function renderActions(context) {
                     ? html`<span class="sf-property-view-conflict color-error" role="alert">${context.conflict}</span>`
                     : nothing}
             <span class="grow"></span>
+            ${hosted ? html`<div class="sf-property-view-host-footer flex flex-wrap items-cross-center gap-2">${context.hostSlot('footer')}</div>` : nothing}
             ${removable
                     ? html`
                         <sf-icon-button
                                 appearance="link"
                                 status="error"
-                                size="1"
+                                size=${context.size}
                                 icon="delete"
                                 data-action="delete"
                                 title=${context.deleteText}
@@ -991,7 +1008,7 @@ function renderMenuControl(context) {
                         slot="trigger"
                         appearance="link"
                         scheme="on-surface"
-                        size="1"
+                        size=${context.size}
                         icon="more_horiz"
                         data-action="menu"
                         aria-label=${context.menuLabel}
@@ -1000,7 +1017,7 @@ function renderMenuControl(context) {
                     ${items.map((item) => html`
                         <sf-button
                                 appearance="link"
-                                size="1"
+                                size=${context.size}
                                 scheme="on-surface"
                                 text=${item.name}
                                 icon-start=${item.icon}
@@ -1016,7 +1033,7 @@ function renderMenuControl(context) {
         <sf-icon-button
                 appearance="link"
                 scheme="on-surface"
-                size="1"
+                size=${context.size}
                 icon="more_horiz"
                 data-action="menu"
                 aria-haspopup="menu"
@@ -1039,7 +1056,7 @@ function renderPanelHead(context) {
                      is a favourite stays the host's to decide and to answer. -->
                 <sf-icon-button
                         appearance="link"
-                        size="1"
+                        size=${context.size}
                         icon="star"
                         ?filled=${context.favourite}
                         data-action="favourite"
@@ -1073,7 +1090,7 @@ function renderPanelControls(context) {
                     appearance="tonal"
                     scheme="on-surface"
                     root-style=${EDGE_SURFACE}
-                    size="1"
+                    size=${context.size}
                     icon="close"
                     data-action="close"
                     aria-label=${context.closeLabel}
@@ -1086,7 +1103,7 @@ function renderPanelControls(context) {
                                 appearance="tonal"
                                 scheme="on-surface"
                                 root-style=${EDGE_SURFACE}
-                                size="1"
+                                size=${context.size}
                                 icon=${context.addressCopied ? 'check' : 'link'}
                                 aria-label=${context.addressCopied ? context.linkCopiedLabel : context.copyLinkLabel}
                                 title=${context.addressCopied ? context.linkCopiedLabel : context.copyLinkLabel}
@@ -1101,7 +1118,7 @@ function renderPanelControls(context) {
                                 appearance="tonal"
                                 scheme="on-surface"
                                 root-style=${EDGE_SURFACE}
-                                size="1"
+                                size=${context.size}
                                 icon="open_in_full"
                                 aria-label=${context.openFullLabel}
                                 title=${context.openFullLabel}
@@ -1161,7 +1178,6 @@ function renderSectionIcon(context, section) {
     const current = section.icon ? String(section.icon) : '';
     const options = context.sectionIconChoices.map((icon) => ({
         kind: 'icon',
-        size: '1',
         icon,
         text: icon,
         value: icon,
@@ -1280,7 +1296,7 @@ function renderArrangementAdditions(context, section) {
             <sf-button
                     appearance="outline"
                     scheme="on-surface"
-                    size="1"
+                    size=${context.size}
                     text=${context.addGroupText}
                     data-action="add-group"
                     @click=${() => context.component.addGroup(section ? String(section.key) : '')}
@@ -1341,7 +1357,7 @@ function renderBody(context, railOutside = false, withActions = true) {
                 ? renderSectionTabs(context, sections)
                 : nothing}
         <div class="sf-property-view-layout"
-             style=${`--sf-property-view--sections-width: ${context.sectionsWidth};`}
+             style=${`--sf-property-view--sections-width: ${context.sectionsWidth};${context.panel ? '' : sizeStyle(context)}`}
              data-sections=${String(sections.length)}
              data-screen=${onPhoneSectionList(context, sections) ? 'sections' : 'groups'}>
             ${!context.wide && sections.length > 1 && context.phoneSection !== null
@@ -1371,7 +1387,7 @@ function renderBody(context, railOutside = false, withActions = true) {
                             ${context.visible(current?.groups).map((group) => renderGroup(context, current, group))}
                         </div>`}
         </div>
-        ${context.hasHostSlot('footer')
+        ${withActions && context.hasHostSlot('footer')
                 ? html`<div class="sf-property-view-host-footer flex flex-wrap items-cross-center gap-2">${context.hostSlot('footer')}</div>`
                 : nothing}
         ${withActions ? renderActions(context) : nothing}
@@ -1431,7 +1447,7 @@ export function renderPropertyViewTemplate(context) {
                 size=${context.wide ? context.panelSize : 'full'}
                 width=${context.wide ? (context.drawerWidth || nothing) : nothing}
                 gutter="var(--sf-space-1)"
-                panel-style=${`--sf-drawer-background: var(--sf-surface-1); --sf-property-view--sections-width: ${context.sectionsWidth}; scrollbar-gutter: auto;`}
+                panel-style=${`--sf-drawer-background: var(--sf-surface-1); --sf-property-view--sections-width: ${context.sectionsWidth}; scrollbar-gutter: auto;${sizeStyle(context)}`}
                 show-close="false"
                 close-label=${context.closeLabel}
                 close-on-esc="false"
@@ -1453,7 +1469,7 @@ export function renderPropertyViewTemplate(context) {
                                 </div>`
                             : renderBody(context, false, false)}
                 </div>
-                ${renderActions(context)}
+                ${renderActions(context, {panel: true})}
             </div>
         </sf-drawer>
     `;

@@ -18,8 +18,8 @@ test('a click moves the row the person is on, and nothing else', async () => {
   // still does its own work; only opening the record stays off limits from one.
   assert.match(
     source,
-    /handleRowClick\(event, row, index = -1\) \{\s*this\.focusRow\(this\.getRowKey\(row, index\)\);\s*return this;/u,
-    'a click anywhere in the row moves the current row',
+    /handleRowClick\(event, row, index = -1\) \{\s*this\.focusRow\(this\.getRowKey\(row, index\)\);\s*this\.openReferenceFromCell\(event, row\);\s*return this;/u,
+    'a click anywhere in the row moves the current row; a link to another record asks to open it (owner, 2026-10-14)',
   );
   assert.match(
     source,

@@ -115,6 +115,12 @@ export const NAVIGATION_TEXT = {
         addLink: "Link",
         linkLabel: "Name",
         linkHref: "Address",
+        profileName: "Profile name",
+        profileNameEmpty: "Give the profile a name.",
+        linkNameEmpty: "Give the link a name.",
+        hrefInvalid: "An address is a path on this site (/admin/...) or a full https:// address.",
+        hrefInsecure: "Only https:// addresses: an http:// link is not saved.",
+        refused: "Not saved: {reason}.",
         newHeading: "Subheading",
         conflict: "The menu was changed elsewhere. This is what is saved now.",
         personalName: "Personal",
@@ -186,6 +192,12 @@ export const NAVIGATION_TEXT = {
         addLink: "Ссылка",
         linkLabel: "Название",
         linkHref: "Адрес",
+        profileName: "Название профиля",
+        profileNameEmpty: "Дайте профилю название.",
+        linkNameEmpty: "Дайте ссылке название.",
+        hrefInvalid: "Адрес — путь на этом сайте (/admin/...) или полный адрес https://.",
+        hrefInsecure: "Только адреса https://: ссылка http:// не сохраняется.",
+        refused: "Не сохранено: {reason}.",
         newHeading: "Подзаголовок",
         conflict: "Меню изменили в другом месте. Показано то, что сохранено сейчас.",
         personalName: "Персональный",
@@ -588,6 +600,9 @@ export class NavigationController {
         this.sites = {...this.sites, open: true, query: "", items: [], next: null};
         const opened = await openMenu(this, anchor, {
             label: this.text("chooseSite"),
+            // As wide as the switcher it opens from (owner, 2026-10-14), but in
+            // the narrow rail, where the switcher is a picture.
+            width: this.compact ? "content" : "trigger",
             entries: this.siteEntries(),
             search: {placeholder: this.text("findSite"), empty: this.text("nothingFound"), remote: true},
             onSearch: (query) => this.searchSites(query),
@@ -752,8 +767,18 @@ export class NavigationController {
         this.update("edit");
     }
 
+    // A refusal is said in words: the host's codes are for logs. One the menu
+    // knows by name is translated, the rest is named as it came.
+    reasonText(reason) {
+        const code = String(reason ?? "");
+        if (!code) return "";
+        if (code === "admin_menu_layout_href_invalid") return this.text("hrefInvalid");
+        if (/\s/u.test(code)) return code;
+        return this.text("refused").replace("{reason}", code);
+    }
+
     editMessage(text) {
-        this.edit = {...this.edit, message: text || ""};
+        this.edit = {...this.edit, message: this.reasonText(text)};
         this.update("edit");
         return false;
     }
@@ -778,7 +803,13 @@ export class NavigationController {
                     label: row.label ?? null, icon: row.icon ?? null, href: row.href ?? null,
                 });
             } else {
-                layout.items[row.key] = {parent, order, hidden: Boolean(row.hidden), label: named, icon: null};
+                // A glyph chosen for a package's row is saved with it: it was
+                // written as null, so every choice was lost on the next read
+                // (owner, 2026-10-14). Where the host says the package's own
+                // glyph, only a different one is saved; where it does not, the
+                // row's glyph is, so a chosen one is never dropped.
+                const chosen = "package_icon" in row ? (row.icon !== row.package_icon ? row.icon ?? null : null) : row.icon ?? null;
+                layout.items[row.key] = {parent, order, hidden: Boolean(row.hidden), label: named, icon: chosen};
             }
         };
         items.forEach((root, rootIndex) => {
@@ -870,6 +901,36 @@ export class NavigationController {
         });
     }
 
+    // A link's address, as the host keeps it: a path on this site, or an
+    // https:// address. A bare host name gets https://; http:// is refused
+    // (owner, 2026-10-14). A wrong address refused the whole layout, and the
+    // rows added with it vanished on the next read.
+    static linkAddress(value) {
+        const text = String(value ?? "").trim();
+        if (!text) return {error: "hrefInvalid"};
+        if (text.startsWith("/") && !text.startsWith("//")) return {href: text};
+        if (/^http:\/\//iu.test(text)) return {error: "hrefInsecure"};
+        const full = /^[a-z][a-z0-9+.-]*:/iu.test(text) ? text : `https://${text.replace(/^\/\//u, "")}`;
+        try {
+            const url = new URL(full);
+            if (url.protocol !== "https:" || !url.hostname.includes(".")) return {error: "hrefInvalid"};
+            return {href: url.href};
+        } catch {
+            return {error: "hrefInvalid"};
+        }
+    }
+
+    addLink(parent, label, href) {
+        const name = String(label ?? "").trim();
+        const address = this.constructor.linkAddress(href);
+        if (!name || address.error) {
+            this.edit = {...this.edit, linkError: name ? this.text(address.error) : this.text("linkNameEmpty")};
+            return this.update("edit");
+        }
+        this.edit = {...this.edit, draft: null, linkError: ""};
+        return this.addOwnRow(parent, "link", {label: name, href: address.href});
+    }
+
     // A person's own rows get keys the layout recognises as theirs; the host
     // keeps them as they are, inside the profile they were made in.
     addOwnRow(parent, kind, {label = null, href = null} = {}) {
@@ -897,8 +958,9 @@ export class NavigationController {
     }
 
     // sf-sortable says what was moved and where to; this controller moves it in
-    // the menu it holds and saves. Rows stay within their own list -- the roots,
-    // or one root's rows -- which is all the two columns can show at once.
+    // the menu it holds and saves. A row moves within its list, or between the
+    // top level and the open section's column (owner, 2026-10-14); a section
+    // stays at the top level, as the menu is two levels deep.
     onSortableIntent(event) {
         if (!this.edit.on) return;
         // sf-sortable names a list by its id; the lists here are
@@ -906,8 +968,27 @@ export class NavigationController {
         const {item, from, to, index} = event.detail ?? {};
         const listKey = (id) => (typeof id === "string" && id.startsWith(LIST_ID) ? id.slice(LIST_ID.length) : null);
         const source = listKey(from);
-        if (!source || source !== listKey(to)) return;
-        this.moveRow(source, item, index);
+        const target = listKey(to);
+        if (!source || !target) return;
+        if (source === target) {
+            this.moveRow(source, item, index);
+            return;
+        }
+        this.moveRowBetween(source, target, item, index);
+    }
+
+    moveRowBetween(source, target, key, index) {
+        const from = this.listOf(this.navigation.items ?? [], source === "roots" ? null : source);
+        const row = from?.find((entry) => entry.key === key);
+        if (!row || (target !== "roots" && row.kind === "root")) return null;
+        return this.change((items) => {
+            const list = this.listOf(items, source === "roots" ? null : source);
+            const into = this.listOf(items, target === "roots" ? null : target);
+            const at = list?.findIndex((entry) => entry.key === key) ?? -1;
+            if (!into || at < 0) return;
+            const [moved] = list.splice(at, 1);
+            into.splice(Math.max(0, Math.min(index, into.length)), 0, moved);
+        });
     }
 
     moveRow(listKey, key, index) {
@@ -946,25 +1027,25 @@ export class NavigationController {
     }
 
     startNaming(mode) {
-        this.edit = {...this.edit, naming: mode};
+        this.edit = {...this.edit, naming: mode, draft: null, message: ""};
         this.update("edit");
     }
 
     async createProfile(label, shared) {
         const text = String(label ?? "").trim();
-        if (!text) return;
+        if (!text) return this.editMessage(this.text("profileNameEmpty"));
         const answer = await this.raise("view.create", {label: text, shared: Boolean(shared), from: this.navigation.profiles.current});
         if (answer.answer !== "applied") return this.editMessage(answer.reason);
         const made = answer.profiles?.list?.find((entry) => entry.label === text
             && !this.navigation.profiles.list.some((known) => known.key === entry.key));
-        this.edit = {...this.edit, profiles: false, naming: null};
+        this.edit = {...this.edit, profiles: false, naming: null, draft: null};
         if (made) await this.switchProfile(made.key);
         else await this.load("requested");
     }
 
     async renameProfile(label) {
         const text = String(label ?? "").trim();
-        if (!text) return;
+        if (!text) return this.editMessage(this.text("profileNameEmpty"));
         const answer = await this.raise("view.rename", {profile: this.navigation.profiles.current, label: text});
         if (answer.answer !== "applied") return this.editMessage(answer.reason);
         this.navigation = {...this.navigation, profiles: answer.profiles ?? this.navigation.profiles};

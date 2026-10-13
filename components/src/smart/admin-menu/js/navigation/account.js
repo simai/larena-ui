@@ -80,6 +80,9 @@ export function openAccountMenu(context, anchor) {
     }
     return openMenu(controller, anchor, {
         label: text("account"), entries, side: "block-start", align: "start",
+        // As wide as the person button (owner, 2026-10-14); in the narrow rail
+        // the button is a picture, and the menu is as wide as its lines.
+        width: controller.compact ? "content" : "trigger",
         select: (id) => {
             const [kind, value] = String(id ?? "").split(/:(.*)/su);
             if (kind === "theme") return controller.chooseTheme(value);

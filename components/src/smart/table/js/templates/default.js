@@ -445,6 +445,10 @@ const SYSTEM_COLUMNS = new Set(['select', 'settings', 'actions']);
 // reader and stay in a status; the bars are hidden from one.
 const SKELETON_ROWS = 6;
 const SKELETON_WIDTHS = ['w-3/4', 'w-1/2', 'w-2/3', 'w-1/3', 'w-2/5', 'w-3/5'];
+// Where a loaded row has a box, a menu or a gear, a loading row keeps a block
+// as tall as that control, so the row is as tall before the data as after it
+// (owner, 2026-10-14: the rows jumped when the data came).
+const skeletonControl = html`<div class="sf-table-skeleton-control" aria-hidden="true"></div>`;
 const skeletonBar = (row, column) => html`<div class="sf-skeleton sf-skeleton--animation-pulse" aria-hidden="true">
     <div class="sf-skeleton-text sf-skeleton-text--size-1/2 ${SKELETON_WIDTHS[(row + column * 2) % SKELETON_WIDTHS.length]}"></div>
 </div>`;
@@ -644,7 +648,7 @@ export function renderTableTemplate(context) {
                     <tbody data-state="loading" class="sf-table-skeleton">
                         ${Array.from({length: SKELETON_ROWS}, (_, row) => html`<tr aria-hidden="true">
                             ${columns.some((column) => !SYSTEM_COLUMNS.has(column?.key))
-                                    ? columns.map((column, at) => html`<td>${SYSTEM_COLUMNS.has(column?.key) ? nothing : skeletonBar(row, at)}</td>`)
+                                    ? columns.map((column, at) => html`<td>${SYSTEM_COLUMNS.has(column?.key) ? skeletonControl : skeletonBar(row, at)}</td>`)
                                     // Before the host's first answer the columns are not
                                     // known yet: three bars across the whole row.
                                     : html`<td colspan=${String(Math.max(columns.length, 1))}>

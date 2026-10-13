@@ -794,6 +794,7 @@ class SfTable extends SfBaseElement {
         };
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'toolbar-actions'})}
                     style="
@@ -841,6 +842,7 @@ class SfTable extends SfBaseElement {
         ];
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'list-sort'})}
                     style="
@@ -867,6 +869,7 @@ class SfTable extends SfBaseElement {
         };
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'create'})}
                     style="
@@ -1015,7 +1018,31 @@ class SfTable extends SfBaseElement {
     // from a control.
     handleRowClick(event, row, index = -1) {
         this.focusRow(this.getRowKey(row, index));
+        this.openReferenceFromCell(event, row);
         return this;
+    }
+
+    // A value that points at another record -- a person, a file, a related
+    // record -- opens that record in the page's panel instead of loading a page
+    // (owner, 2026-10-14): the table asks with sf-table-reference-open and the
+    // data view raises record.open {field, value, href}. A click with a
+    // modifier or the middle button still follows the address, so a new tab is
+    // one keystroke away; a host that cannot open it gets the address.
+    openReferenceFromCell(event, row) {
+        if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const link = event.target?.closest?.("a[href]");
+        const cell = link?.closest?.("td[data-key]");
+        if (!link || !cell || !this.contains(cell)) return;
+        const field = cell.dataset.key;
+        const value = row?.[field];
+        const href = link.getAttribute("href");
+        if (!href || href.startsWith("#") || link.target === "_blank" || link.hasAttribute("download")) return;
+        const asked = this.dispatchEvent(new CustomEvent("sf-table-reference-open", {
+            bubbles: true, composed: true, cancelable: true,
+            detail: {record_id: row?.id ?? null, field, value: value ?? null, href},
+        }));
+        // Only a listener that takes it (cancels the event) keeps the page.
+        if (!asked) event.preventDefault();
     }
 
     // Which row this is, for the purpose of being the current one. The rest of
@@ -2431,6 +2458,7 @@ class SfTable extends SfBaseElement {
         const template = this.getSelectedFilterTemplate();
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y + this._renderToken}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'filter-favorites'})}
                     style="
@@ -2484,7 +2512,7 @@ class SfTable extends SfBaseElement {
                         </form>
                     </div>
                 </div>
-                <div class="sf-table-context-bottom flex gap-1/3">
+                <div class="sf-table-context-bottom sf-context-menu-footer">
                     <sf-button size=${this.size} @click="${() => {
                         this.tempSettings = null;
                         this.requestComponentUpdate('table')
@@ -2565,6 +2593,7 @@ class SfTable extends SfBaseElement {
         }
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'row-settings'})}
                     style="
@@ -3653,6 +3682,7 @@ class SfTable extends SfBaseElement {
         let contextItems = `${this.text('templatesTabText')}|${this.text('fieldsTabText')}`;
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y + this._renderToken}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'filter-settings'})}
                     style="
@@ -3694,7 +3724,7 @@ class SfTable extends SfBaseElement {
                         </div>
 
                     </sf-tabs>
-                    <div class="sf-table-context-bottom flex gap-1/3">
+                    <div class="sf-table-context-bottom sf-context-menu-footer">
                         <sf-button size=${this.size} @click="${() => {
                             // Reset means the defaults, not "forget what I just
                             // typed here": the draft goes, and the host is asked
@@ -3794,6 +3824,7 @@ class SfTable extends SfBaseElement {
         };
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y + this._renderToken}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'tag-settings'})}
                     style="
@@ -3813,7 +3844,7 @@ class SfTable extends SfBaseElement {
                             </div>
                         </div>
                     </div>
-                    <div class="sf-table-context-bottom flex gap-1/3">
+                    <div class="sf-table-context-bottom sf-context-menu-footer">
                         <sf-button size=${this.size} @click="${() => {
                             this.tempSettings = null;
                             this.requestComponentUpdate('table')
@@ -3943,6 +3974,7 @@ class SfTable extends SfBaseElement {
         // them taught nobody anything.
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${x + y + this._renderToken}
                     aria-label=${this.getContextMenuLabel({...data, menu: 'table-settings'})}
                     style="
@@ -3989,7 +4021,7 @@ class SfTable extends SfBaseElement {
                          to commit. «Сбросить» is the way back -- the settings as
                          they stood when the window was opened, applied at once
                          and announced once. -->
-                    <div class="sf-table-context-bottom flex gap-1/3">
+                    <div class="sf-table-context-bottom sf-context-menu-footer">
                         <sf-button size=${this.size} @click="${() => this.restoreColumnSettingsOnOpen()}"
                                    appearance="outline" scheme="on-surface" root-class="flex-1"
                                    text="${this.text('resetText')}"></sf-button>
@@ -4040,6 +4072,7 @@ class SfTable extends SfBaseElement {
         const isDefaultTemplate = (temp || template).default === true;
         return html`
             <sf-context-menu
+                    size=${this.size === "1/2" ? "1/2" : "1"}
                     :key=${`${template.key || ''}-${x}-${y}`}
                     aria-label=${this.getContextMenuLabel({...data, type: 'filter-template-actions'})}
                     style="

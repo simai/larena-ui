@@ -252,6 +252,9 @@ class SfPropertyView extends SfBaseElement {
             recordId: {attribute: "record-id", default: ""},
             collection: {default: ""},
             showRare: {attribute: "show-rare", type: Boolean, default: false},
+            // 1, or 1/2 beside a table at 1/2: the record read a step larger
+            // than the list it was opened from (owner, 2026-10-14).
+            size: {default: "1"},
             emptyText: {attribute: "empty-text", default: "not filled in"},
             emptyRecordText: {attribute: "empty-record-text", default: "This record has nothing to show"},
             editText: {attribute: "edit-text", default: "edit"},
@@ -533,6 +536,11 @@ class SfPropertyView extends SfBaseElement {
             this.closePanel("deleted");
             return true;
         }
+        // The person said no to the host's question: nothing to report.
+        if (answer.reason === "cancelled") {
+            this._setState("ready");
+            return false;
+        }
         this.message = answer.message || answer.reason || this.viewDeniedText;
         this._setState("ready");
         this.requestComponentUpdate("delete-refused");
@@ -575,6 +583,10 @@ class SfPropertyView extends SfBaseElement {
         return this.getAttribute("panel-width") || "";
     }
 
+    get size() {
+        return this.getAttribute("size") === "1/2" ? "1/2" : "1";
+    }
+
     // What the drawer is told to be. `size` is a ladder and its widest step short
     // of full measured 391px on a consumer's screen, which is too narrow for two
     // columns -- labels wrapped and a record title broke over three lines. `width`
@@ -602,7 +614,9 @@ class SfPropertyView extends SfBaseElement {
         // The rail is drawn while the view is arranged even with one section,
         // because that is where a second one is made.
         if ((this.sections ?? []).length < 2 && !this.configuring) return width;
-        return `calc(${width} + ${SECTIONS_WIDTH} + var(--sf-space-4))`;
+        // Never wider than the window: grown by the rail, a 40rem panel ran past
+        // the left edge and its sections were cut off (owner, 2026-10-14).
+        return `min(calc(${width} + ${SECTIONS_WIDTH} + var(--sf-space-4)), calc(100vw - var(--sf-space-4)))`;
     }
 
     get closeLabel() {
@@ -1309,6 +1323,7 @@ class SfPropertyView extends SfBaseElement {
             ...props,
             component: this,
             hostPort: this.hostPort,
+            size: this.size,
             emptyText: this.emptyText,
             emptyRecordText: this.emptyRecordText,
             isEmptyRecord: this.isEmptyRecord,

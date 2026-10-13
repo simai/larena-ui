@@ -349,21 +349,21 @@
        `inherit` and a group title was the same sixteen regular pixels as the field
        labels under it -- the flat look the owner called slapdash. The roles that
        do exist are display, heading, label and text. */
-    font-size: var(--sf-heading-6--size);
-    line-height: var(--sf-heading-6--height);
+    font-size: var(--sf-property-view--group-size, var(--sf-heading-6--size));
+    line-height: var(--sf-property-view--group-height, var(--sf-heading-6--height));
     font-weight: 600;
   }
 
   /* A label is smaller and quieter than its value. They were the same size, so a
      field had no hierarchy at all and a card read as a list of equal lines. */
   .sf-property-view-field-label {
-    font-size: var(--sf-label-large--size);
-    line-height: var(--sf-label-large--height);
+    font-size: var(--sf-property-view--label-size, var(--sf-label-large--size));
+    line-height: var(--sf-property-view--label-height, var(--sf-label-large--height));
   }
 
   .sf-property-view-field-value {
-    font-size: var(--sf-text-medium--size);
-    line-height: var(--sf-text-medium--height);
+    font-size: var(--sf-property-view--value-size, var(--sf-text-medium--size));
+    line-height: var(--sf-property-view--value-height, var(--sf-text-medium--height));
     color: var(--sf-on-surface);
   }
 
@@ -836,8 +836,8 @@
 
   .sf-property-view-title {
     margin: 0;
-    font-size: var(--sf-heading-4--size);
-    line-height: var(--sf-heading-4--height);
+    font-size: var(--sf-property-view--title-size, var(--sf-heading-4--size));
+    line-height: var(--sf-property-view--title-height, var(--sf-heading-4--height));
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -137,8 +137,24 @@ function renderBottom(context) {
                     ${notifications.unread ? html`<sf-badge class="sf-admin-nav-attention" size="1/3" status="error"
                         text=${String(notifications.unread)}></sf-badge>` : nothing}`}
         </div>` : nothing}
-        ${renderPersonButton(context)}
+        <div class="sf-admin-nav-person-row">
+            ${renderPersonButton(context)}
+            ${renderCollapse(context)}
+        </div>
     </div>`;
+}
+
+// Folding the first column to a rail: a small button beside the person, not
+// a row of its own under it (owner, 2026-10-14). In the rail it stands under
+// the picture.
+function renderCollapse(context) {
+    const {controller, text, compact} = context;
+    if (!context.wide || controller.edit?.on) return nothing;
+    return html`<sf-icon-button class="sf-admin-nav-collapse" size="1/2" appearance="ghost" scheme="on-surface"
+        icon=${compact ? "chevron_right" : "chevron_left"}
+        aria-label=${compact ? text("expand") : text("collapse")}
+        title=${compact ? text("expand") : text("collapse")}
+        @click=${() => controller.toggleCompact()}></sf-icon-button>`;
 }
 
 function renderFirstColumn(context) {
@@ -165,14 +181,6 @@ function renderFirstColumn(context) {
             ${renderFavourites(context)}
         </div>
         ${renderBottom(context)}
-        ${context.wide ? html`<div class="sf-admin-nav-foot">
-            <span class="grow"></span>
-            <sf-icon-button size="1/2" appearance="ghost" scheme="on-surface"
-                icon=${compact ? "chevron_right" : "chevron_left"}
-                aria-label=${compact ? text("expand") : text("collapse")}
-                title=${compact ? text("expand") : text("collapse")}
-                @click=${() => controller.toggleCompact()}></sf-icon-button>
-        </div>` : nothing}
     </div>`;
 }
 

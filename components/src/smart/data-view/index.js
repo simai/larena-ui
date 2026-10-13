@@ -421,7 +421,7 @@ class SfDataView extends HTMLElement {
             "sf-table-retry", "sf-port-output", "sf-page-change", "sf-page-size-change",
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
-            "sf-table-tree-toggle", "sf-table-tree-more",
+            "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open",
         ];
         for (const name of events) this.shadowRoot.addEventListener(name, this._bound);
         for (const name of events) this.addEventListener(name, this._bound);
@@ -481,7 +481,7 @@ class SfDataView extends HTMLElement {
             "sf-table-retry", "sf-port-output", "sf-page-change", "sf-page-size-change",
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
-            "sf-table-tree-toggle", "sf-table-tree-more",
+            "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open",
         ];
         for (const name of events) this.shadowRoot.removeEventListener(name, this._bound);
         for (const name of events) this.removeEventListener(name, this._bound);
@@ -1481,6 +1481,19 @@ class SfDataView extends HTMLElement {
         return this._raise(selectedBulk || ids.length > 1 ? "bulk.apply_selected" : "record.mutate", {...detail, revisions});
     }
 
+    // A value pointing at another record opens it in the host's panel without
+    // loading a page (owner, 2026-10-14). Taken only when the host opens
+    // records; when its answer is not an opening, the address is followed, so
+    // the click still goes somewhere.
+    _openReference(event) {
+        if (!this.hostPort || !this.hostOffers("row-actions")) return;
+        event.preventDefault();
+        const {href, ...detail} = event.detail ?? {};
+        return this._raise("record.open", {...detail, href}).then((answer) => {
+            if (!["applied", "accepted", "opened"].includes(answer?.answer) && href) globalThis.location?.assign?.(href);
+        });
+    }
+
     _onEvent(event) {
         if (this._seenEvents.has(event)) return;
         this._seenEvents.add(event);
@@ -1516,6 +1529,7 @@ class SfDataView extends HTMLElement {
             return undefined;
         }
         if (event.type === "sf-table-retry") return this.refresh("retry");
+        if (event.type === "sf-table-reference-open") return this._openReference(event);
         if (event.type === "sf-table-tree-toggle") {
             const id = event.detail?.id;
             return event.detail?.expanded ? this.collapseNode(id) : this.expandNode(id);

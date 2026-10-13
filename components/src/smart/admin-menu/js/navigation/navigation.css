@@ -433,16 +433,23 @@
     object-fit: cover;
   }
 
-  .sf-admin-nav-foot {
-    flex: none;
+  .sf-admin-nav-person-row {
     display: flex;
-    justify-content: flex-end;
-    padding: var(--sf-space-1\/4) var(--sf-space-1\/2);
-    border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    align-items: center;
+    gap: var(--sf-px);
   }
 
-  .sf-admin-nav-first[data-compact="true"] .sf-admin-nav-foot {
-    justify-content: center;
+  .sf-admin-nav-person-row > .sf-admin-nav-person {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .sf-admin-nav-collapse {
+    flex: none;
+  }
+
+  .sf-admin-nav-first[data-compact="true"] .sf-admin-nav-person-row {
+    flex-direction: column;
   }
 
   /* ─── the second column ─────────────────────────────────────────────────── */
@@ -616,13 +623,10 @@
   /* ─── the profile menu ──────────────────────────────────────────────────── */
 
   /* The Framework's standard menu (js/navigation/account.js): its surface,
-     rows, theme choice and language search are the menu's own. Only the
-     person button that opens it is drawn here, and the floor of its width:
-     the navigation's menus are wider than the first column (f6), so
-     «Безопасность учётной записи» and a row with its value read whole. */
-  sf-context-menu[data-sf-admin-nav-menu] {
-    --sf-context-menu--min-inline-size: var(--sf-f8);
-  }
+     rows, theme choice and language search are the menu's own, and so is its
+     width. The site switcher and the profile menu open as wide as the button
+     they open from (owner, 2026-10-14); the rest are as wide as their lines --
+     the floor of f8 left a row menu of three short actions a third empty. */
 
   /* ─── the edit mode ─────────────────────────────────────────────────────── */
 
