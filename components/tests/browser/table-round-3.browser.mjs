@@ -389,9 +389,10 @@ try {
     if (!at) return {control: 'not hittable'};
     await actions.mouse.click(at.x, at.y);
     await actions.waitForTimeout(350);
-    const items = await actions.evaluate(() => [...document.querySelectorAll('sf-context-menu sf-button')]
-      .map((one) => one.getAttribute('text')));
-    const item = await centre(actions, `() => [...document.querySelectorAll('sf-context-menu sf-button')].find((one) => one.getAttribute('text') === 'Удалённые элементы')`);
+    // The standard menu's rows; the label is the row's text.
+    const items = await actions.evaluate(() => [...document.querySelectorAll('sf-context-menu .sf-context-menu-item')]
+      .map((one) => (one.querySelector('.sf-context-menu-item-label') ?? one).textContent.trim()));
+    const item = await centre(actions, `() => [...document.querySelectorAll('sf-context-menu .sf-context-menu-item')].find((one) => one.textContent.trim().endsWith('Удалённые элементы'))`);
     if (item) await actions.mouse.click(item.x, item.y);
     await actions.waitForTimeout(350);
     return {items, events: await actions.evaluate(() => window.toolbarEvents),
