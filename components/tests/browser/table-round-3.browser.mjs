@@ -538,13 +538,14 @@ try {
       const menu = document.querySelector('sf-context-menu');
       const surface = menu?.querySelector('.sf-context-menu') ?? menu;
       const content = menu?.querySelector('.sf-context-menu-content');
-      const items = [...(menu?.querySelectorAll('sf-button') ?? [])].map((one) => {
-        const button = one.querySelector('button') ?? one;
-        const box = button.getBoundingClientRect();
-        const style = getComputedStyle(button);
+      // The standard menu's rows (2026-10-13); they were link buttons.
+      const items = [...(menu?.querySelectorAll('.sf-context-menu-item') ?? [])].map((row) => {
+        const label = row.querySelector('.sf-context-menu-item-label, .sf-context-menu-item-text') ?? row;
+        const box = row.getBoundingClientRect();
         return {
-          text: one.getAttribute('text'), height: Math.round(box.height),
-          width: Math.round(box.width), wrap: style.whiteSpace,
+          text: row.textContent.trim(), height: Math.round(box.height),
+          width: Math.round(box.width), wrap: getComputedStyle(label).whiteSpace,
+          lines: Math.round(label.getBoundingClientRect().height / (parseFloat(getComputedStyle(label).lineHeight) || 1)),
         };
       });
       const box = surface?.getBoundingClientRect();
@@ -559,8 +560,10 @@ try {
   })();
   {
     const tallest = Math.max(...(tightMenu.items ?? []).map((item) => item.height ?? 0));
-    const wrapped = (tightMenu.items ?? []).some((item) => item.wrap !== 'nowrap');
-    if (!tightMenu.items?.length || wrapped || tallest > 26
+    // One line each: a standard menu row is 32px (a field at 1/2), so the
+    // height says a second line only above that; 26 was a link button's.
+    const wrapped = (tightMenu.items ?? []).some((item) => item.wrap !== 'nowrap' || item.lines > 1);
+    if (!tightMenu.items?.length || wrapped || tallest > 32
         || tightMenu.right > tightMenu.viewport || tightMenu.width < 120) {
       note({case: 'menu near the edge', got: {...tightMenu, tallest},
         expected: 'items on one line, the menu inside the window'});
