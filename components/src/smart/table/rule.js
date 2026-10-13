@@ -25,6 +25,8 @@ SF.RuleLoader["cl-table"] = {
     { name: "cl-dropdown" },
     { name: "cl-tabs", lazy: true },
     { name: "cl-context-menu", lazy: true },
+    // The windows' lists are reordered with sf-sortable (owner, 2026-10-13).
+    { name: "cl-sortable", lazy: true },
     { name: "cl-avatar" },
     { name: "cl-badges" },
     { name: "cl-list-item" },

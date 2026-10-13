@@ -6,7 +6,6 @@ import {html, nothing, render} from "lit";
 import {ref} from "lit/directives/ref.js";
 import {pageText} from "../../core/js/page-language";
 import {getParent, setParentSpace} from "../helpers/dom";
-import {bindSortableDrag, getVerticalDragAfterElement} from "../helpers/draggable";
 import {setLoaderDragState} from "../helpers/loaderDragState";
 import BundledPosition from "../../core/js/position.js";
 
@@ -362,8 +361,6 @@ class SfTable extends SfBaseElement {
         this._abandonedQuery = false;
         this._filterOptionPages = new Map();
         this._contextViewportBound = false;
-        this._filterTemplateDragCleanups = [];
-        this._columnSettingsDragCleanups = [];
         this.contextKeyEvent = this.contextKeyEvent.bind(this);
         this.contextViewportEvent = this.contextViewportEvent.bind(this);
 
@@ -1977,243 +1974,60 @@ class SfTable extends SfBaseElement {
         return this;
     }
 
-    bindFilterTemplateDrag() {
-        this.clearFilterTemplateDragBindings();
-        const contextMenu = this.refs?.contextMenu?.value;
-        const container = contextMenu?.querySelector?.(
-            "[data-filter-template-list]",
-        );
-
-        if (!container) return;
-
-        container
-            .querySelectorAll("[data-filter-template-key]")
-            .forEach((item) => {
-                const handle = item.querySelector("[data-move]");
-
-                const cleanup = bindSortableDrag({
-                    handle,
-                    item,
-                    container,
-                    boundAttr: "data-sf-table-template-drag-bound",
-                    getSortableItems: (currentContainer, currentItem) =>
-                        this.getFilterTemplateSortableItems(
-                            currentContainer,
-                            currentItem?.dataset?.pinned === "1",
-                        ),
-                    getAfterElement: (currentContainer, y) =>
-                        this.getFilterTemplateDragAfterElement(
-                            currentContainer,
-                            y,
-                            item.dataset.pinned === "1",
-                        ),
-                    insertPlaceholder: (
-                        currentContainer,
-                        placeholder,
-                        afterElement,
-                    ) => {
-                        this.insertFilterTemplatePlaceholder(
-                            currentContainer,
-                            placeholder,
-                            afterElement,
-                            item.dataset.pinned === "1",
-                        );
-                    },
-                    onDrop: () => {
-                        this.syncFilterTemplateOrderFromContainer(container);
-                    },
-                });
-
-                if (cleanup) {
-                    this._filterTemplateDragCleanups.push(cleanup);
-                }
-            });
+    // The table's lists are reordered with the Framework's sf-sortable (owner,
+    // 2026-10-13): a pointer, a finger or the keyboard, a silhouette where the
+    // row lands, the steps announced. A pinned row moves among pinned rows and
+    // a loose one among loose ones, so each group is a list of its own and a
+    // drag cannot silently unpin anything. What a list asks for arrives as
+    // sf-sortable-intent; the order is computed from keys and the window is
+    // drawn again from it -- the rows are lit's, not moved by hand.
+    static reorderedKeys(list, item, index) {
+        const keys = [...list.querySelectorAll('[data-sf-sortable-item]')]
+            .filter((node) => node.closest('sf-sortable') === list)
+            .map((node) => node.getAttribute('data-sf-sortable-item'))
+            .filter((key) => key !== item);
+        keys.splice(Math.max(0, Math.min(index, keys.length)), 0, item);
+        return keys;
     }
 
-    // The order of the columns, by the handle on each row of the settings list.
-    // The same binding the filter templates use, grouped the same way: a pinned
-    // column moves among pinned columns and a loose one among loose ones, so a
-    // drag cannot silently unpin a column.
-    bindColumnSettingsDrag() {
-        this.clearColumnSettingsDragBindings();
-        const contextMenu = this.refs?.contextMenu?.value;
-        const container = contextMenu?.querySelector?.('[data-column-settings-list]');
-
-        if (!container) return;
-
-        container.querySelectorAll('[data-column-key]').forEach((item) => {
-            const handle = item.querySelector('[data-move]');
-            const pinnedGroup = item.dataset.pinned === '1';
-            const items = (currentContainer) => Array.from(currentContainer?.children || []).filter(
-                (candidate) => candidate instanceof HTMLElement
-                    && candidate.dataset.columnKey
-                    && candidate.dataset.pinned === (pinnedGroup ? '1' : '0')
-                    && !candidate.classList.contains('is-dragging')
-                    && !candidate.classList.contains('drag-placeholder'),
-            );
-
-            const cleanup = bindSortableDrag({
-                handle,
-                item,
-                container,
-                boundAttr: 'data-sf-table-column-drag-bound',
-                getSortableItems: (currentContainer) => items(currentContainer),
-                getAfterElement: (currentContainer, y) =>
-                    getVerticalDragAfterElement(currentContainer, y, {
-                        accept: (candidate) => candidate instanceof HTMLElement
-                            && Boolean(candidate.dataset.columnKey)
-                            && candidate.dataset.pinned === (pinnedGroup ? '1' : '0'),
-                    }),
-                insertPlaceholder: (currentContainer, placeholder, afterElement) => {
-                    const group = items(currentContainer);
-                    if (afterElement) currentContainer.insertBefore(placeholder, afterElement);
-                    else if (group.length) group[group.length - 1].after(placeholder);
-                    else currentContainer.append(placeholder);
-                },
-                onDrop: () => this.syncColumnOrderFromContainer(container),
-            });
-
-            if (cleanup) this._columnSettingsDragCleanups.push(cleanup);
-        });
+    onFilterTemplateIntent(event) {
+        const list = event.target;
+        const {item, index} = event.detail ?? {};
+        if (!(list instanceof Element) || !item) return;
+        const keys = SfTable.reorderedKeys(list, item, index);
+        const group = list.getAttribute('data-group') === 'pinned' ? 'pinned' : 'normal';
+        const orderedByGroup = {pinned: new Map(), normal: new Map()};
+        keys.forEach((key, at) => orderedByGroup[group].set(key, at));
+        this.syncFilterTemplateOrder(orderedByGroup);
     }
 
-    clearColumnSettingsDragBindings() {
-        this._columnSettingsDragCleanups.forEach((cleanup) => cleanup());
-        this._columnSettingsDragCleanups = [];
-    }
-
-    // What the list now reads, written back as `order` in the pending settings:
-    // ten apart, so a later move has room between two columns without renumbering
-    // the rest.
-    syncColumnOrderFromContainer(container) {
-        const rows = Array.from(container?.children || []).filter(
-            (item) => item instanceof HTMLElement
-                && item.dataset.columnKey
-                && !item.classList.contains('drag-placeholder'),
-        );
-        rows.forEach((item, index) => {
-            this.patchTempColumnSettings(item.dataset.columnKey, {order: (index + 1) * 10});
-        });
+    // A column list may be narrowed by the search: the move is placed against
+    // the shown neighbours, and the columns the search hides keep their places.
+    onColumnSettingsIntent(event) {
+        const list = event.target;
+        const {item, index} = event.detail ?? {};
+        if (!(list instanceof Element) || !item) return;
+        const pinnedGroup = list.getAttribute('data-group') === 'pinned';
+        const shown = SfTable.reorderedKeys(list, item, index);
+        const at = shown.indexOf(item);
+        const columns = this.getColumnItems().filter((column) => column?.key && !column.system);
+        const groupKeys = columns.filter((column) => this.isColumnPinned(column) === pinnedGroup).map((column) => column.key)
+            .filter((key) => key !== item);
+        const before = shown[at + 1];
+        const after = shown[at - 1];
+        let place = before !== undefined ? groupKeys.indexOf(before) : -1;
+        if (place === -1) place = after !== undefined ? groupKeys.indexOf(after) + 1 : groupKeys.length;
+        groupKeys.splice(place === -1 ? groupKeys.length : place, 0, item);
+        const otherKeys = columns.filter((column) => this.isColumnPinned(column) !== pinnedGroup).map((column) => column.key);
+        const ordered = pinnedGroup ? [...groupKeys, ...otherKeys] : [...otherKeys, ...groupKeys];
+        ordered.forEach((key, position) => this.patchTempColumnSettings(key, {order: (position + 1) * 10}));
         this.requestComponentUpdate('column-order');
         // The consumer's owner read the drag as applying at once, because the
-        // list redraws from the draft. It did not: a click outside threw the new
-        // order away with everything else. It does now, so the two controls that
-        // look immediate are immediate.
+        // list redraws from the draft; it does, as every control in the window.
         this.commitColumnSettings('column-order');
-
-        return this;
     }
 
-    clearFilterTemplateDragBindings() {
-        this._filterTemplateDragCleanups.forEach((cleanup) => cleanup());
-        this._filterTemplateDragCleanups = [];
-    }
-
-    getFilterTemplateSortableItems(container, pinned = false) {
-        return Array.from(container?.children || []).filter(
-            (item) =>
-                item instanceof HTMLElement &&
-                item.dataset.filterTemplateKey &&
-                item.dataset.pinned === (pinned ? "1" : "0") &&
-                !item.classList.contains("hidden") &&
-                !item.classList.contains("is-dragging") &&
-                !item.classList.contains("drag-placeholder"),
-        );
-    }
-
-    getFilterTemplateDragAfterElement(
-        container,
-        y,
-        pinned = false,
-        itemsLayout = null,
-    ) {
-        return getVerticalDragAfterElement(container, y, {
-            itemsLayout: Array.isArray(itemsLayout)
-                ? itemsLayout.filter(
-                    (layout) =>
-                        layout.item?.dataset?.filterTemplateKey &&
-                        layout.item?.dataset?.pinned ===
-                        (pinned ? "1" : "0") &&
-                        !layout.item.classList.contains("hidden"),
-                )
-                : null,
-            accept: (item) =>
-                item.dataset.filterTemplateKey &&
-                item.dataset.pinned === (pinned ? "1" : "0") &&
-                !item.classList.contains("hidden"),
-        });
-    }
-
-    insertFilterTemplatePlaceholder(
-        container,
-        placeholder,
-        afterElement,
-        pinned = false,
-    ) {
-        if (afterElement) {
-            container.insertBefore(placeholder, afterElement);
-            return;
-        }
-
-        const group = pinned ? "1" : "0";
-        const groupItems = Array.from(container?.children || []).filter(
-            (item) =>
-                item instanceof HTMLElement &&
-                item.dataset.filterTemplateKey &&
-                item.dataset.pinned === group &&
-                !item.classList.contains("is-dragging") &&
-                !item.classList.contains("drag-placeholder"),
-        );
-        const lastGroupItem = groupItems.at(-1);
-
-        if (lastGroupItem?.nextSibling) {
-            container.insertBefore(placeholder, lastGroupItem.nextSibling);
-            return;
-        }
-
-        if (pinned) {
-            const firstUnpinnedItem = Array.from(
-                container?.children || [],
-            ).find(
-                (item) =>
-                    item instanceof HTMLElement &&
-                    item.dataset.filterTemplateKey &&
-                    item.dataset.pinned === "0" &&
-                    !item.classList.contains("is-dragging") &&
-                    !item.classList.contains("drag-placeholder"),
-            );
-
-            if (firstUnpinnedItem) {
-                container.insertBefore(placeholder, firstUnpinnedItem);
-                return;
-            }
-        }
-
-        container.appendChild(placeholder);
-    }
-
-    syncFilterTemplateOrderFromContainer(container) {
-        const orderedByGroup = {
-            pinned: new Map(),
-            normal: new Map(),
-        };
-
-        Array.from(container?.children || [])
-            .filter(
-                (item) =>
-                    item instanceof HTMLElement &&
-                    item.dataset.filterTemplateKey &&
-                    !item.classList.contains("drag-placeholder"),
-            )
-            .forEach((item) => {
-                const group =
-                    item.dataset.pinned === "1" ? "pinned" : "normal";
-                orderedByGroup[group].set(
-                    item.dataset.filterTemplateKey,
-                    orderedByGroup[group].size,
-                );
-            });
-
+    syncFilterTemplateOrder(orderedByGroup) {
         const currentFilter = this.getPendingFilterState();
         const templates = this.getFilterTemplates(currentFilter).map(
             (template, sourceIndex) => {
@@ -3185,10 +2999,14 @@ class SfTable extends SfBaseElement {
             refPrefix = "column",
         } = options;
 
-        const {pin = false, handle = false, query = ""} = options;
+        const {pin = false, handle = false, query = "", group = ""} = options;
+        // A group is one of the two sortable lists: the pinned columns -- the
+        // system ones among them, offered nothing -- or the loose ones.
+        const inGroup = (col) => !group
+            || (group === 'pinned' ? (col.system || this.isColumnPinned(col)) : (!col.system && !this.isColumnPinned(col)));
 
         return this.getColumnItems().filter(
-            (col) => !pin || col.system || this.matchesColumnQuery(col.label, query),
+            (col) => inGroup(col) && (!pin || col.system || this.matchesColumnQuery(col.label, query)),
         ).map((col) => {
             const itemRef = this.getItemRef(`${refPrefix}:${col.key}`) || false;
             const isChecked = typeof checked === "function" ? Boolean(checked(col)) : Boolean(checked);
@@ -3214,6 +3032,7 @@ class SfTable extends SfBaseElement {
             return html`
                 <div class="sf-table-column-option flex items-cross-center gap-1/3"
                      data-column-key=${col.key}
+                     data-sf-sortable-item=${col.key}
                      data-pinned=${pinned ? "1" : "0"}>
                     ${handle
                         ? html`<sf-icon-button
@@ -3222,6 +3041,7 @@ class SfTable extends SfBaseElement {
                                 scheme="on-surface"
                                 icon="drag_indicator"
                                 data-move
+                                data-sf-sortable-handle
                                 root-class="sf-table-column-move cursor-grab"
                                 aria-label=${`${this.text("columnMoveLabel", "column-move-label")}: ${col.label || col.key}`}
                             ></sf-icon-button>`
@@ -3322,8 +3142,21 @@ class SfTable extends SfBaseElement {
         return this;
     }
 
-    getTableColsData() {
+    // Two sortable lists, one under the other: the pinned rows, then the
+    // loose ones. Each is a group of its own, so a row stays in its group.
+    renderSortableGroups(pinnedRows, looseRows, {name, label, onIntent}) {
+        const list = (group, rows) => (rows.length ? html`<sf-sortable
+                group=${`${name}-${group}`}
+                data-group=${group}
+                label=${label}
+                class="flex flex-col gap-1/3"
+                @sf-sortable-intent=${onIntent}>${rows}</sf-sortable>` : nothing);
+        return html`${list('pinned', pinnedRows)}${list('loose', looseRows)}`;
+    }
+
+    getTableColsData(group = '') {
         return this.getColumnCheckboxItems({
+            group,
             pin: true,
             handle: true,
             query: this.state.columnSettingsQuery || "",
@@ -3712,7 +3545,8 @@ class SfTable extends SfBaseElement {
         // have been an attribute nobody reads.
         const pendingConditions = this.countPendingFilterConditionChanges();
         const selectedTemplateKey = pendingFilter.selectedTemplateKey;
-        const sortTemplates = this.getSortedFilterTemplates(pendingFilter).map((col) => {
+        const sortedTemplates = this.getSortedFilterTemplates(pendingFilter);
+        const sortTemplates = sortedTemplates.map((col) => {
             let component;
             const isActiveEdit = this.state.filter.rename === col.key;
             if (this.state.filter.rename !== col.key) {
@@ -3768,6 +3602,7 @@ class SfTable extends SfBaseElement {
                         ${ref(this.getItemRef(col.label))}
                         class="sf-settings-context-menu-item flex items-cross-center flex-1 gap-1/3 ${col.deleted ? 'opacity-3' : ''}"
                         data-filter-template-key="${col.key}"
+                        data-sf-sortable-item=${col.key}
                         data-pinned="${col.pinned ? "1" : "0"}"
                 >
                     ${!isActiveEdit ? html`
@@ -3775,6 +3610,7 @@ class SfTable extends SfBaseElement {
                                 id="${this.getInstanceId()}--template-move--${col.key}"
                                 appearance="link"
                                 data-move
+                                data-sf-sortable-handle
                                 scheme="on-surface"
                                 aria-label=${`${this.text("templateMoveLabel")}: ${col.label}`}
                                 icon="drag_indicator"
@@ -3842,7 +3678,12 @@ class SfTable extends SfBaseElement {
                                     class="sf-context-menu-columns flex flex-col gap-1/4 overflow-auto flex-1"
                                     data-filter-template-list
                             >
-                                ${sortTemplates}
+                                ${this.renderSortableGroups(
+                                    sortTemplates.filter((_, at) => sortedTemplates[at].pinned),
+                                    sortTemplates.filter((_, at) => !sortedTemplates[at].pinned),
+                                    {name: 'filter-templates', label: this.text('templatesTabText'),
+                                     onIntent: (event) => this.onFilterTemplateIntent(event)},
+                                )}
                             </div>
                         </div>
                         <div slot="panel-1">
@@ -4098,6 +3939,8 @@ class SfTable extends SfBaseElement {
         const menuColumnCount =
             columnCount ?? columnsCount ?? this.contextMenuColumns ?? 1;
         const cols = this.getTableColsData()
+        const pinnedCols = this.getTableColsData('pinned');
+        const looseCols = this.getTableColsData('loose');
         const query = this.state.columnSettingsQuery || "";
         // The settings window is about the columns. Its "Actions" tab was asked
         // to go on 2026-10-02: row actions are offered in the row's own menu and
@@ -4138,7 +3981,9 @@ class SfTable extends SfBaseElement {
                     <div class="sf-context-menu-columns flex flex-col flex-1 gap-1/3 overflow-auto"
                          data-column-settings-list>
                         ${cols.length
-                            ? cols
+                            ? this.renderSortableGroups(pinnedCols, looseCols, {name: 'table-columns',
+                                label: this.text('settingsColumnLabel'),
+                                onIntent: (event) => this.onColumnSettingsIntent(event)})
                             : html`<div class="sf-table-column-empty p-1 color-on-surface-variant">
                                 ${this.getProp('columnSearchEmptyText')}
                             </div>`}
@@ -4253,6 +4098,9 @@ class SfTable extends SfBaseElement {
     }
 
     renderContextMenu(data) {
+        // The windows' lists are reordered with sf-sortable, fetched when a
+        // window first opens rather than with every page.
+        if (data?.open) globalThis.SF?.Loader?.ensureSmartElementLoaded?.("sf-sortable");
         if (!data?.open) {
             render(null, this.getPortalContainer());
             this.hidePortal();
@@ -4283,8 +4131,6 @@ class SfTable extends SfBaseElement {
         this.bindContextEvent();
         this.bindContextViewport();
         requestAnimationFrame(() => {
-            this.bindFilterTemplateDrag();
-            this.bindColumnSettingsDrag();
             this.clampContextMenusToViewport();
             // The menu lives in the portal, not in this element's own tree.
             this.redrawWhenComponentsUpgrade(this.getPortalContainer());
@@ -6724,7 +6570,6 @@ class SfTable extends SfBaseElement {
         this.clearSearchDebounce();
         this._searchPendingProps = null;
         this._searchHoldKey = '';
-        this.clearFilterTemplateDragBindings();
         this.stopContextMenuPositions();
         this.unbindContextEvent();
         this.unbindContextViewport();
