@@ -109,23 +109,19 @@ test('template Apply emits template-select only when the selected template chang
     assert.match(source, /this\.dispatchTableEvent\('sf-table-template-select',\s*Object\.freeze\(\{key: selectedKey\}\)\)/);
 });
 
+// A heading is dragged with SF.Sortable.attach (owner, 2026-10-13), which
+// swallows the click a drop ends with (probe sortable-columns in the
+// Framework); a pointer resize still suppresses the header click itself.
 test('ending a column drag or pointer resize suppresses the header click', () => {
-    assert.match(source, /if \(state\.started\) \{\s*this\.suppressNextHeaderClick\(\);/);
+    assert.match(source, /this\._headerSortableDetach = attach\(row, \{/);
     assert.match(source, /setLoaderDragState\(false\);\s*this\.suppressNextHeaderClick\(\);/);
 });
 
-test('a column drag restores the exact DOM, including Lit markers, before the order update', () => {
-    assert.match(source, /state\.started = true;\s*state\.domSnapshot = this\.snapshotColumnDom\(state\.table\);/);
-    assert.match(source, /if \(state\.started\) \{\s*this\.restoreColumnDom\(state\.domSnapshot\);\s*\}\s*if \(!shouldCommit\) \{\s*return;\s*\}\s*this\.applyColumnOrder/);
-    const restore = new Function('snapshot = []', method(source, 'restoreColumnDom(snapshot = [])', 'applyColumnOrder('));
-    const container = {isConnected: true, childNodes: [], append(...nodes) { this.childNodes = nodes; }};
-    const [a, b, c] = ['<!--a-->', 'th:title', 'th:status'].map((name) => ({name, parentNode: container}));
-    restore([{container, nodes: [a, b, c]}]);
-    assert.deepEqual(container.childNodes.map((node) => node.name), ['<!--a-->', 'th:title', 'th:status']);
-    const moved = {name: 'gone', parentNode: null};
-    container.childNodes = [c];
-    restore([{container, nodes: [moved, c]}]);
-    assert.deepEqual(container.childNodes.map((node) => node.name), ['th:status']);
+// No cell is moved by hand any more: the drag only outlines the place, and the
+// order is applied through the settings, so there is no DOM to restore.
+test('a column drag moves no cell by hand and applies the order through the settings', () => {
+    assert.doesNotMatch(source, /snapshotColumnDom|restoreColumnDom|setColumnDragPlaceholderClass/u);
+    assert.match(source, /onHeaderColumnIntent\(\{item, index, group\}\) \{[\s\S]*?return this\.applyColumnOrder\(rest, \{\}\);/u);
 });
 
 test('actions column is a system column', () => {

@@ -451,17 +451,12 @@ class SfTable extends SfBaseElement {
         this.onColumnResizePointerDown = this.onColumnResizePointerDown.bind(this);
         this.onColumnResizePointerMove = this.onColumnResizePointerMove.bind(this);
         this.onColumnResizePointerUp = this.onColumnResizePointerUp.bind(this);
-        this.onColumnDragPointerDown = this.onColumnDragPointerDown.bind(this);
-        this.onColumnDragPointerMove = this.onColumnDragPointerMove.bind(this);
-        this.onColumnDragPointerUp = this.onColumnDragPointerUp.bind(this);
-        this.onColumnDragPointerCancel = this.onColumnDragPointerCancel.bind(this);
         this._contextEventBound = false;
         this._hoverEventBound = false;
         this._columnResizeEventBound = false;
-        this._columnDragEventBound = false;
+        this._headerSortableRow = null;
+        this._headerSortableDetach = null;
         this._columnResizeState = null;
-        this._columnDragState = null;
-        this._columnAnimationToken = 0;
         this.searchChange = this.scheduleSearchChange.bind(this);
         this._searchDebounceTimer = null;
         this._searchPendingProps = null;
@@ -2138,7 +2133,7 @@ class SfTable extends SfBaseElement {
     measureContentWidths() {
         const table = this.refs.table?.value;
         if (!(table instanceof HTMLTableElement) || !table.isConnected) return false;
-        if (this._columnResizeState || this._columnDragState?.started) return false;
+        if (this._columnResizeState || this.columnDragActive) return false;
         // The skeleton and an empty or failed list say nothing about the content.
         if (table.querySelector('tbody[data-state]') || !table.querySelector('tbody tr td')) return false;
         const measured = new Map();
@@ -4174,7 +4169,7 @@ class SfTable extends SfBaseElement {
     }
 
     hoverEvents(e) {
-        if (this._columnResizeState || this._columnDragState?.started) {
+        if (this._columnResizeState || this.columnDragActive) {
             return;
         }
 
@@ -4199,7 +4194,7 @@ class SfTable extends SfBaseElement {
     }
 
     outEvent(e) {
-        if (this._columnResizeState || this._columnDragState?.started) {
+        if (this._columnResizeState || this.columnDragActive) {
             return;
         }
 
@@ -4317,24 +4312,75 @@ class SfTable extends SfBaseElement {
         this._columnResizeEventBound = false;
     }
 
+    // A heading is dragged with the Framework's sortable in its column mode
+    // (SF.Sortable.attach, owner 2026-10-13): the column is dimmed in every row,
+    // an outline the width of the column and the height of the table stands
+    // where it will go, a pinned column moves among pinned ones and a loose one
+    // among loose ones, and the click a drop ends with does not sort. The
+    // table's own drag -- nine hundred lines moving cells between lit's part
+    // markers and putting them back -- is gone. Keyboard reordering is the
+    // column settings list.
+    get columnDragActive() {
+        return document.documentElement.hasAttribute('data-sf-sortable-active');
+    }
+
     bindColumnDragEvent() {
-        if (this._columnDragEventBound) return;
-
         const table = this.refs.table?.value;
-        if (!table) return;
-
-        table.addEventListener('pointerdown', this.onColumnDragPointerDown);
-        this._columnDragEventBound = true;
+        const row = table?.tHead?.rows?.[0];
+        if (!row || this._headerSortableRow === row) return;
+        const attach = globalThis.SF?.Sortable?.attach;
+        if (typeof attach !== 'function') {
+            // sf-sortable is a lazy relation: fetched when first needed.
+            globalThis.SF?.Loader?.ensureSmartElementLoaded?.('sf-sortable');
+            customElements.whenDefined('sf-sortable').then(() => {
+                if (this.isConnected) this.bindColumnDragEvent();
+            });
+            return;
+        }
+        this._headerSortableDetach?.();
+        this._headerSortableRow = row;
+        this._headerSortableDetach = attach(row, {
+            items: 'th[data-key]',
+            extent: table,
+            label: this.text('settingsColumnLabel'),
+            groupOf: (th) => this.headerColumnGroup(th.dataset.key),
+            canStart: (event, th) => !this._columnResizeState && !this.getColumnResizeHandle(event.target)
+                && ['pinned', 'loose'].includes(this.headerColumnGroup(th.dataset.key)),
+            cellsOf: (th) => [...table.rows].map((tr) => tr.cells[th.cellIndex]).filter(Boolean),
+            onIntent: (detail) => this.onHeaderColumnIntent(detail),
+        });
     }
 
     unbindColumnDragEvent() {
-        if (!this._columnDragEventBound) {
-            return;
-        }
+        this._headerSortableDetach?.();
+        this._headerSortableDetach = null;
+        this._headerSortableRow = null;
+    }
 
+    // Which group a heading moves in: the system columns and a column marked
+    // draggable: false do not move; a pinned column moves among pinned ones.
+    headerColumnGroup(key) {
+        if (this.getSystemColumns().some((column) => String(column.key) === key)) return 'system';
+        const column = this.getColumns().find((item) => String(item.key) === key);
+        if (!column || column.system || column.draggable === false) return 'fixed';
+        return this.isColumnPinned(column) ? 'pinned' : 'loose';
+    }
+
+    // The order a heading drop asks for: the column at its place among the
+    // shown columns of its group, the others where they are.
+    onHeaderColumnIntent({item, index, group}) {
         const table = this.refs.table?.value;
-        table?.removeEventListener('pointerdown', this.onColumnDragPointerDown);
-        this._columnDragEventBound = false;
+        const shown = [...(table?.tHead?.rows?.[0]?.cells ?? [])]
+            .map((cell) => cell.dataset?.key)
+            .filter((key) => key && ['pinned', 'loose', 'fixed'].includes(this.headerColumnGroup(key)));
+        const peers = shown.filter((key) => key !== item && this.headerColumnGroup(key) === group);
+        const rest = shown.filter((key) => key !== item);
+        const before = peers[index];
+        const after = peers[index - 1];
+        const at = before !== undefined ? rest.indexOf(before) : (after !== undefined ? rest.indexOf(after) + 1 : rest.length);
+        rest.splice(at, 0, item);
+        if (rest.join('|') === shown.join('|')) return this;
+        return this.applyColumnOrder(rest, {});
     }
 
     getColumnResizeHandle(target) {
@@ -4348,18 +4394,6 @@ class SfTable extends SfBaseElement {
         // resize and fell through to the column-move handler, which is why
         // dragging the edge moved the column instead of changing its width.
         return target.closest('[data-sf-column-resizer]');
-    }
-
-    getColumnDragHeader(target) {
-        if (!(target instanceof Element)) {
-            return null;
-        }
-
-        if (this.getColumnResizeHandle(target)) {
-            return null;
-        }
-
-        return target.closest('th[data-key]');
     }
 
     parseColumnSize(value, fallback = null) {
@@ -4533,59 +4567,6 @@ class SfTable extends SfBaseElement {
         );
     }
 
-    getColumnDragLayout(table) {
-        const columns = this.getColumns();
-
-        return columns
-            .filter((column) => column?.key && !column.system && column.draggable !== false)
-            .map((column) => {
-                const key = String(column.key);
-                const escapedKey = this.escapeColumnKey(key);
-                const th = table?.querySelector(`th[data-key="${escapedKey}"]`);
-                const rect = th?.getBoundingClientRect?.();
-
-                if (!th || !rect) {
-                    return null;
-                }
-
-                return {
-                    key,
-                    column,
-                    th,
-                    left: rect.left,
-                    right: rect.right,
-                    width: rect.width,
-                    middle: rect.left + rect.width / 2,
-                    cellIndex: th.cellIndex,
-                };
-            })
-            .sort((left, right) => left.cellIndex - right.cellIndex)
-            .filter(Boolean);
-    }
-
-    getColumnDragDropIndex(layout, x, draggingKey) {
-        const items = layout.filter((item) => item.key !== draggingKey);
-
-        for (let index = 0; index < items.length; index += 1) {
-            if (x < items[index].middle) {
-                return index;
-            }
-        }
-
-        return items.length;
-    }
-
-    getVisibleUserColumnKeysFromDom(table) {
-        const systemKeys = new Set(
-            this.getSystemColumns().map((column) => String(column.key)),
-        );
-        const headerCells = Array.from(table?.tHead?.rows?.[0]?.cells || []);
-
-        return headerCells
-            .map((cell) => cell?.dataset?.key)
-            .filter((key) => key && !systemKeys.has(String(key)));
-    }
-
     reorderColumnDomByKeys(table, userKeys = []) {
         if (!table || !Array.isArray(userKeys) || !userKeys.length) {
             return;
@@ -4634,294 +4615,6 @@ class SfTable extends SfBaseElement {
                 moveKeyedChildren(row, 'td');
             });
         });
-    }
-
-    getColumnAnimationCells(table) {
-        return Array.from(
-            table?.querySelectorAll('thead th[data-key], tbody td[data-key]') || [],
-        ).filter((cell) => cell instanceof HTMLElement);
-    }
-
-    snapshotColumnCellRects(table) {
-        const rects = new Map();
-
-        this.getColumnAnimationCells(table).forEach((cell) => {
-            rects.set(cell, cell.getBoundingClientRect());
-        });
-
-        return rects;
-    }
-
-    clearColumnAnimationStyles(table = this.refs.table?.value) {
-        this._columnAnimationToken += 1;
-
-        this.getColumnAnimationCells(table).forEach((cell) => {
-            cell.style.transition = '';
-            cell.style.transform = '';
-            cell.style.willChange = '';
-        });
-    }
-
-    clearColumnDragDom(table = this.refs.table?.value) {
-        table
-            ?.querySelectorAll(
-                [
-                    '.is-column-dragging',
-                    '.is-column-drag-placeholder-cell',
-                    '.is-column-drag-before',
-                    '.is-column-drag-after',
-                ].join(','),
-            )
-            .forEach((cell) => {
-                cell.classList.remove(
-                    'is-column-dragging',
-                    'is-column-drag-placeholder-cell',
-                    'is-column-drag-before',
-                    'is-column-drag-after',
-                );
-            });
-
-        document
-            .querySelectorAll('.sf-table-column-drag-ghost')
-            .forEach((ghost) => ghost.remove());
-        document.documentElement.classList.remove('sf-table-column-dragging');
-    }
-
-    animateColumnReorder(table, beforeRects) {
-        if (!table || !(beforeRects instanceof Map)) {
-            return;
-        }
-
-        const animationToken = ++this._columnAnimationToken;
-        const cells = this.getColumnAnimationCells(table);
-
-        cells.forEach((cell) => {
-            const before = beforeRects.get(cell);
-
-            if (!before) {
-                return;
-            }
-
-            const after = cell.getBoundingClientRect();
-            const deltaX = before.left - after.left;
-
-            if (Math.abs(deltaX) < 1) {
-                return;
-            }
-
-            cell.style.transition = 'none';
-            cell.style.transform = `translate3d(${deltaX}px, 0, 0)`;
-            cell.style.willChange = 'transform';
-        });
-
-        requestAnimationFrame(() => {
-            if (animationToken !== this._columnAnimationToken) {
-                return;
-            }
-
-            cells.forEach((cell) => {
-                if (!cell.style.transform) {
-                    return;
-                }
-
-                cell.style.transition = 'transform 140ms ease';
-                cell.style.transform = 'translate3d(0, 0, 0)';
-            });
-
-            window.setTimeout(() => {
-                if (animationToken !== this._columnAnimationToken) {
-                    return;
-                }
-
-                cells.forEach((cell) => {
-                    cell.style.transition = '';
-                    cell.style.transform = '';
-                    cell.style.willChange = '';
-                });
-            }, 160);
-        });
-    }
-
-    updateColumnDragPreview(state, dropIndex) {
-        if (!state || state.dropIndex === dropIndex) {
-            return;
-        }
-
-        state.layout.forEach((item) => {
-            item.th.classList.remove(
-                'is-column-drag-before',
-                'is-column-drag-after',
-            );
-        });
-
-        state.dropIndex = dropIndex;
-
-        const items = state.layout.filter((item) => item.key !== state.key);
-        const nextKeys = items.map((item) => item.key);
-
-        nextKeys.splice(
-            Math.max(0, Math.min(dropIndex, nextKeys.length)),
-            0,
-            state.key,
-        );
-
-        if (nextKeys.join('|') === state.currentKeys?.join('|')) {
-            return;
-        }
-
-        state.currentKeys = nextKeys;
-        const beforeRects = this.snapshotColumnCellRects(state.table);
-        this.reorderColumnDomByKeys(state.table, nextKeys);
-        this.animateColumnReorder(state.table, beforeRects);
-        state.layout = this.getColumnDragLayout(state.table);
-        this.setColumnDragPlaceholderClass(state.key, true, state.table);
-
-        const target = state.layout.find((item) => item.key === state.key);
-
-        if (!target) {
-            return;
-        }
-
-        target.th.classList.add('is-column-dragging');
-    }
-
-    setColumnDragPlaceholderClass(key, active, table = this.refs.table?.value) {
-        if (!key || !table) {
-            return;
-        }
-
-        const escapedKey = this.escapeColumnKey(key);
-
-        table
-            .querySelectorAll(`th[data-key="${escapedKey}"], td[data-key="${escapedKey}"]`)
-            .forEach((cell) => {
-                cell.classList.toggle('is-column-dragging', Boolean(active));
-                cell.classList.toggle('is-column-drag-placeholder-cell', Boolean(active));
-            });
-    }
-
-    createColumnDragGhost(th) {
-        const rect = th.getBoundingClientRect();
-        const ghost = document.createElement('div');
-        const label =
-            th?.dataset?.label ||
-            th?.textContent?.replace(/\s+/g, ' ').trim() ||
-            '';
-
-        ghost.textContent = label;
-        ghost.classList.add('sf-table-column-drag-ghost');
-        Object.assign(ghost.style, {
-            position: 'fixed',
-            left: `${rect.left}px`,
-            top: `${rect.top}px`,
-            width: `${rect.width}px`,
-            height: `${rect.height}px`,
-            zIndex: 'var(--sf-table-drag-ghost--z-index, var(--sf-z-index-9))',
-            pointerEvents: 'none',
-            boxSizing: 'border-box',
-        });
-        ghost.setAttribute('aria-hidden', 'true');
-
-        document.body.append(ghost);
-
-        return ghost;
-    }
-
-    clearColumnDragState(commit = false, event = null) {
-        const state = this._columnDragState;
-
-        document.removeEventListener('pointermove', this.onColumnDragPointerMove);
-        document.removeEventListener('pointerup', this.onColumnDragPointerUp);
-        document.removeEventListener('pointercancel', this.onColumnDragPointerCancel);
-        document.documentElement.classList.remove('sf-table-column-dragging');
-
-        if (!state) {
-            this.clearColumnAnimationStyles();
-            this.clearColumnDragDom();
-            setLoaderDragState(false);
-            return;
-        }
-
-        // A drop is decided in a frame, and a short drag can end before that
-        // frame ever runs: the pointer goes down, moves a few times and comes
-        // up inside one frame. Cancelling then threw the decision away and the
-        // move did nothing at all, which is exactly what a consumer saw on a
-        // quick drag. The pending decision is made now instead.
-        if (state.frame) {
-            if (commit) {
-                this.flushColumnDragPreview(state);
-            } else {
-                cancelAnimationFrame(state.frame);
-                state.frame = null;
-            }
-        }
-
-        state.handle?.releasePointerCapture?.(event?.pointerId);
-        if (state.started) {
-            this.suppressNextHeaderClick();
-        }
-        state.ghost?.remove();
-        this.clearColumnAnimationStyles(state.table);
-        this.setColumnDragPlaceholderClass(state.key, false, state.table);
-        state.th?.classList.remove('is-column-dragging');
-        state.layout?.forEach((item) => {
-            item.th.classList.remove(
-                'is-column-drag-before',
-                'is-column-drag-after',
-            );
-        });
-
-        // The order to commit is the one the drag worked out, not the one the
-        // cells happen to be in. The preview moves cells by hand, so reading
-        // the order back from the DOM worked only as long as nothing re-rendered
-        // in between — and a host hands its rows back on every answer, which
-        // puts the cells back and made the whole move disappear without a word.
-        // The DOM is still read when the drag never updated a preview, so a
-        // reorder by any other means is not lost either.
-        const previewKeys = Array.isArray(state.currentKeys) ? state.currentKeys : [];
-        const domKeys = this.getVisibleUserColumnKeysFromDom(state.table);
-        const nextKeys = previewKeys.length ? previewKeys : domKeys;
-        const shouldCommit =
-            commit &&
-            state.started &&
-            nextKeys.length &&
-            nextKeys.join('|') !== state.originalKeys?.join('|');
-
-        this._columnDragState = null;
-        this.clearColumnDragDom(state.table);
-        setLoaderDragState(false);
-
-        // The preview moved header and body cells by hand, between Lit's part
-        // markers. Put every node back exactly as it was, so a committed order
-        // renders over the DOM Lit knows (otherwise moved cells stay and the
-        // columns appear twice) and a cancelled drag leaves nothing behind.
-        // The order update runs in a microtask, before the next paint.
-        if (state.started) {
-            this.restoreColumnDom(state.domSnapshot);
-        }
-
-        if (!shouldCommit) {
-            return;
-        }
-
-        this.applyColumnOrder(nextKeys, state.frozenWidths);
-    }
-
-    snapshotColumnDom(table) {
-        if (!table) return [];
-        const containers = [
-            table.querySelector('colgroup'),
-            table.tHead?.rows?.[0],
-            ...Array.from(table.tBodies || []).flatMap((tbody) => Array.from(tbody.rows || [])),
-        ].filter(Boolean);
-        return containers.map((container) => ({container, nodes: Array.from(container.childNodes)}));
-    }
-
-    restoreColumnDom(snapshot = []) {
-        for (const {container, nodes} of snapshot || []) {
-            if (!container.isConnected || nodes.some((node) => node.parentNode !== container)) continue;
-            container.append(...nodes);
-        }
     }
 
     applyColumnOrder(userKeys = [], frozenWidths = {}) {
@@ -5004,187 +4697,6 @@ class SfTable extends SfBaseElement {
         );
         this.hideColumnResizeGuide();
         this.measurePinnedColumns();
-    }
-
-    onColumnDragPointerDown(event) {
-        if (event.button !== 0 || this._columnResizeState) {
-            return;
-        }
-
-        const th = this.getColumnDragHeader(event.target);
-        const key = th?.dataset?.key;
-
-        if (!th || !key) {
-            return;
-        }
-
-        const table = this.refs.table?.value;
-        this.clearColumnAnimationStyles(table);
-        this.clearColumnDragDom(table);
-
-        const layout = this.getColumnDragLayout(table);
-        const column = layout.find((item) => item.key === key);
-        const userKeys = layout.map((item) => item.key);
-
-        if (!column || layout.length < 2) {
-            return;
-        }
-
-        this._columnDragState = {
-            key,
-            th,
-            table,
-            handle: th,
-            startRect: th.getBoundingClientRect(),
-            startX: event.clientX,
-            startY: event.clientY,
-            shiftX: event.clientX - column.left,
-            shiftY: event.clientY - th.getBoundingClientRect().top,
-            originalIndex: layout.findIndex((item) => item.key === key),
-            originalKeys: userKeys,
-            currentKeys: userKeys,
-            dropIndex: null,
-            layout,
-            started: false,
-            ghost: null,
-            frozenWidths: null,
-        };
-
-        th.setPointerCapture?.(event.pointerId);
-        document.addEventListener('pointermove', this.onColumnDragPointerMove);
-        document.addEventListener('pointerup', this.onColumnDragPointerUp, {
-            once: true,
-        });
-        document.addEventListener('pointercancel', this.onColumnDragPointerCancel, {
-            once: true,
-        });
-    }
-
-    // A render in the middle of a drag replaces the header cells, and the drag
-    // was left holding the old ones: the ghost kept moving while the drop was
-    // computed against elements no longer in the page. The cells are found
-    // again by the column key, which a render cannot change.
-    reconnectColumnDragState(state) {
-        const table = this.refs.table?.value;
-
-        if (!table) {
-            return false;
-        }
-
-        if (state.table !== table || !state.th?.isConnected) {
-            const escapedKey = this.escapeColumnKey(state.key);
-            const th = table.querySelector(`th[data-key="${escapedKey}"]`);
-
-            if (!th) {
-                return false;
-            }
-
-            state.table = table;
-            state.th = th;
-            state.handle = th;
-            // The preview's own marks went with the old cells, and so did the
-            // widths frozen on them.
-            state.frozenWidths = this.freezeColumnsWidthForResize(table);
-            state.domSnapshot = this.snapshotColumnDom(table);
-            state.dropIndex = null;
-            state.layout = this.getColumnDragLayout(table);
-            this.setColumnDragPlaceholderClass(state.key, true, table);
-            th.classList.add('is-column-dragging');
-        }
-
-        return true;
-    }
-
-    onColumnDragPointerMove(event) {
-        const state = this._columnDragState;
-
-        if (!state) {
-            return;
-        }
-
-        if (state.started && !this.reconnectColumnDragState(state)) {
-            this.clearColumnDragState(false, event);
-            return;
-        }
-
-        const deltaX = event.clientX - state.startX;
-        const deltaY = event.clientY - state.startY;
-
-        if (!state.started) {
-            if (Math.abs(deltaX) < 4 && Math.abs(deltaY) < 4) {
-                return;
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            state.started = true;
-            state.domSnapshot = this.snapshotColumnDom(state.table);
-            setLoaderDragState(true);
-            state.frozenWidths = this.freezeColumnsWidthForResize(state.table);
-            state.ghost = this.createColumnDragGhost(state.th);
-            this.setColumnDragPlaceholderClass(state.key, true, state.table);
-            document.documentElement.classList.add('sf-table-column-dragging');
-        }
-
-        if (state.frame) {
-            state.latestEvent = event;
-            return;
-        }
-
-        state.latestEvent = event;
-        state.frame = requestAnimationFrame(() => {
-            const latestEvent = state.latestEvent;
-            state.frame = null;
-
-            if (!latestEvent || !state.ghost) {
-                return;
-            }
-
-            state.ghost.style.left = `${latestEvent.clientX - state.shiftX}px`;
-            state.ghost.style.top = `${latestEvent.clientY - state.shiftY}px`;
-            state.layout = this.getColumnDragLayout(state.table);
-
-            const dropIndex = this.getColumnDragDropIndex(
-                state.layout,
-                latestEvent.clientX,
-                state.key,
-            );
-
-            this.updateColumnDragPreview(state, dropIndex);
-        });
-    }
-
-    flushColumnDragPreview(state) {
-        if (!state?.frame) {
-            return this;
-        }
-
-        cancelAnimationFrame(state.frame);
-        state.frame = null;
-        const latestEvent = state.latestEvent;
-
-        if (!latestEvent || !state.ghost) {
-            return this;
-        }
-
-        state.layout = this.getColumnDragLayout(state.table);
-        const dropIndex = this.getColumnDragDropIndex(
-            state.layout,
-            latestEvent.clientX,
-            state.key,
-        );
-        this.updateColumnDragPreview(state, dropIndex);
-
-        return this;
-    }
-
-    onColumnDragPointerUp(event) {
-        this.clearColumnDragState(true, event);
-    }
-
-    onColumnDragPointerCancel(event) {
-        this.clearColumnDragState(false, event);
     }
 
     onColumnResizePointerDown(event) {
@@ -6576,7 +6088,6 @@ class SfTable extends SfBaseElement {
         this.unBindHoverEvent();
         this.unbindColumnResizeEvent();
         this.unbindColumnDragEvent();
-        this.clearColumnDragState(false);
         this.onColumnResizePointerUp();
         this.tempSettings = null;
         this._selectionPortKey = "[]";

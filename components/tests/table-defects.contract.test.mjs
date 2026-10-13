@@ -36,7 +36,7 @@ test('the resize handle is recognised by what it carries, not by a prefix of its
   // pointer is not on the handle.
   assert.match(
     element,
-    /getColumnDragHeader\(target\)\s*\{[\s\S]*?if \(this\.getColumnResizeHandle\(target\)\)\s*\{\s*return null;/u,
+    /canStart: \(event, th\) => !this\._columnResizeState && !this\.getColumnResizeHandle\(event\.target\)/u,
     'the move handler steps aside for the handle',
   );
 });

@@ -374,62 +374,10 @@
     border-inline-start-color: var(--sf-primary);
   }
 
-  sf-table th.is-column-dragging,
-  sf-table td.is-column-dragging {
-    background-color: color-mix(in srgb, var(--sf-primary) 14%, transparent);
-    color: transparent;
-  }
-
-  sf-table th.is-column-dragging > *,
-  sf-table td.is-column-dragging > * {
-    opacity: 0;
-  }
-
-  sf-table th.is-column-drag-before {
-    border-inline-start-color: var(--sf-primary);
-  }
-
-  sf-table th.is-column-drag-after {
-    border-inline-end-color: var(--sf-primary);
-  }
-
-  sf-table th.is-column-drag-before::before,
-  sf-table th.is-column-drag-after::after {
-    background-color: var(--sf-primary);
-    block-size: 100%;
-    content: "";
-    inline-size: calc(var(--sf-px) * 2);
-    inset-block-start: 0;
-    pointer-events: none;
-    position: absolute;
-    z-index: var(--sf-z-index-1);
-  }
-
-  sf-table th.is-column-drag-before::before {
-    inset-inline-start: 0;
-    transform: translateX(-50%);
-  }
-
-  sf-table th.is-column-drag-after::after {
-    inset-inline-end: 0;
-    transform: translateX(50%);
-  }
-
-  .sf-table-column-drag-ghost {
-    align-items: center;
-    background-color: var(--sf-primary-container);
-    border: var(--sf-px) solid var(--sf-primary);
-    box-shadow: var(--sf-ui-shadow-3);
-    display: flex;
-    opacity: 0.92;
-    padding-block: var(--sf-space-1);
-    padding-inline: var(--sf-space-1);
-  }
-
-  .sf-table-column-dragging,
-  .sf-table-column-dragging * {
-    cursor: grabbing !important;
-    user-select: none !important;
+  /* A heading being dragged (SF.Sortable.attach): a sortable ghost follows
+     the pointer and the heading text is not selected on the way. */
+  html[data-sf-sortable-active] sf-table th {
+    user-select: none;
   }
 
   .sf-table-column-resizing,
@@ -601,12 +549,6 @@
   .sf-table-context-menu .sf-settings-context-menu-item.drag-placeholder > *,
   sf-table .drag-placeholder > * {
     visibility: hidden;
-  }
-
-  /* The column a dragged heading will take, in the head and down the rows. */
-  sf-table .is-column-drag-placeholder-cell {
-    background-color: var(--sf-primary-transparent-select);
-    box-shadow: inset var(--sf-px) 0 0 var(--sf-outline-primary), inset calc(-1 * var(--sf-px)) 0 0 var(--sf-outline-primary);
   }
 
   /* A tree row (data view port 1.8.0): the first data cell is indented by the

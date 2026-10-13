@@ -12,7 +12,6 @@ const root = resolve(import.meta.dirname, '..');
 const read = (path) => readFileSync(resolve(root, path), 'utf8');
 const PACKAGE = ['table', 'data-view', 'property-view', 'admin-menu'];
 const exemptions = [
-  {file: 'src/smart/table/js/templates/default.css', token: '--sf-ui-shadow-3', reason: 'The column drag ghost is filled with the primary container and outlined in primary, which shows it in both themes.'},
 ];
 
 const files = (directory, pattern) => {

@@ -137,45 +137,21 @@ test('the keyboard reaches the same two answers as the pointer', async () => {
 test('a column move survives the render a host answer brings with it', async () => {
   const source = await element();
 
-  // The move was committed by reading the order back out of the DOM, because
-  // the preview moves cells by hand. That held only while nothing re-rendered
-  // mid-drag — and a host hands its rows back on every answer, which puts the
-  // cells back and made the move vanish with no word to anyone. The order the
-  // drag worked out is the authority now.
-  assert.match(
-    source,
-    /const previewKeys = Array\.isArray\(state\.currentKeys\) \? state\.currentKeys : \[\];\s*const domKeys = this\.getVisibleUserColumnKeysFromDom\(state\.table\);\s*const nextKeys = previewKeys\.length \? previewKeys : domKeys;/u,
-  );
-  // And the drag finds its cells again by key, since a render replaces them.
-  assert.match(
-    source,
-    /reconnectColumnDragState\(state\) \{[\s\S]*?if \(state\.table !== table \|\| !state\.th\?\.isConnected\) \{[\s\S]*?querySelector\(`th\[data-key="\$\{escapedKey\}"\]`\)/u,
-  );
-  assert.match(
-    source,
-    /if \(state\.started && !this\.reconnectColumnDragState\(state\)\) \{\s*this\.clearColumnDragState\(false, event\);/u,
-    'and gives up cleanly when the column is gone for good',
-  );
+  // The order is worked out from the heading row's keys when the drop asks for
+  // it, and applied through the settings; nothing the drag did is in the DOM,
+  // so a render a host answer brings mid-drag has nothing to undo. The row the
+  // drag is attached to is attached again when a render replaces it.
+  assert.match(source, /onHeaderColumnIntent\(\{item, index, group\}\) \{\s*const table = this\.refs\.table\?\.value;\s*const shown = \[\.\.\.\(table\?\.tHead\?\.rows\?\.\[0\]\?\.cells/u);
+  assert.match(source, /if \(!row \|\| this\._headerSortableRow === row\) return;/u);
 });
 
 test('a quick drag still decides where the column lands', async () => {
   const source = await element();
 
-  // The drop is decided in a frame. A pointer that goes down, moves twice and
-  // comes up inside one frame used to have that decision cancelled on release,
-  // and the move did nothing at all. It is made on release instead.
-  assert.match(
-    source,
-    /if \(state\.frame\) \{\s*if \(commit\) \{\s*this\.flushColumnDragPreview\(state\);/u,
-  );
-  assert.match(
-    source,
-    /flushColumnDragPreview\(state\) \{[\s\S]*?cancelAnimationFrame\(state\.frame\);[\s\S]*?const dropIndex = this\.getColumnDragDropIndex\([\s\S]*?this\.updateColumnDragPreview\(state, dropIndex\);/u,
-  );
-  // A cancelled drag still throws the pending decision away.
-  assert.match(source, /\} else \{\s*cancelAnimationFrame\(state\.frame\);\s*state\.frame = null;/u);
+  // The drop decides on release, in the Framework's sortable, with no frame
+  // in between to lose; the table applies what it is asked at once.
+  assert.match(source, /onIntent: \(detail\) => this\.onHeaderColumnIntent\(detail\),/u);
 });
-
 test('a move rearranges the visible columns among the places they already hold', async () => {
   const source = await element();
 
