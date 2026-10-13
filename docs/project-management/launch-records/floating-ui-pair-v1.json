@@ -330,6 +330,7 @@
     "components/*",
     ".gitattributes",
     "LICENSE",
-    "tools/larena-scope-check.php"
+    "tools/larena-scope-check.php",
+    "src/Runtime/SfElementBackendRenderer.php"
   ]
 }

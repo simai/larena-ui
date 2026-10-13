@@ -481,7 +481,9 @@
         "native-type",
         "aria-label",
         "id",
-        "class"
+        "class",
+        "kind",
+        "appearance"
       ],
       "package": "framework"
     },
