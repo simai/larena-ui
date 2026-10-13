@@ -452,6 +452,12 @@
     --sf-skeleton-text--height: var(--sf-b0);
   }
 
+  /* A window's own buttons keep their words on one line: «Применить фильтр»
+     was two pixels wider than half the row and broke in two, making the
+     buttons twice as tall as the controls above them. */
+  .sf-table-context-menu .sf-table-context-bottom .sf-button-text-container {
+    white-space: nowrap;
+  }
   .sf-table-context-menu.sf-table-context-menu--dense .sf-tabs-top-container {
     --sf-tabs-top-container--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2, var(--sf-space-1));
     --sf-tabs-top-container--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2, var(--sf-space-1));
