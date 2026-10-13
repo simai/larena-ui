@@ -96,6 +96,30 @@
     padding-block: var(--sf-ui-1\/2--space-y);
   }
 
+  /* The windows' top-layer container (see getPortalContainer): the whole
+     viewport, invisible and click-through, so each window inside places itself
+     as it did at the end of the body. A popover is otherwise drawn as a small
+     centred box with a border, a fill and padding of the browser's own. */
+  .sf-table-portal:popover-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    inline-size: auto;
+    block-size: auto;
+    max-inline-size: none;
+    max-block-size: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .sf-table-portal:popover-open > * {
+    pointer-events: auto;
+  }
+
   .sf-table-context-menu {
     max-width: var(--sf-table-context-menu--max-width, var(--sf-g2));
     width: var(--sf-table-context-menu--available-inline-size, 100%);
@@ -195,6 +219,9 @@
 
        A host that knows better says so per column, and that wins. */
     --sf-table--column-min-inline-size: var(--sf-f0);
+    /* The widest a column grows to fit its content on one line; past it the
+       value wraps. A host that knows better sets a width per column. */
+    --sf-table--column-max-inline-size: var(--sf-g0);
     /* The cell's own leading padding, measured at 8px on the built bytes rather
        than derived -- and 8px is --sf-a8, so it is named here rather than
        written out again (owner, 2026-10-09). It is set by a nested rule in this sheet, and a nested rule's
@@ -209,6 +236,19 @@
        inset was computed from that reading and put an embedded list 7px out once
        the table was styled. */
     --sf-table--row-text-inset: calc(var(--sf-table--cell-spacing) + var(--sf-a8));
+  }
+
+  /* The moment the table is measured for its content widths (see
+     measureContentWidths): laid out by content at its widest, with no column
+     width of its own. It is never painted like this. */
+  sf-table table.sf-table-measuring {
+    table-layout: auto !important;
+    inline-size: max-content !important;
+    min-inline-size: 0 !important;
+  }
+  sf-table table.sf-table-measuring col {
+    inline-size: auto !important;
+    width: auto !important;
   }
 
   sf-table table {

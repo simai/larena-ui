@@ -477,6 +477,7 @@ function renderColgroup(context) {
                 // it and held at their floor.
                 const width = toColumnSize(column.colWidth ?? column.width ?? column.size)
                         || (column.key === 'actions' ? (context.component?.actionsColumnWidth || 'var(--sf-table--actions-column-width, var(--sf-f0))') : '')
+                        || context.component?.contentWidth?.(column)
                         || (context.component?.columnsAreCramped
                                 && context.component?.columnTakesFloor?.(column)
                             ? 'var(--sf-table--column-min-inline-size)'

@@ -2307,6 +2307,42 @@ class SfTable extends SfBaseElement {
             + ` + ${inline - 1} * var(--sf-space-1\\/3) + var(--sf-b6))`;
     }
 
+    // Each data column as wide as its content wants on one line -- the heading
+    // and the values shown -- up to a cap, read from the laid-out table: for a
+    // moment the table is laid out by its content at its widest (auto layout,
+    // max-content), the headings are measured, and the layout goes back. The
+    // columns used to share the room equally and stop at a floor, so a long
+    // value wrapped in a column a short one did not need (owner, 2026-10-13).
+    // A width the host or the person set wins; what does not fit scrolls.
+    measureContentWidths() {
+        const table = this.refs.table?.value;
+        if (!(table instanceof HTMLTableElement) || !table.isConnected) return false;
+        if (this._columnResizeState || this._columnDragState?.started) return false;
+        // The skeleton and an empty or failed list say nothing about the content.
+        if (table.querySelector('tbody[data-state]') || !table.querySelector('tbody tr td')) return false;
+        const measured = new Map();
+        table.classList.add('sf-table-measuring');
+        try {
+            for (const cell of table.querySelectorAll('thead th[data-key]')) {
+                const key = cell.dataset.key;
+                if (SYSTEM_COLUMN_KEYS.has(key)) continue;
+                measured.set(key, Math.ceil(cell.getBoundingClientRect().width));
+            }
+        } finally {
+            table.classList.remove('sf-table-measuring');
+        }
+        const previous = this._contentWidths ?? new Map();
+        const changed = measured.size !== previous.size
+            || [...measured].some(([key, width]) => Math.abs((previous.get(key) ?? 0) - width) > 2);
+        if (changed) this._contentWidths = measured;
+        return changed;
+    }
+
+    contentWidth(column) {
+        const width = this._contentWidths?.get(column?.key);
+        return width ? `min(${width}px, var(--sf-table--column-max-inline-size))` : '';
+    }
+
     columnTakesFloor(column) {
         if (!column?.key || SYSTEM_COLUMN_KEYS.has(column.key)) return false;
         return !(column.colWidth ?? column.width ?? column.size ?? column.min_width ?? column.minWidth);
@@ -4118,6 +4154,7 @@ class SfTable extends SfBaseElement {
     renderContextMenu(data) {
         if (!data?.open) {
             render(null, this.getPortalContainer());
+            this.hidePortal();
             return nothing;
         }
 
@@ -4141,6 +4178,7 @@ class SfTable extends SfBaseElement {
             `,
             this.getPortalContainer(),
         );
+        this.showPortal();
         this.bindContextEvent();
         this.bindContextViewport();
         requestAnimationFrame(() => {
@@ -5348,19 +5386,51 @@ class SfTable extends SfBaseElement {
         this.closeContextMenu(true);
     }
 
+    // The table's windows -- filter, field popovers, settings, menus -- are
+    // drawn in the page's top layer from inside the table, not moved to the end
+    // of the body. Moved out, a window was not clipped by the table's scroll
+    // box, but it lost everything the table gives what it holds: its size (the
+    // filter opened a step larger than a table at 1/2), its language, its theme,
+    // the variables its containers set (owner, 2026-10-13). In the top layer it
+    // stays where it belongs and is still drawn above everything, unclipped.
+    //
+    // The container is a form of its own, before the table's rendered content:
+    // inside a page's form a filter field would be submitted with it and Enter
+    // in one would send the page's form; and before the content, so a re-render
+    // of the table never takes it away. Its fields' own change and input stop
+    // at it: they are the table's business, not the page's.
     getPortalContainer() {
         if (this._portalContainer?.isConnected) {
             return this._portalContainer;
         }
 
-        const portal = document.createElement("div");
+        const portal = document.createElement("form");
         portal.className = "sf-table-portal";
+        portal.noValidate = true;
         portal.dataset.tableSettingsKey = this.getTableSettingsKey();
         portal.dataset.sfInstance = this.getInstanceId();
-        document.body.append(portal);
+        if (typeof portal.showPopover === "function") portal.setAttribute("popover", "manual");
+        portal.addEventListener("submit", (event) => event.preventDefault());
+        for (const type of ["change", "input"]) {
+            portal.addEventListener(type, (event) => event.stopPropagation());
+        }
+        this.insertBefore(portal, this.firstChild);
         this._portalContainer = portal;
 
         return portal;
+    }
+
+    // The top layer is entered while a window is open and left when none is.
+    showPortal() {
+        const portal = this._portalContainer;
+        if (!portal?.isConnected || typeof portal.showPopover !== "function") return;
+        if (!portal.matches(":popover-open")) portal.showPopover();
+    }
+
+    hidePortal() {
+        const portal = this._portalContainer;
+        if (!portal?.isConnected || typeof portal.hidePopover !== "function") return;
+        if (portal.matches(":popover-open")) portal.hidePopover();
     }
 
     getVisualViewportRect() {
@@ -6492,6 +6562,7 @@ class SfTable extends SfBaseElement {
         });
         this.stopContextMenuPositions();
         render(null, this.getPortalContainer());
+        this.hidePortal();
         if (this.refs.contextMenu) {
             this.refs.contextMenu.value = null;
         }
@@ -6675,6 +6746,15 @@ class SfTable extends SfBaseElement {
     }
 
     afterRender() {
+        // Content widths first: they change the widths everything below reads.
+        // Twice at most in a row, as the cramped check below, so content that
+        // sits on an edge cannot keep the table re-rendering.
+        if (this.measureContentWidths() && (this._contentRetries ?? 0) < 2) {
+            this._contentRetries = (this._contentRetries ?? 0) + 1;
+            this.requestComponentUpdate("content-widths");
+            return;
+        }
+        this._contentRetries = 0;
         this.measurePinnedColumns();
         // Whether the columns are cramped is read from the laid-out table, so
         // the first render guesses: before layout the actions column and the
