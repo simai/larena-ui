@@ -505,6 +505,21 @@ function renderColgroup(context) {
     `;
 }
 
+// Several values in a cell -- tags for each choice, badges for each language --
+// stay on one line: what does not fit folds into «+N», whose title names the
+// rest (owner, 2026-10-13). Wrapped, three tags made a row three lines tall in
+// a list of one-line rows. The folded values stay in the text, visually hidden,
+// so a screen reader still reads them all; the table's afterRender does the
+// folding (fitCellValues), because only the laid-out row knows what fits.
+function renderCellValues(items, owner) {
+    return html`
+        <div class="sf-table-cell-values flex items-cross-center gap-1/3">
+            ${items.map((item) => renderCellItem(item, owner))}
+            <span class="sf-table-cell-more" aria-hidden="true" hidden></span>
+        </div>
+    `;
+}
+
 function renderComponent(component, owner) {
     if (!component?.type) {
         return nothing;
@@ -935,11 +950,7 @@ export function renderTableTemplate(context) {
                             </div>
                         `;
                     }
-                    return html`
-                        <div class="flex flex-wrap items-cross-center gap-1/3">
-                            ${typed.map((item) => renderCellItem(item, context.component))}
-                        </div>
-                    `;
+                    return renderCellValues(typed, context.component);
                 }
 
                 return renderCellItem(typed, context.component);
@@ -964,11 +975,14 @@ export function renderTableTemplate(context) {
             // -- wrap onto the next line when the column is narrower than
             // they are, instead of running out of the cell under the next one.
             // The row of actions stays on one line: it is sized for it.
-            return html`
-                <div class="flex ${column.key === 'actions' ? '' : 'flex-wrap'} items-cross-center gap-1/3">
-                    ${value.map((item) => renderCellItem(item, context.component))}
-                </div>
-            `;
+            if (column.key === 'actions') {
+                return html`
+                    <div class="flex items-cross-center gap-1/3">
+                        ${value.map((item) => renderCellItem(item, context.component))}
+                    </div>
+                `;
+            }
+            return renderCellValues(value, context.component);
         }
 
         if (typeof value === "object") {

@@ -260,6 +260,32 @@
     width: auto !important;
   }
 
+  sf-table .sf-table-cell-values {
+    flex-wrap: nowrap;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+  sf-table .sf-table-cell-values > * {
+    flex: none;
+  }
+  /* A folded value leaves the line but not the text: visually hidden, read. */
+  sf-table .sf-table-cell-values > .sf-table-cell-folded {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  sf-table .sf-table-cell-more {
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-text-size-1\/2);
+    white-space: nowrap;
+  }
+  sf-table .sf-table-cell-more[hidden] {
+    display: none;
+  }
+
   sf-table .sf-table-cell-clip {
     display: block;
     overflow: hidden;

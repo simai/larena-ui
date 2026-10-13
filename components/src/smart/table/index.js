@@ -2341,6 +2341,35 @@ class SfTable extends SfBaseElement {
     // In pixels, capped here rather than with min() in the column's width: a
     // fixed-layout table read min(784px, 20rem) as no fixed width at all and
     // gave that column the whole of the table's spare room.
+    // Folds the values of a multi-value cell that do not fit its line into
+    // «+N» (see renderCellValues in the template).
+    fitCellValues() {
+        for (const box of this.querySelectorAll('tbody .sf-table-cell-values')) {
+            const more = box.querySelector(':scope > .sf-table-cell-more');
+            const items = [...box.children].filter((child) => child !== more);
+            for (const item of items) item.classList.remove('sf-table-cell-folded');
+            if (!more) continue;
+            more.hidden = true;
+            more.removeAttribute('title');
+            if (box.scrollWidth <= box.clientWidth + 1) continue;
+            // Room for the counter first, then values leave from the end until
+            // the rest and the counter fit.
+            more.hidden = false;
+            more.textContent = `+${items.length}`;
+            const folded = [];
+            for (let at = items.length - 1; at > 0 && box.scrollWidth > box.clientWidth + 1; at -= 1) {
+                items[at].classList.add('sf-table-cell-folded');
+                folded.unshift(items[at]);
+                more.textContent = `+${folded.length}`;
+            }
+            if (!folded.length) {
+                more.hidden = true;
+                continue;
+            }
+            more.title = folded.map((item) => item.textContent.trim()).filter(Boolean).join(', ');
+        }
+    }
+
     contentWidth(column) {
         const width = this._contentWidths?.get(column?.key);
         if (!width) return '';
@@ -6771,6 +6800,7 @@ class SfTable extends SfBaseElement {
             return;
         }
         this._contentRetries = 0;
+        this.fitCellValues();
         this.measurePinnedColumns();
         // Whether the columns are cramped is read from the laid-out table, so
         // the first render guesses: before layout the actions column and the
