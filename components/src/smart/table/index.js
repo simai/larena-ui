@@ -2338,6 +2338,12 @@ class SfTable extends SfBaseElement {
         } finally {
             table.classList.remove('sf-table-measuring');
         }
+        // A cell drawn by an element whose module is still on the way -- the
+        // Loader brings parts when a page first uses them -- is empty when this
+        // runs, and its column was measured a few pixels wide and kept so:
+        // record links broke inside words in a 45px column (Larena,
+        // 2026-10-13). Measure again once those elements are drawn.
+        this.remeasureWhenDrawn(table);
         const previous = this._contentWidths ?? new Map();
         const changed = measured.size !== previous.size
             || [...measured].some(([key, width]) => Math.abs((previous.get(key) ?? 0) - width) > 2);
@@ -2393,6 +2399,27 @@ class SfTable extends SfBaseElement {
             }
             more.title = folded.map((item) => item.textContent.trim()).filter(Boolean).join(', ');
         }
+    }
+
+    remeasureWhenDrawn(table) {
+        const pending = new Set();
+        for (const element of table.querySelectorAll('tbody td *')) {
+            if (!element.localName.includes('-')) continue;
+            if (!customElements.get(element.localName) || !element.childElementCount) pending.add(element.localName);
+        }
+        if (!pending.size) {
+            this._remeasureTries = 0;
+            return;
+        }
+        if ((this._remeasureTries ?? 0) >= 3) return;
+        this._remeasureTries = (this._remeasureTries ?? 0) + 1;
+        const token = (this._remeasureToken = (this._remeasureToken ?? 0) + 1);
+        Promise.all([...pending].map((name) => customElements.whenDefined(name)))
+            .then(() => new Promise((settle) => requestAnimationFrame(() => requestAnimationFrame(settle))))
+            .then(() => {
+                if (token !== this._remeasureToken || !this.isConnected) return;
+                if (this.measureContentWidths()) this.requestComponentUpdate("content-widths");
+            });
     }
 
     contentWidth(column) {

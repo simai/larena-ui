@@ -60,14 +60,21 @@ try {
       {key: 'status', label: 'Статус'},
       {key: 'updated', label: 'Обновлено'},
       {key: 'summary', label: 'Описание', propertyType: 'text'},
+      {key: 'record', label: 'Раздел', propertyType: 'record'},
       {key: 'tags', label: 'Теги', propertyType: 'choices', width: '9rem', options: [
         {value: 'a', label: 'Портал'}, {value: 'b', label: 'Интеграции'}, {value: 'c', label: 'Платежи'}, {value: 'd', label: 'Отчёты'}]},
     ]);
     table.setRows([{id: '1', title: 'Раз', code: 'simai.one', section: 'Первый', status: 'В работе', updated: '2026-12-25',
       summary: 'Модуль закрывает весь путь обращения: приём, распределение, ответ и оценку, с отчётами по каждому шагу',
-      tags: ['a', 'b', 'c', 'd']}]);
+      tags: ['a', 'b', 'c', 'd'], record: {label: 'Платежи и биллинг', href: '#billing'}}]);
   });
   await page.waitForFunction(() => document.querySelectorAll('#t tbody tr').length === 1, null, {timeout: 8000});
+  // The record link's module arrives after the table has drawn and measured,
+  // as the Loader brings it on a page: the column was measured empty and kept
+  // a few pixels wide (Larena, 2026-10-13).
+  await page.waitForTimeout(300);
+  await page.addScriptTag({path: join(out, 'smart/smart/reference-link/js/reference-link.js'), type: 'module'});
+  await page.waitForTimeout(800);
 
   const measured = await page.evaluate(() => {
     const table = document.querySelector('#t table');
@@ -76,7 +83,7 @@ try {
     // The data columns by name. Taking the last five once counted the actions
     // column among them, which passed only while that column was held at the
     // floor too -- it is as wide as its buttons now.
-    const data = new Set(['title', 'code', 'section', 'status', 'updated', 'summary']);
+    const data = new Set(['title', 'code', 'section', 'status', 'updated', 'summary', 'record']);
     const widths = [...table.querySelectorAll('thead th')]
       .filter((th) => data.has(th.dataset.key))
       .map((th) => Math.round(th.getBoundingClientRect().width));
