@@ -1104,11 +1104,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "894825b7afa0acd1ec9d9778ba5943d144f12ab56f1cdbf5413af9ecc1adab44"
+        "sha256": "ef79ad9a8e42b9585722d907d5235b3437f0335d18d2de72eb607692cceaf2f3"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "983371ceef620078956a32a949687ddd3bfa9bd1caec78972e5b0968dd2c6046"
+        "sha256": "6716d7eca6ec806519967474ac82e2f55f6e8ba61fdeeb8f901b65785e9be369"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
@@ -1116,7 +1116,7 @@
       },
       {
         "path": "src/smart/property-view/rule.js",
-        "sha256": "69edeb18ef2209b14a29fbad5e7f3f00f883af16125daea6285f90a687cdf212"
+        "sha256": "00a8ccc6a8abe65341aa203f3cf1d0dddf2734a3bd9971b90dc9209f8e261a3c"
       },
       {
         "path": "src/core/contracts/ports/simai.property-view-port/1.4.0/port.json",

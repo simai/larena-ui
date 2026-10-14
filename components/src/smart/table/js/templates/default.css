@@ -420,9 +420,20 @@
     text-decoration: none;
   }
 
-  sf-table a.sf-table-link-cell:hover .sf-table-link-cell-text,
-  sf-table a.sf-table-link-cell:focus-visible .sf-table-link-cell-text {
-    color: var(--sf-primary);
+  /* One link in a table (owner, 2026-10-14): the link colour, no underline at
+     rest, the underline on hover and focus -- the title, a link cell and a
+     related record alike. Three styles side by side were visual noise. */
+  sf-table a.sf-table-link-cell .sf-table-link-cell-text,
+  sf-table .sf-table-title-link,
+  sf-table .sf-reference-link :where(.sf-reference-link__link, .sf-reference-link-left > a) {
+    color: var(--sf-link);
+    text-decoration: none;
+    text-underline-offset: var(--sf-a3);
+  }
+
+  sf-table a.sf-table-link-cell:is(:hover, :focus-visible) .sf-table-link-cell-text,
+  sf-table .sf-table-title-link:is(:hover, :focus-visible),
+  sf-table .sf-reference-link :where(.sf-reference-link__link, .sf-reference-link-left > a):is(:hover, :focus-visible) {
     text-decoration: underline;
   }
 
@@ -887,19 +898,10 @@
     translate: 0 -50%;
   }
 
-  /* The title column's link to the record: the row's text, a pointer and an
-     underline on hover, so the column reads as a list and not as a row of
-     blue words beside the blue related values. */
+  /* The title column's link to the record: the table's one link style
+     (above), in the title's weight. */
   sf-table .sf-table-title-link {
-    color: inherit;
     font-weight: var(--sf-font-weight-medium);
-    text-decoration: none;
-    text-underline-offset: var(--sf-a2);
-  }
-
-  sf-table .sf-table-title-link:hover {
-    color: var(--sf-primary);
-    text-decoration: underline;
   }
 
   sf-table .sf-table-title-link:focus-visible {

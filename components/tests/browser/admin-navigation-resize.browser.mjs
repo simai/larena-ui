@@ -54,11 +54,11 @@ const NAVIGATION = {
   site: {current: {key: 'main', label: 'Main site'}, count: 1},
 };
 
-const open = async (person = {}) => {
+const open = async (person = {}, frame = 800) => {
   const page = await context.newPage();
   page.on('pageerror', (error) => console.error('pageerror', error.message));
   await page.goto('http://probe.test/');
-  await page.setContent('<!doctype html><html class="theme-light" lang="ru"><body style="margin:0"><div style="block-size:800px;display:flex"><sf-admin-menu id="m" aria-label="Меню"></sf-admin-menu><main style="flex:1">Страница</main></div></body></html>');
+  await page.setContent(`<!doctype html><html class="theme-light" lang="ru"><body style="margin:0"><div style="block-size:${frame}px;display:flex"><sf-admin-menu id="m" aria-label="Меню"></sf-admin-menu><main style="flex:1">Страница</main></div></body></html>`);
   for (const path of styles) await page.addStyleTag({path}).catch(() => {});
   for (const path of modules) await page.addScriptTag({path, type: 'module'}).catch(() => {});
   await page.waitForFunction(() => customElements.get('sf-admin-menu') && customElements.get('sf-resizer'), null, {timeout: 8000});
@@ -183,12 +183,24 @@ try {
     note({case: 'a narrow column: the profile menu grows to its longest line', got: narrow});
   }
   console.log(JSON.stringify({narrow}));
+  // A frame as tall as a long page: the menu is the window's height and stays
+  // at the top while the page scrolls (owner, 2026-10-14: it scrolled away,
+  // an empty column under it).
+  const tall = await open({}, 2400);
+  const held = await tall.evaluate(async () => {
+    window.scrollTo(0, 900);
+    await new Promise((done) => setTimeout(done, 100));
+    const box = document.querySelector('.sf-admin-nav').getBoundingClientRect();
+    return {top: Math.round(box.top), height: Math.round(box.height), window: innerHeight};
+  });
+  if (held.top !== 0 || held.height !== held.window) note({case: 'the menu stays in the window', got: held});
+  await tall.close();
   // A width the host keeps for the person wins over this browser's memory.
   const third = await open({widths: {first: 320}});
   const personal = await third.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
   if (personal !== 320) note({case: "the person's width wins", got: personal, expected: 320});
   await third.close();
-  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter, picker}));
+  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter, picker, held}));
 } finally {
   await browser.close();
 }

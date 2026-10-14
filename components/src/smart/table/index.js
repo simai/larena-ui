@@ -1210,6 +1210,29 @@ class SfTable extends SfBaseElement {
 
     onConnected() {
         super.onConnected();
+        // The content widths are read once the rows are drawn, and a font or
+        // a component's stylesheet that arrives after that makes the same
+        // content wider: columns measured before it stayed narrow and their
+        // values wrapped onto two lines until something re-rendered the table
+        // (owner, 2026-10-14: «after I changed the sort it was right»). The
+        // Loader brings a part's stylesheet when the page first uses it, and
+        // fonts load late, so both send the widths to be read again.
+        if (!this._lateLayoutAbort) {
+            this._lateLayoutAbort = new AbortController();
+            const signal = this._lateLayoutAbort.signal;
+            const again = () => {
+                if (this._lateLayoutFrame) return;
+                this._lateLayoutFrame = requestAnimationFrame(() => {
+                    this._lateLayoutFrame = 0;
+                    if (this.isConnected && this.measureContentWidths()) this.requestComponentUpdate("content-widths");
+                });
+            };
+            document.fonts?.addEventListener?.("loadingdone", again, {signal});
+            document.fonts?.ready?.then?.(() => { if (!signal.aborted) again(); });
+            document.addEventListener("load", (event) => {
+                if (event.target?.localName === "link" && /stylesheet/u.test(event.target.rel)) again();
+            }, {capture: true, signal});
+        }
         if (typeof ResizeObserver !== "undefined" && !this._responsiveObserver) {
             this._responsiveObserver = new ResizeObserver(([entry]) => {
                 const width = Math.floor(entry.contentRect.width);
@@ -4562,6 +4585,10 @@ class SfTable extends SfBaseElement {
         this._headerSortableDetach = attach(row, {
             items: 'th[data-key]',
             extent: table,
+            // A column moving shows the line it will stand at, between two
+            // columns (owner, 2026-10-14): the outline of the place it would
+            // take read as a column already there.
+            preview: 'line',
             label: this.text('settingsColumnLabel'),
             groupOf: (th) => this.headerColumnGroup(th.dataset.key),
             canStart: (event, th) => !this._columnResizeState && !this.getColumnResizeHandle(event.target)
@@ -6197,6 +6224,10 @@ class SfTable extends SfBaseElement {
         this._responsiveObserver?.disconnect();
         this._responsiveObserver = null;
         this._responsiveWidth = 0;
+        this._lateLayoutAbort?.abort();
+        this._lateLayoutAbort = null;
+        cancelAnimationFrame(this._lateLayoutFrame ?? 0);
+        this._lateLayoutFrame = 0;
         this.clearSearchDebounce();
         this._searchPendingProps = null;
         this._searchHoldKey = '';

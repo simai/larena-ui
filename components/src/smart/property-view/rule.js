@@ -33,6 +33,8 @@ SF.RuleLoader["cl-property-view"] = {
     { name: "cl-profile-picker", lazy: true },
     // «Copy link» is sf-copy-button (owner, 2026-10-14).
     { name: "cl-copy-button" },
+    // A record that could not load says why in sf-empty-state.
+    { name: "cl-empty-state" },
     { name: "cl-progress-scale" },
     // A number with a range draws sf-range-slider, from the shared renderer set.
     { name: "cl-range-slider" },

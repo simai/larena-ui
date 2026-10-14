@@ -1401,6 +1401,10 @@ class SfPropertyView extends SfBaseElement {
             emptyText: this.emptyText,
             emptyRecordText: this.emptyRecordText,
             isEmptyRecord: this.isEmptyRecord,
+            // The first load draws the fields it waits for; a failed one says
+            // why in sf-empty-state.
+            loading: this.getAttribute("data-state") === "loading" && !this.record,
+            loadFailure: this.record ? null : this.loadFailure ?? null,
             editText: this.editText,
             saveText: this.saveText,
             cancelText: this.cancelText,
@@ -1568,6 +1572,7 @@ class SfPropertyView extends SfBaseElement {
 
     async load(reason = "requested") {
         this._setState("loading", pageText(PROPERTY_VIEW_TEXT, "stateLoading", this));
+        this.loadFailure = null;
         const epoch = ++this.epoch;
         const creating = this.mode === "create";
         const answer = await this._raise("record.load", {
@@ -1579,7 +1584,16 @@ class SfPropertyView extends SfBaseElement {
             ...(creating ? {mode: "create"} : {}),
         }, {stale: () => epoch !== this.epoch});
         if (!answer) return null;
+        // A panel is placed before the host names its record: asked with no
+        // record, the host answered «unavailable», and «Запись недоступна» stood
+        // in the panel until the record's own answer came (owner, 2026-10-14).
+        // Not having been told which record is not a failure: the panel waits,
+        // loading, for its record.
+        if (answer.answer !== "applied" && !creating && !this.recordId) return answer;
         if (answer.answer !== "applied") {
+            // Said by the empty state, only once there is an answer: refused is
+            // no access; anything else could not load, with «Повторить».
+            this.loadFailure = {kind: answer.answer === "refused" ? "no-access" : "error", text: answer.message || ""};
             this._setState("error", answer.message || pageText(PROPERTY_VIEW_TEXT, "stateUnavailable", this));
             return answer;
         }
@@ -2159,6 +2173,7 @@ class SfPropertyView extends SfBaseElement {
         this.editing = null;
         this.changed.clear();
         this._setState("ready");
+        if (this.configuring) this.setViewTarget(this._layerOfProfile());
         this.requestComponentUpdate("profile");
         return answer;
     }
@@ -2206,9 +2221,19 @@ class SfPropertyView extends SfBaseElement {
             || (section?.groups ?? []).some((group) => anyRare(group?.fields)));
     }
 
+    // The layer a view is written to is the view's own: a shared view is the
+    // shared layer, a personal one the personal layer, when this person may
+    // write it.
+    _layerOfProfile() {
+        const profile = this.viewProfiles.find((item) => item.id === this.viewProfile);
+        const wanted = profile?.shared ? "shared" : "personal";
+        return this.editableLayers.includes(wanted) ? wanted : this.viewTarget;
+    }
+
     startConfiguringView() {
         if (!this.canConfigureView) return false;
         this.configuring = true;
+        if (this.viewProfiles.length) this.viewTarget = this._layerOfProfile();
         // What the arrangement was when the mode was entered. Every change in
         // this mode is written at once, so «cancel» can only mean putting back
         // what a person started from -- which is what a person means by it.

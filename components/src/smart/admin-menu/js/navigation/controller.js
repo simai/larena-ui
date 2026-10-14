@@ -595,8 +595,11 @@ export class NavigationController {
 
     // ─── the site switcher ───────────────────────────────────────────────────
 
+    // Whenever the host switches sites, however many there are now: with one
+    // site the switcher was a dead button, and read as broken (owner,
+    // 2026-10-14). Its list says which site this is and finds the others.
     canSwitchSite() {
-        return this.offers("site-switch") && (this.navigation?.site?.count ?? 1) > 1;
+        return this.offers("site-switch");
     }
 
     // The sites are the Framework's standard menu (owner, 2026-10-12): the

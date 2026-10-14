@@ -98,25 +98,15 @@ function renderConfigureBar(context) {
     // head and was one of the two empty-looking rows the owner saw.
     if (!context.configuring) return nothing;
 
-    // One row of controls and nothing else. It carried a title, a sentence and
-    // two differently-shaped actions, which read as three kinds of thing at once;
-    // what a person needs from it is the layer being written and the way out.
-    //
-    // A layer this person may not write stays in the control, disabled, carrying
-    // the host's own reason -- a «Для всех» that is simply absent reads as a
-    // feature the product does not have.
-    const items = [
-        {value: 'personal', label: context.personalLayerText, ariaLabel: context.personalLayerText},
-        {value: 'shared', label: context.sharedLayerText, ariaLabel: context.sharedLayerText},
-    ].map((item) => {
-        const denied = context.layerDenied(item.value);
-        return denied ? {...item, disabled: true, ariaLabel: denied} : item;
-    });
+    // One row of controls and nothing else: the view being arranged and the
+    // way out. Whose copy is written follows from the view itself -- a view
+    // for everyone is written for everyone, a personal one for its person --
+    // so the «Персональный / Для всех» toggle that stood beside the chooser
+    // said the same thing twice and is gone (owner, 2026-10-14).
 
     // Which named view is being arranged, chosen, made, renamed and removed in
     // the Framework's profile picker (owner, 2026-10-14) -- the one the admin
-    // menu's profiles use. It stands before the layer control because it is
-    // the larger question: which arrangement, and only then whose copy of it.
+    // menu's profiles use.
     const writable = context.editableLayers ?? [];
     const chooser = html`
         <sf-profile-picker
@@ -141,16 +131,6 @@ function renderConfigureBar(context) {
              data-configuring="true" role="group"
              aria-label=${context.configureText}>
             ${chooser}
-            <sf-button-group
-                    size=${context.size}
-                    scheme="primary"
-                    data-action="layer"
-                    aria-label=${context.configureText}
-                    value=${context.viewTarget}
-                    .items=${items}
-                    @change=${(event) => context.component.setViewTarget(
-                            event.detail?.value ?? event.target?.value ?? 'personal')}
-            ></sf-button-group>
             <span class="grow"></span>
             ${context.resetAsked
                     ? html`
@@ -1349,7 +1329,34 @@ function sidebarDrawn(context) {
         && (sections.length > 1 || context.configuring));
 }
 
+// The record on its way: three groups of field bars in the Framework's
+// skeleton, the shape of what is coming -- a sentence in its place said
+// nothing about it (owner, 2026-10-14).
+const SKELETON_WIDTHS = ['w-1/3', 'w-2/3', 'w-1/2', 'w-3/4', 'w-2/5'];
+function renderLoading(context) {
+    const bar = (at, size) => html`<div class="sf-skeleton sf-skeleton--animation-pulse" aria-hidden="true">
+        <div class="sf-skeleton-text sf-skeleton-text--size-${size} ${SKELETON_WIDTHS[at % SKELETON_WIDTHS.length]}"></div></div>`;
+    return html`
+        <div class="sf-property-view-loading flex flex-col gap-4" data-state="loading">
+            ${[0, 1, 2].map((group) => html`<div class="flex flex-col gap-2">
+                ${bar(group, '1')}
+                ${[0, 1, 2].map((field) => html`<div class="flex flex-col gap-1/2">${bar(group + field + 1, '1/2')}${bar(group * 2 + field, '1')}</div>`)}
+            </div>`)}
+            <span class="sr-only" role="status">${context.message}</span>
+        </div>`;
+}
+
+function renderLoadFailure(context) {
+    const failure = context.loadFailure;
+    return html`<sf-empty-state kind=${failure.kind} size=${context.size === '1/2' ? '1/2' : '1'} heading-level="2"
+        text=${failure.text || nothing}
+        .actions=${failure.kind === 'error' ? null : []}
+        @sf-empty-state-action=${(event) => { if (event.detail?.id === 'retry') context.component.load('retry'); }}></sf-empty-state>`;
+}
+
 function renderBody(context, railOutside = false, withActions = true) {
+    if (context.loading) return renderLoading(context);
+    if (context.loadFailure) return renderLoadFailure(context);
     // Sections are listed the same way fields and groups are while the view is
     // being configured: a hidden section filtered out here would be a section
     // nobody could ever show again.

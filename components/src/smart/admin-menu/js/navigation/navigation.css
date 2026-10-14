@@ -6,11 +6,18 @@
      space-1 inset, a space-1/2 gap, the UI radius and a text-size-3 icon. */
   /* As wide as its columns, whatever box the page put it in: a second column
      opening is the menu growing, not the menu spilling over the page. */
+  /* The menu stands in the window whatever the host's frame (owner,
+     2026-10-14): as tall as its frame up to the window, and held at the top
+     while the page scrolls. In a frame as tall as the page it scrolled away
+     with it, its foot halfway down and an empty column under it. */
   .sf-admin-nav {
     display: flex;
     inline-size: max-content;
     block-size: 100%;
+    max-block-size: 100dvh;
     min-block-size: 0;
+    position: sticky;
+    inset-block-start: 0;
     color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
@@ -56,6 +63,8 @@
     flex: 1 1 auto;
     min-block-size: 0;
     overflow-y: auto;
+    /* A wheel over the menu scrolls the menu, never the page behind it. */
+    overscroll-behavior: contain;
     /* The column's inset, the same for the rows and for «Найти в разделе»
        above them, so a row's icon stays under the field's. */
     padding: var(--sf-a4);

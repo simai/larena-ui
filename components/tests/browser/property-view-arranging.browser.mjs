@@ -211,7 +211,9 @@ try {
       add,
       band: {
         present: Boolean(band),
-        layers: Boolean(band?.querySelector('[data-action="layer"]')),
+        // The layer is the chosen view's own (owner, 2026-10-14): a shared view
+        // is written for everyone, a personal one for its person -- no toggle.
+        layers: Boolean(band?.querySelector('[data-action="view-profile"]')) && !band?.querySelector('[data-action="layer"]'),
         reset: Boolean(band?.querySelector('[data-action="reset-view"]')),
         done: Boolean(band?.querySelector('[data-action="done-configuring"]')),
         tinted: band ? getComputedStyle(band).backgroundColor : null,

@@ -557,8 +557,11 @@ try {
       // Hidden for everyone, and the target is the personal layer: this person
       // cannot show it again, and the host said so per entry.
       hideLockedByShared: hideC ? hideC.hasAttribute('disabled') : null,
-      sharedDisabled: sharedButton ? sharedButton.hasAttribute('disabled') : null,
-      sharedReason: sharedButton?.getAttribute('aria-label') ?? null,
+      // A layer this person may not write: the view chooser makes no view of
+      // that kind (owner, 2026-10-14 -- the layer toggle is gone; the chosen
+      // view's kind is the layer).
+      sharedCreatable: configView.querySelector('[data-action="view-profile"]')?.rights?.create?.shared ?? null,
+      layerToggle: Boolean(configView.querySelector('[data-action="layer"]')),
       // Width, template and hint sit behind the field's gear. Drawn under every
       // field they were four controls a row, and the arrangement -- the thing
       // being edited -- could no longer be read.
@@ -1629,10 +1632,10 @@ try {
         got: set.hideLockedByShared,
         expected: 'the control disabled -- the host names the layer that hid it, so the component does not reimplement the rule'});
     }
-    if (set.sharedDisabled !== true || set.sharedReason !== 'Нет права менять вид для всех') {
-      note({case: "a layer this person may not write is disabled with the host's own reason",
-        got: {disabled: set.sharedDisabled, reason: set.sharedReason},
-        expected: 'disabled, carrying the reason the host sent'});
+    if (set.sharedCreatable !== false || set.layerToggle) {
+      note({case: 'a layer this person may not write is not offered',
+        got: {sharedCreatable: set.sharedCreatable, layerToggle: set.layerToggle},
+        expected: 'the view chooser makes no shared view, and no layer toggle stands beside it'});
     }
     if (!Array.isArray(set.fieldLists) || set.fieldLists.length !== 2 || !set.groupList) {
       note({case: 'the field lists and the group list are sortable lists naming their container',
