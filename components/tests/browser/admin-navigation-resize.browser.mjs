@@ -155,7 +155,7 @@ try {
       oldForm: Boolean(document.querySelector('.sf-admin-nav-edit-profile, .sf-admin-nav-edit-check')),
     } : null;
   });
-  if (!picker || !picker.trigger?.includes('Обычный') || picker.rows.join() !== 'regular:true:false,editors:false:true' || !picker.add || picker.oldForm) {
+  if (!picker || !picker.trigger?.includes('Профиль: Обычный') || picker.rows.join() !== 'regular:true:false,editors:false:true' || !picker.add || picker.oldForm) {
     note({case: "the edit mode's profiles are the profile picker", got: picker});
   }
   await page.close();
