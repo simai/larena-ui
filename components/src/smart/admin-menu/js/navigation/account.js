@@ -43,9 +43,18 @@ export function openAccountMenu(context, anchor) {
     if (controller.offers("preferences")) {
         entries.push(
             {type: "separator"},
-            {type: "choice", id: "theme", text: text("theme"), options: THEMES.map((theme) => ({
-                id: `theme:${theme.value}`, text: text(theme.label), icon: theme.icon, checked: person.theme === theme.value,
-            }))},
+            // A row with its choice in a submenu, as the language and the menu
+            // profile are (owner, 2026-10-14): three glyphs side by side said
+            // less than the words.
+            {
+                id: "theme", text: text("theme"),
+                icon: (THEMES.find((theme) => theme.value === person.theme) ?? THEMES[2]).icon,
+                value: text((THEMES.find((theme) => theme.value === person.theme) ?? THEMES[2]).label),
+                submenu: THEMES.map((theme) => ({
+                    id: `theme:${theme.value}`, text: text(theme.label), icon: theme.icon,
+                    kind: "radio", checked: person.theme === theme.value,
+                })),
+            },
             {
                 id: "language", text: text("language"), icon: "translate", value: language?.native ?? person.language,
                 search: {placeholder: text("findLanguage"), empty: text("nothingFound")},

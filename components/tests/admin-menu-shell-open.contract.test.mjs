@@ -29,3 +29,16 @@ test('on a wide screen the first answer opens the root that holds the current ro
   assert.match(accept, /this\.holdsCurrent\(root\)/u);
   assert.match(accept, /root\.key !== answer\.current/u, 'a root that is itself the page has no column to open');
 });
+
+test('the theme is a row with a submenu, and the columns are widened by their edges', async () => {
+  // Owner, 2026-10-14: the theme is chosen as the language and the menu
+  // profile are, and the two columns take an sf-resizer within limits.
+  const account = await read('src/smart/admin-menu/js/navigation/account.js');
+  assert.match(account, /id: "theme", text: text\("theme"\),[\s\S]*?submenu: THEMES\.map/u);
+  assert.doesNotMatch(account, /type: "choice", id: "theme"/u);
+  const template = await read('src/smart/admin-menu/js/navigation/template.js');
+  assert.match(template, /<sf-resizer min=\$\{limits\.min\} max=\$\{limits\.max\}/u);
+  assert.match(template, /property=\$\{`--sf-admin-nav-\$\{column\}--inline-size`\}/u);
+  const rule = await read('src/smart/admin-menu/rule.js');
+  assert.match(rule, /\{ name: "cl-resizer" \}/u);
+});

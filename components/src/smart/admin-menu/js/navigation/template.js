@@ -157,6 +157,17 @@ function renderCollapse(context) {
         @click=${() => controller.toggleCompact()}></sf-icon-button>`;
 }
 
+// The columns are widened and narrowed by their edges (owner, 2026-10-14),
+// within limits, the width remembered in this browser; a double click on the
+// edge gives the column its width back. Not in the rail or on a phone.
+function renderResizer(context, column) {
+    if (!context.wide || (column === "first" && context.compact)) return nothing;
+    const limits = column === "first" ? {min: "13rem", max: "24rem"} : {min: "13rem", max: "28rem"};
+    return html`<sf-resizer min=${limits.min} max=${limits.max}
+        property=${`--sf-admin-nav-${column}--inline-size`} storage-key=${`admin-nav-${column}`}
+        label=${context.text(column === "first" ? "menuWidth" : "columnWidth")}></sf-resizer>`;
+}
+
 function renderFirstColumn(context) {
     const {controller, text, compact, edit} = context;
     const site = controller.siteRoots();
@@ -167,6 +178,7 @@ function renderFirstColumn(context) {
             ${renderEditBanner(context)}
             <div class="sf-admin-nav-scroll">${renderEditRoots(context, site, install)}</div>
             ${renderBottom(context)}
+            ${renderResizer(context, "first")}
         </div>`;
     }
     return html`<div class="sf-admin-nav-first" data-compact=${compact ? "true" : nothing}>
@@ -181,6 +193,7 @@ function renderFirstColumn(context) {
             ${renderFavourites(context)}
         </div>
         ${renderBottom(context)}
+        ${renderResizer(context, "first")}
     </div>`;
 }
 
@@ -255,6 +268,7 @@ function renderSecondColumn(context) {
             <a class="sf-admin-nav-action" href=${openRoot.action.href ?? "#"}>
                 ${icon(openRoot.action.icon || "add")}<span>${openRoot.action.label}</span></a>
         </div>` : nothing}
+        ${renderResizer(context, "second")}
     </div>`;
 }
 

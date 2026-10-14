@@ -21,6 +21,8 @@ SF.RuleLoader["cl-admin-menu"] = {
     // The navigation shell's edit mode moves rows with sf-sortable; a tag the
     // menu renders is a tag it fetches.
     { name: "cl-sortable", lazy: true },
+    // The columns' edges widen and narrow them.
+    { name: "cl-resizer" },
     // A row's glyph is chosen in the edit mode with the grid dropdown.
     { name: "cl-dropdown", lazy: true },
   ],
