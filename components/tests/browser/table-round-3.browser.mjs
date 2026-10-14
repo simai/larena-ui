@@ -565,10 +565,12 @@ try {
   })();
   {
     const tallest = Math.max(...(tightMenu.items ?? []).map((item) => item.height ?? 0));
-    // One line each: a standard menu row is 32px (a field at 1/2), so the
-    // height says a second line only above that; 26 was a link button's.
+    // One line each: a standard menu row is as tall as a field of the
+    // table's size -- 40px for this table at 1, since the menus take the
+    // table's size (owner, 2026-10-14) -- so the height says a second line
+    // only above that; 26 was a link button's.
     const wrapped = (tightMenu.items ?? []).some((item) => item.wrap !== 'nowrap' || item.lines > 1);
-    if (!tightMenu.items?.length || wrapped || tallest > 32
+    if (!tightMenu.items?.length || wrapped || tallest > 40
         || tightMenu.right > tightMenu.viewport || tightMenu.width < 120) {
       note({case: 'menu near the edge', got: {...tightMenu, tallest},
         expected: 'items on one line, the menu inside the window'});

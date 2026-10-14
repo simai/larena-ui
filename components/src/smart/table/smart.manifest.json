@@ -1580,7 +1580,7 @@
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "d2159d936c83ff9933ab8decec4624bf92093151df3cd7f8d16fa7fc346e11d3"
+        "sha256": "1ba563720a031806b840a9c4ee3059eae3965a2029ff6e069736ee2b05f46d56"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

@@ -480,14 +480,14 @@
     --sf-skeleton-text--height: var(--sf-b0);
   }
 
-  /* The bar sits in a line of the row's text (the skeleton's own line box);
-     the controls' columns hold a block of a control's height. */
-  sf-table .sf-table-skeleton-control {
-    block-size: var(--sf-ui-1--control-height);
+  /* A loading row is as tall as a loaded one: the bar stands in a line of the
+     row's own text, and the controls' columns hold a block of that line. */
+  sf-table .sf-table-skeleton .sf-skeleton-text {
+    --sf-skeleton-text--line: 1lh;
   }
 
-  sf-table[size="1/2"] .sf-table-skeleton-control {
-    block-size: var(--sf-ui-1\/2--control-height);
+  sf-table .sf-table-skeleton-control {
+    block-size: 1lh;
   }
 
   /* A window's own buttons keep their words on one line: a longer label
