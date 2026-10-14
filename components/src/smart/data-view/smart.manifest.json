@@ -244,6 +244,11 @@
       "pagination-aria-label": {
         "type": "string",
         "description": "Passed on as aria-label to the pagination the view draws (the view's own aria-label names the view)."
+      },
+      "preferences-key": {
+        "type": "string",
+        "default": "",
+        "description": "The key the person's view of this list is kept under (SF.Preferences, sf-table/<key>): the table's arrangement, the sort and the page size, applied before the first paint and the first query. Usually the collection."
       }
     }
   },
@@ -750,7 +755,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "e52677fd2d1c9a986dba6b1bb4839ab6d76de5c439e08ca070dec4abe38f7495"
+        "sha256": "057eded7a8718c0816ad5182eface0b760a9e6d9ab93794135646bcf4be487dc"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

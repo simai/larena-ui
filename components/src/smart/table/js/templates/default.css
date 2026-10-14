@@ -970,6 +970,66 @@
     background-image: inherit;
   }
 
+  /* The gear's «Вид» tab: the standard menu's rows -- its row height and
+     inset -- a quiet heading over the density, a separator before the reach. */
+  .sf-table-settings-tabs {
+    margin-block-end: var(--sf-space-1\/3);
+  }
+
+  .sf-table-view-settings .sf-table-settings-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-1\/2);
+    min-block-size: calc(var(--sf-context-menu--line, var(--sf-text-height-1\/2)) + 2 * var(--sf-context-menu--space-y, var(--sf-a6)));
+    padding-inline: var(--sf-context-menu--inset-start, var(--sf-a8)) var(--sf-context-menu--inset-end, var(--sf-a8));
+    cursor: pointer;
+  }
+
+  .sf-table-view-settings .sf-table-settings-heading {
+    padding-inline: var(--sf-context-menu--inset-start, var(--sf-a8));
+    color: var(--sf-on-surface-variant);
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
+  }
+
+  .sf-table-view-settings .sf-table-settings-separator {
+    block-size: var(--sf-px);
+    margin-block: var(--sf-space-1\/4);
+    background-color: var(--sf-outline-variant);
+  }
+
+  /* The person's view of the table (the gear's «Вид», owner 2026-10-14),
+     kept as a view preference and written on the host as data attributes.
+     Density moves the rows' vertical space one ladder step either way. */
+  sf-table[data-sf-view-density="compact"] > * .table > :not(caption) > * > * {
+    padding-block: var(--sf-space-1\/2);
+  }
+  sf-table[size="1/2"][data-sf-view-density="compact"] > * .table > :not(caption) > * > * {
+    padding-block: var(--sf-space-1\/4);
+  }
+  sf-table[data-sf-view-density="spacious"] > * .table > :not(caption) > * > * {
+    padding-block: var(--sf-space-2);
+  }
+  sf-table[size="1/2"][data-sf-view-density="spacious"] > * .table > :not(caption) > * > * {
+    padding-block: var(--sf-space-1\/2);
+  }
+
+  /* Alternate rows on the container surface, under the hover and selection
+     layers, which are images over it. */
+  sf-table[data-sf-view-stripes] tbody tr:nth-child(even) {
+    --sf-table-row--background-color: var(--sf-surface-container);
+  }
+
+  /* A line between the columns, the table's own line colour. */
+  sf-table[data-sf-view-lines] :is(th, td):not(:last-child) {
+    border-inline-end: var(--sf-px) solid var(--sf-outline-variant);
+  }
+
+  /* One line a cell: a long text ends in «…» rather than taking three. */
+  sf-table[data-sf-view-single-line] {
+    --sf-table-cell--line-clamp: 1;
+  }
+
   sf-table tbody tr:hover {
     background-image: linear-gradient(
       var(--sf-surface-container-hover),

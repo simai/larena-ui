@@ -6,6 +6,7 @@ import "../pagination/index.js";
 // table and the page row.
 import "../toast/index.js";
 import {pageText} from "../../core/js/page-language";
+import BundledPreferences from "../../core/js/preferences.js";
 import {acceptLevel, collapse, createTree, expandKnown, hasLevel, knownRecords, markLoading, visibleRows} from "./js/tree.js";
 const EVENTS = Object.freeze({
     "sf-table-query-intent": "query.change",
@@ -169,6 +170,11 @@ const copy = (value) => (value == null ? value : JSON.parse(JSON.stringify(value
 
 // Whether a filter value holds anything: an empty string, list or object is
 // no filter.
+// SF.Preferences: the view's sort and page size are the person's (owner,
+// 2026-10-14), kept under the same key as the table's arrangement.
+const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
+const viewPreferenceKey = (key) => `sf-table/${String(key).replace(/[^\w.:-]+/gu, "-")}`;
+
 function hasValue(value) {
     if (value === null || value === undefined || value === "" || value === false) return false;
     if (Array.isArray(value)) return value.some(hasValue);
@@ -428,6 +434,8 @@ class SfDataView extends HTMLElement {
 
     connectedCallback() {
         this.epoch += 1;
+        // The key reaches the table before its first paint.
+        this._applyPreferences();
         this._controller = new AbortController();
         const events = [
             ...Object.keys(EVENTS), "sf-table-search-change", "sf-table-filter-change",
@@ -570,7 +578,7 @@ class SfDataView extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["chrome", "row-cap", "aria-label", "size", ...LABEL_ATTRIBUTES];
+        return ["chrome", "row-cap", "aria-label", "size", "preferences-key", ...LABEL_ATTRIBUTES];
     }
 
     // The words of the table and the pagination the view draws itself, written
@@ -598,6 +606,7 @@ class SfDataView extends HTMLElement {
 
     attributeChangedCallback(name, previous, next) {
         if (previous === next || !this.isConnected) return;
+        if (name === "preferences-key") this._applyPreferences();
         this._renderProjection();
     }
 
@@ -746,8 +755,36 @@ class SfDataView extends HTMLElement {
         }));
     }
 
+    // The key the person's view of this list is kept under: the host names
+    // it (preferences-key, e.g. the collection). The table takes the same.
+    get preferencesKey() {
+        const key = this.getAttribute("preferences-key") || "";
+        return key ? viewPreferenceKey(key) : "";
+    }
+
+    // Before the first query: the person's sort and page size, so the rows
+    // come in their order the first time rather than after a click.
+    _applyPreferences() {
+        const key = this.preferencesKey;
+        if (key === this._preferencesApplied) return;
+        this._preferencesApplied = key;
+        const table = this.table;
+        if (table && key && !table.getAttribute("preferences-key")) table.setAttribute("preferences-key", this.getAttribute("preferences-key"));
+        const kept = key ? preferences()?.read(key) : null;
+        if (!kept) return;
+        if (Array.isArray(kept.sort) && !this.query.sort?.length) this.query.sort = copy(kept.sort);
+        if (Number.isInteger(kept.pageSize) && kept.pageSize > 0) this.query.per_page = kept.pageSize;
+    }
+
+    _keepPreference(patch) {
+        const key = this.preferencesKey;
+        if (!key) return;
+        preferences()?.write(key, {...(preferences()?.read(key) ?? {}), v: 1, ...patch});
+    }
+
     refresh(reason = "refresh") {
         if (!this.isConnected) return Promise.resolve(null);
+        this._applyPreferences();
         const sequence = ++this.sequence;
         this.pending = sequence;
         this._queryReason = reason;
@@ -1545,9 +1582,16 @@ class SfDataView extends HTMLElement {
         }
         if (event.type === "sf-table-search-change") return this.changeQuery({search: String(event.detail ?? "")}, "search");
         if (event.type === "sf-table-filter-change") return this.changeQuery({filters: copy(event.detail?.filters ?? event.detail?.values ?? event.detail ?? {})}, "filter");
-        if (event.type === "sf-table-sort-change") return this.changeQuery({sort: event.detail?.direction ? [copy(event.detail)] : []}, "sort");
+        if (event.type === "sf-table-sort-change") {
+            const sort = event.detail?.direction ? [copy(event.detail)] : [];
+            this._keepPreference({sort});
+            return this.changeQuery({sort}, "sort");
+        }
         if (event.type === "sf-page-change") return this.changeQuery({page: event.detail?.current}, "page-change");
-        if (event.type === "sf-page-size-change") return this.changeQuery({per_page: event.detail?.pageSize}, "page-size-change");
+        if (event.type === "sf-page-size-change") {
+            if (Number.isInteger(event.detail?.pageSize)) this._keepPreference({pageSize: event.detail.pageSize});
+            return this.changeQuery({per_page: event.detail?.pageSize}, "page-size-change");
+        }
         if (event.type === "sf-show-more") return this.changeQuery({page: this.query.page + 1}, "show-more");
         if (event.type === "sf-count-request") return this.count(event.detail?.reason ?? "total");
         if (event.type === "sf-table-column-settings-reset") return this.resetColumnSettings();

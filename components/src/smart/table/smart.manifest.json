@@ -227,7 +227,7 @@
       "remember-widths": {
         "type": "boolean",
         "default": false,
-        "description": "Remember the column widths in this browser (localStorage, under table-settings-key) for a table no host keeps settings for; a double click on a column's edge forgets that column's width."
+        "description": "Remember the column widths as a view preference (SF.Preferences, under preferences-key or table-settings-key) for a table no host keeps settings for; a double click on a column's edge forgets that column's width."
       },
       "table-settings-key": {
         "type": "string",
@@ -334,6 +334,11 @@
           "1"
         ],
         "description": "The step of the size ladder the table's controls and rows take: 1, or the dense 1/2 -- 32px controls, 14/20 text, rows of the step's height. A size of 1 written on an element the table draws becomes the table's."
+      },
+      "preferences-key": {
+        "type": "string",
+        "default": "",
+        "description": "The key this table's arrangement -- order, visibility, pinning, widths -- is kept under as a view preference (SF.Preferences, sf-table/<key>); a data view passes its own. Without it table-settings-key is used, and without either nothing is kept."
       }
     }
   },
@@ -1579,7 +1584,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "7b1f6e430c32052aa01e37c2ad4771fd62a0fb37bbead9ae09545fe06819ffc4"
+        "sha256": "9d20f34500bb12109570a236f7e119f39f4e5645998d4efe9b411d7ef0612d77"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
@@ -1587,7 +1592,7 @@
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "9db3671496663b81b4c5fd22f16526d692e82e50c60c553ef38f51c879ac1552"
+        "sha256": "0d8f05061e12565f8fcc61704bb1b571ac1cfdb8a1a1d01291c460e314426675"
       },
       {
         "path": "src/smart/helpers/option-badge.js",
@@ -1595,7 +1600,7 @@
       },
       {
         "path": "src/smart/table/rule.js",
-        "sha256": "0a64de44d28cf9bd0a64f3b807db3ff5ca27d651001c1b73c7ea249547ef5028"
+        "sha256": "40f2148692155d80ae852d297cd3337cc0e2242fa24d9b2a5bfc0615e40aada7"
       },
       {
         "path": "src/smart/table/docs/smart-table-guide.md",

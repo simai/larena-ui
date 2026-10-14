@@ -8,6 +8,7 @@ import {pageText} from "../../core/js/page-language";
 import {getParent, setParentSpace} from "../helpers/dom";
 import {setLoaderDragState} from "../helpers/loaderDragState";
 import BundledPosition from "../../core/js/position.js";
+import BundledPreferences from "../../core/js/preferences.js";
 
 // Sized for what they hold rather than for reading, so they take no floor.
 // Every word this table says, in the two languages the Framework speaks. The
@@ -18,6 +19,14 @@ import BundledPosition from "../../core/js/position.js";
 // switch in an admin shows (owner, 2026-10-10).
 //
 // An attribute still wins over both: a consumer who names a word names it.
+
+// SF.Preferences, the Framework's one store of view preferences (core
+// publishes it; this bundle's copy is the fallback).
+const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
+const tablePreferenceKey = (key) => `sf-table/${String(key).replace(/[^\w.:-]+/gu, "-")}`;
+const GENERAL_TABLE_PREFERENCE = "sf-table/*";
+const TABLE_VIEW_DEFAULTS = Object.freeze({density: "normal", stripes: false, lines: false, singleLine: false});
+
 const TABLE_TEXT = {
     en: {
         filterText: "Filter",
@@ -33,6 +42,17 @@ const TABLE_TEXT = {
         emptyText: "No data",
         errorText: "The data could not be loaded",
         retryText: "Try again",
+        settingsFieldsTab: "Fields",
+        settingsViewTab: "View",
+        viewDensity: "Rows",
+        viewDensityCompact: "Compact",
+        viewDensityNormal: "Normal",
+        viewDensitySpacious: "Spacious",
+        viewStripes: "Alternate rows",
+        viewLines: "Lines between columns",
+        viewSingleLine: "Text on one line",
+        viewEverywhere: "For all my tables",
+        viewReset: "Reset the view",
         resetSearchText: "Clear the search",
         resetFiltersText: "Reset the filters",
         resetBothText: "Reset the search and filters",
@@ -109,6 +129,17 @@ const TABLE_TEXT = {
         emptyText: "Нет данных",
         errorText: "Не удалось загрузить данные",
         retryText: "Повторить",
+        settingsFieldsTab: "Поля",
+        settingsViewTab: "Вид",
+        viewDensity: "Строки",
+        viewDensityCompact: "Компактно",
+        viewDensityNormal: "Обычно",
+        viewDensitySpacious: "Просторно",
+        viewStripes: "Чередовать строки",
+        viewLines: "Линии между столбцами",
+        viewSingleLine: "Текст в одну строку",
+        viewEverywhere: "Для всех моих таблиц",
+        viewReset: "Сбросить вид",
         resetSearchText: "Очистить поиск",
         resetFiltersText: "Сбросить фильтры",
         resetBothText: "Сбросить поиск и фильтры",
@@ -299,6 +330,8 @@ class SfTable extends SfBaseElement {
             // A table no host keeps settings for remembers its column widths in
             // this browser (owner, 2026-10-14), under table-settings-key.
             rememberWidths: {attribute: "remember-widths", type: Boolean, default: false},
+            // The key the arrangement is kept under as a view preference.
+            preferencesKey: {attribute: "preferences-key", default: ""},
             tableSettingsKey: {
                 attribute: "table-settings-key",
                 // Empty, because the effective default was never a string at all:
@@ -2840,6 +2873,11 @@ class SfTable extends SfBaseElement {
     // defaults of its own — it says the layer should go, and the host answers
     // with whatever it considers default for this view.
     requestColumnSettingsReset() {
+        // The person's arrangement goes from the preference too.
+        if (this.viewPreferenceKey) {
+            const {columnSettings, widths, ...rest} = preferences()?.read(this.viewPreferenceKey) ?? {};
+            preferences()?.write(this.viewPreferenceKey, rest);
+        }
         return this.dispatchTableEvent("sf-table-column-settings-reset", Object.freeze({
             target: "personal",
             tableSettingsKey: this.getTableSettingsKey?.() ?? null,
@@ -2847,6 +2885,9 @@ class SfTable extends SfBaseElement {
     }
 
     emitColumnSettingsChange(reason = "column-settings") {
+        if (reason !== "preferences" && this.viewPreferenceKey) {
+            this.writeTablePreference(this.viewPreferenceKey, {columnSettings: this.getColumnSettings()});
+        }
         const detail = {
             reason,
             columnSettings: this.getColumnSettings(),
@@ -4074,10 +4115,19 @@ class SfTable extends SfBaseElement {
                     position="${position || ""}"
             >
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
-                    <!-- One tab held one panel, so its title said only that the
-                         window is about fields, which the window already says.
-                         The search is here instead: a site can have hundreds of
-                         fields, and scrolling for one is not an answer. -->
+                    <!-- Two tabs (owner, 2026-10-14): the fields, and how the
+                         table looks for this person. -->
+                    <sf-tabs class="sf-table-settings-tabs" type="underline" size=${this.size === "1/2" ? "1/2" : "1"}
+                             items=${`${this.text('settingsFieldsTab')}|${this.text('settingsViewTab')}`}
+                             active-index=${this._settingsTab === 'view' ? '1' : '0'}
+                             @sf-tab-change=${(event) => {
+                                 event.stopPropagation();
+                                 this._settingsTab = event.detail?.current === 1 ? 'view' : 'fields';
+                                 this.requestComponentUpdate('settings-tab');
+                             }}></sf-tabs>
+                    ${this._settingsTab === 'view' ? this.renderTableViewSettings() : html`
+                    <!-- The search: a site can have hundreds of fields, and
+                         scrolling for one is not an answer. -->
                     <label class="sf-table-column-search flex flex-col">
                         <sf-input
                             size=${this.size}
@@ -4110,10 +4160,46 @@ class SfTable extends SfBaseElement {
                         <sf-button size=${this.size} @click="${() => this.restoreColumnSettingsOnOpen()}"
                                    appearance="outline" scheme="on-surface" root-class="flex-1"
                                    text="${this.text('resetText')}"></sf-button>
-                    </div>
+                    </div>`}
                 </div>
             </sf-context-menu>
         `;
+    }
+
+    // The gear's «Вид»: the rows' density as a radio list, three switches, and
+    // whether a change is for this table or for all the person's tables.
+    renderTableViewSettings() {
+        const view = this.tableView;
+        const size = this.size === "1/2" ? "1/2" : "1";
+        const everywhere = this._viewEverywhere === true;
+        const row = (label, control) => html`<div class="sf-table-settings-row">${control}<span>${label}</span></div>`;
+        const density = ["compact", "normal", "spacious"];
+        const label = {compact: "viewDensityCompact", normal: "viewDensityNormal", spacious: "viewDensitySpacious"};
+        const check = (field, text) => html`<label class="sf-table-settings-row" data-view-option=${field}>
+            <sf-checkbox size=${size} ?checked=${view[field] === true}
+                         @change=${(event) => this.setTableView({[field]: Boolean(event.target?.checked ?? event.detail?.checked)}, {everywhere})}></sf-checkbox>
+            <span>${this.text(text)}</span></label>`;
+        return html`
+            <div class="sf-table-view-settings flex flex-col flex-1 gap-1/3" data-table-view-settings>
+                <div class="sf-table-settings-heading">${this.text('viewDensity')}</div>
+                <div role="radiogroup" aria-label=${this.text('viewDensity')} class="flex flex-col">
+                    ${density.map((value) => html`<label class="sf-table-settings-row" data-view-density=${value}>
+                        <sf-radio size=${size} name=${`${this.getInstanceId()}-density`} value=${value} ?checked=${view.density === value}
+                                  @change=${() => this.setTableView({density: value}, {everywhere})}></sf-radio>
+                        <span>${this.text(label[value])}</span></label>`)}
+                </div>
+                ${check("stripes", "viewStripes")}
+                ${check("lines", "viewLines")}
+                ${check("singleLine", "viewSingleLine")}
+                ${this.viewPreferenceKey ? html`<div class="sf-table-settings-separator" role="separator"></div>
+                    ${row(this.text('viewEverywhere'), html`<sf-checkbox size=${size} data-view-everywhere ?checked=${everywhere}
+                        @change=${(event) => { this._viewEverywhere = Boolean(event.target?.checked ?? event.detail?.checked); this.requestComponentUpdate('view-everywhere'); }}></sf-checkbox>`)}` : nothing}
+            </div>
+            <div class="sf-table-context-bottom sf-context-menu-footer">
+                <sf-button size=${this.size} @click=${() => this.resetTableView()}
+                           appearance="outline" scheme="on-surface" root-class="flex-1"
+                           text=${this.text('viewReset')}></sf-button>
+            </div>`;
     }
 
     renderMainContextMenu(data) {
@@ -4505,38 +4591,125 @@ class SfTable extends SfBaseElement {
 
     // The browser's memory of the widths, for a table that asks for it with
     // remember-widths: no host keeps its settings, so a reload lost them.
+    // The widths are part of the table's view preference (SF.Preferences):
+    // under preferences-key, or with remember-widths under the table's own key.
     get rememberedWidthsKey() {
+        if (this.viewPreferenceKey) return this.viewPreferenceKey;
         if (!this.hasAttribute("remember-widths")) return "";
-        return `sf-table-widths:${this.getTableSettingsKey() || this.id || globalThis.location?.pathname || "table"}`;
+        return tablePreferenceKey(this.getTableSettingsKey() || this.id || globalThis.location?.pathname || "table");
     }
 
     readRememberedWidths() {
         const key = this.rememberedWidthsKey;
         if (!key) return {};
-        try {
-            const value = JSON.parse(globalThis.localStorage?.getItem(key) ?? "{}");
-            return value && typeof value === "object" ? value : {};
-        } catch {
-            return {};
-        }
+        const widths = preferences()?.read(key)?.widths;
+        return widths && typeof widths === "object" ? widths : {};
+    }
+
+    writeTablePreference(key, patch) {
+        if (!key) return;
+        preferences()?.write(key, {...(preferences()?.read(key) ?? {}), v: 1, ...patch});
     }
 
     rememberWidths(widths = {}) {
-        const key = this.rememberedWidthsKey;
-        if (!key) return;
-        try {
-            globalThis.localStorage?.setItem(key, JSON.stringify({...this.readRememberedWidths(), ...widths}));
-        } catch { /* a private window keeps nothing; the width still applies */ }
+        this.writeTablePreference(this.rememberedWidthsKey, {widths: {...this.readRememberedWidths(), ...widths}});
     }
 
     forgetRememberedWidth(column) {
-        const key = this.rememberedWidthsKey;
-        if (!key) return;
         const widths = this.readRememberedWidths();
         delete widths[column];
-        try {
-            globalThis.localStorage?.setItem(key, JSON.stringify(widths));
-        } catch { /* nothing to forget */ }
+        this.writeTablePreference(this.rememberedWidthsKey, {widths});
+    }
+
+    // How this person arranged this table -- order, visibility, pinning,
+    // widths (owner, 2026-10-14): kept under preferences-key (or the table's
+    // table-settings-key when the host names one), read before the first
+    // paint so the skeleton is already in that order, and written each time
+    // the person changes it.
+    get viewPreferenceKey() {
+        const key = this.getAttribute("preferences-key") || this.getAttribute("table-settings-key") || "";
+        return key ? tablePreferenceKey(key) : "";
+    }
+
+    applyTablePreference(value, {render = false} = {}) {
+        const kept = value?.columnSettings;
+        if (!kept || typeof kept !== "object") return false;
+        const next = this.mergeColumnSettings(this.getColumnSettings(), kept);
+        if (render) this.setColumnSettings(next, "preferences", false);
+        else this.state.columnSettings = next;
+        return true;
+    }
+
+    connectTablePreference() {
+        const key = this.viewPreferenceKey;
+        if (key === this._preferenceKeyBound) return;
+        this._preferenceUnsubscribe?.();
+        this._preferenceKeyBound = key;
+        this._preferenceUnsubscribe = null;
+        this.applyTableView();
+        if (!key) return;
+        this.applyTablePreference(preferences()?.read(key));
+        // The host's value, when it differs from this browser's, arrives later.
+        const own = preferences()?.subscribe(key, (value) => {
+            if (value) this.applyTablePreference(value, {render: true});
+            this.applyTableView();
+        });
+        const general = preferences()?.subscribe(GENERAL_TABLE_PREFERENCE, () => this.applyTableView());
+        this._preferenceUnsubscribe = () => { own?.(); general?.(); };
+    }
+
+    // How the table looks for this person (the gear's «Вид», owner
+    // 2026-10-14): density, alternate rows, lines between columns, text on
+    // one line. Their tables' preference (sf-table/*) lies under this table's.
+    get tableView() {
+        const key = this.viewPreferenceKey;
+        const general = preferences()?.read(GENERAL_TABLE_PREFERENCE)?.view ?? {};
+        const own = key ? preferences()?.read(key)?.view ?? {} : this._sessionView ?? {};
+        return {...TABLE_VIEW_DEFAULTS, ...general, ...own};
+    }
+
+    applyTableView() {
+        const view = this.tableView;
+        const flag = (name, on) => (on ? this.setAttribute(name, "") : this.removeAttribute(name));
+        if (view.density === "normal") this.removeAttribute("data-sf-view-density");
+        else this.setAttribute("data-sf-view-density", view.density);
+        flag("data-sf-view-stripes", view.stripes === true);
+        flag("data-sf-view-lines", view.lines === true);
+        flag("data-sf-view-single-line", view.singleLine === true);
+    }
+
+    // One option changed. «Для всех моих таблиц» writes it to the person's
+    // tables and takes it off this one, so this one follows them.
+    setTableView(patch = {}, {everywhere = false} = {}) {
+        const key = this.viewPreferenceKey;
+        if (everywhere || !key) {
+            if (everywhere) {
+                const general = preferences()?.read(GENERAL_TABLE_PREFERENCE) ?? {};
+                preferences()?.write(GENERAL_TABLE_PREFERENCE, {...general, v: 1, view: {...(general.view ?? {}), ...patch}});
+            }
+            if (key) {
+                const own = {...(preferences()?.read(key)?.view ?? {})};
+                for (const field of Object.keys(patch)) delete own[field];
+                this.writeTablePreference(key, {view: own});
+            } else if (!everywhere) {
+                this._sessionView = {...(this._sessionView ?? {}), ...patch};
+            }
+        } else {
+            this.writeTablePreference(key, {view: {...(preferences()?.read(key)?.view ?? {}), ...patch}});
+        }
+        this.applyTableView();
+        this.requestComponentUpdate("table-view");
+        this.dispatchTableEvent("sf-table-view-change", Object.freeze({view: this.tableView, everywhere}));
+        return this;
+    }
+
+    resetTableView() {
+        const key = this.viewPreferenceKey;
+        if (key) this.writeTablePreference(key, {view: {}});
+        this._sessionView = null;
+        this.applyTableView();
+        this.requestComponentUpdate("table-view");
+        return this;
     }
 
     // The remembered widths of the columns the table now has, as settings.
@@ -6224,6 +6397,9 @@ class SfTable extends SfBaseElement {
         this._responsiveObserver?.disconnect();
         this._responsiveObserver = null;
         this._responsiveWidth = 0;
+        this._preferenceUnsubscribe?.();
+        this._preferenceUnsubscribe = null;
+        this._preferenceKeyBound = undefined;
         this._lateLayoutAbort?.abort();
         this._lateLayoutAbort = null;
         cancelAnimationFrame(this._lateLayoutFrame ?? 0);
@@ -6346,6 +6522,7 @@ class SfTable extends SfBaseElement {
 
     beforeRender() {
         super.beforeRender();
+        this.connectTablePreference();
         this._checkboxMeasureToken++;
         this.refs.items = new Map();
     }

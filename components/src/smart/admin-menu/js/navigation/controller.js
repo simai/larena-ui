@@ -17,6 +17,7 @@
 import {closeMenu, openMenu, removeMenu, updateMenu} from "./menu";
 import {getInitials} from "../../../helpers/text";
 import {pageText} from "../../../../core/js/page-language";
+import BundledPreferences from "../../../../core/js/preferences.js";
 
 export const NAVIGATION_PORT = "simai.admin-navigation-port";
 
@@ -210,6 +211,12 @@ export const NAVIGATION_TEXT = {
 
 const copy = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
 
+
+// SF.Preferences, the Framework's one store of view preferences (core
+// publishes it; this bundle's copy is the fallback).
+const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
+const MENU_PREFERENCE = "sf-admin-menu/main";
+
 export class NavigationController {
     constructor(element, port) {
         this.element = element;
@@ -221,7 +228,9 @@ export class NavigationController {
         this.unfolded = new Set();
         this.filter = "";
         this.favouritesFolded = false;
-        this.compact = false;
+        // Folded as the person left it, from the first paint: the host's answer
+        // came after it, and the menu opened and then folded.
+        this.compact = preferences()?.read(MENU_PREFERENCE)?.compact === true;
         this.screen = "first";
         this.sequence = 0;
         this.sites = {open: false, query: "", items: [], next: null, loading: false, sequence: 0};
@@ -373,7 +382,9 @@ export class NavigationController {
             }
             this.status = "ready";
             this.message = "";
-            this.compact = Boolean(answer.person?.compact);
+            this.compact = typeof answer.person?.compact === "boolean"
+                ? answer.person.compact
+                : this.preference.compact === true;
             // An open root the new menu does not hold closes rather than showing
             // an empty column under a heading that no longer exists.
             if (this.openRoot && !this.roots().some((root) => root.key === this.openRoot)) {
@@ -505,21 +516,38 @@ export class NavigationController {
         return `sf-admin-menu:open-root:${this.navigation?.site?.current?.key ?? ""}`;
     }
 
+    // The menu's view preference (SF.Preferences, owner 2026-10-14): the
+    // root left open per site and whether the menu is folded to its rail, kept
+    // for the person with every other view preference.
+    get preference() {
+        return preferences()?.read(MENU_PREFERENCE) ?? {};
+    }
+
+    keepPreference(patch) {
+        preferences()?.write(MENU_PREFERENCE, {...this.preference, v: 1, ...patch});
+    }
+
     rememberedRoot() {
+        const roots = this.preference.openRoots ?? {};
+        const site = this.navigation?.site?.current?.key ?? "";
+        if (Object.prototype.hasOwnProperty.call(roots, site)) return roots[site] ?? "";
+        // What this browser kept before the standard, taken over once.
         try {
-            const value = globalThis.localStorage?.getItem(this.rootMemoryKey());
-            return value === null || value === undefined ? undefined : value;
+            const legacy = globalThis.localStorage?.getItem(this.rootMemoryKey());
+            if (legacy !== null && legacy !== undefined) {
+                this.rememberRoot(legacy);
+                globalThis.localStorage?.removeItem(this.rootMemoryKey());
+                return legacy;
+            }
         } catch {
-            return undefined;
+            // nothing kept
         }
+        return undefined;
     }
 
     rememberRoot(key) {
-        try {
-            globalThis.localStorage?.setItem(this.rootMemoryKey(), key ?? "");
-        } catch {
-            // A browser that keeps nothing shows the page's root, as before.
-        }
+        const site = this.navigation?.site?.current?.key ?? "";
+        this.keepPreference({openRoots: {...(this.preference.openRoots ?? {}), [site]: key ?? ""}});
     }
 
     back() {
@@ -583,6 +611,7 @@ export class NavigationController {
     async toggleCompact() {
         this.compact = !this.compact;
         if (this.compact) this.openRoot = null;
+        this.keepPreference({compact: this.compact});
         this.update("compact");
         if (this.offers("preferences")) await this.raise("preference.compact", {compact: this.compact});
         this.element.dispatchEvent(new CustomEvent("sf-admin-menu-compact-change", {

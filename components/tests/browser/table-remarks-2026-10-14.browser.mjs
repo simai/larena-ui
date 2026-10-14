@@ -192,7 +192,7 @@ try {
     await again.dblclick('#t thead th[data-key="name"] .sf-table-column-resizer');
     await again.waitForTimeout(500);
     const reset = await widthOf(again);
-    const stored = await again.evaluate(() => JSON.parse(localStorage.getItem('sf-table-widths:probe-widths') ?? '{}').name ?? null);
+    const stored = await again.evaluate(() => JSON.parse(localStorage.getItem('sf-pref:sf-table/probe-widths') ?? '{}').widths?.name ?? null);
     console.log(JSON.stringify({resize: {start, widened, kept, reset, stored}}));
     if (Math.abs(widened - (start + 60)) > 2 || Math.abs(kept - widened) > 2 || Math.abs(reset - start) > 2 || stored !== null) {
       note({case: 'column edge', got: {start, widened, kept, reset, stored}, expected: 'widened by the drag, kept on the next page, back and forgotten on a double click'});

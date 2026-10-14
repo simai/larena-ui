@@ -175,7 +175,9 @@ try {
           pressed: row.querySelector('[icon="push_pin"]')?.getAttribute('aria-pressed') ?? null,
           handle: Boolean(row.querySelector('[data-move]')),
         })),
-        tabs: document.querySelectorAll('sf-context-menu sf-tabs').length,
+        // The one-tab title went (2026-10-05); the two tabs «Поля» and «Вид»
+        // came (owner, 2026-10-14) and are the settings' own, counted apart.
+        tabs: document.querySelectorAll('sf-context-menu sf-tabs:not(.sf-table-settings-tabs)').length,
         search: Boolean(document.querySelector('sf-context-menu [name="sf_table_column_search"]')),
         pinnedByTable: document.getElementById('t').getPinnedColumnKeys?.() ?? null,
       };
