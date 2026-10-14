@@ -2164,8 +2164,10 @@ class SfTable extends SfBaseElement {
         // The skeleton and an empty or failed list say nothing about the content.
         if (table.querySelector('tbody[data-state]') || !table.querySelector('tbody tr td')) return false;
         const measured = new Map();
+        let whole = 0;
         table.classList.add('sf-table-measuring');
         try {
+            whole = table.getBoundingClientRect().width;
             for (const cell of table.querySelectorAll('thead th[data-key]')) {
                 const key = cell.dataset.key;
                 if (SYSTEM_COLUMN_KEYS.has(key)) continue;
@@ -2174,6 +2176,15 @@ class SfTable extends SfBaseElement {
         } finally {
             table.classList.remove('sf-table-measuring');
         }
+        // Room to spare: the content is narrower than the box. A fixed table
+        // shares the spare room between every column with a width, the box and
+        // the menu columns too, so a list of one data column showed it some
+        // 330px in, after two wide empty columns (Larena, 2026-10-14). The last
+        // data column is then left without a width and takes the spare room.
+        const box = table.parentElement?.clientWidth ?? 0;
+        const surplus = box > 0 && whole > 0 && whole < box;
+        const surplusChanged = surplus !== Boolean(this._contentSurplus);
+        this._contentSurplus = surplus;
         // A cell drawn by an element whose module is still on the way -- the
         // Loader brings parts when a page first uses them -- is empty when this
         // runs, and its column was measured a few pixels wide and kept so:
@@ -2184,7 +2195,7 @@ class SfTable extends SfBaseElement {
         const changed = measured.size !== previous.size
             || [...measured].some(([key, width]) => Math.abs((previous.get(key) ?? 0) - width) > 2);
         if (changed) this._contentWidths = measured;
-        return changed;
+        return changed || surplusChanged;
     }
 
     // In pixels, capped here rather than with min() in the column's width: a
@@ -2261,7 +2272,20 @@ class SfTable extends SfBaseElement {
     contentWidth(column) {
         const width = this._contentWidths?.get(column?.key);
         if (!width) return '';
+        if (this._contentSurplus && column?.key === this.spareRoomColumnKey()) return '';
         return `${Math.min(width, this.columnWidthCap())}px`;
+    }
+
+    // The column that takes the spare room: the last data column nobody sized.
+    spareRoomColumnKey() {
+        const columns = this.getColumns?.() ?? [];
+        for (let at = columns.length - 1; at >= 0; at -= 1) {
+            const column = columns[at];
+            if (!column?.key || SYSTEM_COLUMN_KEYS.has(column.key)) continue;
+            if (column.colWidth ?? column.width ?? column.size) return null;
+            return column.key;
+        }
+        return null;
     }
 
     get hasContentWidths() {

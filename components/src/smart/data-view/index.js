@@ -209,6 +209,11 @@ class SfDataView extends HTMLElement {
             :host { display: block; }
             [part="layout"] { display: grid; gap: var(--sf-space-3); }
             [part="toolbar"] { display: flex; flex-wrap: wrap; gap: var(--sf-space-2); }
+            /* Hidden means hidden: the toolbar's own display beat the hidden
+               attribute, and a related list in a record panel (chrome="")
+               showed the bare fallback search above its rows (Larena,
+               2026-10-14). */
+            [hidden] { display: none !important; }
             /* What the view is doing is announced, not laid out. It used to be
                a line above the table, which said "Нет данных" over a table
                whose own body says the same, and pushed everything down by its

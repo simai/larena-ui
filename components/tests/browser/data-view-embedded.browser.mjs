@@ -146,6 +146,12 @@ try {
       // chrome="" leaves out the two parts that draw themselves, and leaves the
       // status line, which is the one a broken load speaks through.
       embeddedToolbarHidden: shadow.querySelector('[part="toolbar"]')?.hidden ?? null,
+      // Hidden on the screen, not only in the attribute: the toolbar's own
+      // display beat it, and the bare search showed (Larena, 2026-10-14).
+      embeddedToolbarDrawn: (() => {
+        const bar = shadow.querySelector('[part="toolbar"]');
+        return bar ? getComputedStyle(bar).display !== 'none' : null;
+      })(),
       embeddedPagesHidden: shadow.querySelector('slot[name="pagination"]')?.hidden ?? null,
       embeddedStatusPresent: Boolean(shadow.querySelector('[part="status"]')),
       pageToolbarHidden: pageShadow.querySelector('[part="toolbar"]')?.hidden ?? null,
@@ -155,6 +161,9 @@ try {
   });
 
   const m = measured;
+  if (m.embeddedToolbarDrawn !== false) {
+    note({case: 'chrome="" draws no toolbar', got: m.embeddedToolbarDrawn, expected: 'the hidden toolbar takes no room on the screen'});
+  }
   if (m.asked.length !== 2) {
     note({case: 'every list with no port asks for one, once', got: m.asked,
       expected: 'two requests, one per element, raised at connection before any port was set'});

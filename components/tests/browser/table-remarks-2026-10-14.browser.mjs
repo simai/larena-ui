@@ -86,6 +86,27 @@ try {
     await page.close();
   }
 
+  // 1b. A list of one data column: the spare room goes to that column, not to
+  //     the box and menu columns (Larena, 2026-10-14: «Название» began some
+  //     330px in).
+  {
+    const page = await open('1/2');
+    const offset = await page.evaluate(async () => {
+      const table = document.getElementById('t');
+      table.setColumns([{key: 'name', label: 'Название'}]);
+      table.setRows([{id: '1', name: 'Раздел', actions: ['view']}, {id: '2', name: 'Другой раздел', actions: ['view']}]);
+      await new Promise((done) => setTimeout(done, 800));
+      const grid = document.querySelector('#t table').getBoundingClientRect();
+      const name = document.querySelector('#t thead th[data-key="name"]').getBoundingClientRect();
+      return {start: Math.round(name.left - grid.left), width: Math.round(name.width), table: Math.round(grid.width)};
+    });
+    console.log(JSON.stringify({offset}));
+    if (offset.start > 160 || offset.width < offset.table / 2) {
+      note({case: 'one data column', got: offset, expected: 'the data column near the start, holding the spare room'});
+    }
+    await page.close();
+  }
+
   // 2. A loading row is as tall as the row it stands for.
   {
     const page = await open('1/2');
