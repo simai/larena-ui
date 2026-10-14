@@ -8,18 +8,18 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
 // The free Framework release and the Larena components package built over it, pinned together.
-assert($lock->pairId() === 'ui-86580e83da1b-larena-b51fe8e5b4cb');
-assert($lock->frameworkId() === 'ui-86580e83da1b');
-assert($lock->larenaId() === 'larena-b51fe8e5b4cb');
+assert($lock->pairId() === 'ui-a362f55f864c-larena-62e1529eef47');
+assert($lock->frameworkId() === 'ui-a362f55f864c');
+assert($lock->larenaId() === 'larena-62e1529eef47');
 assert($lock->toArray()['larena']['requires_framework'] === $lock->frameworkId());
 assert($lock->toArray()['larena']['repository'] === 'simai/larena-ui' && $lock->toArray()['larena']['package_path'] === 'components');
-assert($lock->bundleId() === 'ui-86580e83da1b-larena-b51fe8e5b4cb-registry-105578bb-exact-git-tree-v2');
+assert($lock->bundleId() === 'ui-a362f55f864c-larena-62e1529eef47-registry-28a4dfb8-exact-git-tree-v2');
 assert($lock->uiBase() === 'ui/distr/' && $lock->smartBase() === 'ui/distr/smart/' && $lock->larenaBase() === 'larena/smart/');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->frameworkId());
-assert(($registry['file_sha256'] ?? null) === '105578bb5862bd5d7bd5c4c658bf2b7a2357c3c8a21650310507939b6ba77a48');
+assert(($registry['file_sha256'] ?? null) === '28a4dfb896fa64b358bf901708e336601f3c733b53ae62cb96a39e600f8b71fb');
 
 $expectation = $lock->publicationExpectation();
 assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact.v1');
@@ -28,24 +28,24 @@ assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());
 assert($expectation['sources'] === [
     [
-        'commit' => '86580e83da1b4d4a049cf8a02727e5607aefeeee',
+        'commit' => 'a362f55f864c59f56dcdaacddaf2188730fab9e7',
         'tree' => 'distr',
         'mount' => 'ui',
-        'archive_sha256' => 'abb2d208f3282f8a2d2e17d8270eede23e35d10cd53c0425d0fc7cb5827ef874',
+        'archive_sha256' => '4c70a03f6e43efc06049fe02c63d5e80199e45cdad5b2213d995f1c805ba82d5',
         'files' => 8089,
     ],
     [
-        'commit' => 'b51fe8e5b4cb0a2eba1dcb664dfdf57e782f039f',
+        'commit' => '62e1529eef470372ae861f8ad08fc9150b108f2c',
         'tree' => 'smart',
         'mount' => 'larena',
-        'archive_sha256' => '5826b1f7923827dc05b2cffee47b983c102c73f368ea03d58f859b87d2f51923',
+        'archive_sha256' => '0a2bb0a12670d1c9d5ecf68b49d87d40683eb548e872ef77703ec247e067a662',
         'files' => 62,
     ],
     [
-        'commit' => 'c6513a6c77e3b88cba8d3953f89ef87488afac63',
+        'commit' => '612add2af09276d75ac45b604aab8d11576df93e',
         'tree' => 'contracts/generated',
         'mount' => 'contract',
-        'archive_sha256' => '8d7d0919e86e5ee39e95f31037a2235279b2c576f4b2b38ca5cba947e794ff8b',
+        'archive_sha256' => 'd331eee69b0006c733b4cba58b62c348e11aaab8255894e45ec358b37f351c86',
         'files' => 2,
     ],
 ]);
@@ -88,10 +88,10 @@ assert($sources[0]['repository'] === '/tmp/ui');
 assert($sources[1]['repository'] === '/tmp/package-larena.tar');
 assert($sources[2] === [
     'repository' => '/tmp/ui',
-    'commit' => 'c6513a6c77e3b88cba8d3953f89ef87488afac63',
+    'commit' => '612add2af09276d75ac45b604aab8d11576df93e',
     'tree' => 'contracts/generated',
     'mount' => 'contract',
-    'sha256' => '8d7d0919e86e5ee39e95f31037a2235279b2c576f4b2b38ca5cba947e794ff8b',
+    'sha256' => 'd331eee69b0006c733b4cba58b62c348e11aaab8255894e45ec358b37f351c86',
 ]);
 
 foreach ([
