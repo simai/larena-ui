@@ -145,7 +145,8 @@ try {
   });
   if (strip.icons !== 0 || strip.tag !== 'BUTTON' || strip.cursor !== 'col-resize'
       || strip.width < 8 || strip.width > 12 || Math.abs(strip.offEdge) > 1
-      || !strip.label?.startsWith('Изменить ширину столбца') || strip.keys !== 'ArrowLeft ArrowRight') {
+      // The keys of the Framework's resize gesture since 2026-10-14.
+      || !strip.label?.startsWith('Изменить ширину столбца') || strip.keys !== 'ArrowLeft ArrowRight Home End Enter') {
     note({case: 'resize strip', got: strip, expected: 'no handle; a strip of 8-12px on the edge, named, with the arrows'});
   }
 
