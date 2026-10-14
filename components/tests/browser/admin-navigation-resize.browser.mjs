@@ -42,7 +42,7 @@ const NAVIGATION = {
       {key: 'cms', kind: 'page', level: 'site', label: 'Минимальная CMS', icon: 'table', href: '/admin/cms'},
     ]},
   ],
-  person: {name: 'Administrator', theme: 'dark', language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
+  person: {name: 'Administrator', theme: 'dark', links: [{label: 'Безопасность учётной записи', icon: 'shield', href: '/admin/security'}], language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
   profiles: {current: 'regular', list: [{key: 'regular', label: 'Обычный', kind: 'shared'}]},
   site: {current: {key: 'main', label: 'Main site'}, count: 1},
 };
@@ -101,12 +101,21 @@ try {
     const menu = document.querySelector('sf-context-menu[data-sf-admin-nav-menu]');
     const rows = [...(menu?.querySelectorAll('.sf-context-menu-item') ?? [])];
     const row = rows.find((item) => item.querySelector('.sf-context-menu-item-label')?.textContent.trim() === 'Тема');
+    const labels = [...(menu?.querySelectorAll('.sf-context-menu-item-label, .sf-context-menu-item-value') ?? [])];
+    const surface = menu?.querySelector('.sf-context-menu-content')?.getBoundingClientRect();
     return {
+      width: surface ? Math.round(surface.width) : null,
+      button: Math.round(person?.getBoundingClientRect().width ?? 0),
+      cut: labels.filter((label) => label.scrollWidth > label.clientWidth + 1).map((label) => label.textContent.trim()),
       choice: Boolean(menu?.querySelector('.sf-context-menu-choice')),
       row: Boolean(row), value: row?.querySelector('.sf-context-menu-item-value')?.textContent.trim() ?? null,
       submenu: row?.getAttribute('aria-haspopup') ?? null,
     };
   });
+  // At least the button's width, and no line cut short.
+  if (theme.width === null || theme.width < theme.button - 1 || theme.cut.length) {
+    note({case: 'the profile menu is at least as wide as its button and cuts no line', got: theme});
+  }
   if (theme.choice || !theme.row || theme.value !== 'Тёмная' || theme.submenu !== 'menu') {
     note({case: 'the theme is a row with a submenu', got: theme});
   }

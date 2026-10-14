@@ -45,7 +45,16 @@ export async function openMenu(controller, anchor, {label, entries, select, side
     controller._menuSearch = onSearch;
     controller._menuClose = onClose;
     controller._menuAnchor = anchor;
-    return menu.openFor(anchor, {side, align, width});
+    // "trigger" here is at least the button's width and wider when a line
+    // needs it: exactly the button's width cut «Безопасность учётной записи»
+    // and «Профиль меню» in the profile menu (Larena, 2026-10-14). The floor is
+    // the menu's own minimum, so the shared menu gives it back for the next.
+    if (width === "trigger") {
+        menu.style.setProperty("--sf-context-menu--min-inline-size", `${Math.round(anchor.getBoundingClientRect().width)}px`);
+    } else {
+        menu.style.removeProperty("--sf-context-menu--min-inline-size");
+    }
+    return menu.openFor(anchor, {side, align, width: "content"});
 }
 
 // Whether the shared menu is open for this anchor now.

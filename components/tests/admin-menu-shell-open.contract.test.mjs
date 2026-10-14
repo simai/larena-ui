@@ -16,7 +16,9 @@ test('the profile menu and the site switcher open as wide as their button', asyn
   const controller = await read('src/smart/admin-menu/js/navigation/controller.js');
   assert.match(controller, /width: this\.compact \? "content" : "trigger",/u);
   const menu = await read('src/smart/admin-menu/js/navigation/menu.js');
-  assert.match(menu, /menu\.openFor\(anchor, \{side, align, width\}\)/u);
+  // At least the button's width, wider when a line needs it (2026-10-14).
+  assert.match(menu, /menu\.style\.setProperty\("--sf-context-menu--min-inline-size", `\$\{Math\.round\(anchor\.getBoundingClientRect\(\)\.width\)\}px`\)/u);
+  assert.match(menu, /menu\.openFor\(anchor, \{side, align, width: "content"\}\)/u);
   const styles = await read('src/smart/admin-menu/js/navigation/navigation.css');
   assert.doesNotMatch(styles, /--sf-context-menu--min-inline-size: var\(--sf-f8\)/u);
 });

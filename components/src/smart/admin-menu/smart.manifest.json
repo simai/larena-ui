@@ -821,7 +821,7 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/menu.js",
-        "sha256": "e360cc758a47418eb62ece3bb22d0c669e5cf030d208ca01bdb1acfbddaf1323"
+        "sha256": "2aae43917ea2de31b6837d96e782d31197eb5b74952d349a75480691784d40a2"
       },
       {
         "path": "src/component/admin-menu/scss/_css__admin_menu.scss",
