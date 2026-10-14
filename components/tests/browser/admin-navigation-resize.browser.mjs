@@ -47,7 +47,7 @@ const NAVIGATION = {
   site: {current: {key: 'main', label: 'Main site'}, count: 1},
 };
 
-const open = async () => {
+const open = async (person = {}) => {
   const page = await context.newPage();
   page.on('pageerror', (error) => console.error('pageerror', error.message));
   await page.goto('http://probe.test/');
@@ -56,14 +56,16 @@ const open = async () => {
   for (const path of modules) await page.addScriptTag({path, type: 'module'}).catch(() => {});
   await page.waitForFunction(() => customElements.get('sf-admin-menu') && customElements.get('sf-resizer'), null, {timeout: 8000});
   await page.evaluate((navigation) => {
+    window.raised = [];
     document.getElementById('m').setHostPort({
       port: 'simai.admin-navigation-port', version: '1.0.0', capabilities: ['preferences', 'menu-profiles'],
-      async raise(intent) {
+      async raise(intent, payload) {
+        window.raised.push({intent, payload: structuredClone(payload)});
         if (intent === 'navigation.load') return structuredClone(navigation);
         return {answer: 'applied'};
       },
     });
-  }, NAVIGATION);
+  }, {...NAVIGATION, person: {...NAVIGATION.person, ...person}});
   await page.waitForTimeout(900);
   return page;
 };
@@ -91,6 +93,9 @@ try {
     await page.waitForTimeout(100);
     widened = await page.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
     if (widened !== before.first + 48) note({case: 'a drag widens the first column', got: {before: before.first, widened}});
+    // The width is the person's: the host is told, to keep it.
+    const told = await page.evaluate(() => window.raised.filter((one) => one.intent === 'preference.widths').map((one) => one.payload));
+    if (told.length !== 1 || told[0]?.widths?.first !== widened) note({case: 'the host keeps the width', got: told, expected: {widths: {first: widened}}});
   }
 
   // The theme is a row with a submenu.
@@ -144,7 +149,12 @@ try {
     note({case: 'a narrow column: the profile menu grows to its longest line', got: narrow});
   }
   console.log(JSON.stringify({narrow}));
-  console.log(JSON.stringify({before, widened, theme, kept, reset}));
+  // A width the host keeps for the person wins over this browser's memory.
+  const third = await open({widths: {first: 320}});
+  const personal = await third.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
+  if (personal !== 320) note({case: "the person's width wins", got: personal, expected: 320});
+  await third.close();
+  console.log(JSON.stringify({before, widened, theme, kept, reset, personal}));
 } finally {
   await browser.close();
 }

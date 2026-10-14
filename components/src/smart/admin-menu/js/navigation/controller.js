@@ -235,6 +235,8 @@ export class NavigationController {
         this.edit = {on: false, renaming: null, adding: null, rowMenu: null, profiles: false, naming: null, message: ""};
         this._onSortableIntent = (event) => this.onSortableIntent(event);
         element.addEventListener("sf-sortable-intent", this._onSortableIntent);
+        this._onResize = (event) => this.onColumnResize(event);
+        element.addEventListener("sf-resize", this._onResize);
 
         this.wideMedia = typeof globalThis.matchMedia === "function"
             ? globalThis.matchMedia(WIDE_MEDIA_QUERY)
@@ -278,6 +280,7 @@ export class NavigationController {
         removeMenu(this);
         clearTimeout(this._paletteTimer);
         this.element.removeEventListener("sf-sortable-intent", this._onSortableIntent);
+        this.element.removeEventListener("sf-resize", this._onResize);
         this.wideMedia?.removeEventListener?.("change", this._onWideChange);
         document.removeEventListener("pointerdown", this._onDocumentPointer, true);
         document.removeEventListener("keydown", this._onKeyDown, true);
@@ -682,6 +685,20 @@ export class NavigationController {
 
     // Applied at once through the Framework's own theme switch, which every page
     // on the Framework already answers; the host keeps it for the next page.
+    // A column's width is the person's, as the theme is (owner, 2026-10-14):
+    // kept by the host with preference.widths when it keeps preferences, so it
+    // is the same on any computer; the browser keeps it too, for a host that
+    // does not. A reset sends null: the column's own width again.
+    async onColumnResize(event) {
+        const phase = event.detail?.phase;
+        const column = /^admin-nav-(first|second)$/u.exec(event.target?.getAttribute?.("storage-key") ?? "")?.[1];
+        if (!column || (phase !== "end" && phase !== "reset") || !this.navigation?.person) return;
+        const width = phase === "reset" ? null : Math.round(Number(event.detail?.width) || 0) || null;
+        const widths = {...(this.navigation.person.widths ?? {}), [column]: width};
+        this.navigation = {...this.navigation, person: {...this.navigation.person, widths}};
+        if (this.offers("preferences")) await this.raise("preference.widths", {widths});
+    }
+
     async chooseTheme(theme) {
         globalThis.SF?.Loader?.setTheme?.(theme);
         this.navigation = {...this.navigation, person: {...this.navigation.person, theme}};

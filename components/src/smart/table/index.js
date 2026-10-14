@@ -288,6 +288,9 @@ class SfTable extends SfBaseElement {
                 // changes nothing for anyone who does not ask.
                 default: 1,
             },
+            // A table no host keeps settings for remembers its column widths in
+            // this browser (owner, 2026-10-14), under table-settings-key.
+            rememberWidths: {attribute: "remember-widths", type: Boolean, default: false},
             tableSettingsKey: {
                 attribute: "table-settings-key",
                 // Empty, because the effective default was never a string at all:
@@ -448,9 +451,6 @@ class SfTable extends SfBaseElement {
         this.contextEvent = this.contextEvent.bind(this);
         this.hoverEvents = this.hoverEvents.bind(this);
         this.outEvent = this.outEvent.bind(this);
-        this.onColumnResizePointerDown = this.onColumnResizePointerDown.bind(this);
-        this.onColumnResizePointerMove = this.onColumnResizePointerMove.bind(this);
-        this.onColumnResizePointerUp = this.onColumnResizePointerUp.bind(this);
         this._contextEventBound = false;
         this._hoverEventBound = false;
         this._columnResizeEventBound = false;
@@ -4374,24 +4374,140 @@ class SfTable extends SfBaseElement {
         this._hoverEventBound = false;
     }
 
+    // A column's edge is the Framework's resize gesture (SF.Resizer.attach,
+    // owner 2026-10-14) -- the same drag, keys and double click as a panel's
+    // edge: the table says what the width is the width of and keeps it in the
+    // column settings, as it did.
     bindColumnResizeEvent() {
-        if (this._columnResizeEventBound) return;
-
         const table = this.refs.table?.value;
-        if (!table) return;
-
-        table.addEventListener('pointerdown', this.onColumnResizePointerDown);
-        this._columnResizeEventBound = true;
+        if (!table || this._columnResizeTable === table) return;
+        const attach = globalThis.SF?.Resizer?.attach;
+        if (typeof attach !== 'function') {
+            globalThis.SF?.Loader?.ensureSmartElementLoaded?.('sf-resizer');
+            customElements.whenDefined('sf-resizer').then(() => { if (this.isConnected) this.bindColumnResizeEvent(); });
+            return;
+        }
+        this._columnResizeDetach?.();
+        this._columnResizeTable = table;
+        this._columnResizeDetach = attach(table, {
+            handles: '.sf-table-column-resizer',
+            session: (handle) => this.columnResizeSession(handle),
+        });
     }
 
     unbindColumnResizeEvent() {
-        if (!this._columnResizeEventBound) {
-            return;
-        }
+        this._columnResizeDetach?.();
+        this._columnResizeDetach = null;
+        this._columnResizeTable = null;
+    }
 
+    columnResizeSession(handle) {
+        const th = handle?.closest?.('th');
+        const key = th?.dataset?.key;
+        const column = key ? this.getColumns().find((item) => item?.key === key) : null;
+        if (!th || !column || column.system || column.resizable === false) return null;
         const table = this.refs.table?.value;
-        table?.removeEventListener('pointerdown', this.onColumnResizePointerDown);
-        this._columnResizeEventBound = false;
+        const col = table?.querySelector(`col[data-key="${this.escapeColumnKey(key)}"]`);
+        const state = {key, th, col, frozenWidths: null, dragging: false};
+        const clear = () => {
+            this._columnResizeState = null;
+            th.style.width = '';
+        };
+        return {
+            measure: () => th.getBoundingClientRect().width,
+            limits: () => {
+                const {minWidth, maxWidth} = this.getColumnResizeLimits(column, th.getBoundingClientRect().width);
+                return {min: minWidth, max: maxWidth};
+            },
+            direction: () => (table && getComputedStyle(table).direction === 'rtl' ? -1 : 1),
+            step: this.resolveCssLength(getComputedStyle(this).getPropertyValue('--sf-space-1'), 16),
+            start: () => {
+                state.dragging = true;
+                this._columnResizeState = state;
+                setLoaderDragState(true);
+                document.documentElement.classList.add('sf-table-column-resizing');
+            },
+            apply: (width) => {
+                state.frozenWidths ??= this.freezeColumnsWidthForResize(table);
+                this._columnResizeState = state;
+                if (col) col.style.width = `${width}px`;
+                th.style.width = `${width}px`;
+                // The line is placed from the cell's own edge, so it moves in the
+                // same frame the edge does.
+                this.showColumnResizeGuide(th);
+                return width;
+            },
+            commit: (width) => {
+                const frozen = state.frozenWidths ?? {};
+                clear();
+                this.applyColumnResizeWidths(key, width, frozen);
+            },
+            end: () => {
+                document.documentElement.classList.remove('sf-table-column-resizing');
+                setLoaderDragState(false);
+                this.suppressNextHeaderClick();
+                this.outEvent({target: th});
+                clear();
+            },
+            // Back to the width the column has by itself: its content's, or
+            // the one the host declared.
+            reset: () => {
+                clear();
+                this.resetColumnWidth(key);
+            },
+        };
+    }
+
+    // The browser's memory of the widths, for a table that asks for it with
+    // remember-widths: no host keeps its settings, so a reload lost them.
+    get rememberedWidthsKey() {
+        if (!this.hasAttribute("remember-widths")) return "";
+        return `sf-table-widths:${this.getTableSettingsKey() || this.id || globalThis.location?.pathname || "table"}`;
+    }
+
+    readRememberedWidths() {
+        const key = this.rememberedWidthsKey;
+        if (!key) return {};
+        try {
+            const value = JSON.parse(globalThis.localStorage?.getItem(key) ?? "{}");
+            return value && typeof value === "object" ? value : {};
+        } catch {
+            return {};
+        }
+    }
+
+    rememberWidths(widths = {}) {
+        const key = this.rememberedWidthsKey;
+        if (!key) return;
+        try {
+            globalThis.localStorage?.setItem(key, JSON.stringify({...this.readRememberedWidths(), ...widths}));
+        } catch { /* a private window keeps nothing; the width still applies */ }
+    }
+
+    forgetRememberedWidth(column) {
+        const key = this.rememberedWidthsKey;
+        if (!key) return;
+        const widths = this.readRememberedWidths();
+        delete widths[column];
+        try {
+            globalThis.localStorage?.setItem(key, JSON.stringify(widths));
+        } catch { /* nothing to forget */ }
+    }
+
+    // The remembered widths of the columns the table now has, as settings.
+    restoreRememberedWidths() {
+        const widths = this.readRememberedWidths();
+        const keys = new Set((this.getColumns?.() ?? []).map((column) => column?.key));
+        const patch = Object.fromEntries(Object.entries(widths)
+            .filter(([column, width]) => keys.has(column) && typeof width === "string")
+            .map(([column, width]) => [column, {width}]));
+        if (Object.keys(patch).length) this.patchColumnSettingsBatch(patch, "column-widths-restore");
+    }
+
+    resetColumnWidth(key) {
+        if (!key) return this;
+        this.forgetRememberedWidth(key);
+        return this.patchColumnSettingsBatch({[key]: {width: null}}, 'column-resize-reset');
     }
 
     // A heading is dragged with the Framework's sortable in its column mode
@@ -4530,45 +4646,6 @@ class SfTable extends SfBaseElement {
         };
     }
 
-    resizeColumnByKeyboard(event, key) {
-        if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) {
-            return;
-        }
-
-        const table = this.refs.table?.value;
-        const escapedKey = this.escapeColumnKey(key);
-        const th = table?.querySelector(`th[data-key="${escapedKey}"]`);
-        const column = this.getColumns().find((item) => item?.key === key);
-
-        if (!th || !column || column.system || column.resizable === false) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        const currentWidth = th.getBoundingClientRect().width;
-        const {minWidth, maxWidth} = this.getColumnResizeLimits(column, currentWidth);
-        const step = this.resolveCssLength(
-            getComputedStyle(this).getPropertyValue('--sf-space-1'),
-            1,
-        );
-        const direction = getComputedStyle(table).direction === 'rtl' ? -1 : 1;
-        const keyDirection = event.key === 'ArrowRight' ? 1 : -1;
-        const nextWidth = Math.min(
-            Math.max(currentWidth + step * direction * keyDirection, minWidth),
-            maxWidth,
-        );
-
-        this.applyColumnResizeWidths(key, nextWidth);
-        requestAnimationFrame(() => {
-            // The strip is a button itself, so it is the focus target; it used
-            // to be the inner control of an icon button.
-            this.querySelector(`th[data-key="${escapedKey}"] .sf-table-column-resizer`)?.focus?.();
-            this.showColumnResizeGuide(th);
-        });
-    }
-
     hasColumnSize(column = {}) {
         return [
             column.colWidth,
@@ -4634,6 +4711,7 @@ class SfTable extends SfBaseElement {
             ...(frozenWidths || {}),
             [key]: `${Math.round(width)}px`,
         };
+        this.rememberWidths(nextWidths);
         const settingsPatch = Object.fromEntries(
             Object.entries(nextWidths).map(([columnKey, columnWidth]) => [
                 columnKey,
@@ -4779,122 +4857,6 @@ class SfTable extends SfBaseElement {
         );
         this.hideColumnResizeGuide();
         this.measurePinnedColumns();
-    }
-
-    onColumnResizePointerDown(event) {
-        const handle = this.getColumnResizeHandle(event.target);
-
-        if (!handle) {
-            return;
-        }
-
-        const th = handle.closest('th');
-        const key = th?.dataset?.key;
-
-        if (!th || !key) {
-            return;
-        }
-
-        const column = this.getColumns().find((item) => item?.key === key);
-
-        if (!column || column.system || column.resizable === false) {
-            return;
-        }
-
-        const table = this.refs.table?.value;
-        const escapedKey = this.escapeColumnKey(key);
-        const col = table?.querySelector(`col[data-key="${escapedKey}"]`);
-        const startWidth = th.getBoundingClientRect().width;
-        const limits = this.getColumnResizeLimits(column, startWidth);
-        const frozenWidths = this.freezeColumnsWidthForResize(table);
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        this._columnResizeState = {
-            key,
-            th,
-            col,
-            startX: event.clientX,
-            startWidth,
-            width: startWidth,
-            frozenWidths,
-            ...limits,
-        };
-
-        // this.setColumnResizeClasses(th);
-        setLoaderDragState(true);
-        document.documentElement.classList.add('sf-table-column-resizing');
-        document.addEventListener('pointermove', this.onColumnResizePointerMove);
-        document.addEventListener('pointerup', this.onColumnResizePointerUp, {
-            once: true,
-        });
-        document.addEventListener('pointercancel', this.onColumnResizePointerUp, {
-            once: true,
-        });
-    }
-
-    onColumnResizePointerMove(event) {
-        const state = this._columnResizeState;
-
-        if (!state) {
-            return;
-        }
-
-        const delta = event.clientX - state.startX;
-        state.width = Math.min(
-            Math.max(state.startWidth + delta, state.minWidth),
-            state.maxWidth,
-        );
-        state.delta = delta;
-
-        if (state.frame) {
-            return;
-        }
-
-        state.frame = requestAnimationFrame(() => {
-            state.frame = null;
-
-            // this.setColumnResizeClasses(state.th, state.delta);
-
-            if (state.col) {
-                state.col.style.width = `${state.width}px`;
-            }
-
-            state.th.style.width = `${state.width}px`;
-            // The line is placed from the cell's own edge, so it has to be
-            // placed again in the same frame the edge moved in. Without this it
-            // stayed where the drag began while the header moved away from it.
-            this.showColumnResizeGuide(state.th);
-        });
-    }
-
-    onColumnResizePointerUp() {
-        const state = this._columnResizeState;
-
-        document.removeEventListener('pointermove', this.onColumnResizePointerMove);
-        document.removeEventListener('pointerup', this.onColumnResizePointerUp);
-        document.removeEventListener('pointercancel', this.onColumnResizePointerUp);
-        document.documentElement.classList.remove('sf-table-column-resizing');
-
-        if (!state) {
-            return;
-        }
-
-        setLoaderDragState(false);
-        this.suppressNextHeaderClick();
-        // this.clearColumnResizeClasses(state.th);
-        this._columnResizeState = null;
-        this.outEvent({
-            target: state.th,
-        });
-        state.th.style.width = '';
-
-        this.applyColumnResizeWidths(
-            state.key,
-            state.width,
-            state.frozenWidths,
-        );
     }
 
     bindContextEvent() {
@@ -5937,12 +5899,14 @@ class SfTable extends SfBaseElement {
         const nextColumns =
             typeof columns === "function" ? columns(currentColumns) : columns;
 
-        return this.setTableData(
+        const result = this.setTableData(
             {
                 columns: Array.isArray(nextColumns) ? nextColumns : [],
             },
             reason,
         );
+        if (this.rememberedWidthsKey) this.restoreRememberedWidths();
+        return result;
     }
 
     addColumns(columns = []) {
@@ -6170,7 +6134,6 @@ class SfTable extends SfBaseElement {
         this.unBindHoverEvent();
         this.unbindColumnResizeEvent();
         this.unbindColumnDragEvent();
-        this.onColumnResizePointerUp();
         this.tempSettings = null;
         this._selectionPortKey = "[]";
         // A removed table abandons its pending answer; a remount asks again.

@@ -163,7 +163,9 @@ function renderCollapse(context) {
 function renderResizer(context, column) {
     if (!context.wide || (column === "first" && context.compact)) return nothing;
     const limits = column === "first" ? {min: "13rem", max: "24rem"} : {min: "13rem", max: "28rem"};
-    return html`<sf-resizer min=${limits.min} max=${limits.max}
+    // The width the host keeps for the person, when it does.
+    const kept = context.navigation?.person?.widths?.[column];
+    return html`<sf-resizer min=${limits.min} max=${limits.max} value=${kept ? String(kept) : nothing}
         property=${`--sf-admin-nav-${column}--inline-size`} storage-key=${`admin-nav-${column}`}
         label=${context.text(column === "first" ? "menuWidth" : "columnWidth")}></sf-resizer>`;
 }

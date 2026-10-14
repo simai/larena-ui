@@ -801,7 +801,7 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/template.js",
-        "sha256": "d6087d8e2bd2ff9d2c5e11d70bfdde6a81448ea302ac854e7c2c7ea996509401"
+        "sha256": "0647c4503a258d160212045e4548acb857272c1f23a53c7de2aff9dfebd49c0a"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/palette.js",
@@ -817,7 +817,7 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/controller.js",
-        "sha256": "c2d80efa151a828955590ccfd837f004f42c70f3fff1aef9d80867c7ad433bdd"
+        "sha256": "4af2e7c3924420d62d4ef47cf53ee1e6b5376ef6d6d88eff85b8083fffed8c81"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/menu.js",

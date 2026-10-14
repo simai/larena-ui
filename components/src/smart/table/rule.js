@@ -27,6 +27,8 @@ SF.RuleLoader["cl-table"] = {
     { name: "cl-context-menu", lazy: true },
     // The windows' lists are reordered with sf-sortable (owner, 2026-10-13).
     { name: "cl-sortable", lazy: true },
+    // A column's edge is the Framework's resize gesture (owner, 2026-10-14).
+    { name: "cl-resizer", lazy: true },
     { name: "cl-avatar" },
     { name: "cl-badges" },
     { name: "cl-list-item" },

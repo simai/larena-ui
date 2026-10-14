@@ -44,6 +44,7 @@
       "smart.modal",
       "smart.pagination",
       "smart.range-slider",
+      "smart.resizer",
       "smart.spinner",
       "smart.tags"
     ],
@@ -221,6 +222,11 @@
         "maximum": 4,
         "default": 1,
         "description": "How many columns the settings menu splits its items into. One until a host asks for more: the read was bare for the whole life of this input, so neither its declared default nor a value a host passed ever reached the menu."
+      },
+      "remember-widths": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remember the column widths in this browser (localStorage, under table-settings-key) for a table no host keeps settings for; a double click on a column's edge forgets that column's width."
       },
       "table-settings-key": {
         "type": "string",
@@ -1572,11 +1578,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "fe74caf132b374004473a0f1e3ee6e29d6f9277d9c901b1720d99c2f6dc6f594"
+        "sha256": "463a3c37360b0acde4dda411a95fd081e8a22a73f37c770f6652ac76b26c187b"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "0460ab51d3676511c5167544cd04551b7f56244457efe1462c3cee84ae548970"
+        "sha256": "9df29dfdbabc142933c548833038617293f0353259b412a2555379dd44bbf527"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
@@ -1588,7 +1594,7 @@
       },
       {
         "path": "src/smart/table/rule.js",
-        "sha256": "b9a2dd9ac6bdc9d4046440500447e2bf8a583c6076b68af57aff18efab7c3818"
+        "sha256": "b790d8cb20dc8a1704e69e9848575b5536ffee4bfbf0f4c1f52a021ea116e1f2"
       },
       {
         "path": "src/smart/table/docs/smart-table-guide.md",

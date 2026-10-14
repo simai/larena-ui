@@ -391,12 +391,13 @@ function renderHead(context) {
                                          still a button, so the keyboard keeps
                                          the name and the arrows it had. -->
                                     <button type="button"
+                                            role="separator"
+                                            aria-orientation="vertical"
                                             class="sf-table-column-resizer"
                                             id=${context.component.getColumnResizerId(column.key)}
                                             data-sf-column-resizer=${column.key}
                                             aria-label="Изменить ширину столбца: ${column.label || column.key}"
-                                            aria-keyshortcuts="ArrowLeft ArrowRight"
-                                            @keydown=${(event) => context.component.resizeColumnByKeyboard(event, column.key)}
+                                            aria-keyshortcuts="ArrowLeft ArrowRight Home End Enter"
                                     ></button>
                                 </div>`}
                             </th>`
