@@ -107,6 +107,50 @@ try {
     await page.close();
   }
 
+  // 1c. The table's last two menus drawn otherwise are standard rows too
+  //     (owner, 2026-10-14): the row menu a group's button opens, and a filter
+  //     template's actions.
+  {
+    const page = await open('1/2');
+    const menus = await page.evaluate(async () => {
+      const table = document.getElementById('t');
+      table.setColumns([{key: 'name', label: 'Название'}]);
+      table.setRows([{id: '1', name: 'A'}]);
+      await new Promise((done) => setTimeout(done, 400));
+      const anchor = document.querySelector('#t thead th[data-key="name"]');
+      window.chosen = 0;
+      table.openContextMenu({currentTarget: anchor, target: anchor, preventDefault() {}, stopPropagation() {}}, {
+        type: 'left', menu: 'row-settings', row: {id: '1'},
+        items: [{component: 'sf-button', props: {text: 'Опубликовать', scheme: 'on-surface', '@click': () => { window.chosen += 1; }}}],
+      });
+      await new Promise((done) => setTimeout(done, 400));
+      const rowMenu = document.querySelector('sf-context-menu[aria-label] .sf-context-menu-item');
+      const rowLabel = rowMenu?.querySelector('.sf-context-menu-item-label')?.textContent.trim() ?? null;
+      const linkButtons = document.querySelectorAll('sf-context-menu sf-button[appearance="link"]').length;
+      rowMenu?.click();
+      await new Promise((done) => setTimeout(done, 200));
+      table.openContextMenu({currentTarget: anchor, target: anchor, preventDefault() {}, stopPropagation() {}}, {menu: 'filter-settings'});
+      await new Promise((done) => setTimeout(done, 400));
+      table.openContextSubmenu({currentTarget: anchor, target: anchor, preventDefault() {}, stopPropagation() {}},
+        {type: 'filter-template-actions', template: {key: 'mine', name: 'Мой'}});
+      await new Promise((done) => setTimeout(done, 400));
+      const submenu = document.querySelector('sf-context-menu[data-context-submenu]');
+      return {
+        rowLabel, linkButtons, chosen: window.chosen,
+        submenu: [...(submenu?.querySelectorAll('.sf-context-menu-item-label') ?? [])].map((node) => node.textContent.trim()),
+        submenuButtons: submenu?.querySelectorAll('sf-button').length ?? null,
+      };
+    });
+    console.log(JSON.stringify({menus}));
+    if (menus.rowLabel !== 'Опубликовать' || menus.linkButtons || menus.chosen !== 1) {
+      note({case: 'row menu of a group', got: menus, expected: 'a standard row that runs the action'});
+    }
+    if (menus.submenu.length !== 3 || menus.submenuButtons) {
+      note({case: 'filter template actions', got: menus, expected: 'three standard rows, no link buttons'});
+    }
+    await page.close();
+  }
+
   // 2. A loading row is as tall as the row it stands for.
   {
     const page = await open('1/2');

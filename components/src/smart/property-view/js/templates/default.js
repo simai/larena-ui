@@ -999,36 +999,11 @@ function renderMenuControl(context) {
     // slots its items into `menu` finds the same «\u2026» wherever it looks --
     // which it could not when one item meant a different glyph in that corner
     // (owner, 2026-10-08).
-    // A host that slots its own items keeps the surface it slots them into;
-    // otherwise the «⋯» opens the Framework's standard menu (owner, 2026-10-12).
-    if (host) {
-        return html`
-            <sf-popover placement="bottom-end" role="menu" label=${context.menuLabel}>
-                <sf-icon-button
-                        slot="trigger"
-                        appearance="link"
-                        scheme="on-surface"
-                        size=${context.size}
-                        icon="more_horiz"
-                        data-action="menu"
-                        aria-label=${context.menuLabel}
-                ></sf-icon-button>
-                <div slot="content" class="flex flex-col items-cross-stretch p-1/2">
-                    ${items.map((item) => html`
-                        <sf-button
-                                appearance="link"
-                                size=${context.size}
-                                scheme="on-surface"
-                                text=${item.name}
-                                icon-start=${item.icon}
-                                data-menu-item=${item.id}
-                                @click=${() => context.component.chooseMenuItem(item.id)}
-                        ></sf-button>`)}
-                    ${host}
-                </div>
-            </sf-popover>
-        `;
-    }
+    // The «⋯» opens the Framework's standard menu (owner, 2026-10-12), and so
+    // do the items a host slots into `menu` (owner, 2026-10-14): they were a
+    // popover of link buttons, the one menu of the panel drawn otherwise. The
+    // slotted elements stay in the page, hidden, and a row of the menu stands
+    // for each -- a link row for a link, a press on the element for the rest.
     return html`
         <sf-icon-button
                 appearance="link"
@@ -1041,6 +1016,7 @@ function renderMenuControl(context) {
                 aria-label=${context.menuLabel}
                 @click=${(event) => context.component.openPanelMenu(event.currentTarget.querySelector('button') ?? event.currentTarget)}
         ></sf-icon-button>
+        ${host ? html`<div class="sf-property-view-host-menu" data-host-menu hidden>${host}</div>` : nothing}
     `;
 }
 

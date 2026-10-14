@@ -1056,6 +1056,9 @@ class SfPropertyView extends SfBaseElement {
         const items = this.panelMenuItems;
         if (entries.length && items.length) entries.push({type: "separator"});
         entries.push(...items.map((item) => ({id: item.id, text: item.name, icon: item.icon})));
+        const hosted = this.hostMenuEntries();
+        if (entries.length && hosted.length) entries.push({type: "separator"});
+        entries.push(...hosted);
         if (!entries.length) return null;
         return this.openStandardMenu(anchor, {
             label: this.menuLabel, entries,
@@ -1070,8 +1073,38 @@ class SfPropertyView extends SfBaseElement {
         });
     }
 
+    // The host's own menu items, as rows of the standard menu: its text, its
+    // icon (icon, icon-start or data-icon), a link row for an address.
+    hostMenuElements() {
+        // In a panel the holder is in the drawer, which is moved to the page's end.
+        const holder = this.querySelector("[data-host-menu]")
+            ?? (this.querySelector("sf-drawer") ?? this._panelDrawer)?.querySelector?.("[data-host-menu]");
+        return holder ? [...holder.children] : [];
+    }
+
+    hostMenuEntries() {
+        return this.hostMenuElements().map((element, at) => {
+            const control = element.matches("a[href], button") ? element : element.querySelector("a[href], button") ?? element;
+            const text = (element.getAttribute("text") ?? element.getAttribute("aria-label") ?? control.textContent ?? "").trim();
+            const href = control.matches?.("a[href]") ? control.getAttribute("href") : null;
+            return {
+                id: `host:${at}`, text,
+                icon: element.getAttribute("icon") ?? element.getAttribute("icon-start") ?? element.dataset.icon ?? undefined,
+                href: href || undefined,
+                danger: element.getAttribute("scheme") === "error" || element.dataset.danger === "true",
+                disabled: element.hasAttribute("disabled") || control.disabled === true,
+            };
+        }).filter((entry) => entry.text);
+    }
+
     _chooseStandardEntry(id) {
         const value = String(id ?? "");
+        if (value.startsWith("host:")) {
+            const element = this.hostMenuElements()[Number(value.slice("host:".length))];
+            const control = element?.matches("a[href], button") ? element : element?.querySelector("a[href], button") ?? element;
+            if (!control?.matches?.("a[href]")) control?.click?.();
+            return true;
+        }
         if (value.startsWith("view-profile:")) return this.selectViewProfile(value.slice("view-profile:".length));
         return this.chooseMenuItem(value);
     }

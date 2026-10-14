@@ -1052,11 +1052,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "3c9896284516fb23f8d83a47ab04116df1c9139fb1566a3bf2d60b5236857de7"
+        "sha256": "6dfa73e1644cb2b1c7e80c7921b952647b9c25ec5c898586e57b04193738c2fc"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "36418b6cd7193ed2f4171d04b310d86c0e838ce5e9b5fa7d4e25c02552c470b7"
+        "sha256": "e032e6f35e513fa55eeeb6d4164919d631f451fee04e07db1473dd6bbb70c876"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",

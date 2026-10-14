@@ -2627,7 +2627,25 @@ class SfTable extends SfBaseElement {
             transform: ${pos};
             z-index: var(--sf-table-context-menu--z-index, var(--sf-z-index-9));
           "
-                    .items=${items}
+                    .entries=${items.map((item, at) => {
+                        // The standard menu's rows (owner, 2026-10-14): these were
+                        // link buttons, the one menu of the table drawn otherwise.
+                        const props = item.props || item.component?.props || {};
+                        return {
+                            id: String(at),
+                            text: props.text ?? item.name ?? "",
+                            icon: props.iconLeft ?? props.iconStart ?? props.icon ?? undefined,
+                            danger: props.scheme === "error" || item.danger === true,
+                            disabled: Boolean(props.disabled),
+                        };
+                    })}
+                    @sf-context-menu-select=${(event) => {
+                        const item = items[Number(event.detail?.id)];
+                        const props = item?.props || item?.component?.props || {};
+                        const handler = props["@click"] ?? props.onClick;
+                        if (typeof handler === "function") handler({currentTarget: event.target, target: event.target, preventDefault() {}, stopPropagation() {}});
+                        this.closeContextMenu();
+                    }}
                     position="${position || "left"}"
             >
             </sf-context-menu>
@@ -4110,32 +4128,40 @@ class SfTable extends SfBaseElement {
                     root-class="sf-table-context-submenu flex flex-col"
                     position="${position || "right"}"
             >
-                <div class="flex flex-col flex-1" slot="content">
-                    <sf-button size=${this.size} appearance="link" scheme="on-surface" icon-start="edit" text="${this.text('renameText')}" @click="${() => {
-                        this.set((prevState) => ({
-                            filter: {
-                                ...(prevState.filter || {}),
-                                rename: template.key,
-                            },
-                            contextMenu: {
-                                ...(prevState.contextMenu || {}),
-                                submenu: null,
-                            },
-                        }));
-                    }}"></sf-button>
-                    <sf-button size=${this.size} appearance="link" scheme="on-surface" icon-start="${isDefaultTemplate ? 'remove' : 'check'}"
-                               text="${isDefaultTemplate ? this.text('defaultTemplateText') : this.text('makeDefaultLabel')}" @click="${() => {
-                        this.changeTempFilterTemplateSettings(template.key, {
-                            default: !template.default,
-                        });
-                        this.closeContextSubmenu();
-                    }}"></sf-button>
-                    <sf-button size=${this.size} appearance="link" scheme="on-surface" icon-start="delete" @click="${() => {
-                        this.patchTempFilterTemplateSettings(template.key, {
-                            deleted: !isDeleted,
-                        });
-                    }}" text="${isDeleted ? this.text('restoreText') : this.text('deleteActionText')}"></sf-button>
-                </div>
+                    .entries=${[
+                        // The standard menu's rows (owner, 2026-10-14), not link
+                        // buttons; a delete is marked as one, a restore is not.
+                        {id: 'rename', text: this.text('renameText'), icon: 'edit'},
+                        {id: 'default', text: isDefaultTemplate ? this.text('defaultTemplateText') : this.text('makeDefaultLabel'),
+                            icon: isDefaultTemplate ? 'remove' : 'check'},
+                        {id: 'delete', text: isDeleted ? this.text('restoreText') : this.text('deleteActionText'),
+                            icon: isDeleted ? 'restore_from_trash' : 'delete', danger: !isDeleted, keepOpen: true},
+                    ]}
+                    @sf-context-menu-select=${(event) => {
+                        const id = event.detail?.id;
+                        if (id === 'rename') {
+                            this.set((prevState) => ({
+                                filter: {
+                                    ...(prevState.filter || {}),
+                                    rename: template.key,
+                                },
+                                contextMenu: {
+                                    ...(prevState.contextMenu || {}),
+                                    submenu: null,
+                                },
+                            }));
+                        } else if (id === 'default') {
+                            this.changeTempFilterTemplateSettings(template.key, {
+                                default: !template.default,
+                            });
+                            this.closeContextSubmenu();
+                        } else if (id === 'delete') {
+                            this.patchTempFilterTemplateSettings(template.key, {
+                                deleted: !isDeleted,
+                            });
+                        }
+                    }}
+            >
             </sf-context-menu>
         `;
     }

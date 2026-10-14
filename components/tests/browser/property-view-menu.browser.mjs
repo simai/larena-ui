@@ -183,7 +183,59 @@ try {
     .map((row) => `${row.querySelector('.sf-context-menu-item-label')?.textContent.trim()}:${row.getAttribute('aria-checked')}`));
   if (barMenu.join() !== 'Обычный:false,Мой:true') note({case: 'the bar opens the views as radio rows', got: barMenu});
 
-  console.log(JSON.stringify({probe: 'property-view-menu', menu, views, chosen, chooser, barMenu, failures}, null, 2));
+  // A host's own items slotted into `menu` are rows of the same standard menu
+  // (owner, 2026-10-14): they were a popover of link buttons.
+  await page.evaluate(() => document.getElementById('view').remove());
+  await page.evaluate(async () => {
+    window.hostPressed = 0;
+    const view = document.createElement('sf-property-view');
+    view.id = 'hosted';
+    view.setAttribute('record-id', 'r2');
+    view.setAttribute('panel', '');
+    view.setAttribute('panel-width', '40rem');
+    const link = document.createElement('a');
+    link.slot = 'menu'; link.href = '#history'; link.dataset.icon = 'history'; link.textContent = 'История';
+    const button = document.createElement('button');
+    button.slot = 'menu'; button.type = 'button'; button.dataset.icon = 'content_copy'; button.textContent = 'Копировать';
+    button.addEventListener('click', () => { window.hostPressed += 1; });
+    view.append(link, button);
+    document.body.append(view);
+    view.setHostPort({
+      version: '1.7.0', capabilities: [],
+      async raise(intent) {
+        if (intent === 'record.load') return {answer: 'applied', record: {record_id: 'r2', revision: '1',
+          sections: [{key: 'main', label: 'Основное', groups: [{key: 'g', label: 'Группа', columns: 1, fields: [
+            {key: 'title', label: 'Название', propertyType: 'string', value: 'Страница'}]}]}]}};
+        return {answer: 'applied'};
+      },
+    });
+    for (let tries = 0; tries < 80 && !view.sections?.length; tries += 1) await new Promise((done) => setTimeout(done, 50));
+  });
+  await page.waitForTimeout(400);
+  const hostedMenu = await page.evaluate(async () => {
+    const view = document.getElementById('hosted');
+    const root = view.panelContent?.() ?? view;
+    const trigger = [...root.querySelectorAll('[data-action="menu"]')].pop();
+    (trigger?.querySelector('button') ?? trigger)?.click();
+    await new Promise((done) => setTimeout(done, 300));
+    const surface = document.querySelector('sf-context-menu[data-sf-property-view-menu] > .sf-context-menu');
+    const rows = [...(surface?.querySelectorAll('.sf-context-menu-item') ?? [])];
+    const result = {
+      popover: Boolean(root.querySelector('sf-popover[role="menu"]')),
+      labels: rows.map((row) => row.querySelector('.sf-context-menu-item-label')?.textContent.trim()),
+      linkRow: rows.find((row) => row.textContent.includes('История'))?.getAttribute('href') ?? null,
+    };
+    rows.find((row) => row.textContent.includes('Копировать'))?.click();
+    await new Promise((done) => setTimeout(done, 100));
+    result.pressed = window.hostPressed;
+    return result;
+  });
+  if (hostedMenu.popover || !hostedMenu.labels.includes('История') || !hostedMenu.labels.includes('Копировать')
+    || hostedMenu.linkRow !== '#history' || hostedMenu.pressed !== 1) {
+    note({case: "a host's menu items are rows of the standard menu", got: hostedMenu});
+  }
+
+  console.log(JSON.stringify({probe: 'property-view-menu', menu, views, chosen, chooser, barMenu, hostedMenu, failures}, null, 2));
 } finally {
   await browser.close();
 }
