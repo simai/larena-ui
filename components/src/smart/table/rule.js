@@ -21,6 +21,8 @@ SF.RuleLoader["cl-table"] = {
     { name: "cl-tags" },
     { name: "cl-pagination" },
     { name: "cl-spinner" },
+    // A table without rows says why in sf-empty-state (owner, 2026-10-14).
+    { name: "cl-empty-state" },
     { name: "cl-datepicker", lazy: true },
     { name: "cl-dropdown" },
     { name: "cl-tabs", lazy: true },

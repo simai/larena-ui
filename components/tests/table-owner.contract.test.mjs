@@ -110,6 +110,10 @@ test('Smart Table implements its declared loading, empty, error and retry states
   assert.match(template, /data-state=\$\{resolvedDataState\(context\)\}/);
   assert.match(template, /aria-busy=\$\{resolvedDataState\(context\) === 'loading'/);
   assert.match(template, /role="status"/);
-  assert.match(template, /role="alert"/);
-  assert.match(template, /context\.component\.requestRetry\(\)/);
+  // Empty and failed are one sf-empty-state (owner, 2026-10-14): its error
+  // offers «Повторить», which the table turns into the retry event, and a
+  // failure the person caused is an alert.
+  assert.match(template, /<sf-empty-state kind=\$\{brick\.kind\}/);
+  assert.match(table, /id === "retry"\) \{ event\.stopPropagation\(\); this\.requestRetry\(\); \}/);
+  assert.match(table, /live: context\.caused \? "alert" : "auto"/);
 });

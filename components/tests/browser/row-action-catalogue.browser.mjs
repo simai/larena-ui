@@ -79,10 +79,10 @@ try {
       },
     });
   });
-  // An empty list draws one row saying so, which is how the first projection
-  // is recognised here.
+  // An empty list draws one row saying so -- its sf-empty-state, no data --
+  // which is how the first projection is recognised here.
   await page.waitForFunction(
-    () => /Нет данных/u.test(document.querySelector('#list tbody')?.textContent ?? ''),
+    () => Boolean(document.querySelector('#list tbody sf-empty-state[kind="no-data"]')),
     null, {timeout: 8000},
   );
   // The second projection, after the empty one that used to eat the catalogue.

@@ -167,6 +167,15 @@ const NO_REFRESH_AFTER = new Set([
 ]);
 const copy = (value) => (value == null ? value : JSON.parse(JSON.stringify(value)));
 
+// Whether a filter value holds anything: an empty string, list or object is
+// no filter.
+function hasValue(value) {
+    if (value === null || value === undefined || value === "" || value === false) return false;
+    if (Array.isArray(value)) return value.some(hasValue);
+    if (typeof value === "object") return Object.values(value).some(hasValue);
+    return true;
+}
+
 class SfDataView extends HTMLElement {
     constructor() {
         super();
@@ -607,6 +616,10 @@ class SfDataView extends HTMLElement {
     _setState(state, message = "") {
         this.setAttribute("data-state", state);
         this.setAttribute("aria-busy", state === "loading" ? "true" : "false");
+        if (this.table && state === "empty") this.table.emptyContext = this._emptyContext();
+        // A load the person caused -- a search or a filter they set -- that
+        // fails is an alert; any other failed load is said politely.
+        if (this.table && state === "error") this.table.emptyContext = {caused: ["search", "filter"].includes(this._queryReason)};
         this.table?.setDataState?.(state);
         const status = this.shadowRoot.querySelector('[part="status"]');
         status.hidden = !message;
@@ -614,6 +627,18 @@ class SfDataView extends HTMLElement {
         this.dispatchEvent(new CustomEvent("sf-data-view-state", {
             bubbles: true, composed: true, detail: {state, message, instance_id: this.instanceId},
         }));
+    }
+
+    // Why the list is empty, from what the view already knows (owner,
+    // 2026-10-14): the host refused the query -- no access; a search or a
+    // filter is on -- nothing found, and what a reset would clear; otherwise
+    // no data. The table draws it.
+    _emptyContext() {
+        if (this._queryRefused) return {kind: "no-access"};
+        const search = String(this.query.search ?? "").trim() !== "";
+        const filters = hasValue(this.query.filters);
+        if (search || filters) return {kind: "nothing-found", reset: search && filters ? "both" : search ? "search" : "filters"};
+        return {kind: "no-data"};
     }
 
     // Whether the host offers a capability: announced, or -- for the two that
@@ -661,6 +686,7 @@ class SfDataView extends HTMLElement {
             }
             if (query && answer.sequence != null && answer.sequence !== sequence) return null;
             if (query) this.pending = null;
+            if (query) this._queryRefused = answer.answer === "refused";
             // A write the host confirms first (port 1.8.0): it answered with what
             // it is about to do and a digest of it. The person reads it; if they
             // confirm, the same intent goes again with the digest, which the
@@ -724,6 +750,7 @@ class SfDataView extends HTMLElement {
         if (!this.isConnected) return Promise.resolve(null);
         const sequence = ++this.sequence;
         this.pending = sequence;
+        this._queryReason = reason;
         // Show more continues the list; every other reason replaces it. The
         // answer carries no reason of its own, so it is remembered here.
         this.continuing = reason === "show-more";

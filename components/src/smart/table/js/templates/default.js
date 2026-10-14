@@ -313,6 +313,20 @@ function renderToolbar(context) {
 
 // The state the region is actually in: the author's data-state, or what the
 // rows resolve to. It is declared on the region, not guessed from the markup.
+// What the table says when it has no rows, one brick for every reason
+// (owner, 2026-10-14): sf-empty-state at the table's size, the reason and its
+// one action from what the table and its data view know -- no access, could
+// not load (Повторить), nothing found (what the reset clears), no data
+// (Создать when the table may create). A slot `empty` replaces it whole.
+function renderEmptyState(context, dataState) {
+    const component = context.component;
+    if (component?.hasSlotContent?.('empty')) return component.getSlotContent('empty');
+    const brick = component.emptyBrick(dataState);
+    return html`<sf-empty-state kind=${brick.kind} size=${brick.size} heading-level=${brick.headingLevel}
+                                title=${brick.title || nothing} text=${brick.text || nothing} live=${brick.live || nothing}
+                                .actions=${brick.actions}></sf-empty-state>`;
+}
+
 export function resolvedDataState(context) {
     if (context.dataState !== 'auto') return context.dataState;
     return (context.component?.getTableData?.().rows || []).length ? 'populated' : 'empty';
@@ -629,20 +643,9 @@ export function renderTableTemplate(context) {
                 // Before this there were two indicators here, one of them in
                 // English on a Russian page.
                 loading: null,
-                error: html`
-                    <div class="flex flex-col items-cross-start gap-1/2" role="alert">
-                        <span>${context.errorText}</span>
-                        <sf-button
-                                appearance="outline"
-                                scheme="on-surface"
-                                size=${context.size}
-                                text=${context.retryText}
-                                @click=${() => context.component.requestRetry()}
-                        ></sf-button>
-                    </div>
-                `,
-                empty: html`<span>${context.emptyText}</span>`,
-            }[dataState] || html`<span>${context.emptyText}</span>`;
+                error: renderEmptyState(context, 'error'),
+                empty: renderEmptyState(context, 'empty'),
+            }[dataState] || renderEmptyState(context, 'empty');
 
             if (dataState === 'loading') {
                 return html`
@@ -666,7 +669,7 @@ export function renderTableTemplate(context) {
                 <tbody data-state=${dataState}>
                     <tr>
                         <td colspan=${String(Math.max(columns.length, 1))}>
-                            <div class="sf-table-state p-2">${stateContent}</div>
+                            <div class="sf-table-state">${stateContent}</div>
                         </td>
                     </tr>
                 </tbody>
@@ -694,12 +697,7 @@ export function renderTableTemplate(context) {
                     <span class="sf-table-visually-hidden" role="status">${context.loadingText}</span>
                 </div>`;
             }
-            return html`<div class="sf-table-state p-2" data-state=${dataState}>${
-                dataState === 'error'
-                        ? html`<div class="flex flex-col items-cross-start gap-1/2" role="alert"><span>${context.errorText}</span>
-                               <sf-button appearance="outline" scheme="on-surface" size=${context.size} text=${context.retryText}
-                                          @click=${() => context.component.requestRetry()}></sf-button></div>`
-                        : html`<span>${context.emptyText}</span>`}</div>`;
+            return html`<div class="sf-table-state" data-state=${dataState}>${renderEmptyState(context, dataState)}</div>`;
         }
         const select = columns.find((column) => column.key === 'select');
         const menu = columns.find((column) => column.key === 'settings');

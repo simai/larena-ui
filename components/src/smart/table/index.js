@@ -33,6 +33,9 @@ const TABLE_TEXT = {
         emptyText: "No data",
         errorText: "The data could not be loaded",
         retryText: "Try again",
+        resetSearchText: "Clear the search",
+        resetFiltersText: "Reset the filters",
+        resetBothText: "Reset the search and filters",
         columnMoveLabel: "Move the column",
         filterApplyText: "Apply",
         columnSearchPlaceholder: "Search the fields",
@@ -106,6 +109,9 @@ const TABLE_TEXT = {
         emptyText: "Нет данных",
         errorText: "Не удалось загрузить данные",
         retryText: "Повторить",
+        resetSearchText: "Очистить поиск",
+        resetFiltersText: "Сбросить фильтры",
+        resetBothText: "Сбросить поиск и фильтры",
         columnMoveLabel: "Переместить столбец",
         filterApplyText: "Применить",
         columnSearchPlaceholder: "Поиск по полям",
@@ -357,6 +363,15 @@ class SfTable extends SfBaseElement {
     constructor() {
         super();
 
+        this._emptyContext = null;
+        // The empty state's actions: retry and create are the table's own;
+        // anything else (the data view's query reset) goes on up.
+        this.addEventListener("sf-empty-state-action", (event) => {
+            const id = event.detail?.id;
+            if (id === "retry") { event.stopPropagation(); this.requestRetry(); }
+            else if (id === "create") { event.stopPropagation(); this.requestCreateIntent(); }
+            else if (id === "reset-query") { event.stopPropagation(); this.resetQuery(this._emptyContext?.reset ?? "both"); }
+        });
         this._portalContainer = null;
         this._instanceId = `sf-table-${++tableInstances}`;
         this._selectionPortKey = "[]";
@@ -6116,6 +6131,56 @@ class SfTable extends SfBaseElement {
 
     requestRetry() {
         return this.dispatchTableEvent('sf-table-retry');
+    }
+
+    // Why there are no rows, as a data view knows it: {kind: 'no-access' |
+    // 'nothing-found' | 'no-data', reset: 'search' | 'filters' | 'both',
+    // headingLevel}. A table on its own knows only no data and could not load.
+    get emptyContext() {
+        return this._emptyContext;
+    }
+
+    set emptyContext(value) {
+        this._emptyContext = value && typeof value === "object" ? {...value} : null;
+        this.requestComponentUpdate("empty-context");
+    }
+
+    // What «Сбросить поиск и фильтры» does: the table's own search and filter
+    // are emptied, and each says so the way a person's edit would.
+    resetQuery(scope = "both") {
+        if (scope !== "search") this.removeFilterTag();
+        if (scope !== "filters") {
+            this.clearSearchDebounce();
+            this._searchPendingProps = null;
+            // A search the table did not hold (the view's own, or a host's) is
+            // still cleared: the event goes either way.
+            if (this.state.search?.value) this.updateSearchState({value: ""});
+            else this.dispatchTableEvent("sf-table-search-change", "");
+        }
+        return this;
+    }
+
+    // The brick for a table without rows: its reason, its words and its one
+    // action. The host's empty-text and error-text are the titles they always
+    // were; the rest are the brick's own words in the page language.
+    emptyBrick(dataState) {
+        const context = this._emptyContext ?? {};
+        const size = this.size === "1/2" ? "1/2" : "1";
+        const headingLevel = String(context.headingLevel ?? 3);
+        if (dataState === "error") {
+            return {kind: "error", size, headingLevel, title: this.getAttribute("error-text") || "", text: "", live: context.caused ? "alert" : "auto",
+                actions: [{id: "retry", text: this.text("retryText", "retry-text"), appearance: "outline"}]};
+        }
+        const kind = ["no-access", "nothing-found"].includes(context.kind) ? context.kind : "no-data";
+        if (kind === "no-access") return {kind, size, headingLevel, title: "", text: "", actions: []};
+        if (kind === "nothing-found") {
+            const key = {search: "resetSearchText", filters: "resetFiltersText"}[context.reset] ?? "resetBothText";
+            return {kind, size, headingLevel, title: "", text: "",
+                actions: [{id: "reset-query", text: this.text(key), appearance: "outline"}]};
+        }
+        const creatable = this.getBooleanAttr("actions", true) && this.getBooleanAttr("creatable", true);
+        return {kind, size, headingLevel, title: this.getAttribute("empty-text") || "", text: "",
+            actions: creatable ? [{id: "create", text: this.text("createText", "create-text")}] : []};
     }
 
     disconnectedCallback() {

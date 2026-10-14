@@ -325,11 +325,11 @@ try {
       statusText: status?.textContent ?? null,
       statusHeight: Math.round(status?.getBoundingClientRect?.().height ?? 0),
       moved: region() - first,
-      body: (document.querySelector('#t tbody')?.textContent ?? '').replace(/\s+/gu, ' ').trim().slice(0, 30),
+      body: document.querySelector('#t tbody sf-empty-state')?.getAttribute('kind') ?? '',
       notice: document.querySelectorAll('sf-data-view > [slot="notice"]').length,
     };
   });
-  if (empty.statusHeight > 1 || empty.moved !== 0 || !empty.body.includes('Нет данных')
+  if (empty.statusHeight > 1 || empty.moved !== 0 || empty.body !== 'no-data'
       || empty.statusText !== 'Нет данных' || empty.notice !== 0) {
     note({case: 'empty', got: empty, expected: 'the table says it; nothing above it moves'});
   }
