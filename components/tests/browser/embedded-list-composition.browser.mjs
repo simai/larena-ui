@@ -31,7 +31,7 @@ const styles = [
   // pair -- the reason a consumer saw plain stacked text.
   'smart/smart/property-view/css/property-view.css',
   'smart/smart/sortable/css/sortable.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
   'component/component/pagination/css/pagination.css',
 ].map((p) => join(out, p));
 const modules = [
@@ -55,7 +55,7 @@ const modules = [
   'smart/smart/context-menu/js/context-menu.js',
   'smart/smart/tabs/js/tabs.js',
   'smart/smart/pagination/js/pagination.js',
-  'smart/smart/table/js/table.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
   'smart/smart/data-view/js/data-view.js',
   'smart/smart/property-view/js/property-view.js',
 ].map((p) => join(out, p));

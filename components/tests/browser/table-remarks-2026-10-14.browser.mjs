@@ -20,7 +20,7 @@ const styles = [
   'component/component/context-menu/css/context-menu.css',
   'component/component/checkbox/css/checkbox.css',
   'component/component/skeleton/css/skeleton.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
   'smart/smart/sortable/css/sortable.css',
 ].map((p) => join(out, p));
 const modules = [
@@ -29,7 +29,7 @@ const modules = [
   'smart/smart/list-item/js/list-item.js', 'smart/smart/dropdown/js/dropdown.js',
   'smart/smart/inputs/js/inputs.js', 'smart/smart/spinner/js/spinner.js',
   'smart/smart/context-menu/js/context-menu.js', 'smart/smart/sortable/js/sortable.js',
-  'smart/smart/pagination/js/pagination.js', 'smart/smart/table/js/table.js',
+  'smart/smart/pagination/js/pagination.js', 'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
 const failures = [];
@@ -149,6 +149,55 @@ try {
       note({case: 'filter template actions', got: menus, expected: 'three standard rows, no link buttons'});
     }
     await page.close();
+  }
+
+  // 1d. A column's edge is the Framework's resize gesture: a drag widens it,
+  //     remember-widths keeps the width in this browser across pages, and a
+  //     double click gives the column its own width back and forgets it.
+  {
+    const context = await browser.newContext({viewport: {width: 1280, height: 800}});
+    await context.route('http://probe.test/**', (route) => route.fulfill({status: 200, contentType: 'text/html', body: '<!doctype html><html><body></body></html>'}));
+    const load = async () => {
+      const page = await context.newPage();
+      await page.goto('http://probe.test/');
+      await page.setContent(`<!doctype html><html class="theme-light" lang="ru"><body style="margin:0">
+        <div style="width:1200px"><sf-table id="t" size="1/2" remember-widths table-settings-key="probe-widths"></sf-table></div></body></html>`);
+      for (const path of styles) await page.addStyleTag({path}).catch(() => {});
+      for (const path of modules) await page.addScriptTag({path, type: 'module'}).catch(() => {});
+      await page.waitForTimeout(1100);
+      await page.evaluate(() => {
+        const table = document.getElementById('t');
+        table.setColumns([{key: 'name', label: 'Название'}, {key: 'city', label: 'Город'}, {key: 'code', label: 'Код'}]);
+        table.setRows([{id: '1', name: 'Строка', city: 'Город', code: 'A1'}]);
+      });
+      await page.waitForTimeout(700);
+      return page;
+    };
+    const widthOf = (page) => page.evaluate(() => Math.round(document.querySelector('#t thead th[data-key="name"]').getBoundingClientRect().width));
+    const page = await load();
+    const start = await widthOf(page);
+    const edge = await page.evaluate(() => {
+      const box = document.querySelector('#t thead th[data-key="name"] .sf-table-column-resizer').getBoundingClientRect();
+      return {x: box.left + box.width / 2, y: box.top + box.height / 2};
+    });
+    await page.mouse.move(edge.x, edge.y);
+    await page.mouse.down();
+    await page.mouse.move(edge.x + 60, edge.y, {steps: 6});
+    await page.mouse.up();
+    await page.waitForTimeout(400);
+    const widened = await widthOf(page);
+    await page.close();
+    const again = await load();
+    const kept = await widthOf(again);
+    await again.dblclick('#t thead th[data-key="name"] .sf-table-column-resizer');
+    await again.waitForTimeout(500);
+    const reset = await widthOf(again);
+    const stored = await again.evaluate(() => JSON.parse(localStorage.getItem('sf-table-widths:probe-widths') ?? '{}').name ?? null);
+    console.log(JSON.stringify({resize: {start, widened, kept, reset, stored}}));
+    if (Math.abs(widened - (start + 60)) > 2 || Math.abs(kept - widened) > 2 || Math.abs(reset - start) > 2 || stored !== null) {
+      note({case: 'column edge', got: {start, widened, kept, reset, stored}, expected: 'widened by the drag, kept on the next page, back and forgotten on a double click'});
+    }
+    await context.close();
   }
 
   // 2. A loading row is as tall as the row it stands for.

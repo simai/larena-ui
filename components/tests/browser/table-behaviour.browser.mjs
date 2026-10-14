@@ -13,7 +13,7 @@ const styles = [
   'core/core/css/utility.full.css',
   'component/component/pagination/css/pagination.css',
   'component/component/inputs/css/inputs.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
   'smart/smart/sortable/css/sortable.css',
 ].map((p) => join(out, p));
 const modules = [
@@ -28,7 +28,7 @@ const modules = [
   'smart/smart/spinner/js/spinner.js',
   'smart/smart/pagination/js/pagination.js',
   'smart/smart/sortable/js/sortable.js',
-  'smart/smart/table/js/table.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
 const failures = [];

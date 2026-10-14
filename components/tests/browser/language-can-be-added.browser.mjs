@@ -25,7 +25,7 @@ const out = resolve(process.argv[2]);
 const styles = [
   'core/core/css/core.css', 'core/core/css/utility.full.css',
   'component/component/buttons/css/buttons.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js', 'smart/smart/icons/js/icons.js',
@@ -34,7 +34,7 @@ const modules = [
   'smart/smart/context-menu/js/context-menu.js', 'smart/smart/list-item/js/list-item.js',
   'smart/smart/inputs/js/inputs.js', 'smart/smart/dropdown/js/dropdown.js',
   'smart/smart/pagination/js/pagination.js',
-  'smart/smart/table/js/table.js', 'smart/smart/data-view/js/data-view.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js', 'smart/smart/data-view/js/data-view.js',
 ].map((p) => join(out, p));
 
 const absent = [...styles, ...modules].filter((path) => !existsSync(path));

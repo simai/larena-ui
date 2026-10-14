@@ -16,7 +16,7 @@ const styles = [
   // the check. The full utility sheet is what a page actually has.
   'core/core/css/utility.full.css',
   'component/component/tables/css/tables.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
   'smart/smart/sortable/css/sortable.css',
 ].map((p) => join(out, p));
 const modules = [
@@ -29,7 +29,7 @@ const modules = [
   'smart/smart/dropdown/js/dropdown.js',
   'smart/smart/pagination/js/pagination.js',
   'smart/smart/sortable/js/sortable.js',
-  'smart/smart/table/js/table.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
 const failures = [];

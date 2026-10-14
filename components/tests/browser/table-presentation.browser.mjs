@@ -13,7 +13,7 @@ const styles = [
   // scroll area has no size and every measurement below collapses to zero.
   'core/core/css/utility.full.css',
   'component/component/tables/css/tables.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js',
@@ -24,7 +24,7 @@ const modules = [
   'smart/smart/list-item/js/list-item.js',
   'smart/smart/dropdown/js/dropdown.js',
   'smart/smart/pagination/js/pagination.js',
-  'smart/smart/table/js/table.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
 const failures = [];

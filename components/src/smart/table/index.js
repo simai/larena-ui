@@ -4446,8 +4446,10 @@ class SfTable extends SfBaseElement {
                 document.documentElement.classList.remove('sf-table-column-resizing');
                 setLoaderDragState(false);
                 this.suppressNextHeaderClick();
-                this.outEvent({target: th});
+                // The drag is over before the line goes: hidden while the
+                // state still said «resizing», it stayed on the edge.
                 clear();
+                this.hideColumnResizeGuide();
             },
             // Back to the width the column has by itself: its content's, or
             // the one the host declared.

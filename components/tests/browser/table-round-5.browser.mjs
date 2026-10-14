@@ -17,7 +17,7 @@ const styles = [
   'component/component/context-menu/css/context-menu.css',
   'component/component/checkbox/css/checkbox.css',
   'component/component/tabs/css/tabs.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js', 'smart/smart/icons/js/icons.js', 'smart/smart/buttons/js/buttons.js',
@@ -26,7 +26,7 @@ const modules = [
   'smart/smart/inputs/js/inputs.js', 'smart/smart/spinner/js/spinner.js',
   'smart/smart/close/js/close.js', 'smart/smart/context-menu/js/context-menu.js',
   'smart/smart/tabs/js/tabs.js', 'smart/smart/tags/js/tags.js',
-  'smart/smart/pagination/js/pagination.js', 'smart/smart/table/js/table.js',
+  'smart/smart/pagination/js/pagination.js', 'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 
 const failures = [];

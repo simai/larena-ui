@@ -31,7 +31,7 @@ const styles = [
   'core/core/css/core.css', 'core/core/css/utility.full.css',
   'component/component/buttons/css/buttons.css',
   'component/component/icon-buttons/css/icon-buttons.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js', 'smart/smart/icons/js/icons.js',
@@ -41,7 +41,7 @@ const modules = [
   'smart/smart/pagination/js/pagination.js', 'smart/smart/badges/js/badges.js',
   'smart/smart/tags/js/tags.js', 'smart/smart/avatar/js/avatar.js',
   'smart/smart/color/js/color.js', 'smart/smart/reference-link/js/reference-link.js',
-  'smart/smart/table/js/table.js', 'smart/smart/data-view/js/data-view.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js', 'smart/smart/data-view/js/data-view.js',
 ].map((p) => join(out, p));
 
 const absent = [...styles, ...modules].filter((path) => !existsSync(path));

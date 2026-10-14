@@ -21,7 +21,7 @@ const styles = [
   'component/component/context-menu/css/context-menu.css',
   'component/component/tabs/css/tabs.css',
   'component/component/checkbox/css/checkbox.css',
-  'smart/smart/table/css/table.css',
+  'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
 ].map((p) => join(out, p));
 const base = [
   'core/core/js/core.js', 'core/core/js/smart-base.js', 'smart/smart/icons/js/icons.js', 'smart/smart/buttons/js/buttons.js',
@@ -30,7 +30,7 @@ const base = [
   'smart/smart/inputs/js/inputs.js', 'smart/smart/spinner/js/spinner.js',
   'smart/smart/close/js/close.js', 'smart/smart/context-menu/js/context-menu.js',
   'smart/smart/tags/js/tags.js', 'smart/smart/pagination/js/pagination.js',
-  'smart/smart/table/js/table.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
 ].map((p) => join(out, p));
 // The two the consumer's page had not loaded when the window opened.
 const late = ['smart/smart/radio/js/radio.js', 'smart/smart/tabs/js/tabs.js'].map((p) => join(out, p));
