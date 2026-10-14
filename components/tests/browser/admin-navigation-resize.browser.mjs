@@ -128,6 +128,22 @@ try {
   await again.waitForTimeout(150);
   const reset = await again.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
   if (reset !== before.first) note({case: 'a double click gives the width back', got: {reset, expected: before.first}});
+  // At the column's own width the button is narrower than the profile
+  // menu's longest line: the menu grows to it rather than cutting it.
+  const narrow = await again.evaluate(async () => {
+    const person = document.querySelector('.sf-admin-nav-person');
+    person?.click();
+    await new Promise((done) => setTimeout(done, 400));
+    const menu = document.querySelector('sf-context-menu[data-sf-admin-nav-menu]');
+    const labels = [...(menu?.querySelectorAll('.sf-context-menu-item-label, .sf-context-menu-item-value') ?? [])];
+    const surface = menu?.querySelector('.sf-context-menu-content')?.getBoundingClientRect();
+    return {width: surface ? Math.round(surface.width) : null, button: Math.round(person?.getBoundingClientRect().width ?? 0),
+      cut: labels.filter((label) => label.scrollWidth > label.clientWidth + 1).map((label) => label.textContent.trim())};
+  });
+  if (narrow.width === null || narrow.width < narrow.button - 1 || narrow.cut.length) {
+    note({case: 'a narrow column: the profile menu grows to its longest line', got: narrow});
+  }
+  console.log(JSON.stringify({narrow}));
   console.log(JSON.stringify({before, widened, theme, kept, reset}));
 } finally {
   await browser.close();
