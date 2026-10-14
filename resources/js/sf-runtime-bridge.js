@@ -700,6 +700,16 @@
     view.setHostPort({version: '1.4.0', capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
       if (intent === 'query.change') latestQuerySequence = payload?.sequence;
+      // A linked value of a cell (record.open {field, value, href}) opens its record in the admin's panel, with no
+      // page load; an address the panel does not take opens as a page.
+      if (intent === 'record.open' && !Array.isArray(payload?.record_ids) && typeof payload?.href === 'string') {
+        var linked;
+        try { linked = new URL(payload.href, window.location.href); } catch (error) { return {answer: 'refused', reason: 'href_invalid'}; }
+        if (linked.origin !== window.location.origin) return {answer: 'refused', reason: 'href_foreign'};
+        var panel = window.LarenaRecordPanel;
+        if (!(panel?.open?.(linked.toString()) || panel?.push?.(linked.toString()))) window.location.assign(linked.toString());
+        return {answer: 'applied'};
+      }
       if ((intent === 'record.mutate' && payload?.action_id === 'delete')
         || intent === 'bulk.apply_selected' || intent === 'bulk.apply_under_filter') {
         // One record from its row menu, or several: the message says which, with their number.

@@ -252,3 +252,15 @@ test('column settings answers reach the data view as they are, and the Storage l
     await cms.view.port.raise('view.open', {key: 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa'}, {});
     assert.equal(cms.view.query.saved_view_id, undefined, 'the Minimal CMS list keeps its own behaviour');
 });
+
+test('a linked value of a cell opens its record without asking the host port, and a foreign address is refused', async () => {
+    const h = await harness({answer: 'applied'});
+    // No record panel on the page: the record opens as a page, and the host port is not asked.
+    const opened = await h.view.port.raise('record.open', {field: 'section', value: 'record-2',
+        href: '/admin/cms?structure_id=workbench.demo_sections&record_id=record-2&record_mode=view'}, {});
+    assert.equal(opened.answer, 'applied');
+    assert.deepEqual(h.assigned, ['http://localhost/admin/cms?structure_id=workbench.demo_sections&record_id=record-2&record_mode=view']);
+    assert.equal(h.calls.filter((call) => String(call.options?.body || '').includes('record.open')).length, 0);
+    const foreign = await h.view.port.raise('record.open', {field: 'section', value: 'x', href: 'https://elsewhere.test/admin/cms?record_id=x'}, {});
+    assert.equal(foreign.answer, 'refused');
+});
