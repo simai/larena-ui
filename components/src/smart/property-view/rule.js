@@ -31,6 +31,8 @@ SF.RuleLoader["cl-property-view"] = {
     // The views are chosen, made, renamed and removed in the profile picker
     // (owner, 2026-10-14), drawn while the view is arranged.
     { name: "cl-profile-picker", lazy: true },
+    // «Copy link» is sf-copy-button (owner, 2026-10-14).
+    { name: "cl-copy-button" },
     { name: "cl-progress-scale" },
     // A number with a range draws sf-range-slider, from the shared renderer set.
     { name: "cl-range-slider" },

@@ -20,6 +20,7 @@ const styles = [
   'core/core/css/core.css', 'core/core/css/utility.full.css',
   'component/component/buttons/css/buttons.css',
   'component/component/icon-buttons/css/icon-buttons.css',
+  'smart/smart/copy-button/css/copy-button.css',
   'smart/smart/property-view/css/property-view.css',
 ].map((p) => join(out, p));
 const modules = [
@@ -29,6 +30,7 @@ const modules = [
   'smart/smart/modal/js/modal.js', 'smart/smart/popover/js/popover.js',
   'smart/smart/tree/js/tree.js', 'smart/smart/tree-item/js/tree-item.js',
   'smart/smart/avatar/js/avatar.js', 'smart/smart/badges/js/badges.js',
+  'smart/smart/copy-button/js/copy-button.js',
   'smart/smart/property-view/js/property-view.js',
 ].map((p) => join(out, p));
 

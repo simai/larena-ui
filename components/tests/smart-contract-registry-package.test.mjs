@@ -16,7 +16,7 @@ test("the package composites are generated into the searchable registry beside t
   assert.equal(registry.schema, "simai.smart-component-contract-registry.v2");
   // The free registry pins 52 (... sf-empty-state, sf-copy-button); the four
   // package components make 56.
-  assert.equal(registry.entries.length, 56);
+  assert.equal(registry.entries.length, 57);
   for (const id of ["smart.admin-menu", "smart.data-view", "smart.data-view-composite", "smart.property-view"]) {
     assert.ok(registry.entries.some((entry) => entry.id === id), id);
   }

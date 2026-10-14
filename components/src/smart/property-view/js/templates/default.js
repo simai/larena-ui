@@ -1113,18 +1113,20 @@ function renderPanelControls(context) {
             ></sf-icon-button>
             ${context.address
                     ? html`
-                        <sf-icon-button
+                        <sf-copy-button
                                 appearance="tonal"
-                                scheme="on-surface"
                                 root-style=${EDGE_SURFACE}
                                 size=${context.size}
-                                icon=${context.addressCopied ? 'check' : 'link'}
-                                aria-label=${context.addressCopied ? context.linkCopiedLabel : context.copyLinkLabel}
-                                title=${context.addressCopied ? context.linkCopiedLabel : context.copyLinkLabel}
+                                icon="link"
+                                value=${context.addressUrl}
+                                label=${context.copyLinkLabel}
+                                success-text=${context.linkCopiedLabel}
+                                duration=${String(context.copyFeedbackMs)}
                                 data-action="copy-link"
-                                data-copied=${context.addressCopied ? 'true' : nothing}
-                                @click=${() => context.component.copyAddress()}
-                        ></sf-icon-button>`
+                                .propertyView=${context.component}
+                                @sf-copy=${() => context.component.announceAddressCopy(true)}
+                                @sf-copy-error=${() => context.component.announceAddressCopy(false)}
+                        ></sf-copy-button>`
                     : nothing}
             ${context.canOpenFullPage
                     ? html`

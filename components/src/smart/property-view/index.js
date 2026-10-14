@@ -18,11 +18,6 @@ import SfBaseElement from "../../core/js/smart-base";
 import {ICON_CHOICES} from "./js/icon-choices.js";
 import {pageText} from "../../core/js/page-language";
 import {renderPropertyViewTemplate} from "./js/templates/default";
-// The Framework's own copy, with its fallback for a browser that refuses the
-// clipboard API. Asking navigator.clipboard directly meant one copy worked and
-// another did not depending on the page it was on, which is two behaviours for
-// one act.
-import {writeText} from "../../component/clipboard/js/index";
 
 // Every port version this composite accepts, in one place, the way sf-data-view
 // keeps its list -- a guard naming a narrower set than the published versions is
@@ -1505,7 +1500,8 @@ class SfPropertyView extends SfBaseElement {
             favourite: this.favourite,
             favouriteLabel: this.favouriteLabel,
             menuLabel: this.menuLabel,
-            addressCopied: this.addressCopied,
+            addressUrl: this.addressUrl ?? this.address,
+            copyFeedbackMs: COPY_FEEDBACK_MS,
             linkCopiedLabel: this.linkCopiedLabel,
             // The three the head draws beside those, which were not here. Every
             // label the panel shows is resolved by a getter that reads the
@@ -1724,44 +1720,35 @@ class SfPropertyView extends SfBaseElement {
         }
     }
 
-    // Copying says nothing by itself, so the control says it: the glyph becomes
-    // a tick for as long as the Framework's own clipboard holds its tick, and
-    // goes back on its own. Held here rather than in the template, because the
-    // template is redrawn from this state (owner, 2026-10-08).
-    get addressCopied() {
-        return this._addressCopied === true;
+    // Copying is sf-copy-button's (owner, 2026-10-14): one implementation of
+    // the act, its tick and its spoken result, with the Framework's fallback
+    // for a browser that refuses the clipboard. The view keeps only what it
+    // says about it.
+    // The control stands on the drawer's outer edge, which may be outside this
+    // element, so it carries the view it belongs to.
+    copyControl() {
+        return [...document.querySelectorAll('sf-copy-button[data-action="copy-link"]')]
+            .find((control) => control.propertyView === this) ?? null;
     }
 
-    _showAddressCopied() {
-        window.clearTimeout(this._addressCopiedTimer);
-        this._addressCopied = true;
-        this.requestComponentUpdate("address-copied");
-        this._addressCopiedTimer = window.setTimeout(() => {
-            this._addressCopied = false;
-            this.requestComponentUpdate("address-copied-done");
-        }, COPY_FEEDBACK_MS);
-        return this;
+    get addressCopied() {
+        return this.copyControl()?.state?.phase === "success";
+    }
+
+    announceAddressCopy(copied) {
+        const address = this.address;
+        this.dispatchEvent(new CustomEvent("sf-property-view-address-copy", {
+            bubbles: true, composed: true,
+            detail: {address, url: this.addressUrl ?? address, copied, record_id: this.recordId || null},
+        }));
+        return copied;
     }
 
     async copyAddress() {
-        const address = this.address;
-        if (!address) return null;
-        const url = this.addressUrl ?? address;
-        let copied = false;
-        try {
-            await writeText(url);
-            copied = true;
-        } catch {
-            // A clipboard a browser refuses is not an error worth a red state: the
-            // event carries the address either way, so a host can offer its own
-            // way of copying. Saying «copied» when nothing was would be worse.
-            copied = false;
-        }
-        if (copied) this._showAddressCopied();
-        this.dispatchEvent(new CustomEvent("sf-property-view-address-copy", {
-            bubbles: true, composed: true, detail: {address, url, copied, record_id: this.recordId || null},
-        }));
-        return copied;
+        if (!this.address) return null;
+        const control = this.copyControl();
+        if (!control?.copy) return null;
+        return Boolean(await control.copy());
     }
 
     openFullPage() {

@@ -29,6 +29,8 @@ const styles = [
   // The composite's own stylesheet, which it did not have at all in the first
   // pair -- the reason a consumer saw plain stacked text.
   'smart/smart/popover/css/popover.css',
+  'component/component/icon-buttons/css/icon-buttons.css',
+  'smart/smart/copy-button/css/copy-button.css',
   'smart/smart/property-view/css/property-view.css',
   'smart/smart/sortable/css/sortable.css',
   'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
@@ -58,6 +60,7 @@ const modules = [
   'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
   'smart/smart/data-view/js/data-view.js',
   'smart/smart/popover/js/popover.js',
+  'smart/smart/copy-button/js/copy-button.js',
   'smart/smart/property-view/js/property-view.js',
 ].map((p) => join(out, p));
 
@@ -2097,7 +2100,7 @@ try {
     const copyControl = copies[copies.length - 1] ?? null;
     const copy = {
       copied: view.addressCopied === true,
-      glyph: copyControl ? copyControl.textContent.trim() : null,
+      glyph: copyControl?.querySelector('.sf-icon')?.textContent.trim() ?? null,
     };
 
     const arranging = (() => {
