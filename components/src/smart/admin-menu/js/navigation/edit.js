@@ -23,88 +23,38 @@ export function newProfileKinds(controller) {
     return {personal: !hasPersonal && Boolean(navigation?.rights?.edit_personal), shared: mayShare};
 }
 
-function renderNaming(context, mode) {
-    const {controller, text} = context;
-    const current = controller.currentProfile();
-    const kinds = newProfileKinds(controller);
-    // The draft is the controller's, not this render's: a render while the form
-    // was open bound fresh handlers to an empty name, and «Создать» quietly
-    // did nothing with the name still on the screen (owner, 2026-10-14).
-    const draft = controller.edit.draft ?? {};
-    const label = draft.label ?? (mode === "rename" ? current?.label ?? "" : "");
-    // Shared unless a personal one can still be made, in which case the person
-    // chooses -- and only if they may share at all.
-    const sharedOn = draft.shared ?? !kinds.personal;
-    const keep = (patch) => { controller.edit = {...controller.edit, draft: {...controller.edit.draft, ...patch}}; };
-    const submit = (form) => {
-        const typed = form?.querySelector("sf-input")?.value ?? label;
-        return mode === "rename" ? controller.renameProfile(typed) : controller.createProfile(typed, sharedOn);
-    };
-    return html`<form class="sf-admin-nav-edit-form" @submit=${(event) => { event.preventDefault(); submit(event.currentTarget); }}>
-        <sf-input size="1/2" .value=${label} placeholder=${text("profileName")}
-            @input=${(event) => keep({label: event.target?.value ?? event.detail?.value ?? ""})}></sf-input>
-        ${mode === "new" && kinds.personal && kinds.shared ? html`<sf-checkbox size="1/2" .checked=${sharedOn}
-            text=${text("sharedProfile")}
-            @change=${(event) => keep({shared: Boolean(event.target?.checked ?? event.detail?.checked)})}></sf-checkbox>` : nothing}
-        <div class="sf-admin-nav-edit-actions">
-            <sf-button size="1/2" @click=${(event) => submit(event.target.closest("form"))} text=${mode === "rename" ? text("save") : text("create")}></sf-button>
-            <sf-button size="1/2" appearance="ghost" scheme="on-surface"
-                @click=${() => controller.startNaming(null)} text=${text("cancel")}></sf-button>
-        </div>
-    </form>`;
-}
-
-// The profiles to edit, and what can be done to the one being edited, in the
-// standard menu. Naming a profile is a form, so it opens in the banner rather
-// than inside the menu.
-function openProfiles(context, anchor) {
-    const {controller, navigation, text} = context;
-    const profiles = navigation.profiles;
-    const current = controller.currentProfile();
-    const kinds = newProfileKinds(controller);
-    const entries = profiles.list.map((entry) => ({
-        id: `profile:${entry.key}`, text: entry.label, kind: "radio",
-        icon: entry.kind === "personal" ? "person" : "group",
-        checked: entry.key === profiles.current, disabled: !controller.mayEdit(entry),
+// The profile being edited is chosen, made, renamed, removed and reset in the
+// Framework's profile picker (owner, 2026-10-14): one place for all of it,
+// rather than a button opening a menu and a form opening under the banner.
+function profilePickerEntries(controller) {
+    return (controller.navigation?.profiles?.list ?? []).map((entry) => ({
+        id: entry.key, label: entry.label, shared: entry.kind === "shared",
+        builtin: !entry.renamable && !entry.removable && entry.kind === "shared",
+        editable: controller.mayEdit(entry) && (entry.renamable || entry.removable),
     }));
-    const actions = [
-        kinds.personal || kinds.shared ? {id: "new", text: text("newProfile"), icon: "add"} : null,
-        current?.renamable ? {id: "rename", text: text("renameProfile"), icon: "edit"} : null,
-        current?.removable ? {id: "delete", text: text("deleteProfile"), icon: "delete", danger: true} : null,
-    ].filter(Boolean);
-    if (actions.length) entries.push({type: "separator"}, ...actions);
-    return openMenu(controller, anchor, {
-        label: text("menuProfile"), entries,
-        select: (id) => {
-            if (id?.startsWith("profile:")) return controller.editProfile(id.slice("profile:".length));
-            if (id === "new" || id === "rename") return controller.startNaming(id);
-            if (id === "delete") return controller.deleteProfile();
-            return null;
-        },
-    });
 }
 
 export function renderEditBanner(context) {
     const {controller, text, edit} = context;
     const current = controller.currentProfile();
     const shared = current?.kind === "shared";
+    const kinds = newProfileKinds(controller);
     return html`<div class="sf-admin-nav-edit-banner" role="region" aria-label=${text("editMenu")}>
         <div class="sf-admin-nav-edit-title">
             ${icon("edit", "")}
             <span class="sf-admin-nav-row-label">${text("editMenu")}</span>
             <sf-button size="1/2" @click=${() => controller.stopEdit()} text=${text("done")}></sf-button>
         </div>
-        <button type="button" class="sf-admin-nav-edit-profile" aria-haspopup="menu"
-            aria-expanded="false" @click=${(event) => openProfiles(context, event.currentTarget)}>
-            ${icon(shared ? "group" : "person")}
-            <span class="sf-admin-nav-row-label">${text("profileLabel")} <b>${current?.label ?? ""}</b></span>
-            ${icon("expand_more", "sf-admin-nav-row-chevron")}
-        </button>
-        ${edit.naming ? renderNaming(context, edit.naming) : nothing}
+        <sf-profile-picker size="1/2" label=${text("profileLabel")} current=${controller.navigation?.profiles?.current ?? ""}
+            resettable message=${edit.message || ""}
+            .profiles=${profilePickerEntries(controller)}
+            .rights=${{create: {personal: kinds.personal, shared: kinds.shared}}}
+            @sf-profile-select=${(event) => controller.editProfile(event.detail.id)}
+            @sf-profile-create=${(event) => controller.createProfile(event.detail.label, event.detail.shared)}
+            @sf-profile-rename=${(event) => controller.renameProfile(event.detail.label, event.detail.id)}
+            @sf-profile-delete=${(event) => controller.deleteProfile(event.detail.id)}
+            @sf-profile-reset=${() => controller.resetProfile()}></sf-profile-picker>
         <p class="sf-admin-nav-edit-note">${shared ? text("noteShared") : text("notePersonal")}</p>
-        ${edit.message ? html`<p class="sf-admin-nav-edit-message" role="alert">${edit.message}</p>` : nothing}
-        <sf-button size="1/2" appearance="outline" scheme="on-surface" icon-start="restart_alt"
-            @click=${() => controller.resetProfile()} text=${text("resetToPackages")}></sf-button>
     </div>`;
 }
 

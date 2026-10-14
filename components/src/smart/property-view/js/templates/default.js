@@ -113,28 +113,28 @@ function renderConfigureBar(context) {
         return denied ? {...item, disabled: true, ariaLabel: denied} : item;
     });
 
-    // Which named view is being arranged, when the host offers more than one.
-    // One view is not a choice and draws nothing. The chooser stands before the
-    // layer control because it is the larger question: which arrangement, and
-    // only then whose copy of it (owner, 2026-10-09).
-    const profiles = context.viewProfiles ?? [];
-    const current = profiles.find((profile) => profile.id === context.viewProfile);
-    const chooser = profiles.length > 1
-        ? html`
-            <sf-button
-                    size=${context.size}
-                    appearance="outline"
-                    scheme="on-surface"
-                    icon-end="expand_more"
-                    data-action="view-profile"
-                    aria-haspopup="menu"
-                    aria-expanded="false"
-                    aria-label=${context.viewProfileLabel}
-                    text=${`${context.viewProfileLabel}: ${current?.label ?? ''}`}
-                    @click=${(event) => context.component.openViewProfileMenu(
-                            event.currentTarget.querySelector('button') ?? event.currentTarget)}
-            ></sf-button>`
-        : nothing;
+    // Which named view is being arranged, chosen, made, renamed and removed in
+    // the Framework's profile picker (owner, 2026-10-14) -- the one the admin
+    // menu's profiles use. It stands before the layer control because it is
+    // the larger question: which arrangement, and only then whose copy of it.
+    const writable = context.editableLayers ?? [];
+    const chooser = html`
+        <sf-profile-picker
+                size=${context.size}
+                data-action="view-profile"
+                label=${context.viewProfileLabel}
+                current=${context.viewProfile ?? ''}
+                .profiles=${(context.viewProfiles ?? []).map((profile) => ({
+                    id: profile.id, label: profile.label, shared: Boolean(profile.shared),
+                    editable: writable.includes(profile.shared ? 'shared' : 'personal')
+                        && (!profile.shared || context.canDeleteViewProfile(profile.id)),
+                }))}
+                .rights=${{create: {personal: writable.includes('personal'), shared: writable.includes('shared')}}}
+                @sf-profile-select=${(event) => context.component.selectViewProfile(event.detail.id)}
+                @sf-profile-create=${(event) => context.component.createViewProfile(event.detail.label, {shared: event.detail.shared})}
+                @sf-profile-rename=${(event) => context.component.renameViewProfile(event.detail.id, event.detail.label)}
+                @sf-profile-delete=${(event) => context.component.deleteViewProfile(event.detail.id)}
+        ></sf-profile-picker>`;
 
     return html`
         <div class="sf-property-view-actions sf-property-view-configure-bar flex items-cross-center gap-2 flex-wrap"

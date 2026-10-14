@@ -31,6 +31,7 @@ const styles = [
   'smart/smart/popover/css/popover.css',
   'component/component/context-menu/css/context-menu.css',
   'smart/smart/property-view/css/property-view.css',
+  'smart/smart/profile-picker/css/profile-picker.css',
   'smart/smart/sortable/css/sortable.css',
   'smart/smart/table/css/table.css', 'smart/smart/resizer/css/resizer.css',
   'component/component/pagination/css/pagination.css',
@@ -59,6 +60,7 @@ const modules = [
   'smart/smart/resizer/js/resizer.js', 'smart/smart/table/js/table.js',
   'smart/smart/data-view/js/data-view.js',
   'smart/smart/popover/js/popover.js',
+  'smart/smart/profile-picker/js/profile-picker.js',
   'smart/smart/property-view/js/property-view.js',
 ].map((p) => join(out, p));
 
@@ -177,10 +179,11 @@ try {
     };
   });
   if (!chooser.text?.includes('Мой') || chooser.dropdown) note({case: 'the bar names the view and is a menu button', got: chooser});
-  await press('[data-action="view-profile"]', true);
+  // The bar's chooser is the Framework's profile picker since 2026-10-14.
+  await press('[data-action="view-profile"] .sf-profile-picker-trigger', true);
   await page.waitForTimeout(300);
-  const barMenu = await page.evaluate(() => [...document.querySelectorAll('sf-context-menu[data-sf-property-view-menu] .sf-context-menu-item')]
-    .map((row) => `${row.querySelector('.sf-context-menu-item-label')?.textContent.trim()}:${row.getAttribute('aria-checked')}`));
+  const barMenu = await page.evaluate(() => [...document.querySelectorAll('sf-profile-picker[data-action="view-profile"] .sf-profile-picker-row[data-id]')]
+    .map((row) => `${row.querySelector('.sf-profile-picker-label')?.textContent.trim()}:${row.getAttribute('aria-checked')}`));
   if (barMenu.join() !== 'Обычный:false,Мой:true') note({case: 'the bar opens the views as radio rows', got: barMenu});
 
   // A host's own items slotted into `menu` are rows of the same standard menu

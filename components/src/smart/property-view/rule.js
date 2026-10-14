@@ -28,6 +28,9 @@ SF.RuleLoader["cl-property-view"] = {
     // renders is a component this one fetches.
     { name: "accordion" },
     { name: "cl-reference-link" },
+    // The views are chosen, made, renamed and removed in the profile picker
+    // (owner, 2026-10-14), drawn while the view is arranged.
+    { name: "cl-profile-picker", lazy: true },
     { name: "cl-progress-scale" },
     // A number with a range draws sf-range-slider, from the shared renderer set.
     { name: "cl-range-slider" },

@@ -23,6 +23,8 @@ SF.RuleLoader["cl-admin-menu"] = {
     { name: "cl-sortable", lazy: true },
     // The columns' edges widen and narrow them.
     { name: "cl-resizer" },
+    // The edit mode's profiles are the profile picker (owner, 2026-10-14).
+    { name: "cl-profile-picker", lazy: true },
     // A row's glyph is chosen in the edit mode with the grid dropdown.
     { name: "cl-dropdown", lazy: true },
   ],

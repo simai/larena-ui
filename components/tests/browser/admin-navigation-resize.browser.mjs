@@ -19,13 +19,14 @@ const styles = [
   'component/component/context-menu/css/context-menu.css',
   'smart/smart/admin-menu/css/admin-menu.css',
   'smart/smart/resizer/css/resizer.css',
+  'smart/smart/profile-picker/css/profile-picker.css',
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js',
   'smart/smart/icons/js/icons.js', 'smart/smart/buttons/js/buttons.js',
   'smart/smart/icon-buttons/js/icon-buttons.js', 'smart/smart/badges/js/badges.js',
   'smart/smart/inputs/js/inputs.js', 'smart/smart/context-menu/js/context-menu.js',
-  'smart/smart/resizer/js/resizer.js', 'smart/smart/admin-menu/js/admin-menu.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/profile-picker/js/profile-picker.js', 'smart/smart/admin-menu/js/admin-menu.js',
 ].map((p) => join(out, p));
 
 const failures = [];
@@ -45,7 +46,11 @@ const NAVIGATION = {
   ],
   notifications: {unread: 1},
   person: {name: 'Administrator', theme: 'dark', links: [{label: 'Безопасность учётной записи', icon: 'shield', href: '/admin/security'}], language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
-  profiles: {current: 'regular', list: [{key: 'regular', label: 'Обычный', kind: 'shared'}]},
+  profiles: {current: 'regular', list: [
+    {key: 'regular', label: 'Обычный', kind: 'shared'},
+    {key: 'editors', label: 'Редакторы', kind: 'shared', renamable: true, removable: true},
+  ]},
+  rights: {edit_shared: true, edit_personal: true, create_shared: true},
   site: {current: {key: 'main', label: 'Main site'}, count: 1},
 };
 
@@ -135,6 +140,24 @@ try {
   if (theme.choice || !theme.row || theme.value !== 'Тёмная' || theme.submenu !== 'menu') {
     note({case: 'the theme is a row with a submenu', got: theme});
   }
+  // The edit mode's profiles are the profile picker: the profiles as rows,
+  // rename and remove where the person may, a new profile inline.
+  const picker = await page.evaluate(async () => {
+    await document.getElementById('m')._navigation?.startEdit();
+    await new Promise((done) => setTimeout(done, 500));
+    const element = document.querySelector('.sf-admin-nav-edit-banner sf-profile-picker');
+    element?.querySelector('.sf-profile-picker-trigger')?.click();
+    await new Promise((done) => setTimeout(done, 300));
+    return element ? {
+      trigger: element.querySelector('.sf-profile-picker-trigger')?.textContent.replace(/\s+/gu, ' ').trim(),
+      rows: [...element.querySelectorAll('.sf-profile-picker-row[data-id]')].map((row) => `${row.dataset.id}:${row.getAttribute('aria-checked')}:${Boolean(row.querySelector('.sf-profile-picker-actions'))}`),
+      add: Boolean(element.querySelector('.sf-profile-picker-add')),
+      oldForm: Boolean(document.querySelector('.sf-admin-nav-edit-profile, .sf-admin-nav-edit-check')),
+    } : null;
+  });
+  if (!picker || !picker.trigger?.includes('Обычный') || picker.rows.join() !== 'regular:true:false,editors:false:true' || !picker.add || picker.oldForm) {
+    note({case: "the edit mode's profiles are the profile picker", got: picker});
+  }
   await page.close();
 
   const again = await open();
@@ -165,7 +188,7 @@ try {
   const personal = await third.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
   if (personal !== 320) note({case: "the person's width wins", got: personal, expected: 320});
   await third.close();
-  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter}));
+  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter, picker}));
 } finally {
   await browser.close();
 }

@@ -50,6 +50,7 @@
       "smart.inputs",
       "smart.list-item",
       "smart.popover",
+      "smart.profile-picker",
       "smart.progress-bar",
       "smart.progress-scale",
       "smart.range-slider",
@@ -1107,7 +1108,7 @@
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "a7f396c832c4c7b73e658d74d34ecd209334dbfef496b2135c694a7a25df1bf4"
+        "sha256": "583925f1955df883f2d4cec504b3168497c840aef31bdfb182ea7f056d6a0380"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
@@ -1115,7 +1116,7 @@
       },
       {
         "path": "src/smart/property-view/rule.js",
-        "sha256": "af99cba80d9a9295ccd478953438bf52552c3a37d585f2dad150bd5324a8a39f"
+        "sha256": "0cf3ee4e3014c67f5e76c12895a19b7bc7c1ffe2c5f31a20499645c9641f83f6"
       },
       {
         "path": "src/core/contracts/ports/simai.property-view-port/1.4.0/port.json",

@@ -1064,18 +1064,18 @@ export class NavigationController {
         else await this.load("requested");
     }
 
-    async renameProfile(label) {
+    async renameProfile(label, profile = this.navigation.profiles.current) {
         const text = String(label ?? "").trim();
         if (!text) return this.editMessage(this.text("profileNameEmpty"));
-        const answer = await this.raise("view.rename", {profile: this.navigation.profiles.current, label: text});
+        const answer = await this.raise("view.rename", {profile, label: text});
         if (answer.answer !== "applied") return this.editMessage(answer.reason);
         this.navigation = {...this.navigation, profiles: answer.profiles ?? this.navigation.profiles};
         this.edit = {...this.edit, profiles: false, naming: null};
         this.update("edit");
     }
 
-    async deleteProfile() {
-        const answer = await this.raise("view.delete", {profile: this.navigation.profiles.current});
+    async deleteProfile(profile = this.navigation.profiles.current) {
+        const answer = await this.raise("view.delete", {profile});
         if (answer.answer !== "applied") return this.editMessage(answer.reason);
         this.edit = {...this.edit, profiles: false, naming: null};
         if (answer.navigation) this.accept({...answer.navigation, answer: "applied"}, this.sequence);

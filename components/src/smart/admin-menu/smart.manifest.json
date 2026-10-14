@@ -37,6 +37,7 @@
       "smart.icon-buttons",
       "smart.icons",
       "smart.inputs",
+      "smart.profile-picker",
       "smart.resizer",
       "smart.sortable"
     ],
@@ -813,11 +814,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/edit.js",
-        "sha256": "1e1b5d8bb0b98074b2811bcd6ba53fa3603e4a6714a73fff2e55d7a23b6f7505"
+        "sha256": "aac106e340d773773e5f06d73addab788001e1825917ba01998b18d8a4a8cc46"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/controller.js",
-        "sha256": "4af2e7c3924420d62d4ef47cf53ee1e6b5376ef6d6d88eff85b8083fffed8c81"
+        "sha256": "8d3d8eea381ccb368c4beec169b67e68bfe517cf6bd54303cfc9ea1c4abe03c6"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/menu.js",
