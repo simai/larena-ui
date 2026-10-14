@@ -67,7 +67,9 @@ try {
     await new Promise((done) => setTimeout(done, 300));
   }, [...rows(4), {id: '5', name: 'Row 5', city: 'City 5', actions: ['edit']}]);
 
-  await table.click('tbody tr[data-row-id="2"] td[data-key="name"]');
+  // A cell other than the title: the title is a link that opens the record
+  // with one click since 2026-10-14.
+  await table.click('tbody tr[data-row-id="2"] td[data-key="city"]');
   await table.waitForTimeout(120);
   const afterClick = await table.evaluate(() => {
     const element = document.getElementById('t');

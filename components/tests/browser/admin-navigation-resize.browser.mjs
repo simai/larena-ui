@@ -14,6 +14,7 @@ const out = resolve(process.argv[2]);
 const styles = [
   'core/core/css/core.css', 'core/core/css/utility.full.css',
   'component/component/admin-menu/css/admin-menu.css',
+  'component/component/badges/css/badges.css',
   'component/component/inputs/css/inputs.css',
   'component/component/context-menu/css/context-menu.css',
   'smart/smart/admin-menu/css/admin-menu.css',

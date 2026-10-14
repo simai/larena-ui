@@ -766,6 +766,9 @@ export function renderTableTemplate(context) {
                     }
                     event.preventDefault();
                     event.stopPropagation();
+                    // The second click of a double click is the same wish:
+                    // opened once, not twice.
+                    if (event.detail > 1) return;
                     context.component.requestActionIntent('view', [row.id]);
                 }}>${value}</a>`;
     }
