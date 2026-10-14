@@ -184,9 +184,9 @@ function renderEditRow(context, row, {draggable = true} = {}) {
         ${edit.renaming === row.key ? renderRenaming(context, row) : row.kind === "divider"
             ? html`<hr class="sf-admin-nav-divider sf-admin-nav-edit-line" aria-label=${name}>`
             : label}
-        <button type="button" class="sf-admin-nav-edit-button" aria-pressed=${String(!row.hidden)}
-            aria-label=${`${row.hidden ? text("show") : text("hide")}: ${name}`} title=${row.hidden ? text("show") : text("hide")}
-            @click=${() => controller.toggleHidden(row.key)}>${icon(row.hidden ? "visibility_off" : "visibility", "")}</button>
+        <!-- Showing and hiding is in the row's ⋯ (owner, 2026-10-14): an eye on
+             every row was a second way to the same thing, and a hidden row
+             already reads as hidden, struck through. -->
         <button type="button" class="sf-admin-nav-edit-button" aria-haspopup="menu" aria-expanded="false"
             aria-label=${`${text("more")}: ${name}`} title=${text("more")}
             @click=${(event) => openRowMenu(context, row, event.currentTarget)}>

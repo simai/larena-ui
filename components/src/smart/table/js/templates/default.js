@@ -753,8 +753,26 @@ export function renderTableTemplate(context) {
             </ul>`;
     }
 
+    // The title opens its record with one click (owner, 2026-10-14): the
+    // column the host marked as the title is a link to the record's view when
+    // the row offers it, so a record is a click away rather than a double
+    // click or a trip through the row's menu.
+    function renderTitleLink(context, row, value) {
+        if (!context.component.canOpenRow?.(row) || row?.id == null) return value;
+        return html`<a class="sf-table-title-link" href=${row.href ?? row.url ?? '#'}
+                @click=${(event) => {
+                    if (event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                        if (row.href ?? row.url) return;
+                    }
+                    event.preventDefault();
+                    event.stopPropagation();
+                    context.component.requestActionIntent('view', [row.id]);
+                }}>${value}</a>`;
+    }
+
     function renderRows(context, columns, rows, {busy = false} = {}) {
         const treeColumn = context.component.treeColumnKey?.(columns);
+        const titleColumn = columns.find((column) => column?.role === 'title' && !column.system)?.key ?? null;
         return html`
             <tbody data-busy=${busy ? '' : nothing}>
             ${rows.map((row, rowIndex) => row.__tree?.more ? keyed(`row:${row.id}`, renderMoreRow(context, columns, row)) : keyed(`row:${row.id ?? row.value ?? rowIndex}`, html`
@@ -777,8 +795,8 @@ export function renderTableTemplate(context) {
                         <td data-key="${column.key}" data-item="${row.id}_${column.key}"
                             data-sf-pinned=${context.component.isPinnedColumn(column) ? '' : nothing}
                             style=${context.component.getStickyCellStyle(columns, index) || nothing}>${column.key === treeColumn
-                                ? renderTreeCell(context, row, renderCellValue(row, column))
-                                : renderCellValue(row, column)}</td>
+                                ? renderTreeCell(context, row, column.key === titleColumn ? renderTitleLink(context, row, renderCellValue(row, column)) : renderCellValue(row, column))
+                                : column.key === titleColumn ? renderTitleLink(context, row, renderCellValue(row, column)) : renderCellValue(row, column)}</td>
                     `))}
                 </tr>
             `))}

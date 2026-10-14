@@ -200,6 +200,39 @@ try {
     await context.close();
   }
 
+  // 1e. A sort or a page loading over the rows moves nothing: the spinner
+  //     takes no room (it pushed the table down and back). And the title is a
+  //     link that opens the record with one click.
+  {
+    const page = await open('1/2');
+    const measured = await page.evaluate(async () => {
+      const table = document.getElementById('t');
+      window.intents = [];
+      table.addEventListener('sf-table-action-intent', (event) => window.intents.push(JSON.parse(JSON.stringify(event.detail ?? {}))));
+      table.setColumns([{key: 'name', label: 'Название', role: 'title'}, {key: 'code', label: 'Код'}]);
+      table.setRows([{id: '7', name: 'Запись', code: 'A', actions: ['view']}, {id: '8', name: 'Другая', code: 'B', actions: []}]);
+      await new Promise((done) => setTimeout(done, 500));
+      const head = () => Math.round(document.querySelector('#t thead').getBoundingClientRect().top);
+      const before = head();
+      table.setDataState('loading');
+      await new Promise((done) => setTimeout(done, 200));
+      const during = head();
+      const spinner = Boolean(document.querySelector('#t .sf-table-busy'));
+      table.setDataState('auto');
+      await new Promise((done) => setTimeout(done, 200));
+      const links = [...document.querySelectorAll('#t tbody td[data-key="name"] a.sf-table-title-link')].map((link) => link.textContent.trim());
+      document.querySelector('#t tbody td[data-key="name"] a.sf-table-title-link')?.click();
+      await new Promise((done) => setTimeout(done, 100));
+      return {before, during, spinner, links, intents: window.intents};
+    });
+    console.log(JSON.stringify({measured}));
+    if (!measured.spinner || measured.before !== measured.during) note({case: 'loading over the rows', got: measured, expected: 'the head stays where it is'});
+    if (measured.links.join() !== 'Запись' || measured.intents.length !== 1 || measured.intents[0]?.action_id !== 'view') {
+      note({case: 'title link', got: measured, expected: 'a link on the row that can be opened, and one view intent on a click'});
+    }
+    await page.close();
+  }
+
   // 2. A loading row is as tall as the row it stands for.
   {
     const page = await open('1/2');

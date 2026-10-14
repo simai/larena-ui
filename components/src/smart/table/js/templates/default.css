@@ -866,14 +866,46 @@
      scrollport rather than the table, so it stays in the middle of the visible
      part of a table taller or wider than its box — the old loader replaced the
      rows and sat in the top left corner of the result. */
+  /* The spinner over the rows takes no room: sticky, it stayed in the flow
+     with its own height and pushed the table down for as long as a sort or a
+     page took, and the table jumped down and back (owner, 2026-10-14). It is a
+     line of no height in the middle of the visible box, the spinner hung on
+     it. */
   sf-table .sf-table-busy {
     position: sticky;
     inset-block-start: 50%;
     inset-inline-start: 50%;
-    translate: -50% -50%;
+    translate: -50% 0;
     inline-size: fit-content;
+    block-size: 0;
+    overflow: visible;
     z-index: 4;
     pointer-events: none;
+  }
+
+  sf-table .sf-table-busy > * {
+    translate: 0 -50%;
+  }
+
+  /* The title column's link to the record: the row's text, a pointer and an
+     underline on hover, so the column reads as a list and not as a row of
+     blue words beside the blue related values. */
+  sf-table .sf-table-title-link {
+    color: inherit;
+    font-weight: var(--sf-font-weight-medium);
+    text-decoration: none;
+    text-underline-offset: var(--sf-a2);
+  }
+
+  sf-table .sf-table-title-link:hover {
+    color: var(--sf-primary);
+    text-decoration: underline;
+  }
+
+  sf-table .sf-table-title-link:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-a2);
+    border-radius: var(--sf-radius--ui);
   }
 
   sf-table tbody[data-busy] {

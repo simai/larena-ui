@@ -159,6 +159,17 @@
     margin-inline-end: var(--sf-space-1\/2);
   }
 
+  /* A count beside a row's words is a counter, not a label: a step smaller
+     than the row's text and no taller than its letters' line (owner,
+     2026-10-14: the «1» by «Уведомления» stood as tall as the row). */
+  .sf-admin-nav-attention .sf-badge {
+    --sf-badge--font-size: var(--sf-text-size-1\/4);
+    --sf-badge--line-height: var(--sf-text-height-1\/4);
+    --sf-badge--padding-block: 0px;
+    --sf-badge--padding-inline-start: var(--sf-a4);
+    --sf-badge--padding-inline-end: var(--sf-a4);
+  }
+
   .sf-admin-nav-kbd {
     flex: none;
     color: var(--sf-on-surface-variant);
@@ -167,12 +178,14 @@
   }
 
   /* The rail keeps only a dot where a row has something waiting. */
+  /* In the rail a count is a dot on the icon's corner, small beside the icon
+     (owner, 2026-10-14: it was nearly half the icon). */
   .sf-admin-nav-dot {
     position: absolute;
-    inset-block-start: var(--sf-space-1\/4);
-    inset-inline-end: var(--sf-space-1\/4);
-    inline-size: var(--sf-space-1\/2);
-    block-size: var(--sf-space-1\/2);
+    inset-block-start: var(--sf-a6);
+    inset-inline-end: var(--sf-a8);
+    inline-size: var(--sf-a6);
+    block-size: var(--sf-a6);
     border-radius: 50%;
     background-color: var(--sf-error);
   }
@@ -732,6 +745,21 @@
     inline-size: var(--sf-icon-size-2);
     cursor: grab;
     --sf-icon--color: var(--sf-on-surface-variant);
+  }
+
+  /* The glyph keeps its size and the name takes what is left, ending in an
+     ellipsis: a long name squeezed the glyph under its first letters (owner,
+     2026-10-14). */
+  .sf-admin-nav-edit-icon {
+    flex: none;
+  }
+
+  .sf-admin-nav-edit-row > .sf-admin-nav-row-label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .sf-admin-nav-edit-line {

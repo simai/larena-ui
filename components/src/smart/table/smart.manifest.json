@@ -43,6 +43,7 @@
       "smart.list-item",
       "smart.modal",
       "smart.pagination",
+      "smart.radio",
       "smart.range-slider",
       "smart.resizer",
       "smart.spinner",
@@ -1578,15 +1579,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "117f865b26e5745ff83c8c7c9d47ad004382b310a09e8609694677bac9cb62aa"
+        "sha256": "42913207c5b8d59544a8a09f1e232654dddc373cdd4a7f88bf778bfcb41c1c86"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "9df29dfdbabc142933c548833038617293f0353259b412a2555379dd44bbf527"
+        "sha256": "8a5a118a712dfe3c1891090f27b7ed5203a21eead637d63ad2678772fe6c4429"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "1ba563720a031806b840a9c4ee3059eae3965a2029ff6e069736ee2b05f46d56"
+        "sha256": "0500fa2fe2380df6665a27b54847775d093894770a9dbd059b02ddc1329fdb16"
       },
       {
         "path": "src/smart/helpers/option-badge.js",
@@ -1594,7 +1595,7 @@
       },
       {
         "path": "src/smart/table/rule.js",
-        "sha256": "b790d8cb20dc8a1704e69e9848575b5536ffee4bfbf0f4c1f52a021ea116e1f2"
+        "sha256": "8565ec82f7715146dff2db1d3b5ee7231fc5fafa2b895ead55bf6ce59c441a5c"
       },
       {
         "path": "src/smart/table/docs/smart-table-guide.md",

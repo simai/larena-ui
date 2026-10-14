@@ -42,6 +42,7 @@ const NAVIGATION = {
       {key: 'cms', kind: 'page', level: 'site', label: 'Минимальная CMS', icon: 'table', href: '/admin/cms'},
     ]},
   ],
+  notifications: {unread: 1},
   person: {name: 'Administrator', theme: 'dark', links: [{label: 'Безопасность учётной записи', icon: 'shield', href: '/admin/security'}], language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
   profiles: {current: 'regular', list: [{key: 'regular', label: 'Обычный', kind: 'shared'}]},
   site: {current: {key: 'main', label: 'Main site'}, count: 1},
@@ -97,6 +98,15 @@ try {
     const told = await page.evaluate(() => window.raised.filter((one) => one.intent === 'preference.widths').map((one) => one.payload));
     if (told.length !== 1 || told[0]?.widths?.first !== widened) note({case: 'the host keeps the width', got: told, expected: {widths: {first: widened}}});
   }
+
+  // The count beside «Уведомления» is a small counter, no taller than the
+  // letters' line.
+  const counter = await page.evaluate(() => {
+    const badge = document.querySelector('.sf-admin-nav-attention .sf-badge');
+    const row = badge?.closest('.sf-admin-nav-row');
+    return badge ? {height: Math.round(badge.getBoundingClientRect().height), row: Math.round(row?.getBoundingClientRect().height ?? 0)} : null;
+  });
+  if (!counter || counter.height > 16) note({case: 'the notification counter', got: counter, expected: 'at most 16px tall'});
 
   // The theme is a row with a submenu.
   const theme = await page.evaluate(async () => {
@@ -154,7 +164,7 @@ try {
   const personal = await third.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
   if (personal !== 320) note({case: "the person's width wins", got: personal, expected: 320});
   await third.close();
-  console.log(JSON.stringify({before, widened, theme, kept, reset, personal}));
+  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter}));
 } finally {
   await browser.close();
 }

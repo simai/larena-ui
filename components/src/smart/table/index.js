@@ -46,6 +46,7 @@ const TABLE_TEXT = {
         defaultTemplateText: "Default",
         fieldsTabText: "Fields",
         templatesTabText: "Templates",
+        untitledTemplateText: "All records",
         saveTemplateLabel: "Save the filter as a template",
         filterSettingsLabel: "Filter settings",
         fieldWordText: "field",
@@ -118,6 +119,7 @@ const TABLE_TEXT = {
         defaultTemplateText: "По умолчанию",
         fieldsTabText: "Поля",
         templatesTabText: "Шаблоны",
+        untitledTemplateText: "Все записи",
         saveTemplateLabel: "Сохранение шаблона фильтра",
         filterSettingsLabel: "Настройки фильтра",
         fieldWordText: "поле",
@@ -3620,7 +3622,10 @@ class SfTable extends SfBaseElement {
                     type: "radio",
                     props: {
                         size: this.size,
-                        label: col.label,
+                        // A template the host gave no name is the view as it
+                        // stands: it is named so, not drawn as an empty row
+                        // (owner, 2026-10-14).
+                        label: col.label || this.text('untitledTemplateText'),
                         name: 'filter_templates',
                         checked: selectedTemplateKey
                             ? selectedTemplateKey === col.key
