@@ -438,7 +438,7 @@ function renderField(context, field, editing, sectionKey = '', groupKey = '') {
                         ? html`<span class="sf-property-view-inherited color-on-surface-variant">${context.inheritedText}</span>`
                         : nothing}
             </div>
-            ${editing || context.configuring || field.readonly === true
+            ${editing || context.configuring || field.readonly === true || !context.mayEdit || context.openAll
                     ? html`<div class="sf-property-view-field-value min-w-0 flex items-cross-center gap-2 flex-wrap">${renderFieldValue(context, field, editing)}</div>`
                     : html`
                         <button
@@ -562,8 +562,11 @@ function renderAddField(context, groupKey) {
 
 function renderGroup(context, section, group) {
     const groupKey = String(group.key ?? '');
-    const editing = context.editing?.group === groupKey
-        && context.editing?.section === String(section.key ?? '');
+    // On a surface open all at once (edit, create) every group is open; a
+    // group the host keeps closed stays shown.
+    const editing = (context.openAll && group.kind !== 'related' && group.editable !== false)
+        || (context.editing?.group === groupKey
+            && context.editing?.section === String(section.key ?? ''));
     const fields = listed(context, group.fields);
     const configuring = context.configuring;
     const groupError = configuring ? context.entryError('group', groupKey) : null;
@@ -628,7 +631,7 @@ function renderGroup(context, section, group) {
                             ></sf-icon-button>
                             </span>`
                         : nothing}
-                ${!configuring && !editing && group.kind !== 'related' && group.editable !== false
+                ${!configuring && !editing && context.mayEdit && !context.openAll && group.kind !== 'related' && group.editable !== false
                         ? html`
                             <sf-button
                                     appearance="link"
@@ -834,8 +837,43 @@ function sizeStyle(context) {
         + ' --sf-property-view--value-size: var(--sf-text-small--size); --sf-property-view--value-height: var(--sf-text-small--height);';
 }
 
+// The foot of a surface open all at once: Create or Save, and Cancel, with
+// what went wrong beside them.
+function renderOpenAllBar(context) {
+    const creating = context.mode === 'create';
+    return html`
+        <div class="sf-property-view-actions flex items-cross-center gap-2 flex-wrap" role="group">
+            <sf-button
+                    appearance="default"
+                    size=${context.size}
+                    text=${creating ? context.createText : context.saveText}
+                    data-action=${creating ? 'create' : 'save'}
+                    ?disabled=${!creating && context.changed.size === 0}
+                    @click=${() => context.component.saveAll()}
+            ></sf-button>
+            <sf-button
+                    appearance="outline"
+                    size=${context.size}
+                    text=${context.cancelText}
+                    data-action="cancel"
+                    @click=${() => context.component.cancelEdit()}
+            ></sf-button>
+            ${context.errors.size
+                    ? html`<span class="sf-property-view-errors color-error">${context.errorsText}: ${context.errors.size}</span>`
+                    : nothing}
+            ${context.conflict
+                    ? html`<span class="sf-property-view-conflict color-error" role="alert">${context.conflict}</span>`
+                    : nothing}
+        </div>
+    `;
+}
+
 function renderActions(context, {panel = false} = {}) {
-    const removable = context.recordActions.includes('record.delete');
+    // A surface placed to show the object has no footer of its own (owner,
+    // 2026-10-14): a reader sees values, not controls that would refuse.
+    if (context.mode === 'view') return nothing;
+    if (context.openAll) return renderOpenAllBar(context);
+    const removable = context.mode !== 'create' && context.recordActions.includes('record.delete');
     // While the view is arranged the foot carries that mode's controls instead:
     // saving a record and arranging the view it is read in are two modes, and a
     // bar holding both would offer a save for something nobody was editing.

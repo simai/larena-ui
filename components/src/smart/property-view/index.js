@@ -28,7 +28,21 @@ import {writeText} from "../../component/clipboard/js/index";
 // keeps its list -- a guard naming a narrower set than the published versions is
 // a component refusing a host it asked to move. The contract test beside this
 // file compares the list with the manifest.
-const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0"];
+const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0"];
+
+// The surface's mode (owner, 2026-10-14). view: show the object, never offer
+// a change. auto: show it and offer what this person may do. edit: every group
+// open at once, one save. create: an empty object of the collection, every
+// field open, one create.
+const MODES = ["view", "auto", "edit", "create"];
+const versionAtLeast = (version, minimum) => {
+    const parts = (value) => String(value ?? "").split(".").map((part) => Number.parseInt(part, 10) || 0);
+    const [a, b] = [parts(version), parts(minimum)];
+    for (let index = 0; index < 3; index += 1) {
+        if ((a[index] ?? 0) !== (b[index] ?? 0)) return (a[index] ?? 0) > (b[index] ?? 0);
+    }
+    return true;
+};
 
 // Every panel open on the page, in the order they were opened. A stack is not one
 // state held for several records: each window is its own element with its own
@@ -105,6 +119,8 @@ const PROPERTY_VIEW_TEXT = {
         editText: "edit",
         saveText: "Save",
         cancelText: "Cancel",
+        createText: "Create",
+        readOnlyText: "You can only view this record",
         deleteText: "Delete",
         changedText: "Fields changed",
         errorsText: "Errors",
@@ -176,6 +192,8 @@ const PROPERTY_VIEW_TEXT = {
         editText: "изменить",
         saveText: "Сохранить",
         cancelText: "Отменить",
+        createText: "Создать",
+        readOnlyText: "Эту запись можно только смотреть",
         deleteText: "Удалить",
         changedText: "Изменено полей",
         errorsText: "Ошибок",
@@ -255,6 +273,9 @@ class SfPropertyView extends SfBaseElement {
             // 1, or 1/2 beside a table at 1/2: the record read a step larger
             // than the list it was opened from (owner, 2026-10-14).
             size: {default: "1"},
+            // view | auto | edit | create: what the surface is placed to do
+            // (owner, 2026-10-14). The person's rights narrow it.
+            mode: {default: "auto"},
             emptyText: {attribute: "empty-text", default: "not filled in"},
             emptyRecordText: {attribute: "empty-record-text", default: "This record has nothing to show"},
             editText: {attribute: "edit-text", default: "edit"},
@@ -515,7 +536,7 @@ class SfPropertyView extends SfBaseElement {
     // it was asked for and closes when the host says it is done; a host that
     // refuses sends its reason and the panel stays open with it on screen.
     async deleteRecord() {
-        if (!this.recordActions.includes("record.delete")) return false;
+        if (this.mode === "view" || this.mode === "create" || !this.recordActions.includes("record.delete")) return false;
         const answer = await this._raise("record.delete", {
             record_id: this.recordId || null,
             collection: this.collection || null,
@@ -585,6 +606,27 @@ class SfPropertyView extends SfBaseElement {
 
     get size() {
         return this.getAttribute("size") === "1/2" ? "1/2" : "1";
+    }
+
+    get mode() {
+        const value = this.getAttribute("mode");
+        return MODES.includes(value) ? value : "auto";
+    }
+
+    // Whether this person may change the fields. A view surface never offers
+    // it; since port 1.12.0 the host says so with record.edit among the
+    // record's actions, and a reader is sent none. A host on an earlier port
+    // never sent it, and for it a group is editable unless it says otherwise.
+    get mayEdit() {
+        if (this.mode === "view") return false;
+        if (this.mode === "create") return true;
+        if (!versionAtLeast(this.hostPort?.version, "1.12.0")) return true;
+        return this.recordActions.includes("record.edit");
+    }
+
+    // Every group open at once: a full edit page, or a create.
+    get openAll() {
+        return this.mode === "create" || (this.mode === "edit" && this.mayEdit);
     }
 
     // What the drawer is told to be. `size` is a ladder and its widest step short
@@ -1357,6 +1399,10 @@ class SfPropertyView extends SfBaseElement {
             component: this,
             hostPort: this.hostPort,
             size: this.size,
+            mode: this.mode,
+            mayEdit: this.mayEdit,
+            openAll: this.openAll,
+            createText: pageText(PROPERTY_VIEW_TEXT, "createText", this),
             emptyText: this.emptyText,
             emptyRecordText: this.emptyRecordText,
             isEmptyRecord: this.isEmptyRecord,
@@ -1527,10 +1573,14 @@ class SfPropertyView extends SfBaseElement {
     async load(reason = "requested") {
         this._setState("loading", pageText(PROPERTY_VIEW_TEXT, "stateLoading", this));
         const epoch = ++this.epoch;
+        const creating = this.mode === "create";
         const answer = await this._raise("record.load", {
-            record_id: this.recordId || null,
+            record_id: creating ? null : this.recordId || null,
             collection: this.collection || null,
             reason,
+            // An empty object of the collection, laid out by its arrangement
+            // (port 1.12.0).
+            ...(creating ? {mode: "create"} : {}),
         }, {stale: () => epoch !== this.epoch});
         if (!answer) return null;
         if (answer.answer !== "applied") {
@@ -1849,6 +1899,7 @@ class SfPropertyView extends SfBaseElement {
     }
 
     editGroup(section, group) {
+        if (!this.mayEdit) return this;
         this.editing = {section: String(section), group: String(group)};
         this.changed.clear();
         this.errors.clear();
@@ -1870,7 +1921,17 @@ class SfPropertyView extends SfBaseElement {
 
     cancelEdit() {
         // Cancel drops what was typed and writes nothing. Data is saved by the
-        // button alone, so there is nothing to undo.
+        // button alone, so there is nothing to undo. On a surface open all at
+        // once the host decides where cancelling leads (a panel closes).
+        if (this.openAll) {
+            this.changed.clear();
+            this.errors.clear();
+            this.conflict = null;
+            this.requestComponentUpdate("editing");
+            this.dispatchEvent(new CustomEvent("sf-property-view-cancel", {bubbles: true, composed: true, detail: {mode: this.mode}}));
+            if (this.panel) this.closePanel?.("cancelled");
+            return this;
+        }
         this.editing = null;
         this.changed.clear();
         this.errors.clear();
@@ -1883,6 +1944,7 @@ class SfPropertyView extends SfBaseElement {
     // per field: a save carries the fields the person changed, against the
     // revision the read carried, and the host compares and sets.
     async saveGroup() {
+        if (this.openAll) return this.saveAll();
         if (!this.editing || this.changed.size === 0) return null;
         const epoch = ++this.epoch;
         const answer = await this._raise("group.save", {
@@ -1921,6 +1983,70 @@ class SfPropertyView extends SfBaseElement {
         return answer;
     }
 
+    // A surface open all at once saves the whole object: a create makes it
+    // (record.create), an edit saves every changed field as one revision
+    // (record.save), port 1.12.0.
+    async saveAll() {
+        if (this.mode !== "create" && this.changed.size === 0) return null;
+        const epoch = ++this.epoch;
+        const creating = this.mode === "create";
+        const answer = creating
+            ? await this._raise("record.create", {
+                collection: this.collection || null,
+                values: Object.fromEntries(this.changed),
+            }, {stale: () => epoch !== this.epoch})
+            : await this._raise("record.save", {
+                record_id: this.recordId || null,
+                collection: this.collection || null,
+                values: Object.fromEntries(this.changed),
+                revision: this.record?.revision ?? null,
+            }, {stale: () => epoch !== this.epoch});
+        if (!answer) return null;
+        if (answer.answer === "applied") {
+            this.changed.clear();
+            this.errors.clear();
+            this.conflict = null;
+            if (creating) {
+                const id = answer.record_id ?? answer.record?.record_id ?? null;
+                this.dispatchEvent(new CustomEvent("sf-property-view-created", {
+                    bubbles: true, composed: true, detail: {record_id: id, collection: this.collection || null},
+                }));
+                // The new object is shown as any object is: read, with what
+                // this person may do with it.
+                if (id !== null) {
+                    this.setAttribute("record-id", String(id));
+                    this.setAttribute("mode", "auto");
+                    if (answer.record) {
+                        this.record = answer.record;
+                        this.sections = Array.isArray(answer.record.sections) ? copy(answer.record.sections) : this.sections;
+                        this.view = answer.record.view ?? this.view;
+                        this._setState("ready");
+                    } else {
+                        await this.load("created");
+                    }
+                }
+                return answer;
+            }
+            this.record = answer.record ?? this.record;
+            this.sections = Array.isArray(answer.record?.sections) ? copy(answer.record.sections) : this.sections;
+            this._setState("ready");
+            return answer;
+        }
+        if (answer.answer === "conflict") {
+            this.conflict = answer.message || this.conflictText;
+            this.requestComponentUpdate("conflict");
+            return answer;
+        }
+        if (answer.answer === "refused") {
+            this.errors = new Map(Object.entries(answer.errors ?? {}).map(([key, value]) => [key, String(value)]));
+            if (!this.errors.size && answer.message) this.conflict = answer.message;
+            this.requestComponentUpdate("errors");
+            return answer;
+        }
+        this._setState("error", answer.message || pageText(PROPERTY_VIEW_TEXT, "saveFailedText", this));
+        return answer;
+    }
+
     // Configuring the view. The host decides three separate things and the
     // component decides none of them: whether a view can be configured at all
     // (the capability), which layers this person may write (`editable`, per
@@ -1928,6 +2054,9 @@ class SfPropertyView extends SfBaseElement {
     // which layer hid a given entry (`hiddenBy`, so the rule that hiding for
     // everyone cannot be undone in a personal view stays in one place).
     get canConfigureView() {
+        // Arranging is offered where it can be saved, and not on a surface
+        // placed only to show the object or to make one.
+        if (this.mode === "view" || this.mode === "create") return false;
         return Boolean(this.hostPort?.capabilities?.includes?.("view-settings"))
             && Boolean(this.view)
             && this.editableLayers.length > 0;

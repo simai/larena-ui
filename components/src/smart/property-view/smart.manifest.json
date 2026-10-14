@@ -82,6 +82,7 @@
         "edit-text",
         "empty-text",
         "errors-text",
+        "mode",
         "open-full-label",
         "panel",
         "panel-label",
@@ -121,9 +122,9 @@
       },
       "host_port": {
         "port": "simai.property-view-port",
-        "version": "1.11.0",
-        "path": "src/core/contracts/ports/simai.property-view-port/1.11.0/port.json",
-        "sha256": "8c57d5747ab071659f5495fd96c2bba3315e93ff078b639e9fc7c2a0bebc772f",
+        "version": "1.12.0",
+        "path": "src/core/contracts/ports/simai.property-view-port/1.12.0/port.json",
+        "sha256": "f4fd7b814a4920e9db6356209b67679c663790f9cca61996005eae31c9fe36f7",
         "supported_versions": [
           "1.0.0",
           "1.1.0",
@@ -135,7 +136,8 @@
           "1.7.0",
           "1.8.0",
           "1.10.0",
-          "1.11.0"
+          "1.11.0",
+          "1.12.0"
         ]
       }
     }
@@ -367,9 +369,23 @@
       },
       "size": {
         "type": "string",
-        "enum": ["1", "1/2"],
+        "enum": [
+          "1",
+          "1/2"
+        ],
         "default": "1",
         "description": "The view's size: its text, field labels, titles and controls. 1/2 matches a table at 1/2."
+      },
+      "mode": {
+        "type": "string",
+        "enum": [
+          "view",
+          "auto",
+          "edit",
+          "create"
+        ],
+        "default": "auto",
+        "description": "What the surface is placed to do. view: show the object and offer no change, footer, delete or arranging whatever the person may do. auto: show it and offer what this person may do (record.edit, the lifecycle acts, the writable layers). edit: every group open at once, one record.save. create: an empty object of the collection read with record.load mode create, every field open, one record.create."
       },
       "panel-width": {
         "type": "string",
@@ -949,6 +965,41 @@
           }
         }
       }
+    },
+    "sf-property-view-created": {
+      "summary": "A create surface made its object; the host may go on to its own place for it. The component shows the new object in auto mode.",
+      "payload": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "collection": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "sf-property-view-cancel": {
+      "summary": "A surface open all at once (edit, create) was cancelled; what the person typed is dropped and the host decides where that leads. A panel closes.",
+      "payload": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "enum": [
+              "edit",
+              "create"
+            ]
+          }
+        }
+      }
     }
   },
   "state": {
@@ -1052,11 +1103,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "3d53bfd128a67041d6e492a49dddfe8741058f27ed9045a0827d43938d091719"
+        "sha256": "16812121f829c07a8123908a63c921dd539e73498e82502dccc44d241bda19fc"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "e032e6f35e513fa55eeeb6d4164919d631f451fee04e07db1473dd6bbb70c876"
+        "sha256": "a7f396c832c4c7b73e658d74d34ecd209334dbfef496b2135c694a7a25df1bf4"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
