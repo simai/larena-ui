@@ -1078,7 +1078,7 @@ class SfPropertyView extends SfBaseElement {
     hostMenuElements() {
         // In a panel the holder is in the drawer, which is moved to the page's end.
         const holder = this.querySelector("[data-host-menu]")
-            ?? (this.querySelector("sf-drawer") ?? this._panelDrawer)?.querySelector?.("[data-host-menu]");
+            ?? this.panelContent?.()?.querySelector?.("[data-host-menu]");
         return holder ? [...holder.children] : [];
     }
 

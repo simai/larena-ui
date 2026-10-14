@@ -4127,7 +4127,6 @@ class SfTable extends SfBaseElement {
                     data-context-submenu
                     root-class="sf-table-context-submenu flex flex-col"
                     position="${position || "right"}"
-            >
                     .entries=${[
                         // The standard menu's rows (owner, 2026-10-14), not link
                         // buttons; a delete is marked as one, a restore is not.
