@@ -1,0 +1,127 @@
+#!/usr/bin/env node
+// Usage: node this-file /absolute/path/to/output
+// The admin menu's navigation shell (owner, 2026-10-14), measured on the built
+// bytes with a host port that answers the menu:
+// - both columns stand with an sf-resizer on their edge; dragging the first
+//   column's edge widens it within 13rem..24rem and the width is kept on the
+//   next page; a double click gives the width back;
+// - the theme is a row of the profile menu with its choice in a submenu.
+import {resolve, join} from 'node:path';
+import {chromium} from 'playwright';
+
+if (!process.argv[2]) throw new Error('Build output root is required');
+const out = resolve(process.argv[2]);
+const styles = [
+  'core/core/css/core.css', 'core/core/css/utility.full.css',
+  'component/component/admin-menu/css/admin-menu.css',
+  'component/component/inputs/css/inputs.css',
+  'component/component/context-menu/css/context-menu.css',
+  'smart/smart/admin-menu/css/admin-menu.css',
+  'smart/smart/resizer/css/resizer.css',
+].map((p) => join(out, p));
+const modules = [
+  'core/core/js/core.js', 'core/core/js/smart-base.js',
+  'smart/smart/icons/js/icons.js', 'smart/smart/buttons/js/buttons.js',
+  'smart/smart/icon-buttons/js/icon-buttons.js', 'smart/smart/badges/js/badges.js',
+  'smart/smart/inputs/js/inputs.js', 'smart/smart/context-menu/js/context-menu.js',
+  'smart/smart/resizer/js/resizer.js', 'smart/smart/admin-menu/js/admin-menu.js',
+].map((p) => join(out, p));
+
+const failures = [];
+const note = (detail) => failures.push(detail);
+const browser = await chromium.launch();
+const context = await browser.newContext({viewport: {width: 1400, height: 800}});
+// An origin of its own, so the remembered width has a storage to live in.
+await context.route('http://probe.test/**', (route) => route.fulfill({status: 200, contentType: 'text/html', body: '<!doctype html><html><body></body></html>'}));
+
+const NAVIGATION = {
+  answer: 'applied', revision: '1', current: 'cms',
+  items: [
+    {key: 'home', kind: 'page', level: 'site', label: 'Главная', icon: 'home', href: '/admin'},
+    {key: 'data', kind: 'root', level: 'site', label: 'Данные', icon: 'database', children: [
+      {key: 'cms', kind: 'page', level: 'site', label: 'Минимальная CMS', icon: 'table', href: '/admin/cms'},
+    ]},
+  ],
+  person: {name: 'Administrator', theme: 'dark', language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
+  profiles: {current: 'regular', list: [{key: 'regular', label: 'Обычный', kind: 'shared'}]},
+  site: {current: {key: 'main', label: 'Main site'}, count: 1},
+};
+
+const open = async () => {
+  const page = await context.newPage();
+  page.on('pageerror', (error) => console.error('pageerror', error.message));
+  await page.goto('http://probe.test/');
+  await page.setContent('<!doctype html><html class="theme-light" lang="ru"><body style="margin:0"><div style="block-size:800px;display:flex"><sf-admin-menu id="m" aria-label="Меню"></sf-admin-menu><main style="flex:1">Страница</main></div></body></html>');
+  for (const path of styles) await page.addStyleTag({path}).catch(() => {});
+  for (const path of modules) await page.addScriptTag({path, type: 'module'}).catch(() => {});
+  await page.waitForFunction(() => customElements.get('sf-admin-menu') && customElements.get('sf-resizer'), null, {timeout: 8000});
+  await page.evaluate((navigation) => {
+    document.getElementById('m').setHostPort({
+      port: 'simai.admin-navigation-port', version: '1.0.0', capabilities: ['preferences', 'menu-profiles'],
+      async raise(intent) {
+        if (intent === 'navigation.load') return structuredClone(navigation);
+        return {answer: 'applied'};
+      },
+    });
+  }, NAVIGATION);
+  await page.waitForTimeout(900);
+  return page;
+};
+
+try {
+  const page = await open();
+  const before = await page.evaluate(() => {
+    const first = document.querySelector('.sf-admin-nav-first');
+    const second = document.querySelector('.sf-admin-nav-second');
+    const handle = first?.querySelector(':scope > sf-resizer')?.getBoundingClientRect();
+    return {
+      first: first ? Math.round(first.getBoundingClientRect().width) : null,
+      secondHandle: Boolean(second?.querySelector(':scope > sf-resizer')),
+      handle: handle ? {x: handle.left + handle.width / 2, y: handle.top + 300} : null,
+    };
+  });
+  if (!before.handle) note({case: 'the first column has a handle', got: before});
+  if (!before.secondHandle) note({case: 'the second column has a handle', got: before});
+  let widened = null;
+  if (before.handle) {
+    await page.mouse.move(before.handle.x, before.handle.y);
+    await page.mouse.down();
+    await page.mouse.move(before.handle.x + 48, before.handle.y, {steps: 6});
+    await page.mouse.up();
+    await page.waitForTimeout(100);
+    widened = await page.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
+    if (widened !== before.first + 48) note({case: 'a drag widens the first column', got: {before: before.first, widened}});
+  }
+
+  // The theme is a row with a submenu.
+  const theme = await page.evaluate(async () => {
+    const person = document.querySelector('.sf-admin-nav-person');
+    person?.click();
+    await new Promise((done) => setTimeout(done, 400));
+    const menu = document.querySelector('sf-context-menu[data-sf-admin-nav-menu]');
+    const rows = [...(menu?.querySelectorAll('.sf-context-menu-item') ?? [])];
+    const row = rows.find((item) => item.querySelector('.sf-context-menu-item-label')?.textContent.trim() === 'Тема');
+    return {
+      choice: Boolean(menu?.querySelector('.sf-context-menu-choice')),
+      row: Boolean(row), value: row?.querySelector('.sf-context-menu-item-value')?.textContent.trim() ?? null,
+      submenu: row?.getAttribute('aria-haspopup') ?? null,
+    };
+  });
+  if (theme.choice || !theme.row || theme.value !== 'Тёмная' || theme.submenu !== 'menu') {
+    note({case: 'the theme is a row with a submenu', got: theme});
+  }
+  await page.close();
+
+  const again = await open();
+  const kept = await again.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
+  if (widened !== null && kept !== widened) note({case: 'the width is kept on the next page', got: {widened, kept}});
+  await again.dblclick('.sf-admin-nav-first > sf-resizer');
+  await again.waitForTimeout(150);
+  const reset = await again.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
+  if (reset !== before.first) note({case: 'a double click gives the width back', got: {reset, expected: before.first}});
+  console.log(JSON.stringify({before, widened, theme, kept, reset}));
+} finally {
+  await browser.close();
+}
+if (failures.length) { console.error(JSON.stringify(failures, null, 2)); process.exit(1); }
+console.log('ADMIN_NAVIGATION_RESIZE_OK');
