@@ -1192,6 +1192,14 @@ class SfPropertyView extends SfBaseElement {
 
     onConnected() {
         super.onConnected?.();
+        // Born loading. The first render comes before the host is asked, and
+        // drawn with no state it was the empty body -- one frame of «nothing
+        // here» before the skeleton, the flash the table had (rules of the
+        // road, rule 2: loading is drawn as the skeleton, from the first frame).
+        if (!this.hasAttribute("data-state") && !this.record) {
+            this.setAttribute("data-state", "loading");
+            this.setAttribute("aria-busy", "true");
+        }
         if (this.panel && !openPanels.includes(this)) {
             openPanels.push(this);
             restackPanels();
@@ -1532,10 +1540,13 @@ class SfPropertyView extends SfBaseElement {
     }
 
     _setState(state, message = "") {
+        // Loading again while loading draws nothing new: the skeleton is already
+        // on screen (one action, one render).
+        const unchanged = state === "loading" && this.getAttribute("data-state") === "loading" && !this.record;
         this.setAttribute("data-state", state);
         this.setAttribute("aria-busy", state === "loading" ? "true" : "false");
         this.message = message;
-        this.requestComponentUpdate("state");
+        if (!unchanged) this.requestComponentUpdate("state");
         this.dispatchEvent(new CustomEvent("sf-property-view-state", {
             bubbles: true, composed: true, detail: {state, message},
         }));

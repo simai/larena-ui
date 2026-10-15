@@ -141,7 +141,31 @@ try {
   await fresh.waitForTimeout(1200);
   const retried = await look(fresh);
   if (retried.asked !== before + 1 || !retried.fields) note({case: '«Повторить» asks again', got: {before, retried}});
-  console.log(JSON.stringify({unnamed, waiting, loaded, denied, failed, retried}));
+  // A panel opened fresh (rules of the road, 2026-10-15): its first frame is
+  // the skeleton, never the empty body, and opening a record costs two renders
+  // -- the skeleton and the record -- not one more for every state it passes.
+  const opened = await fresh.evaluate(async (record) => {
+    const Ctor = customElements.get('sf-property-view');
+    const renders = [];
+    const own = Ctor.prototype.template;
+    Ctor.prototype.template = function (...args) {
+      if (this.id === 'w') renders.push({state: this.getAttribute('data-state'), record: Boolean(this.record)});
+      return own.apply(this, args);
+    };
+    const view = document.createElement('sf-property-view');
+    view.id = 'w';
+    view.setAttribute('collection', 'demo');
+    view.setAttribute('record-id', 'r-1');
+    document.body.append(view);
+    view.setHostPort({version: '1.12.0', capabilities: [],
+      async raise(intent) { return intent === 'record.load' ? {answer: 'applied', record: structuredClone(record)} : {answer: 'applied'}; }});
+    await new Promise((done) => setTimeout(done, 600));
+    Ctor.prototype.template = own;
+    return {renders, fields: view.querySelectorAll('.sf-property-view-field').length};
+  }, RECORD);
+  const blank = opened.renders.filter((one) => !one.record && one.state !== 'loading');
+  if (blank.length || opened.renders.length > 2 || !opened.fields) note({case: 'a fresh panel: skeleton first, two renders', got: opened});
+  console.log(JSON.stringify({unnamed, waiting, loaded, denied, failed, retried, opened}));
 } finally {
   await browser.close();
 }
