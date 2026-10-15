@@ -10,6 +10,7 @@
 // - the menu's current row follows the address, on Back too;
 // - a link inside the region goes the same way.
 import {resolve, join} from 'node:path';
+import {existsSync, readFileSync} from 'node:fs';
 import {chromium} from 'playwright';
 
 if (!process.argv[2]) throw new Error('Build output root is required');
@@ -44,6 +45,15 @@ const pages = {
 const regionRequests = [];
 await context.route('http://probe.test/**', (route) => {
   const url = new URL(route.request().url());
+  // The free runtime under /distr/, laid out as the ui distribution lays it,
+  // so core.js finds its own parts (it cannot from an inlined script).
+  if (url.pathname.startsWith('/distr/')) {
+    const [product, ...rest] = url.pathname.slice('/distr/'.length).split('/');
+    const file = join(out, product, product, ...rest);
+    return existsSync(file)
+      ? route.fulfill({status: 200, contentType: file.endsWith('.css') ? 'text/css; charset=utf-8' : 'text/javascript; charset=utf-8', body: readFileSync(file)})
+      : route.fulfill({status: 404, body: ''});
+  }
   const entry = pages[url.pathname];
   if (!entry) return route.fulfill({status: 404, body: ''});
   if (route.request().headers()['x-larena-region'] === 'content') {
@@ -51,9 +61,10 @@ await context.route('http://probe.test/**', (route) => {
     return route.fulfill({status: 200, contentType: 'application/json; charset=utf-8',
       body: JSON.stringify({region: 'content', html: entry.html, title: entry.title, assets: [], shell_revision: SHELL, url: url.pathname})});
   }
-  return route.fulfill({status: 200, contentType: 'text/html; charset=utf-8', body: `<!doctype html><html class="theme-light" lang="ru"><head><meta charset="utf-8"><title>${entry.title}</title><meta name="larena-shell-revision" content="${SHELL}"></head>
+  return route.fulfill({status: 200, contentType: 'text/html; charset=utf-8', body: `<!doctype html><html class="theme-light" lang="ru"><head><meta charset="utf-8"><title>${entry.title}</title><meta name="larena-shell-revision" content="${SHELL}">
+    <script>window.sfPath = '/distr/'; window.SF_BOOT_CONFIG = {cacheVersion: 'region-menu', pluginListVersion: 'region-menu', preloader: {enabled: false}, icons: {enabled: false}, theme: false};</script></head>
     <body style="margin:0"><div style="block-size:800px;display:flex"><sf-admin-menu id="m" aria-label="Меню"></sf-admin-menu>
-    <main id="larena-admin-content" style="flex:1"><!--larena-region:content-->${entry.html}<!--/larena-region:content--></main></div></body></html>`});
+    <main id="larena-admin-content" style="flex:1"><!--larena-region:content-->${entry.html}<!--/larena-region:content--></main></div><script src="/distr/core/js/core.js"></script></body></html>`});
 });
 
 const NAVIGATION = {
@@ -74,8 +85,9 @@ try {
   page.on('pageerror', (error) => console.error('pageerror', error.message));
   await page.goto('http://probe.test/admin/cms');
   for (const path of styles) await page.addStyleTag({path}).catch(() => {});
-  for (const path of modules) await page.addScriptTag({path, type: 'module'}).catch(() => {});
-  await page.waitForFunction(() => customElements.get('sf-admin-menu') && window.SF?.RegionNavigation, null, {timeout: 8000});
+  await page.waitForFunction(() => window.SF?.RegionNavigation, null, {timeout: 8000});
+  for (const path of modules.filter((one) => !one.endsWith('core/core/js/core.js'))) await page.addScriptTag({path, type: 'module'}).catch(() => {});
+  await page.waitForFunction(() => customElements.get('sf-admin-menu'), null, {timeout: 8000});
   await page.evaluate((navigation) => {
     window.__marker = 'same document';
     window.__menu = document.getElementById('m');
@@ -97,13 +109,13 @@ try {
       heading: document.querySelector('#larena-admin-content h1')?.textContent ?? null,
       crumbs: document.querySelector('#larena-admin-content .larena-page-path')?.textContent ?? null,
       focused: document.activeElement?.tagName === 'H1' ? document.activeElement.textContent : null,
-      current: current?.textContent.trim() ?? null,
+      current: current?.querySelector('.sf-admin-nav-row-label')?.textContent.trim() ?? null,
     };
   });
   const first = await look();
   if (!first.enabled || first.current !== 'Минимальная CMS') note({case: 'Larena\'s shell turns region navigation on', got: first});
 
-  await page.evaluate(() => [...document.querySelectorAll('#m .sf-admin-nav-row')].find((row) => row.textContent.trim() === 'Файлы')?.click());
+  await page.evaluate(() => [...document.querySelectorAll('#m .sf-admin-nav-row')].find((row) => row.querySelector('.sf-admin-nav-row-label')?.textContent.trim() === 'Файлы')?.click());
   await page.waitForTimeout(600);
   const files = await look();
   if (files.path !== '/admin/files' || files.marker !== 'same document' || !files.sameMenu || files.heading !== 'Файлы' || files.crumbs !== 'Данные / Файлы') note({case: 'a menu row changes the region, not the page', got: files});
