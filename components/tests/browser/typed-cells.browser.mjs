@@ -142,7 +142,10 @@ try {
       const found = cell(key);
       if (!found) return null;
       return {
-        tags: [...new Set([...found.querySelectorAll('*')].map((node) => node.tagName.toLowerCase())
+        // A shown badge, tag or avatar is its component's markup (owner,
+        // 2026-10-15), so a component is found by its element or its class.
+        tags: [...new Set([...found.querySelectorAll('*')].flatMap((node) => [node.tagName.toLowerCase(),
+          ...['sf-badge', 'sf-tag', 'sf-avatar'].filter((name) => node.classList.contains(name))])
           .filter((tag) => tag.startsWith('sf-')))],
         text: found.textContent.replace(/\s+/gu, ' ').trim(),
       };

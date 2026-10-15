@@ -24,6 +24,8 @@ import BundledPreferences from "../../core/js/preferences.js";
 // publishes it; this bundle's copy is the fallback).
 const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
 const tablePreferenceKey = (key) => `sf-table/${String(key).replace(/[^\w.:-]+/gu, "-")}`;
+// What a cell may draw as markup rather than as an element of its own.
+const LIGHT_CELL_TAGS = new Set(["sf-badge", "sf-tag", "sf-avatar"]);
 const GENERAL_TABLE_PREFERENCE = "sf-table/*";
 const TABLE_VIEW_DEFAULTS = Object.freeze({density: "normal", stripes: false, lines: false, singleLine: false, stickyHead: true});
 
@@ -2258,8 +2260,11 @@ class SfTable extends SfBaseElement {
         const table = this.refs.table?.value;
         if (!(table instanceof HTMLTableElement) || !table.isConnected) return false;
         if (this._columnResizeState || this.columnDragActive) return false;
-        // The skeleton and an empty or failed list say nothing about the content.
-        if (table.querySelector('tbody[data-state]') || !table.querySelector('tbody tr td')) return false;
+        // The skeleton and an empty or failed list say nothing about the content,
+        // and rows kept on screen while the next ones load are the old ones: a
+        // measurement of them is thrown away when the answer comes (owner,
+        // 2026-10-15, a sort measured the table twice).
+        if (table.querySelector('tbody[data-state]') || table.querySelector('tbody[data-busy]') || !table.querySelector('tbody tr td')) return false;
         const measured = new Map();
         let whole = 0;
         table.classList.add('sf-table-measuring');
@@ -5765,6 +5770,41 @@ class SfTable extends SfBaseElement {
     // its own: a size of 1 becomes the table's. An element that names no size
     // keeps its own default -- a badge's is 1/3, a tag's 1/2 -- which a table at
     // a smaller step would otherwise have grown.
+    // A value in a cell that is only shown -- a badge, a tag, an avatar -- is
+    // drawn as its component's own markup, from a detached instance of the
+    // component, instead of as an element of its own (owner, 2026-10-15: a
+    // page of rows held four hundred elements, each rendering itself, and a
+    // sort built them all). The classes, so the look, are the component's;
+    // anything interactive, or a component not defined yet, stays an element.
+    renderCellElement(type, props = {}) {
+        const tag = `sf-${String(type ?? "").replace(/^sf-/u, "")}`;
+        const shown = LIGHT_CELL_TAGS.has(tag)
+            && props.interactive !== true && props.closable !== true && props.type !== "checkbox"
+            && !Object.keys(props).some((key) => key.startsWith("@") || /^on[A-Z]/u.test(key));
+        const Element = shown ? customElements.get(tag) : null;
+        if (!Element) return this.renderSmartElement(type, props);
+        this._lightCells ??= new Map();
+        let element = this._lightCells.get(tag);
+        if (!element) {
+            element = document.createElement(tag);
+            this._lightCells.set(tag, element);
+        }
+        if (typeof element.template !== "function") return this.renderSmartElement(type, props);
+        for (const name of [...element.getAttributeNames()]) element.removeAttribute(name);
+        const size = this.size !== "1" && String(props.size) === "1" ? this.size : props.size;
+        for (const [key, value] of Object.entries({...props, ...(size !== undefined ? {size} : {})})) {
+            if (value === undefined || value === null || value === false) continue;
+            const attribute = key.replace(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`);
+            if (typeof value === "object" || typeof value === "function") element[key] = value;
+            else element.setAttribute(attribute, value === true ? "" : String(value));
+        }
+        try {
+            return element.template();
+        } catch {
+            return this.renderSmartElement(type, props);
+        }
+    }
+
     renderSmartElement(type, props = {}) {
         const size = this.size;
         if (size !== "1" && props && String(props.size) === "1") {

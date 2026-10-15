@@ -99,6 +99,21 @@ try {
       const cell = document.querySelector(`#t tbody td[data-key="${key}"]`);
       if (!cell) return null;
       const element = cell.querySelector('sf-badge, sf-progress-scale, sf-avatar, sf-reference-link, sf-input');
+      // A shown badge or avatar is its component's markup now, not an element
+      // (owner, 2026-10-15): the same facts are read from its classes.
+      const markup = element ? null : cell.querySelector('.sf-badge, .sf-avatar');
+      if (markup) {
+        const kind = markup.classList.contains('sf-badge') ? 'badge' : 'avatar';
+        const named = (prefix) => [...markup.classList].find((name) => name.startsWith(`sf-${kind}--${prefix}`))?.slice(`sf-${kind}--${prefix}`.length) ?? null;
+        const modifiers = [...markup.classList].filter((name) => name.startsWith(`sf-${kind}--`) && !/--(size|line)-/u.test(name)).map((name) => name.slice(`sf-${kind}--`.length));
+        return {
+          text: cell.textContent.replace(/\s+/gu, ' ').trim(),
+          element: `sf-${kind}`, size: named('size-'), line: named('line-'), icon: null, value: null,
+          appearance: kind === 'badge' ? modifiers[0] ?? null : null,
+          scheme: kind === 'badge' ? modifiers[1] ?? null : null,
+          background: getComputedStyle(markup).backgroundColor,
+        };
+      }
       return {
         text: cell.textContent.replace(/\s+/gu, ' ').trim(),
         element: element ? element.tagName.toLowerCase() : null,
@@ -122,8 +137,8 @@ try {
       attachment: read('attachment'),
       modules: (() => {
         const cell = document.querySelector('#t tbody td[data-key="modules"]');
-        const tags = [...(cell?.querySelectorAll('sf-tag') ?? [])];
-        return {count: tags.length, lines: tags.map((tag) => tag.getAttribute('line')),
+        const tags = [...(cell?.querySelectorAll('.sf-tag') ?? [])];
+        return {count: tags.length, lines: tags.map((tag) => [...tag.classList].find((name) => name.startsWith('sf-tag--line-'))?.slice('sf-tag--line-'.length) ?? null),
           text: cell?.textContent.replace(/\s+/gu, ' ').trim() ?? ''};
       })(),
       code: read('code'),

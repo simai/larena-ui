@@ -553,7 +553,7 @@ function renderComponent(component, owner) {
         return nothing;
     }
     const props = {...(component.props || {})};
-    return owner.renderSmartElement(component.type, props);
+    return owner.renderCellElement ? owner.renderCellElement(component.type, props) : owner.renderSmartElement(component.type, props);
 }
 
 function renderCellItem(item, owner) {
