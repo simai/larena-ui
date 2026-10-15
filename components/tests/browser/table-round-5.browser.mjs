@@ -64,6 +64,12 @@ const open = async (height = 700) => {
 };
 
 const openWindow = async (page, label) => {
+  // The gear closes the window it opened (owner, 2026-10-15): one left open
+  // by the step before is closed first, so the click opens it again.
+  if (await page.evaluate(() => Boolean(document.querySelector('sf-context-menu .sf-table-context-menu')))) {
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+  }
   // The control's host is display: contents, so the click goes to the real
   // button inside it; matching by aria-label on the host finds the control
   // whatever element the template wraps it in.

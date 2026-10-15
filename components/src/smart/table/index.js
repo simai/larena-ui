@@ -505,7 +505,17 @@ class SfTable extends SfBaseElement {
                     icon: "settings",
                     ariaLabel: this.text("settingsColumnLabel"),
                     value: "settings",
+                    // The gear opens the window and closes it again.
+                    // One click reaches this twice (the button, then its host), so
+                    // only a later click closes what this one opened.
                     '@click': (e) => {
+                        const open = this.state.contextMenu?.open && this.state.contextMenu?.menu === 'table-settings';
+                        if (open && e.timeStamp - (this._settingsOpenedAt ?? 0) > 200) {
+                            this.closeContextMenu();
+                            return;
+                        }
+                        if (open) return;
+                        this._settingsOpenedAt = e.timeStamp;
                         this.openContextMenu(e, {menu: 'table-settings'})
                     }
                 },
@@ -4131,6 +4141,11 @@ class SfTable extends SfBaseElement {
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
                     <!-- Two tabs (owner, 2026-10-14): the fields, and how the
                          table looks for this person. -->
+                    <!-- The tabs and the way out on one row: a window that
+                         opened under the gear said nowhere how to close it
+                         (owner, 2026-10-15). Esc, a click outside and the gear
+                         again close it too. -->
+                    <div class="sf-table-settings-head">
                     <sf-tabs class="sf-table-settings-tabs" type="underline" size=${this.size === "1/2" ? "1/2" : "1"}
                              items=${`${this.text('settingsFieldsTab')}|${this.text('settingsViewTab')}`}
                              active-index=${this._settingsTab === 'view' ? '1' : '0'}
@@ -4139,6 +4154,10 @@ class SfTable extends SfBaseElement {
                                  this._settingsTab = event.detail?.current === 1 ? 'view' : 'fields';
                                  this.requestComponentUpdate('settings-tab');
                              }}></sf-tabs>
+                    <sf-icon-button class="sf-table-settings-close" appearance="link" scheme="on-surface" size=${this.size === "1/2" ? "1/2" : "1"}
+                                    icon="close" aria-label=${this.text('closeText')} title=${this.text('closeText')}
+                                    @click=${() => this.closeContextMenu()}></sf-icon-button>
+                    </div>
                     ${this._settingsTab === 'view' ? this.renderTableViewSettings() : html`
                     <!-- The search: a site can have hundreds of fields, and
                          scrolling for one is not an answer. -->
