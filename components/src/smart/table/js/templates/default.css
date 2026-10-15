@@ -482,7 +482,7 @@
   /* A window's own buttons keep their words on one line: a longer label
      («Применить фильтр» once) was two pixels wider than half the row and broke in two, making the
      buttons twice as tall as the controls above them. */
-  .sf-table-context-menu .sf-table-context-bottom .sf-button-text-container {
+  .sf-table-context-menu .sf-context-menu-footer .sf-button-text-container {
     white-space: nowrap;
   }
   .sf-table-context-menu .sf-settings-context-menu-item [data-keep]:not(.sf-button-pinned) {
