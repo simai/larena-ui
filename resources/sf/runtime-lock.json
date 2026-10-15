@@ -1,8 +1,8 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-39cb22f3ed85-larena-6cf3b934084e",
-  "bundle_id": "ui-39cb22f3ed85-larena-6cf3b934084e-registry-dae43900-exact-git-tree-v2",
+  "pair_id": "ui-39cb22f3ed85-larena-3890cb5f4f70",
+  "bundle_id": "ui-39cb22f3ed85-larena-3890cb5f4f70-registry-dae43900-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -16,17 +16,17 @@
     "files": 8260
   },
   "larena": {
-    "release": "larena-6cf3b934084e",
+    "release": "larena-3890cb5f4f70",
     "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "6cf3b934084e2e6bdd55b6d3c4743f9c8d1918ea",
+    "commit": "3890cb5f4f70cfc78c54a9e6f228a745f840ba09",
     "tree": "smart",
     "mount": "larena",
-    "sha256": "8b46668a4dfce7a4c5ad8f280dd314473c1c7238fb7cc23cea962fdaa4397324",
+    "sha256": "21756fc2e9e5a911b50da27f3f0477e9c9a6a4291534abbb3c28cb17b6e67646",
     "files": 62,
     "requires_framework": "ui-39cb22f3ed85",
     "package_path": "components",
-    "package_tree": "9014b6c25e7fbcb907facb341e9e41bb62cad9a4",
+    "package_tree": "4e26d2e16560700090b8f8bcc775325c06f627c0",
     "framework_source": {
       "repository": "simai/ui-source",
       "revision": "34a660d55c2cb19494a9f46abe05aedcba33c13c"
@@ -35,8 +35,8 @@
       "repository": "simai/ui-builder",
       "revision": "70a10b81949c4d6ded5160a7b6e68c395be2f572"
     },
-    "manifest_sha256": "75afe77ef3068acac70301d8d132a7e2469f751e53d44a1418f6fce5d2715112",
-    "receipt_sha256": "1a02c8dede85ab133ad7a0ffb376c1cc3eacfb5ae28465a25717d8065c032910"
+    "manifest_sha256": "718c2a4053bdf04843728abc8a3d42550298e9f067683f3ae69469b8fb61f32b",
+    "receipt_sha256": "5f67b4e491f2ea7c64037a747b4e3003d37417c40b830a373ae1adb64505e5a8"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
@@ -202,7 +202,9 @@
         "remember-widths",
         "preferences-key",
         "row-actions-visible",
-        "drag-rows"
+        "drag-rows",
+        "row-reorder",
+        "inline-edit"
       ],
       "package": "larena"
     },

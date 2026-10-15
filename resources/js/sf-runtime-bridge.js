@@ -867,4 +867,7 @@
   } else {
     boot();
   }
+  // A content region swapped in by the admin's region navigation (interface fragments) brings new lists and
+  // Smart elements; they are hydrated and connected the same way. What is already done is skipped.
+  if (typeof document.addEventListener === 'function') document.addEventListener('sf-region-load', function () { void boot(); });
 })();
