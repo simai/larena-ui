@@ -706,6 +706,64 @@
         "mode"
       ],
       "package": "larena"
+    },
+    "sf-tree": {
+      "source": "ui/distr/smart/tree",
+      "javascript": "ui/distr/smart/tree/js/tree.js",
+      "css": "ui/distr/smart/tree/css/tree.css",
+      "requires": [
+        "sf-tree-item"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "aria-label",
+        "role",
+        "selection",
+        "items",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-tree-item": {
+      "source": "ui/distr/smart/tree-item",
+      "javascript": "ui/distr/smart/tree-item/js/tree-item.js",
+      "css": "ui/distr/component/tree-item/css/tree-item.css",
+      "requires": [
+        "sf-icon",
+        "sf-icon-button"
+      ],
+      "attributes": [
+        "template",
+        "label",
+        "text",
+        "href",
+        "target",
+        "rel",
+        "kind",
+        "value",
+        "open",
+        "selected",
+        "active",
+        "disabled",
+        "items-data",
+        "open-icon",
+        "closed-icon",
+        "icon",
+        "chevron-open-icon",
+        "chevron-closed-icon",
+        "open-label",
+        "close-label",
+        "root-class",
+        "item-class",
+        "container-class",
+        "name-class",
+        "type",
+        "id",
+        "class"
+      ],
+      "package": "framework"
     }
   }
 }
