@@ -317,9 +317,12 @@ try {
       note({case: 'blocks on the menu axis', got: axis,
         expected: `the search field, the rows and the buttons all start at the published axis (${axis.published})`});
     }
-    // The pin sits at the end edge, so the end inset has to match too, or the
-    // row stops being symmetric and it shows at the end rather than the start.
-    if (off(axis.searchFieldEnd) || off(axis.rowPinEnd)) {
+    // The pin sits at the end edge, so the search field and the pin have to
+    // finish on one axis. The panel's body keeps the scrollbar's room
+    // (Framework panel, 2026-10-15), so that axis is the published inset plus
+    // the gutter -- the same for both, never less than the start's.
+    if (axis.searchFieldEnd === null || axis.rowPinEnd === null
+        || Math.abs(axis.searchFieldEnd - axis.rowPinEnd) > 0.5 || axis.searchFieldEnd < axis.published - 0.5) {
       note({case: 'the end edge too', got: axis, expected: 'the search field and the pin finish at the same axis'});
     }
   }

@@ -177,7 +177,7 @@ try {
         })),
         // The one-tab title went (2026-10-05); the two tabs «Поля» and «Вид»
         // came (owner, 2026-10-14) and are the settings' own, counted apart.
-        tabs: document.querySelectorAll('sf-context-menu sf-tabs:not(.sf-table-settings-tabs)').length,
+        tabs: document.querySelectorAll('sf-context-menu sf-tabs:not(.sf-context-menu-tabs)').length,
         search: Boolean(document.querySelector('sf-context-menu [name="sf_table_column_search"]')),
         pinnedByTable: document.getElementById('t').getPinnedColumnKeys?.() ?? null,
       };

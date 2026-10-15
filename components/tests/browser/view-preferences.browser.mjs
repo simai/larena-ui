@@ -116,8 +116,8 @@ try {
     table.openContextMenu({currentTarget: anchor, target: anchor, preventDefault() {}, stopPropagation() {}}, {menu: 'table-settings'});
   });
   await viewed.waitForTimeout(600);
-  const tabs = await viewed.evaluate(() => [...document.querySelectorAll('sf-context-menu .sf-table-settings-tabs [role="tab"]')].map((tab) => tab.textContent.trim()));
-  await viewed.evaluate(() => [...document.querySelectorAll('sf-context-menu .sf-table-settings-tabs [role="tab"]')][1]?.click());
+  const tabs = await viewed.evaluate(() => [...document.querySelectorAll('sf-context-menu .sf-context-menu-tabs [role="tab"]')].map((tab) => tab.textContent.trim()));
+  await viewed.evaluate(() => [...document.querySelectorAll('sf-context-menu .sf-context-menu-tabs [role="tab"]')][1]?.click());
   await viewed.waitForTimeout(500);
   const pick = (selector) => viewed.evaluate((query) => {
     const host = document.querySelector(query);
