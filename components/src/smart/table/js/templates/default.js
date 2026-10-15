@@ -1,5 +1,6 @@
 import {html, nothing} from "lit";
 import {keyed} from "lit/directives/keyed.js";
+import {repeat} from "lit/directives/repeat.js";
 import {ref} from "lit/directives/ref.js";
 import {isTemplateResult} from "lit/directive-helpers.js";
 import "./default.css";
@@ -779,12 +780,15 @@ export function renderTableTemplate(context) {
                 }}>${value}</a>`;
     }
 
+    // repeat, not keyed: a sort moves the rows it already drew. keyed at each
+    // position redrew every row and every value in it when the order changed --
+    // four hundred elements for one click (owner, 2026-10-15).
     function renderRows(context, columns, rows, {busy = false} = {}) {
         const treeColumn = context.component.treeColumnKey?.(columns);
         const titleColumn = columns.find((column) => column?.role === 'title' && !column.system)?.key ?? null;
         return html`
             <tbody data-busy=${busy ? '' : nothing}>
-            ${rows.map((row, rowIndex) => row.__tree?.more ? keyed(`row:${row.id}`, renderMoreRow(context, columns, row)) : keyed(`row:${row.id ?? row.value ?? rowIndex}`, html`
+            ${repeat(rows, (row, rowIndex) => (row.__tree?.more ? `more:${row.id}` : `row:${row.id ?? row.value ?? rowIndex}`), (row, rowIndex) => row.__tree?.more ? renderMoreRow(context, columns, row) : html`
                 <tr data-selected=${row.select?.component?.props?.checked === true ? '' : nothing}
                     aria-level=${row.__tree ? String(row.__tree.level + 1) : nothing}
                     aria-expanded=${row.__tree?.hasChildren ? String(row.__tree.expanded === true) : nothing}
@@ -798,17 +802,15 @@ export function renderTableTemplate(context) {
                     @click=${(event) => context.component.handleRowClick(event, row, rowIndex)}
                     @dblclick=${(event) => context.component.handleRowOpen(event, row)}
                     @keydown=${(event) => context.component.handleRowKeydown(event, row)}>
-                    ${columns.map((column, index) => keyed(
-                        `cell:${context.component.getRowKey(row, rowIndex)}:${column.key}`,
-                        html`
+                    ${repeat(columns, (column) => `cell:${column.key}`, (column, index) => html`
                         <td data-key="${column.key}" data-item="${row.id}_${column.key}"
                             data-sf-pinned=${context.component.isPinnedColumn(column) ? '' : nothing}
                             style=${context.component.getStickyCellStyle(columns, index) || nothing}>${column.key === treeColumn
                                 ? renderTreeCell(context, row, column.key === titleColumn ? renderTitleLink(context, row, renderCellValue(row, column)) : renderCellValue(row, column))
                                 : column.key === titleColumn ? renderTitleLink(context, row, renderCellValue(row, column)) : renderCellValue(row, column)}</td>
-                    `))}
+                    `)}
                 </tr>
-            `))}
+            `)}
             </tbody>`;
     }
 
