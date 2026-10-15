@@ -1,8 +1,8 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-c95d35179e84-larena-05ff22ab26ed",
-  "bundle_id": "ui-c95d35179e84-larena-05ff22ab26ed-registry-cedf6d60-exact-git-tree-v2",
+  "pair_id": "ui-c95d35179e84-larena-267dee5a28f7",
+  "bundle_id": "ui-c95d35179e84-larena-267dee5a28f7-registry-cedf6d60-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -16,17 +16,17 @@
     "files": 8256
   },
   "larena": {
-    "release": "larena-05ff22ab26ed",
+    "release": "larena-267dee5a28f7",
     "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "05ff22ab26edeb135b57c5bd6c9d12f028b975dc",
+    "commit": "267dee5a28f7cea19bd58ea31db8aaf683612bb3",
     "tree": "smart",
     "mount": "larena",
-    "sha256": "980bdd5e0786e6ce19e3dd90e4c421143e797fe062c3cf41211893fdcfc578ae",
+    "sha256": "15cb77134dc046b99395ff9680002ff56cd11b18168de2074c5c6a76708d8a48",
     "files": 62,
     "requires_framework": "ui-c95d35179e84",
     "package_path": "components",
-    "package_tree": "1a82627d6a3e8adabd7320916caa94487d0d875c",
+    "package_tree": "2197561014e38a097d36dc8a01c6198b5378da76",
     "framework_source": {
       "repository": "simai/ui-source",
       "revision": "70154ca497ae8ee9b4cf42846d108fb66f794e77"
@@ -35,8 +35,8 @@
       "repository": "simai/ui-builder",
       "revision": "7f6d4ce92bcdc0cf83fe3d3bbe971226e829cff9"
     },
-    "manifest_sha256": "0bccf364dbefabbc78f837c0c4af19a67ddb8600fb063a2936adf61cd832d3ab",
-    "receipt_sha256": "1c9c1cf658169ed8dca61f3a892d4dbaaed761ab718881f5c94c9fc5bde44a70"
+    "manifest_sha256": "7b2d49662f3ce28d41e1187e527b933881442f633243db988958b8304b245b34",
+    "receipt_sha256": "553669402e442fea5ba0f2f69a3ad43ed0885a2def7b63259bc630393e232f45"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
@@ -706,6 +706,64 @@
         "mode"
       ],
       "package": "larena"
+    },
+    "sf-tree": {
+      "source": "ui/distr/smart/tree",
+      "javascript": "ui/distr/smart/tree/js/tree.js",
+      "css": "ui/distr/smart/tree/css/tree.css",
+      "requires": [
+        "sf-tree-item"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "aria-label",
+        "role",
+        "selection",
+        "items",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-tree-item": {
+      "source": "ui/distr/smart/tree-item",
+      "javascript": "ui/distr/smart/tree-item/js/tree-item.js",
+      "css": "ui/distr/component/tree-item/css/tree-item.css",
+      "requires": [
+        "sf-icon",
+        "sf-icon-button"
+      ],
+      "attributes": [
+        "template",
+        "label",
+        "text",
+        "href",
+        "target",
+        "rel",
+        "kind",
+        "value",
+        "open",
+        "selected",
+        "active",
+        "disabled",
+        "items-data",
+        "open-icon",
+        "closed-icon",
+        "icon",
+        "chevron-open-icon",
+        "chevron-closed-icon",
+        "open-label",
+        "close-label",
+        "root-class",
+        "item-class",
+        "container-class",
+        "name-class",
+        "type",
+        "id",
+        "class"
+      ],
+      "package": "framework"
     }
   }
 }
