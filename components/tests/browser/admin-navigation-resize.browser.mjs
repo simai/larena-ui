@@ -45,6 +45,7 @@ const NAVIGATION = {
     ]},
   ],
   notifications: {unread: 1},
+  favourites: [{key: 'cms', label: 'Минимальная CMS', icon: 'table', href: '/admin/cms'}],
   person: {name: 'Administrator', theme: 'dark', links: [{label: 'Безопасность учётной записи', icon: 'shield', href: '/admin/security'}], language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
   profiles: {current: 'regular', list: [
     {key: 'regular', label: 'Обычный', kind: 'shared'},
@@ -65,7 +66,7 @@ const open = async (person = {}, frame = 800) => {
   await page.evaluate((navigation) => {
     window.raised = [];
     document.getElementById('m').setHostPort({
-      port: 'simai.admin-navigation-port', version: '1.0.0', capabilities: ['preferences', 'menu-profiles'],
+      port: 'simai.admin-navigation-port', version: '1.0.0', capabilities: ['preferences', 'menu-profiles', 'favourites'],
       async raise(intent, payload) {
         window.raised.push({intent, payload: structuredClone(payload)});
         if (intent === 'navigation.load') return structuredClone(navigation);
@@ -104,6 +105,23 @@ try {
     const told = await page.evaluate(() => window.raised.filter((one) => one.intent === 'preference.widths').map((one) => one.payload));
     if (told.length !== 1 || told[0]?.widths?.first !== widened) note({case: 'the host keeps the width', got: told, expected: {widths: {first: widened}}});
   }
+
+  // Favourites are a section of their own: a star at the foot of the first
+  // column, its pages in the second (owner, 2026-10-15).
+  const favourites = await page.evaluate(async () => {
+    const star = [...document.querySelectorAll('.sf-admin-nav-bottom .sf-admin-nav-row')].find((row) => row.textContent.includes('Избранное'));
+    const inScroll = Boolean(document.querySelector('.sf-admin-nav-first .sf-admin-nav-scroll .sf-admin-nav-favourites'));
+    star?.click();
+    await new Promise((done) => setTimeout(done, 300));
+    const second = document.querySelector('.sf-admin-nav-second');
+    return {star: Boolean(star), inScroll, second: second?.getAttribute('aria-label') ?? null,
+      rows: [...(second?.querySelectorAll('.sf-admin-nav-row-label') ?? [])].map((node) => node.textContent.trim())};
+  });
+  if (!favourites.star || favourites.inScroll || favourites.second !== 'Избранное' || !favourites.rows.includes('Минимальная CMS')) {
+    note({case: 'favourites are a section at the foot of the menu', got: favourites});
+  }
+  await page.evaluate(() => [...document.querySelectorAll('.sf-admin-nav-bottom .sf-admin-nav-row')].find((row) => row.textContent.includes('Избранное'))?.click());
+  await page.waitForTimeout(200);
 
   // The count beside «Уведомления» is a small counter, no taller than the
   // letters' line.
@@ -200,7 +218,7 @@ try {
   const personal = await third.evaluate(() => Math.round(document.querySelector('.sf-admin-nav-first').getBoundingClientRect().width));
   if (personal !== 320) note({case: "the person's width wins", got: personal, expected: 320});
   await third.close();
-  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter, picker, held}));
+  console.log(JSON.stringify({before, widened, theme, kept, reset, personal, counter, picker, held, favourites}));
 } finally {
   await browser.close();
 }

@@ -34,8 +34,6 @@ const WIDE_MEDIA_QUERY = "(min-width: 48rem)";
 // glance (assignment, section 3).
 const FIND_IN_SECTION_FROM = 7;
 
-// How many favourites show before the block folds (assignment, section 2).
-const FAVOURITES_SHOWN = 5;
 
 // How long typing may pause before the palette asks the host. Short enough to
 // feel immediate; long enough that a word typed at speed is one question.
@@ -216,6 +214,7 @@ const copy = (value) => (value === undefined ? undefined : JSON.parse(JSON.strin
 // publishes it; this bundle's copy is the fallback).
 const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
 const MENU_PREFERENCE = "sf-admin-menu/main";
+const FAVOURITES_ROOT = "sf:favourites";
 
 export class NavigationController {
     constructor(element, port) {
@@ -227,7 +226,6 @@ export class NavigationController {
         this.openRoot = null;
         this.unfolded = new Set();
         this.filter = "";
-        this.favouritesFolded = false;
         // Folded as the person left it, from the first paint: the host's answer
         // came after it, and the menu opened and then folded.
         this.compact = preferences()?.read(MENU_PREFERENCE)?.compact === true;
@@ -427,7 +425,21 @@ export class NavigationController {
     }
 
     rootByKey(key) {
+        if (key === FAVOURITES_ROOT) return this.favouritesRoot();
         return (this.navigation?.items ?? []).find((row) => row.key === key) ?? null;
+    }
+
+    // Favourites are a section of their own (owner, 2026-10-15): a star at the
+    // foot of the first column, its pages in the second column like any
+    // section's. They were a block under the sections, in the first column,
+    // where the person mostly works in the second.
+    favouritesRoot() {
+        const favourites = this.favourites();
+        if (!favourites.length) return null;
+        return {
+            key: FAVOURITES_ROOT, kind: "root", level: "site", label: this.text("favourites"), icon: "star",
+            children: favourites.map((entry) => ({...entry, kind: entry.kind === "divider" || entry.kind === "heading" ? entry.kind : "page"})),
+        };
     }
 
     // The rows of the open root as they are drawn: hidden ones gone, headings
@@ -464,11 +476,6 @@ export class NavigationController {
 
     favourites() {
         return this.offers("favourites") ? (this.navigation?.favourites ?? []) : [];
-    }
-
-    shownFavourites() {
-        const all = this.favourites();
-        return this.favouritesFolded ? [] : all.slice(0, FAVOURITES_SHOWN);
     }
 
     isFavourite(key) {
@@ -564,11 +571,6 @@ export class NavigationController {
     setFilter(value) {
         this.filter = String(value ?? "");
         this.update("filter");
-    }
-
-    toggleFavouritesFolded() {
-        this.favouritesFolded = !this.favouritesFolded;
-        this.update("favourites-folded");
     }
 
     // A row is a link the browser understands -- a middle click or a modified

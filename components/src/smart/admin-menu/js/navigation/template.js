@@ -95,28 +95,6 @@ function renderFirstRow(context, row) {
     </a>`;
 }
 
-function renderFavourites(context) {
-    const {controller, text, compact} = context;
-    const all = controller.favourites();
-    if (!all.length || compact) return nothing;
-    return html`<div class="sf-admin-nav-favourites">
-        <div class="sf-admin-nav-group-head">
-            <span>${text("favourites")}</span>
-            <button type="button" class="sf-admin-nav-link-button"
-                aria-expanded=${String(!controller.favouritesFolded)}
-                @click=${() => controller.toggleFavouritesFolded()}>${controller.favouritesFolded ? text("unfold") : text("fold")}</button>
-        </div>
-        ${controller.shownFavourites().map((entry) => html`<a class="sf-admin-nav-row sf-admin-nav-row--first"
-            href=${entry.href}
-            data-current=${controller.isCurrent(entry.key) ? "true" : nothing}
-            @click=${(event) => controller.openRow({...entry, kind: "page"}, event)}>
-            ${icon(entry.icon, "sf-admin-nav-row-icon")}
-            <span class="sf-admin-nav-row-label">${entry.label}</span>
-            ${attention(findRow(context, entry.key) ?? {})}
-        </a>`)}
-    </div>`;
-}
-
 function findRow(context, key) {
     for (const root of context.navigation?.items ?? []) {
         if (root.key === key) return root;
@@ -126,9 +104,11 @@ function findRow(context, key) {
 }
 
 function renderBottom(context) {
-    const {navigation, text, compact} = context;
+    const {navigation, text, compact, controller} = context;
     const notifications = navigation?.notifications;
+    const favourites = controller.edit?.on ? null : controller.favouritesRoot();
     return html`<div class="sf-admin-nav-bottom">
+        ${favourites ? renderFirstRow(context, favourites) : nothing}
         ${notifications ? html`<div class="sf-admin-nav-row sf-admin-nav-row--first" title=${compact ? text("notifications") : nothing}>
             ${icon("notifications", "sf-admin-nav-row-icon")}
             ${compact
@@ -192,7 +172,6 @@ function renderFirstColumn(context) {
             </div>
             ${install.length ? html`<hr class="sf-admin-nav-divider">
                 <div class="sf-admin-nav-rows">${install.map((row) => renderFirstRow(context, row))}</div>` : nothing}
-            ${renderFavourites(context)}
         </div>
         ${renderBottom(context)}
         ${renderResizer(context, "first")}
