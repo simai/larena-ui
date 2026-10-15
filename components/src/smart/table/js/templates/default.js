@@ -796,7 +796,7 @@ export function renderTableTemplate(context) {
             <tbody data-busy=${busy ? '' : nothing}>
             ${repeat(rows, (row, rowIndex) => (row.__tree?.more ? `more:${row.id}` : `row:${row.id ?? row.value ?? rowIndex}`), (row, rowIndex) => row.__tree?.more ? renderMoreRow(context, columns, row) : html`
                 <tr data-selected=${row.select?.component?.props?.checked === true ? '' : nothing}
-                    draggable=${context.component.hasAttribute('drag-rows') && !row.__tree?.more ? 'true' : nothing}
+                    draggable=${(context.component.hasAttribute('drag-rows') || context.component.getAttribute('row-reorder') === 'true') && !row.__tree?.more ? 'true' : nothing}
                     aria-level=${row.__tree ? String(row.__tree.level + 1) : nothing}
                     aria-expanded=${row.__tree?.hasChildren ? String(row.__tree.expanded === true) : nothing}
                     aria-setsize=${row.__tree ? String(row.__tree.setsize) : nothing}
@@ -921,6 +921,15 @@ export function renderTableTemplate(context) {
             if (!built) value = context.component.rowActionItems(row);
         }
 
+
+        // A boolean the host lets this person write is a checkbox in the cell;
+        // it is disabled while the host answers.
+        if (context.component?.cellEditable?.(row, column)) {
+            return html`<sf-checkbox size=${context.size === '1/2' ? '1/2' : '1'} data-cell-edit=${column.key}
+                ?checked=${value === true} ?disabled=${context.component.cellPending(row, column)}
+                aria-label=${column.label ?? column.key}
+                @change=${(event) => context.component.setCellValue(row, column, Boolean(event.target?.checked ?? event.detail?.checked))}></sf-checkbox>`;
+        }
 
         if (column.component) {
             if (

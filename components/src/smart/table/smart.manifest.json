@@ -353,6 +353,16 @@
         "type": "boolean",
         "default": false,
         "description": "Rows may be dragged out of the list as records (application/x-sf-records+json): the row's record, or every selected record when it is one of them."
+      },
+      "row-reorder": {
+        "type": "boolean",
+        "default": false,
+        "description": "Rows can be put in another order by dragging them inside the list; a drop emits sf-table-rows-reorder {ids, before, order}. A data view sets it when the host offers row-reorder."
+      },
+      "inline-edit": {
+        "type": "boolean",
+        "default": false,
+        "description": "A boolean cell the record names in `editable` is a checkbox; pressing it emits sf-table-cell-set {id, key, value, revision} and the cell waits for the host. A data view sets it when the host offers inline-edit."
       }
     }
   },
@@ -1371,6 +1381,35 @@
       "payload": {
         "type": "object"
       }
+    },
+    "sf-table-rows-reorder": {
+      "summary": "Rows were dragged into another order inside the list: the ids that moved, the row they now stand before (null: the end) and the whole order shown.",
+      "payload": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array"
+          },
+          "before": {},
+          "order": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "sf-table-cell-set": {
+      "summary": "A checkable cell was pressed: the record, the field, the new value and the record's revision.",
+      "payload": {
+        "type": "object",
+        "properties": {
+          "id": {},
+          "key": {
+            "type": "string"
+          },
+          "value": {},
+          "revision": {}
+        }
+      }
     }
   },
   "state": {
@@ -1608,15 +1647,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "c900c93ab0aaf89a59a6797e7477b6eafc2209ef1dd60645e8af87b8cd446749"
+        "sha256": "81508e0ea32bf2d0d83e530c125110215957ba52ca65d39b888c1c0390c7fd1a"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "4e9d94553ba5c479be683f44320afec437a52cf6585017793355a15a6cd55c05"
+        "sha256": "67a91ed40b287a8d78f0f2f3f589aa97823e9523b6e40ea6325beafeed2b9956"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "abe9c0c64c132118168d95dda53f04e14aa605d8f2cd18dc6dcd6f213a0bac20"
+        "sha256": "a8b817561d85f1a7ff39dba45cf90858205d43600ae0e6ff2fcc5889084e358e"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

@@ -493,6 +493,7 @@ class SfDataView extends HTMLElement {
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
             "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open",
+            "sf-table-cell-set", "sf-table-rows-reorder",
         ];
         for (const name of events) this.shadowRoot.addEventListener(name, this._bound);
         for (const name of events) this.addEventListener(name, this._bound);
@@ -553,6 +554,7 @@ class SfDataView extends HTMLElement {
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
             "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open",
+            "sf-table-cell-set", "sf-table-rows-reorder",
         ];
         for (const name of events) this.shadowRoot.removeEventListener(name, this._bound);
         for (const name of events) this.removeEventListener(name, this._bound);
@@ -1269,6 +1271,51 @@ class SfDataView extends HTMLElement {
             && !data.saved_views && !data.column_settings && !data.tree;
     }
 
+    // A checkable cell (record.set, capability inline-edit): the host answers
+    // with the record as it now is, asks to confirm first (a change that
+    // rewrites records), or refuses; the row is then drawn from what it said.
+    async setCell({id, key, value, revision} = {}) {
+        if (id == null || !key) return null;
+        const record = this.records.find((entry) => String(entry.id) === String(id));
+        const answer = await this._raise("record.set", {
+            record_id: id, key, value,
+            revision: revision ?? record?._revision ?? record?.revision ?? null,
+        });
+        this.table?.clearCellPending?.(String(id), key);
+        // Anything but applied leaves the record as it was, and the box shows
+        // the value the host still holds.
+        if (answer?.answer !== "applied") {
+            const held = this.records.find((entry) => String(entry.id) === String(id));
+            this.table?.resetCellControl?.(String(id), key, held?.[key]);
+        }
+        return answer;
+    }
+
+    // Rows dragged into another order (record.reorder, capability
+    // row-reorder). Shown in the new order at once; a refusal or a conflict
+    // puts the old order back.
+    async reorderRows({ids = [], before = null, order = null} = {}) {
+        if (!ids.length) return null;
+        const previous = this.records;
+        if (Array.isArray(order)) {
+            const byId = new Map(this.records.map((record) => [String(record.id), record]));
+            const placed = order.map((key) => byId.get(String(key))).filter(Boolean);
+            if (placed.length === this.records.length) {
+                this.records = placed;
+                this._renderProjection();
+            }
+        }
+        const first = previous.find((record) => ids.map(String).includes(String(record.id)));
+        const answer = await this._raise("record.reorder", {
+            record_ids: [...ids], before, revision: first?._revision ?? first?.revision ?? null,
+        });
+        if (answer?.answer !== "applied") {
+            this.records = previous;
+            this._renderProjection();
+        }
+        return answer;
+    }
+
     _applyRecordPatch(records = []) {
         let applied = 0;
         for (const record of records) {
@@ -1322,6 +1369,8 @@ class SfDataView extends HTMLElement {
             // row's menu, which is the host's row-actions, not this.
             table.setAttribute("settings-menu", this.hostOffers("personal-column-settings") ? "true" : "false");
             table.setAttribute("creatable", this.hostOffers("create-record") ? "true" : "false");
+            table.setAttribute("row-reorder", this.hostOffers("row-reorder") && this.treeMode !== "tree" ? "true" : "false");
+            table.setAttribute("inline-edit", this.hostOffers("inline-edit") ? "true" : "false");
             // A filter template is a saved view the table keeps by itself; in a
             // view it went nowhere, so it is offered where the host keeps views.
             table.setAttribute("filter-templates", this.hostOffers("saved-views") ? "true" : "false");
@@ -1646,6 +1695,8 @@ class SfDataView extends HTMLElement {
             const key = this.shadowRoot.querySelector("[data-view]").value;
             if (key) return this.deleteView(key);
         }
+        if (event.type === "sf-table-cell-set") return this.setCell(event.detail ?? {});
+        if (event.type === "sf-table-rows-reorder") return this.reorderRows(event.detail ?? {});
         if (event.type === "sf-table-search-change") return this.changeQuery({search: String(event.detail ?? "")}, "search");
         if (event.type === "sf-table-filter-change") return this.changeQuery({filters: copy(event.detail?.filters ?? event.detail?.values ?? event.detail ?? {})}, "filter");
         if (event.type === "sf-table-sort-change") {

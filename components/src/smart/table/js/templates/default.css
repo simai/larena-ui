@@ -1199,3 +1199,12 @@
     }
   }
 }
+
+/* Where a dragged row lands in a list put in order by hand (row-reorder): a
+   line on the edge it will stand at. */
+sf-table tbody tr[data-sf-drop-before] > td {
+  box-shadow: inset 0 calc(2 * var(--sf-px)) 0 var(--sf-primary);
+}
+sf-table tbody tr[data-sf-drop-after] > td {
+  box-shadow: inset 0 calc(-2 * var(--sf-px)) 0 var(--sf-primary);
+}

@@ -298,6 +298,12 @@ class SfTable extends SfBaseElement {
             // Rows may be dragged out of the list -- onto a folder of a tree --
             // as records (application/x-sf-records+json).
             dragRows: {attribute: "drag-rows", type: Boolean, default: false},
+            // The rows can be put in another order by dragging them inside the
+            // list (row-reorder, the storage schema's fields, 2026-10-16).
+            rowReorder: {attribute: "row-reorder", type: Boolean, default: false},
+            // A boolean cell the host lets a person write is a checkbox
+            // (inline-edit; which cells, the record's `editable` says).
+            inlineEdit: {attribute: "inline-edit", type: Boolean, default: false},
             // Where the row's buttons are drawn: the active row, or every row.
             rowActionsVisible: {attribute: "row-actions-visible", default: "hover"},
             // The create button and its menu of kinds, inside actions: a data view
@@ -1185,6 +1191,60 @@ class SfTable extends SfBaseElement {
             event.dataTransfer.setData("text/plain", ids.join(", "));
             event.dataTransfer.effectAllowed = "copyMove";
             this.dispatchTableEvent("sf-table-rows-drag", Object.freeze({ids, source}));
+        }, {signal});
+        // Reordering inside the list: a row dragged over another goes before
+        // it, or after it from its lower half; the drop says which rows moved
+        // and the row they now stand before (null: the end). The host decides.
+        const reorder = () => this.getAttribute("row-reorder") === "true";
+        const dropMark = (row, after) => {
+            for (const marked of table.querySelectorAll("tbody tr[data-sf-drop-before], tbody tr[data-sf-drop-after]")) {
+                marked.removeAttribute("data-sf-drop-before");
+                marked.removeAttribute("data-sf-drop-after");
+            }
+            if (row) row.setAttribute(after ? "data-sf-drop-after" : "data-sf-drop-before", "");
+        };
+        const dropTarget = (event) => {
+            const row = event.target?.closest?.("tbody tr[data-row-id]");
+            if (!row) return null;
+            const box = row.getBoundingClientRect();
+            return {row, after: event.clientY > box.top + box.height / 2};
+        };
+        table.addEventListener("dragstart", (event) => {
+            const key = rowKey(event.target);
+            if (!key || !reorder() || !event.dataTransfer) return;
+            this._reorderDrag = [key];
+            event.dataTransfer.setData("application/x-sf-row-order", key);
+            event.dataTransfer.effectAllowed = "move";
+        }, {signal});
+        table.addEventListener("dragover", (event) => {
+            if (!this._reorderDrag || !reorder()) return;
+            const target = dropTarget(event);
+            if (!target) return;
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "move";
+            dropMark(target.row, target.after);
+        }, {signal});
+        table.addEventListener("drop", (event) => {
+            if (!this._reorderDrag || !reorder()) return;
+            const target = dropTarget(event);
+            dropMark(null);
+            const ids = this._reorderDrag;
+            this._reorderDrag = null;
+            if (!target) return;
+            event.preventDefault();
+            const keys = [...table.querySelectorAll("tbody tr[data-row-id]")].map((row) => row.dataset.rowId);
+            const at = keys.indexOf(target.row.dataset.rowId) + (target.after ? 1 : 0);
+            const rest = keys.slice(at).filter((key) => !ids.includes(key));
+            const before = rest[0] ?? null;
+            const now = keys.filter((key) => !ids.includes(key));
+            const place = before === null ? now.length : now.indexOf(before);
+            const order = [...now.slice(0, place), ...ids, ...now.slice(place)];
+            if (order.join("\u0000") === keys.join("\u0000")) return;
+            this.dispatchTableEvent("sf-table-rows-reorder", Object.freeze({ids: [...ids], before, order}));
+        }, {signal});
+        table.addEventListener("dragend", () => {
+            this._reorderDrag = null;
+            dropMark(null);
         }, {signal});
         table.addEventListener("pointerleave", () => this.setActionsRow("pointer", null), {signal});
         table.addEventListener("focusin", (event) => this.setActionsRow("focus", rowKey(event.target)), {signal});
@@ -3676,6 +3736,49 @@ class SfTable extends SfBaseElement {
     // string, an object with a component, or a list of those -- so the template
     // renders it through the path it already had. The set adds no second way to
     // draw a cell.
+    // A boolean cell the host lets this person write: the table is told it
+    // may (inline-edit) and the record names the field in `editable`.
+    cellEditable(row = {}, column = {}) {
+        if (this.getAttribute("inline-edit") !== "true") return false;
+        if ((column.propertyType ?? column.property_type ?? column.type) !== "boolean") return false;
+        return Array.isArray(row.editable) && row.editable.map(String).includes(String(column.key));
+    }
+
+    cellPending(row = {}, column = {}) {
+        return this._pendingCells?.has(`${this.getRowKey(row)}\u0000${column.key}`) === true;
+    }
+
+    // A checkbox pressed: the cell waits for the host, which answers with the
+    // record as it now is, or not, and then the row is drawn from what it says.
+    setCellValue(row = {}, column = {}, value) {
+        const id = this.getRowKey(row);
+        this._pendingCells ??= new Set();
+        this._pendingCells.add(`${id}\u0000${column.key}`);
+        this.requestComponentUpdate("cell-pending");
+        this.dispatchTableEvent("sf-table-cell-set", Object.freeze({
+            id: row.id ?? id, key: column.key, value,
+            revision: row._revision ?? row.revision ?? null,
+        }));
+    }
+
+    clearCellPending(id, key) {
+        if (this._pendingCells?.delete(`${id}\u0000${key}`)) this.requestComponentUpdate("cell-pending");
+    }
+
+    // The box shows what the host holds again. A render cannot do it: the
+    // value it would draw is the one it drew before the click, so nothing
+    // changes for it, while the box itself was toggled by the click.
+    resetCellControl(id, key, value) {
+        const escape = (text) => String(text).replace(/"/gu, '\\"');
+        const box = this.querySelector(`tbody tr[data-row-id="${escape(id)}"] [data-cell-edit="${escape(key)}"]`);
+        if (!box) return;
+        const checked = value === true;
+        box.checked = checked;
+        box.toggleAttribute("checked", checked);
+        const input = box.querySelector("input");
+        if (input) input.checked = checked;
+    }
+
     getTypedCellValue(column = {}, value) {
         // The host is passed so `formatFieldValue` is reachable from a cell. It
         // was reachable from the record panel and not from the list -- the
