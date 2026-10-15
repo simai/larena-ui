@@ -721,6 +721,7 @@ class SfDataView extends HTMLElement {
             "record.open": "row-actions", "record.mutate": "row-actions",
             "tree.expand": "tree", "node.targets": "tree-move", "node.move": "tree-move",
             "view.create_record": "create-record", "settings.save_personal": "personal-column-settings",
+            "record.reorder": "row-reorder", "record.set": "inline-edit",
         }[intent];
         if (capability && !this.hostOffers(capability)) {
             const answer = {answer: "unavailable", reason: "capability-not-provided"};
@@ -774,6 +775,10 @@ class SfDataView extends HTMLElement {
                 // fall into this branch and re-query the whole page, so moving a
                 // column reloaded the view and flashed a loader at the person.
                 if (!query && !answer.data && !NO_REFRESH_AFTER.has(intent)) this.refresh("after-write");
+                // What the write changed for the rest of the page goes out on
+                // the page host's outputs (simai.interface-fragment, effects);
+                // the page's routes take it to whoever listens.
+                if (Array.isArray(answer.effects) && answer.effects.length) globalThis.SF?.Composition?.publishEffects?.(answer.effects, {origin: this});
             } else if (query && answer.answer === "unavailable") {
                 this._setState("error", pageText(DATA_VIEW_TEXT, "stateUnavailable", this));
                 this.notify(pageText(DATA_VIEW_TEXT, "noticeFetchFailed", this), {code: answer.reason || ""});

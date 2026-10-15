@@ -1573,6 +1573,11 @@ class SfPropertyView extends SfBaseElement {
             if (!answer || !["applied", "conflict", "refused", "unavailable"].includes(answer.answer)) {
                 throw new TypeError("Host answer is not a declared port answer");
             }
+            // A saved record tells the rest of the page what changed, on the
+            // page host's outputs (simai.interface-fragment, effects).
+            if (answer.answer === "applied" && Array.isArray(answer.effects) && answer.effects.length) {
+                globalThis.SF?.Composition?.publishEffects?.(answer.effects, {origin: this});
+            }
             return answer;
         } catch (error) {
             if (!this.isConnected || stale()) return null;

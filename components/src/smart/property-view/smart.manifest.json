@@ -1108,7 +1108,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "df6b73a1fc5f8a7dc2f44fa3d90a18fc0d002601b112d532bef6f2b5cc419f3e"
+        "sha256": "5ff5cd9fbac2f90f1b0ddf3b675475adbee969c8b07c7eb33be840db4ae4e488"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
