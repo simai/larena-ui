@@ -41,7 +41,7 @@ const COLUMNS = [
   {key: 'owner', label: 'Автор', property_type: 'user', propertyType: 'user'},
 ];
 const rows = (from) => Array.from({length: 20}, (_, at) => ({id: String(from + at), name: `Запись ${from + at}`, status: at % 2 ? 'done' : 'work',
-  tags: ['a', 'b'].slice(0, 1 + (at % 2)), owner: {value: `u${at}`, label: 'Анна Петрова', avatarText: 'АП'}}));
+  tags: ['a', 'b'].slice(0, 1 + (at % 2)), owner: {value: `u${at}`, label: 'Анна Петрова', avatarText: 'АП'}, actions: ['view', 'edit']}));
 
 try {
   const page = await browser.newPage({viewport: {width: 1200, height: 800}});
@@ -55,7 +55,7 @@ try {
   // A first page, and another one when the person sorts.
   await page.evaluate(({columns, data}) => {
     document.getElementById('v').setHostPort({
-      version: '1.10.0', capabilities: [],
+      version: '1.10.0', capabilities: ['row-actions'],
       async raise(intent, payload) {
         if (intent !== 'query.change') return {answer: 'applied'};
         const records = payload.query.sort?.length ? data.second : data.first;
@@ -75,6 +75,19 @@ try {
       avatars: body.querySelectorAll('.sf-avatar').length, cell: box(badge), alone: box(ref)};
   });
   if (weight.elements !== 0 || !weight.badges || !weight.tags || !weight.avatars) note({case: 'shown values are markup, not elements', got: weight});
+  // The row's buttons are in the row a person is on, and follow the pointer.
+  const actions = async () => page.evaluate(() => [...document.querySelectorAll('#t tbody tr[data-row-id]')]
+    .filter((row) => row.querySelector('td[data-key="actions"] sf-icon-button, td[data-key="actions"] .sf-icon-button')).map((row) => row.dataset.rowId));
+  const idle = await actions();
+  await page.hover('#t tbody tr[data-row-id]:nth-child(3) td[data-key="name"]');
+  await page.waitForTimeout(250);
+  const hovered = await actions();
+  await page.hover('#t tbody tr[data-row-id]:nth-child(5) td[data-key="name"]');
+  await page.waitForTimeout(250);
+  const moved = await actions();
+  if (idle.length > 1 || hovered.length !== 1 || moved.length !== 1 || hovered[0] === moved[0]) {
+    note({case: "a row's buttons are in the row a person is on", got: {idle, hovered, moved}});
+  }
   // A sort: no more than two renders of the table.
   const renders = await page.evaluate(async () => {
     const table = document.getElementById('t');

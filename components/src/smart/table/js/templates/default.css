@@ -1119,6 +1119,15 @@
     --sf-table-cell--line-clamp: 1;
   }
 
+  /* A colour option in a filter window: its swatch, a text line square. */
+  .sf-table-filter-swatch {
+    flex: none;
+    inline-size: var(--sf-text-height-1\/2);
+    block-size: var(--sf-text-height-1\/2);
+    border-radius: var(--sf-radius--ui);
+    box-shadow: inset 0 0 0 var(--sf-px) var(--sf-outline-variant);
+  }
+
   sf-table tbody tr:hover {
     background-image: linear-gradient(
       var(--sf-surface-container-hover),

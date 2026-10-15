@@ -50,7 +50,7 @@ try {
   await page.setContent(
     '<!doctype html><html class="theme-light" lang="ru"><body style="margin:0">'
     + '<sf-data-view id="list" chrome="" row-cap="5" aria-label="Связанные">'
-    + '<sf-table slot="content" toolbar="false" aria-label="Связанные"></sf-table>'
+    + '<sf-table slot="content" toolbar="false" row-actions-visible="always" aria-label="Связанные"></sf-table>'
     + '</sf-data-view></body></html>',
   );
   for (const style of styles) await page.addStyleTag({path: style});

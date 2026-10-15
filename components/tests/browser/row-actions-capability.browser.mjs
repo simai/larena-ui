@@ -45,7 +45,7 @@ const measure = async (capabilities) => {
   await page.setContent(
     '<!doctype html><html class="theme-light" lang="ru"><body style="margin:0">'
     + '<sf-data-view id="list" chrome="" aria-label="Записи">'
-    + '<sf-table slot="content" toolbar="false" aria-label="Записи"></sf-table>'
+    + '<sf-table slot="content" toolbar="false" row-actions-visible="always" aria-label="Записи"></sf-table>'
     + '</sf-data-view></body></html>',
   );
   for (const style of styles) await page.addStyleTag({path: style});

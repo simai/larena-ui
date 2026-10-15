@@ -295,6 +295,8 @@ class SfTable extends SfBaseElement {
             actions: {type: Boolean, default: true},
             // The row action column alone; the create button still follows actions.
             rowActions: {attribute: "row-actions", type: Boolean, default: true},
+            // Where the row's buttons are drawn: the active row, or every row.
+            rowActionsVisible: {attribute: "row-actions-visible", default: "hover"},
             // The create button and its menu of kinds, inside actions: a data view
             // turns it off for a host on port 1.10.0 that does not announce
             // create-record, so nothing is offered that nobody would answer.
@@ -1134,6 +1136,41 @@ class SfTable extends SfBaseElement {
         }
 
         return index >= 0 ? `index:${index}` : "";
+    }
+
+    // Whether a row's action buttons are drawn: always when the host asks
+    // (row-actions-visible="always"), else in the row under the pointer, the
+    // row holding the focus and the current row.
+    actionsShownFor(row) {
+        if (this.getAttribute("row-actions-visible") === "always") return true;
+        const key = String(row?.id ?? row?.value ?? "");
+        if (!key) return true;
+        return key === this._pointerRowKey || key === this._focusRowKey || String(this._currentRowId ?? "") === key;
+    }
+
+    setActionsRow(kind, key) {
+        const field = kind === "focus" ? "_focusRowKey" : "_pointerRowKey";
+        const next = key ? String(key) : null;
+        if (this[field] === next) return;
+        this[field] = next;
+        // The buttons of one row, not the table's layout: no measuring after it.
+        this._layoutUnchanged = true;
+        this.requestComponentUpdate("row-actions");
+    }
+
+    bindRowActionsEvents(table) {
+        if (!table || this._rowActionsTable === table) return;
+        this._rowActionsAbort?.abort();
+        this._rowActionsAbort = new AbortController();
+        this._rowActionsTable = table;
+        const {signal} = this._rowActionsAbort;
+        const rowKey = (target) => target?.closest?.("tbody tr[data-row-id]")?.dataset.rowId ?? null;
+        table.addEventListener("pointerover", (event) => this.setActionsRow("pointer", rowKey(event.target)), {signal});
+        table.addEventListener("pointerleave", () => this.setActionsRow("pointer", null), {signal});
+        table.addEventListener("focusin", (event) => this.setActionsRow("focus", rowKey(event.target)), {signal});
+        table.addEventListener("focusout", (event) => {
+            if (!table.contains(event.relatedTarget)) this.setActionsRow("focus", null);
+        }, {signal});
     }
 
     isCurrentRow(row, index = -1) {
@@ -3700,6 +3737,10 @@ class SfTable extends SfBaseElement {
     }
 
     renderFilterOptionVisual(field = {}, option = {}) {
+        // A colour from the field's palette is shown as its swatch.
+        if (field.filter?.optionRenderer === 'swatch' && option.color) {
+            return html`<span class="sf-table-filter-swatch" aria-hidden="true" style=${`background-color: ${option.color}`}></span>`;
+        }
         if (field.filter?.optionRenderer !== 'avatar-checkbox') {
             return '';
         }
@@ -6596,6 +6637,9 @@ class SfTable extends SfBaseElement {
         this._preferenceUnsubscribe?.();
         this._preferenceUnsubscribe = null;
         this._preferenceKeyBound = undefined;
+        this._rowActionsAbort?.abort();
+        this._rowActionsAbort = null;
+        this._rowActionsTable = null;
         this.unbindPageScroll();
         this._lateLayoutAbort?.abort();
         this._lateLayoutAbort = null;
@@ -6726,6 +6770,12 @@ class SfTable extends SfBaseElement {
     }
 
     afterRender() {
+        this.bindRowActionsEvents(this.refs.table?.value);
+        // A render that only moved a row's buttons changed no width.
+        if (this._layoutUnchanged) {
+            this._layoutUnchanged = false;
+            return;
+        }
         // Content widths first: they change the widths everything below reads.
         // Written straight onto the columns: a render for them drew every row
         // and every value in it again (owner, 2026-10-15).

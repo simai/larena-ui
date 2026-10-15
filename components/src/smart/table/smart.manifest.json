@@ -339,6 +339,15 @@
         "type": "string",
         "default": "",
         "description": "The key this table's arrangement -- order, visibility, pinning, widths -- is kept under as a view preference (SF.Preferences, sf-table/<key>); a data view passes its own. Without it table-settings-key is used, and without either nothing is kept."
+      },
+      "row-actions-visible": {
+        "type": "string",
+        "enum": [
+          "hover",
+          "always"
+        ],
+        "default": "hover",
+        "description": "Where a row's action buttons are drawn: in the row under the pointer, with the focus or current (hover, the default), or in every row (always)."
       }
     }
   },
@@ -1588,15 +1597,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "6396f72ff7b26b77454970e93eeec40b5d4fc2d1d4c63de5bfd77742d2359958"
+        "sha256": "abac5c3a1847881de4785f472e605641a57775d8cafffae28c893fff53f6e169"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "e99b8db68366f5eee7be57a7c5978114d1255cbd47ca06eac1bbbe2b9d0a040e"
+        "sha256": "4d2d81537c57d3ace5e3b773b7f3d10f98cf1d1e844c42c9c006128a54a34b6b"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "4a9b1daf235f946a03421fcc979417f837a7a5247a9e78280f785ea492105d0c"
+        "sha256": "d77e3438483ab690333ae8d1e52a999d28675b177d9205f5d0cbee8d4749eecd"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

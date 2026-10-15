@@ -1016,8 +1016,15 @@ export function renderTableTemplate(context) {
             // they are, instead of running out of the cell under the next one.
             // The row of actions stays on one line: it is sized for it.
             if (column.key === 'actions') {
+                // A row's buttons stand in the row a person is on -- under the
+                // pointer, with the focus, or current -- and the column keeps its
+                // width in the others (owner, 2026-10-15): drawn in every row they
+                // were most of a page's elements.
+                if (!context.component.actionsShownFor?.(row)) {
+                    return html`<div class="sf-table-row-actions" data-row-actions="idle"></div>`;
+                }
                 return html`
-                    <div class="flex items-cross-center gap-1/3">
+                    <div class="sf-table-row-actions flex items-cross-center gap-1/3">
                         ${value.map((item) => renderCellItem(item, context.component))}
                     </div>
                 `;
