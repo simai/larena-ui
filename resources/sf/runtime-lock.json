@@ -1,62 +1,62 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-30ee90db0b94-larena-83d40671f011",
-  "bundle_id": "ui-30ee90db0b94-larena-83d40671f011-registry-3b653f41-exact-git-tree-v2",
+  "pair_id": "ui-c95d35179e84-larena-05ff22ab26ed",
+  "bundle_id": "ui-c95d35179e84-larena-05ff22ab26ed-registry-cedf6d60-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-30ee90db0b94",
+    "release": "ui-c95d35179e84",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "30ee90db0b948a5663e2bdff00537b4d25cedf2c",
+    "commit": "c95d35179e847b720f59de0b40c2830bb3682a9b",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "284477aa2480c08217d60c408d759eb5c7b16e0a74ab0c5dd826e5a2a8e6c5ef",
+    "sha256": "6223d53034f6d57f9ca5fe00293667b771b7a108aabe1667ea4fb341e40c7903",
     "files": 8256
   },
   "larena": {
-    "release": "larena-83d40671f011",
+    "release": "larena-05ff22ab26ed",
     "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "83d40671f01131649ba10d85dda8aca098cf4bc1",
+    "commit": "05ff22ab26edeb135b57c5bd6c9d12f028b975dc",
     "tree": "smart",
     "mount": "larena",
-    "sha256": "09379804d989fb193fb8f90dd5fc51fbebc0a1137a90a12c8e433211818ff6ef",
+    "sha256": "980bdd5e0786e6ce19e3dd90e4c421143e797fe062c3cf41211893fdcfc578ae",
     "files": 62,
-    "requires_framework": "ui-30ee90db0b94",
+    "requires_framework": "ui-c95d35179e84",
     "package_path": "components",
-    "package_tree": "016bc6d3aae68ac0f8c46888d5762f615f9d6490",
+    "package_tree": "1a82627d6a3e8adabd7320916caa94487d0d875c",
     "framework_source": {
       "repository": "simai/ui-source",
-      "revision": "cb20f5cc3d5e68ab35cff5973a7a8dd55fde39ac"
+      "revision": "70154ca497ae8ee9b4cf42846d108fb66f794e77"
     },
     "builder": {
       "repository": "simai/ui-builder",
       "revision": "7f6d4ce92bcdc0cf83fe3d3bbe971226e829cff9"
     },
-    "manifest_sha256": "7f3c6a3307a50f1b85ae8ed7877405d5a2bb313b4433649052795440262b25ca",
-    "receipt_sha256": "c14c2a91e9d44a9fe33aa0dfa904c4e59b5bdc3f66db15ce1d4a056e107c608a"
+    "manifest_sha256": "0bccf364dbefabbc78f837c0c4af19a67ddb8600fb063a2936adf61cd832d3ab",
+    "receipt_sha256": "1c9c1cf658169ed8dca61f3a892d4dbaaed761ab718881f5c94c9fc5bde44a70"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-30ee90db0b94",
+    "compatibility_id": "ui-c95d35179e84",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "3b653f41bdd65b953de4472b251c47859582ce645c5f7f16077be35bd595d6cd",
+    "file_sha256": "cedf6d606edcd3c7cc8dfc4c0dceb646c218ee347fc61a37a1ac8d98eae7be17",
     "source": {
       "tag": null,
-      "commit": "266ff39460ab7c181e8b1fee144e98eccbcbedc3",
+      "commit": "973478ced4450ff2fe7d5809fb1b1bc6fb42c192",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "56e06d09c134f162f5bfa3fcc819e1b09564734ab4878a234eb3f3ca61a1f5a0",
+      "sha256": "fad5d89c6a6a671b54f302c9efd15e2e633e2aa8dc2189428f45a3827fe09ecd",
       "files": 2,
-      "tree_oid": "0a5bf3da778944eb0b0a844d87fa6e5ee9688342"
+      "tree_oid": "62bc459db243ab3fbe31b36edbd60efd555e05df"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "532b596ad51b888a7addd89268f53bdf5512a1d2c64d8e7a4e8b5a0ac84857a0"
+      "file_sha256": "6864da5baa9f6a36299411929822484282b00526e6b11b272f6f306178eb99e8"
     }
   },
   "boot": {
@@ -105,7 +105,8 @@
         "actions-region-label",
         "clear-selection-label",
         "page-size-label",
-        "pagination-aria-label"
+        "pagination-aria-label",
+        "preferences-key"
       ],
       "package": "larena"
     },
@@ -197,7 +198,8 @@
         "layout",
         "list-below",
         "list-fields",
-        "remember-widths"
+        "remember-widths",
+        "preferences-key"
       ],
       "package": "larena"
     },
