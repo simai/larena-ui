@@ -183,7 +183,10 @@ test('the region declares the data state it is in', () => {
     const resolved = new Function('context', template.split('export function resolvedDataState(context) {')[1].split('\n}')[0]);
     assert.equal(resolved({dataState: 'error'}), 'error');
     assert.equal(resolved({dataState: 'auto', component: {getTableData: () => ({rows: [{id: 1}]})}}), 'populated');
-    assert.equal(resolved({dataState: 'auto', component: {getTableData: () => ({rows: []})}}), 'empty');
+    // Columns and no rows is an answer with nothing in it; neither is a table
+    // still waiting for its first answer (owner, 2026-10-15).
+    assert.equal(resolved({dataState: 'auto', component: {getTableData: () => ({rows: [], columns: [{key: 'name'}]})}}), 'empty');
+    assert.equal(resolved({dataState: 'auto', component: {getTableData: () => ({rows: []})}}), 'loading');
 });
 
 test('ids inside the filter template list also carry their instance', () => {

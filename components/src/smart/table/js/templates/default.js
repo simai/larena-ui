@@ -330,7 +330,13 @@ function renderEmptyState(context, dataState) {
 
 export function resolvedDataState(context) {
     if (context.dataState !== 'auto') return context.dataState;
-    return (context.component?.getTableData?.().rows || []).length ? 'populated' : 'empty';
+    const data = context.component?.getTableData?.() ?? {};
+    if ((data.rows || []).length) return 'populated';
+    // Nothing given yet -- no columns, no rows -- is a table waiting for its
+    // first answer, drawn as its skeleton: «Пока ничего нет» stood there
+    // before any answer came (owner, 2026-10-15, frame by frame).
+    if (!(data.columns || []).length) return 'loading';
+    return 'empty';
 }
 
 function renderHeadLabel(context, column) {

@@ -2268,6 +2268,15 @@ class SfTable extends SfBaseElement {
         const measured = new Map();
         let whole = 0;
         table.classList.add('sf-table-measuring');
+        // Measured before the table's own stylesheet has come, the measuring
+        // class does nothing, the fixed layout squeezes every column to a
+        // letter's width, and those widths were applied and held until the
+        // sheet arrived (owner, 2026-10-15, frame by frame). Not measured then:
+        // the stylesheet's arrival measures again.
+        if (getComputedStyle(table).tableLayout !== 'auto') {
+            table.classList.remove('sf-table-measuring');
+            return false;
+        }
         try {
             whole = table.getBoundingClientRect().width;
             for (const cell of table.querySelectorAll('thead th[data-key]')) {
