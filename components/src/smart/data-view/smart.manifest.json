@@ -103,9 +103,9 @@
       ],
       "host_port": {
         "port": "simai.dataview-port",
-        "version": "1.10.0",
-        "path": "src/core/contracts/ports/simai.dataview-port/1.10.0/port.json",
-        "sha256": "7347b696faf1ea2e129a2a67eab3aa2f154a391732696c611077af1cdb834cfd",
+        "version": "1.11.0",
+        "path": "src/core/contracts/ports/simai.dataview-port/1.11.0/port.json",
+        "sha256": "42073786bca391b21801477473b5834b3d5f22fa0f71a1d8c891977e2adc5b0d",
         "supported_versions": [
           "1.0.0",
           "1.1.0",
@@ -117,7 +117,8 @@
           "1.7.0",
           "1.8.0",
           "1.9.0",
-          "1.10.0"
+          "1.10.0",
+          "1.11.0"
         ]
       }
     }
@@ -664,6 +665,18 @@
       "payload": {
         "type": "object"
       }
+    },
+    "sf-table-cell-set": {
+      "summary": "record.set of simai.dataview-port 1.11.0: a checkable cell pressed in the view's table, raised through the port as the view receives it.",
+      "payload": {
+        "type": "object"
+      }
+    },
+    "sf-table-rows-reorder": {
+      "summary": "record.reorder of simai.dataview-port 1.11.0: rows dragged into another order in the view's table, raised through the port as the view receives it.",
+      "payload": {
+        "type": "object"
+      }
     }
   },
   "state": {
@@ -770,7 +783,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "8abbbaa2421ed988eb3cd9f8407507fc79769cc7960a7ad7ad22d3295947e0cc"
+        "sha256": "4f24655572bd499e98cdff2ca27191a84566d21b94c9562f841084d3ce12135a"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

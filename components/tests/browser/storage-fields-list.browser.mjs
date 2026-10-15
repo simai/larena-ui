@@ -88,7 +88,9 @@ try {
           const rest = window.fields.filter((one) => !payload.record_ids.includes(one.id));
           const at = payload.before === null ? rest.length : rest.findIndex((one) => one.id === payload.before);
           window.fields = [...rest.slice(0, at), ...moving, ...rest.slice(at)];
-          return {answer: 'applied'};
+          window.fields.forEach((one, position) => { one.position = position; });
+          // As Larena answers: the moved records as a patch of their positions.
+          return {answer: 'applied', data: {records: structuredClone(moving)}};
         }
         return {answer: 'applied'};
       },
@@ -144,11 +146,20 @@ try {
   const reorder = await page.evaluate(() => window.raised.filter((one) => one.intent === 'record.reorder').map((one) => one.payload));
   if (order.join() !== 'status,title,code,owner' || reorder.length !== 1 || reorder[0].record_ids.join() !== 'status' || reorder[0].before !== 'title') note({case: 'a dragged row raises record.reorder and stands in its new place', got: {order, reorder}});
 
+  // A second drag right after the first is taken too (Larena, 2026-10-16:
+  // it raised nothing).
+  await drag('code', 'status');
+  const second = await page.evaluate(() => ({
+    order: [...document.querySelectorAll('#t tbody tr[data-row-id]')].map((row) => row.dataset.rowId),
+    raised: window.raised.filter((one) => one.intent === 'record.reorder').length,
+  }));
+  if (second.raised !== 2 || second.order.join() !== 'code,status,title,owner') note({case: 'a second drag after an applied patch is taken', got: second});
+
   // Refused: the old order comes back.
   await page.evaluate(() => { window.mode = 'refuse'; });
   await drag('owner', 'status');
   const back = await page.evaluate(() => [...document.querySelectorAll('#t tbody tr[data-row-id]')].map((row) => row.dataset.rowId));
-  if (back.join() !== 'status,title,code,owner') note({case: 'a refused reorder puts the old order back', got: back});
+  if (back.join() !== 'code,status,title,owner') note({case: 'a refused reorder puts the old order back', got: back});
   console.log(JSON.stringify({first, set, afterSet, dialog, refused, order, reorder, back}));
 } finally {
   await browser.close();
