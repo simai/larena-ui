@@ -713,15 +713,18 @@ class SfTable extends SfBaseElement {
                     ...props
                 }
             }
-        }, () => {
-            if(!isActiveState) return false;
-            this.dispatchEvent(new CustomEvent('onSearchEnd', {
-                bubbles: true,
-                composed: true,
-                detail: this.state.search.value,
-            }));
-            this.dispatchTableEvent('sf-table-search-change', this.state.search.value);
-        })
+        });
+        if (!isActiveState) return this;
+        // Said at once, not after this render: the host's answer (a data view
+        // marking the rows loading) then lands in the same frame, and a search
+        // costs one render before its rows, not two (rules of the road, rule 1).
+        this.dispatchEvent(new CustomEvent('onSearchEnd', {
+            bubbles: true,
+            composed: true,
+            detail: this.state.search.value,
+        }));
+        this.dispatchTableEvent('sf-table-search-change', this.state.search.value);
+        return this;
     }
 
     dispatchTableEvent(name, detail = null) {

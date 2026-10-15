@@ -243,6 +243,26 @@ try {
     }
     if (!band.shadow) note({case: 'bulk band', expected: 'a shadow over the rows'});
   }
+  // 6. A search typed in the table costs one render before its answer: the
+  // value and the dimmed rows together (rules of the road, rule 1). The table
+  // said «search changed» only after its own render, so the view's loading
+  // mark was a second one.
+  const searched = await page.evaluate(async () => {
+    const table = document.getElementById('t');
+    const Table = customElements.get('sf-table');
+    let renders = 0;
+    const own = Table.prototype.template;
+    Table.prototype.template = function (...args) { if (this === table) renders += 1; return own.apply(this, args); };
+    table.updateSearchState({value: 'bo'});
+    await new Promise((done) => setTimeout(done, 80));
+    const beforeAnswer = {renders, dimmed: Boolean(document.querySelector('#t tbody[data-busy]'))};
+    await new Promise((done) => setTimeout(done, 300));
+    Table.prototype.template = own;
+    return {beforeAnswer, total: renders};
+  });
+  if (searched.beforeAnswer.renders !== 1 || !searched.beforeAnswer.dimmed || searched.total !== 2) {
+    note({case: 'a search: one render before the answer, one with it', got: searched});
+  }
 } finally {
   await browser.close();
 }
