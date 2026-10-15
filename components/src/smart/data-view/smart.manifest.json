@@ -249,6 +249,11 @@
         "type": "string",
         "default": "",
         "description": "The key the person's view of this list is kept under (SF.Preferences, sf-table/<key>): the table's arrangement, the sort and the page size, applied before the first paint and the first query. Usually the collection."
+      },
+      "accept-files": {
+        "type": "boolean",
+        "default": false,
+        "description": "Files dropped from the computer on the view are the host's to upload: a drop zone shows while they are over it, and sf-data-view-files-drop {files} says they were dropped."
       }
     }
   },
@@ -653,6 +658,12 @@
           }
         }
       }
+    },
+    "sf-data-view-files-drop": {
+      "summary": "Files from the computer were dropped on the view: {files}. The view uploads nothing; the host does.",
+      "payload": {
+        "type": "object"
+      }
     }
   },
   "state": {
@@ -759,7 +770,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "0cdc1a2a7b7345957586b80934b7c51d22a3c090c5cb9f45775eec0333fd196b"
+        "sha256": "acf593bd78042c8c89d74105d00d6542d1e56f6dacdfe712a5826139609d5f2d"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

@@ -63,6 +63,7 @@ const DATA_VIEW_TEXT = {
     en: {
         showAll: "Show all",
         emptyText: "No data",
+        dropFiles: "Drop the files here to upload them",
         closeNoticeLabel: "Close the message",
         statePortNotConnected: "The data port is not connected",
         stateUnavailable: "The data is temporarily unavailable",
@@ -98,6 +99,7 @@ const DATA_VIEW_TEXT = {
     ru: {
         showAll: "Показать все",
         emptyText: "Нет данных",
+        dropFiles: "Отпустите, чтобы загрузить файлы сюда",
         closeNoticeLabel: "Закрыть сообщение",
         statePortNotConnected: "Порт данных не подключён",
         stateUnavailable: "Данные временно недоступны",
@@ -229,6 +231,18 @@ class SfDataView extends HTMLElement {
                showed the bare fallback search above its rows (Larena,
                2026-10-14). */
             [hidden] { display: none !important; }
+            /* Files from the computer over a view that takes them (accept-files):
+               a dashed zone over the list says where they go. */
+            [part="drop"] {
+              position: absolute; inset: 0; z-index: 20;
+              display: grid; place-items: center;
+              border: var(--sf-focus--width, 2px) dashed var(--sf-primary);
+              border-radius: var(--sf-radius--surface);
+              background: color-mix(in srgb, var(--sf-primary-container) 80%, transparent);
+              color: var(--sf-on-primary-container);
+              font: var(--sf-font-weight-medium) var(--sf-text-size-1) / var(--sf-text-height-1) var(--sf-text--family);
+              pointer-events: none;
+            }
             /* What the view is doing is announced, not laid out. It used to be
                a line above the table, which said "Нет данных" over a table
                whose own body says the same, and pushed everything down by its
@@ -290,6 +304,7 @@ class SfDataView extends HTMLElement {
               </span>
             </slot></div>
             <div part="status" role="status" aria-live="polite" hidden></div>
+            <div part="drop" hidden></div>
             <slot name="content"><sf-table toolbar="false"></sf-table></slot>
             <slot name="show-all"></slot>
             <slot name="pagination"><sf-pagination top="false" bottom="false"></sf-pagination></slot>
@@ -432,7 +447,41 @@ class SfDataView extends HTMLElement {
             ?? slot.querySelector("sf-pagination");
     }
 
+    // Files from the computer dropped on the view (accept-files, owner
+    // 2026-10-15, the file manager) are the host's to upload: the view says
+    // so with sf-data-view-files-drop {files}. They do not go through the
+    // port, whose payloads are JSON.
+    _bindFileDrop() {
+        if (this._fileDropBound) return;
+        this._fileDropBound = true;
+        const zone = () => this.shadowRoot.querySelector('[part="drop"]');
+        const carriesFiles = (event) => this.hasAttribute("accept-files") && [...(event.dataTransfer?.types ?? [])].includes("Files");
+        const show = (on) => {
+            const node = zone();
+            if (!node) return;
+            node.textContent = pageText(DATA_VIEW_TEXT, "dropFiles", this);
+            node.hidden = !on;
+        };
+        this.addEventListener("dragover", (event) => {
+            if (!carriesFiles(event)) return;
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "copy";
+            show(true);
+        });
+        this.addEventListener("dragleave", (event) => {
+            if (!this.contains(event.relatedTarget) && !this.shadowRoot.contains(event.relatedTarget)) show(false);
+        });
+        this.addEventListener("drop", (event) => {
+            if (!carriesFiles(event)) return;
+            event.preventDefault();
+            show(false);
+            const files = [...event.dataTransfer.files];
+            if (files.length) this.dispatchEvent(new CustomEvent("sf-data-view-files-drop", {bubbles: true, composed: true, detail: {files}}));
+        });
+    }
+
     connectedCallback() {
+        this._bindFileDrop();
         this.epoch += 1;
         // The key reaches the table before its first paint.
         this._applyPreferences();

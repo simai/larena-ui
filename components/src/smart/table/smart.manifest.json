@@ -348,6 +348,11 @@
         ],
         "default": "hover",
         "description": "Where a row's action buttons are drawn: in the row under the pointer, with the focus or current (hover, the default), or in every row (always)."
+      },
+      "drag-rows": {
+        "type": "boolean",
+        "default": false,
+        "description": "Rows may be dragged out of the list as records (application/x-sf-records+json): the row's record, or every selected record when it is one of them."
       }
     }
   },
@@ -1360,6 +1365,12 @@
           }
         }
       }
+    },
+    "sf-table-rows-drag": {
+      "summary": "Rows began to be dragged out of the list: {ids, source}.",
+      "payload": {
+        "type": "object"
+      }
     }
   },
   "state": {
@@ -1597,11 +1608,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "abac5c3a1847881de4785f472e605641a57775d8cafffae28c893fff53f6e169"
+        "sha256": "17b3c25ed62c058507effba0ba1f3fb50bd75a94d5c05337be12616c1c97fedd"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "4d2d81537c57d3ace5e3b773b7f3d10f98cf1d1e844c42c9c006128a54a34b6b"
+        "sha256": "4e9d94553ba5c479be683f44320afec437a52cf6585017793355a15a6cd55c05"
       },
       {
         "path": "src/smart/table/js/templates/default.css",

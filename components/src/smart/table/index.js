@@ -295,6 +295,9 @@ class SfTable extends SfBaseElement {
             actions: {type: Boolean, default: true},
             // The row action column alone; the create button still follows actions.
             rowActions: {attribute: "row-actions", type: Boolean, default: true},
+            // Rows may be dragged out of the list -- onto a folder of a tree --
+            // as records (application/x-sf-records+json).
+            dragRows: {attribute: "drag-rows", type: Boolean, default: false},
             // Where the row's buttons are drawn: the active row, or every row.
             rowActionsVisible: {attribute: "row-actions-visible", default: "hover"},
             // The create button and its menu of kinds, inside actions: a data view
@@ -1166,6 +1169,20 @@ class SfTable extends SfBaseElement {
         const {signal} = this._rowActionsAbort;
         const rowKey = (target) => target?.closest?.("tbody tr[data-row-id]")?.dataset.rowId ?? null;
         table.addEventListener("pointerover", (event) => this.setActionsRow("pointer", rowKey(event.target)), {signal});
+        // A dragged row carries its record, or every selected record when it is
+        // one of them (owner, 2026-10-15, the file manager): a tree that
+        // accepts records says where they were dropped.
+        table.addEventListener("dragstart", (event) => {
+            const key = rowKey(event.target);
+            if (!key || !this.hasAttribute("drag-rows") || !event.dataTransfer) return;
+            const selected = this.getSelectedRecordIds?.() ?? [];
+            const ids = selected.map(String).includes(key) ? selected.map(String) : [key];
+            const source = this.getAttribute("preferences-key") || this.getAttribute("table-settings-key") || this.id || null;
+            event.dataTransfer.setData("application/x-sf-records+json", JSON.stringify({ids, source}));
+            event.dataTransfer.setData("text/plain", ids.join(", "));
+            event.dataTransfer.effectAllowed = "copyMove";
+            this.dispatchTableEvent("sf-table-rows-drag", Object.freeze({ids, source}));
+        }, {signal});
         table.addEventListener("pointerleave", () => this.setActionsRow("pointer", null), {signal});
         table.addEventListener("focusin", (event) => this.setActionsRow("focus", rowKey(event.target)), {signal});
         table.addEventListener("focusout", (event) => {

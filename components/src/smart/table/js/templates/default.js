@@ -796,6 +796,7 @@ export function renderTableTemplate(context) {
             <tbody data-busy=${busy ? '' : nothing}>
             ${repeat(rows, (row, rowIndex) => (row.__tree?.more ? `more:${row.id}` : `row:${row.id ?? row.value ?? rowIndex}`), (row, rowIndex) => row.__tree?.more ? renderMoreRow(context, columns, row) : html`
                 <tr data-selected=${row.select?.component?.props?.checked === true ? '' : nothing}
+                    draggable=${context.component.hasAttribute('drag-rows') && !row.__tree?.more ? 'true' : nothing}
                     aria-level=${row.__tree ? String(row.__tree.level + 1) : nothing}
                     aria-expanded=${row.__tree?.hasChildren ? String(row.__tree.expanded === true) : nothing}
                     aria-setsize=${row.__tree ? String(row.__tree.setsize) : nothing}
