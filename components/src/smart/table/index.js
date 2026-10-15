@@ -1,5 +1,5 @@
 import SfBaseElement from "../../core/js/smart-base";
-import {renderTableTemplate} from "./js/templates/default";
+import {renderTableTemplate, columnStyle} from "./js/templates/default";
 import {optionBadgeProps} from "../helpers/option-badge.js";
 import {renderCellField, renderFilterField} from "../field-renderers/index.js";
 import {html, nothing, render} from "lit";
@@ -1281,7 +1281,7 @@ class SfTable extends SfBaseElement {
                 if (this._lateLayoutFrame) return;
                 this._lateLayoutFrame = requestAnimationFrame(() => {
                     this._lateLayoutFrame = 0;
-                    if (this.isConnected && this.measureContentWidths()) this.requestComponentUpdate("content-widths");
+                    if (this.isConnected && this.measureContentWidths()) this.widthsChanged();
                 });
             };
             document.fonts?.addEventListener?.("loadingdone", again, {signal});
@@ -2362,8 +2362,34 @@ class SfTable extends SfBaseElement {
             .then(() => new Promise((settle) => requestAnimationFrame(() => requestAnimationFrame(settle))))
             .then(() => {
                 if (token !== this._remeasureToken || !this.isConnected) return;
-                if (this.measureContentWidths()) this.requestComponentUpdate("content-widths");
+                if (this.measureContentWidths()) this.widthsChanged();
             });
+    }
+
+    // New widths after a render: written onto the columns, and what reads
+    // widths -- folded values, pinned offsets, the rail -- read again.
+    widthsChanged() {
+        this.applyColumnWidths();
+        this.fitCellValues();
+        this.measurePinnedColumns();
+        if (this.hasAttribute("data-sf-page-scroll")) this.syncRail();
+    }
+
+    applyColumnWidths() {
+        const table = this.refs.table?.value;
+        if (!(table instanceof HTMLTableElement)) return;
+        const columns = new Map((this.getColumns?.() ?? []).map((column) => [String(column?.key), column]));
+        for (const col of table.querySelectorAll(':scope > colgroup > col[data-key]')) {
+            const column = columns.get(col.dataset.key);
+            if (!column) continue;
+            const style = columnStyle(this, column);
+            if ((col.getAttribute('style') ?? '') !== style) {
+                if (style) col.setAttribute('style', style);
+                else col.removeAttribute('style');
+            }
+        }
+        table.classList.toggle('sf-table-content-sized', this.hasContentWidths);
+        table.classList.toggle('w-max', !this.hasContentWidths);
     }
 
     contentWidth(column) {
@@ -6652,13 +6678,9 @@ class SfTable extends SfBaseElement {
 
     afterRender() {
         // Content widths first: they change the widths everything below reads.
-        // Twice at most in a row, as the cramped check below, so content that
-        // sits on an edge cannot keep the table re-rendering.
-        if (this.measureContentWidths() && (this._contentRetries ?? 0) < 2) {
-            this._contentRetries = (this._contentRetries ?? 0) + 1;
-            this.requestComponentUpdate("content-widths");
-            return;
-        }
+        // Written straight onto the columns: a render for them drew every row
+        // and every value in it again (owner, 2026-10-15).
+        if (this.measureContentWidths()) this.applyColumnWidths();
         this._contentRetries = 0;
         this.fitCellValues();
         this.measurePinnedColumns();

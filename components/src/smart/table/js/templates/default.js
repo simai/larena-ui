@@ -474,6 +474,27 @@ const skeletonBar = (row, column) => html`<div class="sf-skeleton sf-skeleton--a
 // cell that needs more would wrap and a typed row would grow, measured at 81px
 // against 57 (owner, 2026-10-09).
 
+// A column's width, floor and cap as its <col> style: the template draws it,
+// and the table writes it straight onto the <col> after measuring its content,
+// rather than rendering itself again for it (owner, 2026-10-15: a sort was five
+// renders of four hundred elements).
+export function columnStyle(component, column) {
+    const width = toColumnSize(column.colWidth ?? column.width ?? column.size)
+            || (column.key === 'actions' ? (component?.actionsColumnWidth || 'var(--sf-table--actions-column-width, var(--sf-f0))') : '')
+            || component?.contentWidth?.(column)
+            || (component?.columnsAreCramped
+                    && component?.columnTakesFloor?.(column)
+                ? 'var(--sf-table--column-min-inline-size)'
+                : '');
+    const minWidth = toColumnSize(column.min_width ?? column.minWidth);
+    const maxWidth = toColumnSize(column.maxWidth);
+    return [
+        width ? `width: ${width}` : "",
+        minWidth ? `min-width: ${minWidth}` : "",
+        maxWidth ? `max-width: ${maxWidth}` : "",
+    ].filter(Boolean).join("; ");
+}
+
 function renderColgroup(context) {
     const columns = context.component?.getColumns?.() || [];
 
@@ -498,20 +519,7 @@ function renderColgroup(context) {
                 // took whatever room was left -- a thousand pixels on a wide
                 // page -- and the data columns were measured as cramped beside
                 // it and held at their floor.
-                const width = toColumnSize(column.colWidth ?? column.width ?? column.size)
-                        || (column.key === 'actions' ? (context.component?.actionsColumnWidth || 'var(--sf-table--actions-column-width, var(--sf-f0))') : '')
-                        || context.component?.contentWidth?.(column)
-                        || (context.component?.columnsAreCramped
-                                && context.component?.columnTakesFloor?.(column)
-                            ? 'var(--sf-table--column-min-inline-size)'
-                            : '');
-                const minWidth = toColumnSize(column.min_width ?? column.minWidth);
-                const maxWidth = toColumnSize(column.maxWidth);
-                const style = [
-                    width ? `width: ${width}` : "",
-                    minWidth ? `min-width: ${minWidth}` : "",
-                    maxWidth ? `max-width: ${maxWidth}` : "",
-                ].filter(Boolean).join("; ");
+                const style = columnStyle(context.component, column);
 
                 return keyed(`col:${column.key}`, html`
                     <col
