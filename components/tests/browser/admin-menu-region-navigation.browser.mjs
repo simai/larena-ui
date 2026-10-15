@@ -41,6 +41,7 @@ const SHELL = 'shell-r1';
 const pages = {
   '/admin/cms': {title: 'Минимальная CMS', html: '<nav class="larena-page-path">Данные / Минимальная CMS</nav><h1>Минимальная CMS</h1><p><a id="to-files" href="/admin/files">К файлам</a></p>'},
   '/admin/files': {title: 'Файлы', html: '<nav class="larena-page-path">Данные / Файлы</nav><h1>Файлы</h1>'},
+  '/admin/notifications': {title: 'Уведомления', html: '<h1>Уведомления</h1>'},
 };
 const regionRequests = [];
 await context.route('http://probe.test/**', (route) => {
@@ -76,6 +77,7 @@ const NAVIGATION = {
       {key: 'files', kind: 'page', level: 'site', label: 'Файлы', icon: 'folder', href: '/admin/files'},
     ]},
   ],
+  notifications: {unread: 2, href: '/admin/notifications'},
   person: {name: 'Administrator', language: 'ru', languages: [{code: 'ru', native: 'Русский', english: 'Russian'}]},
   site: {current: {key: 'main', label: 'Main site'}, count: 1},
 };
@@ -131,7 +133,14 @@ try {
   await page.waitForTimeout(600);
   const linked = await look();
   if (linked.path !== '/admin/files' || linked.marker !== 'same document' || linked.current !== 'Файлы') note({case: 'a link in the region goes the same way', got: linked});
-  if (regionRequests.length !== 3) note({case: 'one region request per move', got: regionRequests});
+  // «Уведомления» at the foot is a row like the others: by region, marked.
+  await page.evaluate(() => [...document.querySelectorAll('#m .sf-admin-nav-bottom a.sf-admin-nav-row')].find((row) => row.textContent.includes('Уведомления'))?.click());
+  await page.waitForTimeout(600);
+  const notices = await page.evaluate(() => ({path: location.pathname, marker: window.__marker ?? null,
+    heading: document.querySelector('#larena-admin-content h1')?.textContent ?? null,
+    marked: document.querySelector('#m .sf-admin-nav-bottom a.sf-admin-nav-row[aria-current="page"]')?.textContent.includes('Уведомления') ?? false}));
+  if (notices.path !== '/admin/notifications' || notices.marker !== 'same document' || notices.heading !== 'Уведомления' || !notices.marked) note({case: '«Уведомления» goes by region and is marked', got: notices});
+  if (regionRequests.length !== 4) note({case: 'one region request per move', got: regionRequests});
   console.log(JSON.stringify({first, files, back, linked, regionRequests}));
 } finally {
   await browser.close();

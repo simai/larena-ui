@@ -336,8 +336,9 @@ export class NavigationController {
             }
         };
         visit(this.navigation?.items);
-        if (!best || best.key === this.navigation?.current) return;
-        this.navigation = {...this.navigation, current: best.key};
+        // Drawn again whichever row it is: «Уведомления» reads its own mark
+        // from the address, not from a row of the tree.
+        if (best && best.key !== this.navigation?.current) this.navigation = {...this.navigation, current: best.key};
         this.update("address");
     }
 

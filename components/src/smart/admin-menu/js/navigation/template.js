@@ -103,20 +103,39 @@ function findRow(context, key) {
     return null;
 }
 
+// «Уведомления» is a link when the host names its page (notifications.href),
+// so it goes where every other row goes -- by region when the shell has it
+// (larena.test, 2026-10-16: it was a block, and a host script loaded the page
+// in full); without an address it stays the count it was.
+function renderNotifications(context, notifications) {
+    const {text, compact} = context;
+    const content = html`
+        ${icon("notifications", "sf-admin-nav-row-icon")}
+        ${compact
+            ? (notifications.unread ? html`<span class="sf-admin-nav-dot" aria-hidden="true"></span>` : nothing)
+            : html`<span class="sf-admin-nav-row-label">${text("notifications")}</span>
+                ${notifications.unread ? html`<sf-badge class="sf-admin-nav-attention" size="1/3" status="error"
+                    text=${String(notifications.unread)}></sf-badge>` : nothing}`}`;
+    const href = typeof notifications.href === "string" && notifications.href ? notifications.href : null;
+    if (!href) return html`<div class="sf-admin-nav-row sf-admin-nav-row--first" title=${compact ? text("notifications") : nothing}>${content}</div>`;
+    let current = false;
+    try {
+        current = new URL(href, globalThis.location.href).pathname === globalThis.location.pathname;
+    } catch {
+        current = false;
+    }
+    return html`<a class="sf-admin-nav-row sf-admin-nav-row--first" href=${href}
+        aria-current=${current ? "page" : nothing} data-current=${current ? "true" : nothing}
+        title=${compact ? text("notifications") : nothing}>${content}</a>`;
+}
+
 function renderBottom(context) {
     const {navigation, text, compact, controller} = context;
     const notifications = navigation?.notifications;
     const favourites = controller.edit?.on ? null : controller.favouritesRoot();
     return html`<div class="sf-admin-nav-bottom">
         ${favourites ? renderFirstRow(context, favourites) : nothing}
-        ${notifications ? html`<div class="sf-admin-nav-row sf-admin-nav-row--first" title=${compact ? text("notifications") : nothing}>
-            ${icon("notifications", "sf-admin-nav-row-icon")}
-            ${compact
-                ? (notifications.unread ? html`<span class="sf-admin-nav-dot" aria-hidden="true"></span>` : nothing)
-                : html`<span class="sf-admin-nav-row-label">${text("notifications")}</span>
-                    ${notifications.unread ? html`<sf-badge class="sf-admin-nav-attention" size="1/3" status="error"
-                        text=${String(notifications.unread)}></sf-badge>` : nothing}`}
-        </div>` : nothing}
+        ${notifications ? renderNotifications(context, notifications) : nothing}
         <div class="sf-admin-nav-person-row">
             ${renderPersonButton(context)}
             ${renderCollapse(context)}
