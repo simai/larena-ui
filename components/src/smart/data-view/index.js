@@ -764,7 +764,18 @@ class SfDataView extends HTMLElement {
 
     // Before the first query: the person's sort and page size, so the rows
     // come in their order the first time rather than after a click.
+    // A list page scrolls as a page (owner, 2026-10-15): the view's table is in
+    // page mode unless the host chose its mode itself.
+    _tableScrollMode(table) {
+        if (typeof table?.hasAttribute !== "function" || typeof table.setAttribute !== "function") return;
+        if (!table.hasAttribute("data-sf-host-vertical-scroll")) {
+            table.setAttribute("data-sf-host-vertical-scroll", table.getAttribute("vertical-scroll") ?? "");
+        }
+        if (!table.getAttribute("data-sf-host-vertical-scroll")) table.setAttribute("vertical-scroll", "page");
+    }
+
     _applyPreferences() {
+        this._tableScrollMode(this.table);
         const key = this.preferencesKey;
         if (key === this._preferencesApplied) return;
         this._preferencesApplied = key;
@@ -1251,6 +1262,7 @@ class SfDataView extends HTMLElement {
                 table.setAttribute("layout", this.renders("toolbar") ? "auto" : "table");
             }
             table.setAttribute("size", this.size);
+            this._tableScrollMode(table);
             table.setAttribute("settings", this.renders("settings") ? "true" : "false");
             // The column settings, without the column: it also carries each
             // row's menu, which is the host's row-actions, not this.

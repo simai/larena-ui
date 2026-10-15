@@ -101,11 +101,14 @@ test('the head can stick to the page, and does so by giving up the scroll contai
   // Measured, not assumed: a sticky head binds to its nearest scroll container,
   // and `overflow-y: clip` does not help because the clip axis computes to
   // `hidden` and still makes one. Only releasing the container entirely works.
+  // One scroll on a list page (owner, 2026-10-15): in page mode the area
+  // scrolls sideways only and the table holds its head itself.
   assert.match(
     styles,
-    /\[data-sf-vertical-scroll="page"\]\s*\{\s*overflow: visible;\s*\}/u,
-    'page mode releases the scroll container',
+    /\.sf-table-scroll\[data-sf-vertical-scroll="page"\]\s*\{\s*overflow-x: auto;\s*overflow-y: hidden;/u,
+    'page mode scrolls the area sideways only',
   );
+  assert.match(element, /syncStickyHead\(\)/u, 'the table holds its head while the page scrolls');
   // The comment above the rule explains why the clip pairing was rejected, so
   // the guard reads declarations rather than prose.
   const declarations = styles.replace(/\/\*[\s\S]*?\*\//gu, '');

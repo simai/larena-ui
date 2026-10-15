@@ -25,7 +25,18 @@ import BundledPreferences from "../../core/js/preferences.js";
 const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
 const tablePreferenceKey = (key) => `sf-table/${String(key).replace(/[^\w.:-]+/gu, "-")}`;
 const GENERAL_TABLE_PREFERENCE = "sf-table/*";
-const TABLE_VIEW_DEFAULTS = Object.freeze({density: "normal", stripes: false, lines: false, singleLine: false});
+const TABLE_VIEW_DEFAULTS = Object.freeze({density: "normal", stripes: false, lines: false, singleLine: false, stickyHead: true});
+
+// The nearest box that scrolls vertically above an element, across shadow
+// roots; null when it is the page.
+function verticalScroller(element) {
+    for (let node = element; node; node = node.parentElement ?? node.getRootNode?.()?.host ?? null) {
+        if (node === document.body || node === document.documentElement) return null;
+        const style = getComputedStyle(node);
+        if (/(auto|scroll|overlay)/u.test(style.overflowY) && node.scrollHeight > node.clientHeight + 1) return node;
+    }
+    return null;
+}
 
 const TABLE_TEXT = {
     en: {
@@ -51,6 +62,7 @@ const TABLE_TEXT = {
         viewStripes: "Alternate rows",
         viewLines: "Lines between columns",
         viewSingleLine: "Text on one line",
+        viewStickyHead: "Keep the filter and the head in view",
         viewEverywhere: "For all my tables",
         viewReset: "Reset the view",
         resetSearchText: "Clear the search",
@@ -138,6 +150,7 @@ const TABLE_TEXT = {
         viewStripes: "Чередовать строки",
         viewLines: "Линии между столбцами",
         viewSingleLine: "Текст в одну строку",
+        viewStickyHead: "Закреплять фильтр и шапку",
         viewEverywhere: "Для всех моих таблиц",
         viewReset: "Сбросить вид",
         resetSearchText: "Очистить поиск",
@@ -518,6 +531,7 @@ class SfTable extends SfBaseElement {
             renameInput: this.createRef(),
             table: this.createRef(),
             scroll: this.createRef(),
+            rail: this.createRef(),
             resizeGuide: this.createRef(),
         }
         this._currentRowId = null;
@@ -4191,6 +4205,7 @@ class SfTable extends SfBaseElement {
                 ${check("stripes", "viewStripes")}
                 ${check("lines", "viewLines")}
                 ${check("singleLine", "viewSingleLine")}
+                ${this.getAttribute("vertical-scroll") === "page" ? check("stickyHead", "viewStickyHead") : nothing}
                 ${this.viewPreferenceKey ? html`<div class="sf-table-settings-separator" role="separator"></div>
                     ${row(this.text('viewEverywhere'), html`<sf-checkbox size=${size} data-view-everywhere ?checked=${everywhere}
                         @change=${(event) => { this._viewEverywhere = Boolean(event.target?.checked ?? event.detail?.checked); this.requestComponentUpdate('view-everywhere'); }}></sf-checkbox>`)}` : nothing}
@@ -4676,6 +4691,93 @@ class SfTable extends SfBaseElement {
         flag("data-sf-view-stripes", view.stripes === true);
         flag("data-sf-view-lines", view.lines === true);
         flag("data-sf-view-single-line", view.singleLine === true);
+        const page = this.getAttribute("vertical-scroll") === "page" && !this.isList;
+        flag("data-sf-page-scroll", page);
+        flag("data-sf-sticky-head", page && view.stickyHead !== false);
+    }
+
+    // The head held under the toolbar while what scrolls -- the page, or a
+    // box around the table -- scrolls past it (page mode): moved down by as
+    // much as the table's top has gone above the line, never past its last
+    // row. A sticky head cannot do it, because the area it sits in scrolls
+    // sideways and so is a scroll container of its own.
+    syncStickyHead() {
+        const table = this.refs.table?.value;
+        const head = table?.tHead;
+        if (!head) return;
+        const held = this.hasAttribute("data-sf-sticky-head");
+        let delta = 0;
+        if (held && table.isConnected) {
+            const scroller = verticalScroller(this.refs.scroll?.value?.parentElement ?? this);
+            const top = scroller ? scroller.getBoundingClientRect().top : 0;
+            const toolbar = this.querySelector(":scope > .sf-table > .sf-table-toolbar");
+            const line = Math.max(top, toolbar ? toolbar.getBoundingClientRect().bottom : top);
+            const box = table.getBoundingClientRect();
+            const room = box.height - head.offsetHeight;
+            delta = Math.round(Math.min(Math.max(line - box.top, 0), Math.max(room, 0)));
+        }
+        head.style.transform = delta ? `translateY(${delta}px)` : "";
+        this.toggleAttribute("data-sf-head-stuck", delta > 0);
+    }
+
+    // The rail under the area is its sideways bar: as wide as what the area
+    // scrolls, shown only when there is something to scroll, and each follows
+    // the other.
+    syncRail() {
+        const rail = this.refs.rail?.value;
+        const scroll = this.refs.scroll?.value;
+        if (!rail || !scroll) return;
+        const wide = scroll.scrollWidth > scroll.clientWidth + 1;
+        rail.hidden = !wide;
+        const track = rail.firstElementChild;
+        if (track) track.style.inlineSize = `${scroll.scrollWidth}px`;
+        if (rail._sfBound !== scroll) {
+            rail._sfBound = scroll;
+            let following = false;
+            const follow = (from, to) => () => {
+                if (following) return;
+                following = true;
+                to.scrollLeft = from.scrollLeft;
+                following = false;
+            };
+            scroll.addEventListener("scroll", follow(scroll, rail), {passive: true});
+            rail.addEventListener("scroll", follow(rail, scroll), {passive: true});
+            // The columns take their widths after a render (content widths,
+            // late fonts): the rail follows the table's size, not the render.
+            this._railObserver?.disconnect();
+            if (typeof ResizeObserver !== "undefined") {
+                this._railObserver = new ResizeObserver(() => this.syncRail());
+                this._railObserver.observe(scroll);
+                if (this.refs.table?.value) this._railObserver.observe(this.refs.table.value);
+            }
+        }
+        if (wide) rail.scrollLeft = scroll.scrollLeft;
+    }
+
+    bindPageScroll() {
+        if (this._pageScrollAbort) return;
+        this._pageScrollAbort = new AbortController();
+        const {signal} = this._pageScrollAbort;
+        const again = () => {
+            if (this._pageScrollFrame) return;
+            this._pageScrollFrame = requestAnimationFrame(() => {
+                this._pageScrollFrame = 0;
+                if (this.isConnected) this.syncStickyHead();
+            });
+        };
+        document.addEventListener("scroll", again, {capture: true, passive: true, signal});
+        globalThis.addEventListener("resize", () => { again(); this.syncRail(); }, {passive: true, signal});
+    }
+
+    unbindPageScroll() {
+        this._railObserver?.disconnect();
+        this._railObserver = null;
+        const rail = this.refs.rail?.value;
+        if (rail) rail._sfBound = null;
+        this._pageScrollAbort?.abort();
+        this._pageScrollAbort = null;
+        cancelAnimationFrame(this._pageScrollFrame ?? 0);
+        this._pageScrollFrame = 0;
     }
 
     // One option changed. «Для всех моих таблиц» writes it to the person's
@@ -6400,6 +6502,7 @@ class SfTable extends SfBaseElement {
         this._preferenceUnsubscribe?.();
         this._preferenceUnsubscribe = null;
         this._preferenceKeyBound = undefined;
+        this.unbindPageScroll();
         this._lateLayoutAbort?.abort();
         this._lateLayoutAbort = null;
         cancelAnimationFrame(this._lateLayoutFrame ?? 0);
@@ -6523,6 +6626,7 @@ class SfTable extends SfBaseElement {
     beforeRender() {
         super.beforeRender();
         this.connectTablePreference();
+        this.applyTableView();
         this._checkboxMeasureToken++;
         this.refs.items = new Map();
     }
@@ -6539,6 +6643,15 @@ class SfTable extends SfBaseElement {
         this._contentRetries = 0;
         this.fitCellValues();
         this.measurePinnedColumns();
+        if (this.hasAttribute("data-sf-page-scroll")) {
+            this.bindPageScroll();
+            this.syncRail();
+            this.syncStickyHead();
+        } else {
+            this.unbindPageScroll();
+            const head = this.refs.table?.value?.tHead;
+            if (head?.style.transform) head.style.transform = "";
+        }
         // Whether the columns are cramped is read from the laid-out table, so
         // the first render guesses: before layout the actions column and the
         // floors are not yet where they will be. When the answer after the

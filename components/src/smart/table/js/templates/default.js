@@ -1058,6 +1058,10 @@ export function renderTableTemplate(context) {
                         ${renderBody(context)}
                     </table>`}
                 </div>
+                ${context.verticalScroll === 'page' && !context.list
+                        ? html`<div class="sf-table-rail" aria-hidden="true" hidden ${ref(context.component.refs.rail)}>
+                            <div class="sf-table-rail-track"></div></div>`
+                        : nothing}
 
                 ${context.pagin
                         ? html`

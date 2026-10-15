@@ -868,8 +868,72 @@
      container, a bounded height leaves it at -398 as well, and only
      `overflow: visible` holds it at 0. The cost is that a table wider than the
      page scrolls the page sideways instead of scrolling inside its own box. */
+  /* One scroll on a list page (owner, 2026-10-15, from the approved
+     prototype): the page scrolls, never an area inside it, so in page mode the
+     table takes the height of its rows rather than shrinking into its box; the
+     area scrolls sideways only, its own bar replaced by the sticky rail under
+     it; the head is held under the toolbar by the table itself (it moves the
+     head while the page scrolls, see syncStickyHead), because a sticky head
+     binds to the area, which scrolls sideways and so is a scroll container. */
+  sf-table[data-sf-page-scroll] > .sf-table,
+  sf-table[data-sf-page-scroll] .table-wrap,
   sf-table .sf-table-scroll[data-sf-vertical-scroll="page"] {
-    overflow: visible;
+    flex: none;
+    min-block-size: auto;
+  }
+
+  sf-table .sf-table-scroll[data-sf-vertical-scroll="page"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  sf-table .sf-table-scroll[data-sf-vertical-scroll="page"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* The sideways bar, held at the bottom of the window while the table runs
+     past it, and in its place under the rows once they end. */
+  /* The area and its rail follow each other step for step: a smooth scroll
+     (the core's default) sent each half-way position back to the other, and
+     the two settled near the start. */
+  sf-table .sf-table-scroll[data-sf-vertical-scroll="page"],
+  sf-table .sf-table-rail {
+    scroll-behavior: auto;
+  }
+
+  sf-table .sf-table-rail {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 5;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: var(--sf-table-head--background-color, var(--sf-surface-0));
+  }
+
+  sf-table .sf-table-rail[hidden] {
+    display: none;
+  }
+
+  sf-table .sf-table-rail-track {
+    block-size: var(--sf-px);
+  }
+
+  /* Held: the toolbar at the top of what scrolls, the head under it. */
+  sf-table[data-sf-sticky-head] .sf-table-toolbar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 6;
+    background-color: var(--sf-table-head--background-color, var(--sf-surface-0));
+  }
+
+  sf-table[data-sf-page-scroll] thead {
+    position: relative;
+    z-index: 4;
+  }
+
+  sf-table[data-sf-head-stuck] thead {
+    box-shadow: 0 var(--sf-px) 0 var(--sf-outline-variant);
   }
 
   /* A re-query over rows already on screen dims them and shows one spinner in
