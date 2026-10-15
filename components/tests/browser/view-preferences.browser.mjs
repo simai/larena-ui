@@ -147,18 +147,18 @@ try {
   // No hole under the tabs, and a way out on their row (owner, 2026-10-15).
   const head = await viewed.evaluate(() => {
     const menu = document.querySelector('sf-context-menu');
-    const tabs = menu?.querySelector('.sf-table-settings-head');
+    const tabs = menu?.querySelector('.sf-context-menu-head');
     const first = menu?.querySelector('[data-table-view-settings] > *');
     return {gap: tabs && first ? Math.round(first.getBoundingClientRect().top - tabs.getBoundingClientRect().bottom) : null,
-      panels: menu?.querySelector('.sf-table-settings-head .sf-tabs-main-container')?.getBoundingClientRect().height ?? null,
-      close: Boolean(menu?.querySelector('.sf-table-settings-close button'))};
+      panels: menu?.querySelector('.sf-context-menu-head .sf-tabs-main-container')?.getBoundingClientRect().height ?? null,
+      close: Boolean(menu?.querySelector('.sf-context-menu-close button'))};
   });
   if (head.gap === null || head.gap < 0 || head.gap > 16 || head.panels || !head.close) note({case: 'the tab row: no hole, no overlap, a close button', got: head});
   if (own.density !== 'compact' || !own.stripes || own.kept?.density !== 'compact' || own.kept?.stripes !== true) note({case: 'the view is set and kept for this table', got: own});
   if (everywhere.general?.lines !== true || !everywhere.lines) note({case: '«Для всех моих таблиц» keeps it for every table', got: everywhere});
-  await viewed.evaluate(() => document.querySelector('sf-context-menu .sf-table-settings-close button')?.click());
+  await viewed.evaluate(() => document.querySelector('sf-context-menu .sf-context-menu-close button')?.click());
   await viewed.waitForTimeout(300);
-  const closed = await viewed.evaluate(() => !document.querySelector('sf-context-menu .sf-table-settings-head'));
+  const closed = await viewed.evaluate(() => !document.querySelector('sf-context-menu .sf-context-menu-head'));
   if (!closed) note({case: 'the close button closes the window'});
   await viewed.close();
   console.log(JSON.stringify({arranged, kept, painted, firstQuery, hostedHeads, hostedQuery, tabs, own, everywhere, head}));

@@ -1608,7 +1608,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "9f31ec127c80df35accf9adcd63aa285c24efb20b28930c06d92a2b0ce564193"
+        "sha256": "c900c93ab0aaf89a59a6797e7477b6eafc2209ef1dd60645e8af87b8cd446749"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
@@ -1616,7 +1616,7 @@
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "d77e3438483ab690333ae8d1e52a999d28675b177d9205f5d0cbee8d4749eecd"
+        "sha256": "673324eee46a4715b65cf9d5bb45cb7e59227dd9b5b40bd487ec93f352727188"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

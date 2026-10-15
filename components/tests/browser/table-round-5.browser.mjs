@@ -114,7 +114,7 @@ try {
         if (!surface) return null;
         const box = surface.getBoundingClientRect();
         const list = surface.querySelector('.sf-context-menu-columns');
-        const bottom = surface.querySelector('.sf-table-context-bottom');
+        const bottom = surface.querySelector('.sf-context-menu-footer');
         const top = surface.querySelector(head);
         const visible = (node) => {
           const rect = node?.getBoundingClientRect();
@@ -184,7 +184,7 @@ try {
   const atOnce = await page.evaluate(async () => {
     const table = document.getElementById('t');
     const surface = document.querySelector('sf-context-menu .sf-table-context-menu');
-    const buttons = [...surface.querySelectorAll('.sf-table-context-bottom sf-button')]
+    const buttons = [...surface.querySelectorAll('.sf-context-menu-footer sf-button')]
       .map((node) => node.getAttribute('text'));
     const visible = () => (table.getColumns?.() ?? []).filter((col) => col.visible !== false).length;
     const before = {buttons, visible: visible(), saved: window.saved.length};
@@ -229,7 +229,7 @@ try {
     await new Promise((done) => setTimeout(done, 350));
     const changed = {visible: visible(), pinned: pinned().length};
     const savedBefore = window.saved.length;
-    document.querySelector('sf-context-menu .sf-table-context-bottom sf-button button')?.click();
+    document.querySelector('sf-context-menu .sf-context-menu-footer sf-button button')?.click();
     await new Promise((done) => setTimeout(done, 400));
     return {opened, changed, restored: {visible: visible(), pinned: pinned().length},
       announcements: window.saved.length - savedBefore};
@@ -306,7 +306,7 @@ try {
       searchFieldEnd: finish(content.querySelector('.sf-table-column-search .sf-input-field')),
       rowStart: start(row),
       rowPinEnd: finish(row?.querySelector('[icon="push_pin"] button')),
-      buttons: start(content.querySelector('.sf-table-context-bottom sf-button button')),
+      buttons: start(content.querySelector('.sf-context-menu-footer sf-button button')),
     };
   });
   if (!axis || axis.published === null) {
@@ -328,7 +328,7 @@ try {
   //    always did; with a draft it carries the number of conditions a press
   //    would change, and the host can translate the label.
   const applyButton = async (page) => page.evaluate(() => {
-    const bottom = document.querySelector('sf-context-menu .sf-table-context-bottom');
+    const bottom = document.querySelector('sf-context-menu .sf-context-menu-footer');
     const buttons = [...(bottom?.querySelectorAll('sf-button') ?? [])];
     const commit = buttons[buttons.length - 1];
     return {
@@ -356,18 +356,24 @@ try {
     await new Promise((done) => setTimeout(done, 500));
     // The fields tab renders its own checkboxes inside the window's tabs; the
     // settings window's rows carry data-column-key, this window's do not.
-    const boxes = [...document.querySelectorAll('sf-context-menu sf-tabs input[type="checkbox"]')];
+    const boxes = [...document.querySelectorAll('sf-context-menu .sf-context-menu-body input[type="checkbox"]')];
+    const panel = document.querySelector('sf-context-menu .sf-context-menu-content');
+    const before = Math.round(panel?.getBoundingClientRect().width ?? 0);
     boxes[0]?.click();
     await new Promise((done) => setTimeout(done, 250));
     boxes[1]?.click();
     await new Promise((done) => setTimeout(done, 350));
     // Against bytes that predate this item the method is absent; report that
     // rather than throwing, so the probe says which pair it is measuring.
-    return {ticked: boxes.length, counted: typeof table.countPendingFilterConditionChanges === 'function'
+    // The window keeps its width while «Применить» grows a count (owner,
+    // 2026-10-15: it widened under the pointer).
+    const widths = [before, Math.round(panel?.getBoundingClientRect().width ?? 0)];
+    return {ticked: boxes.length, widths, counted: typeof table.countPendingFilterConditionChanges === 'function'
       ? table.countPendingFilterConditionChanges()
       : 'the component cannot count pending conditions'};
   });
   const marked = await applyButton(filterPage);
+  if (!pending.widths?.[0] || pending.widths[0] !== pending.widths[1]) note({case: 'the filter keeps its width while fields are ticked', got: pending.widths});
   if (pending.counted !== 2 || marked.text !== 'Применить (2)'
       || marked.ariaLabel !== 'Применить: 2') {
     note({case: 'filter button shows what is pending', got: {pending, marked}, expected: 'two conditions counted, and said in the label and to a reader'});
@@ -377,7 +383,7 @@ try {
     const table = document.getElementById('t');
     table.setAttribute('filter-apply-text', 'Apply filter');
     await new Promise((done) => setTimeout(done, 400));
-    const bottom = document.querySelector('sf-context-menu .sf-table-context-bottom');
+    const bottom = document.querySelector('sf-context-menu .sf-context-menu-footer');
     const buttons = [...(bottom?.querySelectorAll('sf-button') ?? [])];
     return buttons[buttons.length - 1]?.getAttribute('text') ?? null;
   });

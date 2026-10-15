@@ -3946,10 +3946,26 @@ class SfTable extends SfBaseElement {
           "
                     root-class="sf-table-context-menu ${this.size === "1/2" ? "sf-table-context-menu--dense " : ""}flex flex-col"
                     position="${position || ""}"
+                    role="dialog"
+                    tabs=${contextItems}
+                    active-tab=${this._filterTab === 'fields' ? '1' : '0'}
+                    closable
+                    @sf-context-menu-tab=${(event) => {
+                        event.stopPropagation();
+                        this._filterTab = event.detail?.index === 1 ? 'fields' : 'templates';
+                        this.requestComponentUpdate('filter-tab');
+                    }}
+                    @sf-context-menu-close=${(event) => {
+                        event.stopPropagation();
+                        this.closeContextMenu();
+                    }}
             >
+                <!-- The Framework's panel with tabs (owner, 2026-10-15): the
+                     tabs stay while the rows scroll, the buttons stay at the
+                     bottom, and the window keeps its width -- it grew under
+                     the pointer when «Применить (2)» got longer. -->
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
-                    <sf-tabs size=${this.size} items="${contextItems}" type="underline">
-                        <div slot="panel-0" class="flex">
+                    ${this._filterTab !== 'fields' ? html`
                             <div
                                     class="sf-context-menu-columns flex flex-col gap-1/4 overflow-auto flex-1"
                                     data-filter-template-list
@@ -3960,9 +3976,7 @@ class SfTable extends SfBaseElement {
                                     {name: 'filter-templates', label: this.text('templatesTabText'),
                                      onIntent: (event) => this.onFilterTemplateIntent(event)},
                                 )}
-                            </div>
-                        </div>
-                        <div slot="panel-1">
+                            </div>` : html`
                             <div class="sf-context-menu-columns flex flex-1 gap-1 overflow-auto">
                                 ${columnGroups.map(
                                         (group) => html`
@@ -3971,12 +3985,9 @@ class SfTable extends SfBaseElement {
                                             </div>
                                         `,
                                 )}
-                            </div>
-                        </div>
-
-                    </sf-tabs>
-                    <div class="sf-table-context-bottom sf-context-menu-footer">
-                        <sf-button size=${this.size} @click="${() => {
+                            </div>`}
+                </div>
+                        <sf-button slot="footer" size=${this.size} @click="${() => {
                             // Reset means the defaults, not "forget what I just
                             // typed here": the draft goes, and the host is asked
                             // to clear the person's own layer — order, widths,
@@ -3988,7 +3999,7 @@ class SfTable extends SfBaseElement {
                         }
                         }" appearance="outline" scheme="on-surface" root-class="flex-1"
                                    text="${this.text('resetText')}"></sf-button>
-                        <sf-button size=${this.size} @click="${() => {
+                        <sf-button slot="footer" size=${this.size} @click="${() => {
                             const tempFilter = this.tempSettings?.filter;
 
                             if (tempFilter) {
@@ -4053,8 +4064,6 @@ class SfTable extends SfBaseElement {
                                    text=${pendingConditions
                                        ? `${this.text("filterApplyText", "filter-apply-text")} (${pendingConditions})`
                                        : this.text("filterApplyText", "filter-apply-text")}></sf-button>
-                    </div>
-                </div>
             </sf-context-menu>
         `;
     }
@@ -4238,27 +4247,25 @@ class SfTable extends SfBaseElement {
           "
                     root-class="sf-table-context-menu ${this.size === "1/2" ? "sf-table-context-menu--dense " : ""}flex flex-col"
                     position="${position || ""}"
+                    role="dialog"
+                    tabs=${`${this.text('settingsFieldsTab')}|${this.text('settingsViewTab')}`}
+                    active-tab=${this._settingsTab === 'view' ? '1' : '0'}
+                    closable
+                    @sf-context-menu-tab=${(event) => {
+                        event.stopPropagation();
+                        this._settingsTab = event.detail?.index === 1 ? 'view' : 'fields';
+                        this.requestComponentUpdate('settings-tab');
+                    }}
+                    @sf-context-menu-close=${(event) => {
+                        event.stopPropagation();
+                        this.closeContextMenu();
+                    }}
             >
+                <!-- Two tabs (owner, 2026-10-14) in the Framework's panel
+                     (2026-10-15): its head -- the tabs and the way out --
+                     stays while the rows scroll, and its width is its own.
+                     Esc, a click outside and the gear again close it too. -->
                 <div class="sf-table-context-body flex flex-col flex-1" slot="content">
-                    <!-- Two tabs (owner, 2026-10-14): the fields, and how the
-                         table looks for this person. -->
-                    <!-- The tabs and the way out on one row: a window that
-                         opened under the gear said nowhere how to close it
-                         (owner, 2026-10-15). Esc, a click outside and the gear
-                         again close it too. -->
-                    <div class="sf-table-settings-head">
-                    <sf-tabs class="sf-table-settings-tabs" type="underline" size=${this.size === "1/2" ? "1/2" : "1"}
-                             items=${`${this.text('settingsFieldsTab')}|${this.text('settingsViewTab')}`}
-                             active-index=${this._settingsTab === 'view' ? '1' : '0'}
-                             @sf-tab-change=${(event) => {
-                                 event.stopPropagation();
-                                 this._settingsTab = event.detail?.current === 1 ? 'view' : 'fields';
-                                 this.requestComponentUpdate('settings-tab');
-                             }}></sf-tabs>
-                    <sf-icon-button class="sf-table-settings-close" appearance="link" scheme="on-surface" size=${this.size === "1/2" ? "1/2" : "1"}
-                                    icon="close" aria-label=${this.text('closeText')} title=${this.text('closeText')}
-                                    @click=${() => this.closeContextMenu()}></sf-icon-button>
-                    </div>
                     ${this._settingsTab === 'view' ? this.renderTableViewSettings() : html`
                     <!-- The search: a site can have hundreds of fields, and
                          scrolling for one is not an answer. -->
@@ -4284,18 +4291,18 @@ class SfTable extends SfBaseElement {
                                 ${this.getProp('columnSearchEmptyText')}
                             </div>`}
                     </div>
-                    <!-- «Применить» went with the consumer owner's decision of
-                         2026-10-05: every control in this window applies as it
-                         is pressed, so a button that commits has nothing left
-                         to commit. «Сбросить» is the way back -- the settings as
-                         they stood when the window was opened, applied at once
-                         and announced once. -->
-                    <div class="sf-table-context-bottom sf-context-menu-footer">
-                        <sf-button size=${this.size} @click="${() => this.restoreColumnSettingsOnOpen()}"
-                                   appearance="outline" scheme="on-surface" root-class="flex-1"
-                                   text="${this.text('resetText')}"></sf-button>
-                    </div>`}
+                    `}
                 </div>
+                <!-- «Применить» went with the consumer owner's decision of
+                     2026-10-05: every control in this window applies as it is
+                     pressed. «Сбросить» is the way back -- for the fields, the
+                     settings as they stood when the window was opened; for the
+                     view, the defaults. -->
+                <!-- One button that stays, its words and act following the
+                     tab: the panel took its footer once, at the start. -->
+                <sf-button slot="footer" size=${this.size} appearance="outline" scheme="on-surface" root-class="flex-1"
+                           text=${this._settingsTab === 'view' ? this.text('viewReset') : this.text('resetText')}
+                           @click=${() => (this._settingsTab === 'view' ? this.resetTableView() : this.restoreColumnSettingsOnOpen())}></sf-button>
             </sf-context-menu>
         `;
     }
@@ -4329,11 +4336,6 @@ class SfTable extends SfBaseElement {
                 ${this.viewPreferenceKey ? html`<div class="sf-table-settings-separator" role="separator"></div>
                     ${row(this.text('viewEverywhere'), html`<sf-checkbox size=${size} data-view-everywhere ?checked=${everywhere}
                         @change=${(event) => { this._viewEverywhere = Boolean(event.target?.checked ?? event.detail?.checked); this.requestComponentUpdate('view-everywhere'); }}></sf-checkbox>`)}` : nothing}
-            </div>
-            <div class="sf-table-context-bottom sf-context-menu-footer">
-                <sf-button size=${this.size} @click=${() => this.resetTableView()}
-                           appearance="outline" scheme="on-surface" root-class="flex-1"
-                           text=${this.text('viewReset')}></sf-button>
             </div>`;
     }
 
