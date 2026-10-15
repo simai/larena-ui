@@ -721,6 +721,10 @@
     "focus": "Context menus focus their first available native item after rendering. Escape returns to the native opener; Tab/Shift+Tab close and continue from the opener. Outside focus is preserved. If save/cancel removes the opener, abandoned body focus returns to the settings control or another available control in this Admin Menu. Shared portal ownership and stale callbacks are guarded. Popup geometry follows the native opener, including display-contents Smart hosts, LTR/RTL, responsive movement, content, font and viewport changes; --sf-context-menu-viewport-space derives from the spacing scale. Internal scrolling preserves the menu; outside document scrolling dismisses it. Search and nested drill-down layers make inactive panels inert. Opening a nested layer focuses its localized Back control; Back restores the corresponding tree trigger. Compact search focuses the revealed input. Search placement and directional chevrons follow LTR or RTL."
   },
   "presentation": {
+    "skeleton": {
+      "shape": "menu",
+      "while_loading": "none"
+    },
     "themes": [
       "light",
       "dark"

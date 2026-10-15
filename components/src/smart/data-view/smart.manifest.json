@@ -705,6 +705,10 @@
     "focus": "No focus movement on data refresh"
   },
   "presentation": {
+    "skeleton": {
+      "shape": "rows",
+      "while_loading": "template"
+    },
     "themes": [
       "light",
       "dark"

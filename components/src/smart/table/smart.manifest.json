@@ -1440,6 +1440,10 @@
     "focus": "Every icon-only action and contextual surface has an accessible name. Per-instance overlays stay inside the visual viewport, close on Escape and restore focus to their trigger. Column resize keeps focus on its native button."
   },
   "presentation": {
+    "skeleton": {
+      "shape": "rows",
+      "while_loading": "template"
+    },
     "themes": [
       "light",
       "dark"
