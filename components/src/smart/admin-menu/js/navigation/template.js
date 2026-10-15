@@ -187,8 +187,6 @@ function renderRow(context, row, depth = 0) {
     const section = row.kind === "section";
     const unfolded = section && controller.unfolded.has(row.key);
     const external = row.kind === "link";
-    const starred = controller.isFavourite(row.key);
-    const canStar = controller.offers("favourites") && !section && !external;
     return html`<div class="sf-admin-nav-item" data-depth=${depth}>
         <a class="sf-admin-nav-row"
             href=${row.href ?? "#"}
@@ -204,12 +202,9 @@ function renderRow(context, row, depth = 0) {
             ${external ? html`${icon("north_east", "sf-admin-nav-row-chevron")}<span class="sr-only">, ${text("external")}</span>` : nothing}
             ${section ? icon(unfolded ? "expand_less" : "expand_more", "sf-admin-nav-row-chevron") : nothing}
         </a>
-        ${canStar ? html`<button type="button" class="sf-admin-nav-star"
-            data-on=${starred ? "true" : nothing}
-            aria-pressed=${String(starred)}
-            aria-label=${starred ? text("unstar") : text("star")}
-            title=${starred ? text("unstar") : text("star")}
-            @click=${() => controller.toggleFavourite(row)}>${icon(starred ? "star" : "star_outline")}</button>` : nothing}
+        <!-- No star on a row: a page is made a favourite on the page itself
+             (the record's title, a list's header), not from the menu, where a
+             star on every row was noise (owner, 2026-10-15). -->
         ${attention(row)}
     </div>
     ${unfolded ? html`<div class="sf-admin-nav-children">${(row.children ?? []).filter((child) => !child.hidden)

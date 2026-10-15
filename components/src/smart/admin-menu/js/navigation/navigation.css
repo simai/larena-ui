@@ -123,7 +123,6 @@
 
   .sf-admin-nav-row:focus-visible,
   .sf-admin-nav-site-trigger:focus-visible,
-  .sf-admin-nav-star:focus-visible,
   .sf-admin-nav-link-button:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(-1 * var(--sf-focus--width));
@@ -204,33 +203,6 @@
     position: relative;
     justify-content: center;
     padding-inline: 0;
-  }
-
-  /* The star shows on a hovered or focused row, and stays on a starred one. */
-  .sf-admin-nav-star {
-    flex: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--sf-space-1\/4);
-    border: 0;
-    border-radius: var(--sf-radius--ui);
-    background: none;
-    color: var(--sf-on-surface-variant);
-    cursor: pointer;
-    --sf-icon--color: var(--sf-on-surface-variant);
-  }
-  /* A star nobody set takes no room until the row is pointed at or focused:
-     kept in place but invisible, it cut every label in the column short. */
-  .sf-admin-nav-star:not([data-on="true"]) {
-    display: none;
-  }
-  .sf-admin-nav-item:hover .sf-admin-nav-star,
-  .sf-admin-nav-item:focus-within .sf-admin-nav-star {
-    display: inline-flex;
-  }
-  .sf-admin-nav-star[data-on="true"] {
-    --sf-icon--color: var(--sf-warning);
   }
 
   .sf-admin-nav-heading {

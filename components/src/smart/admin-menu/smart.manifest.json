@@ -802,11 +802,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/navigation.css",
-        "sha256": "c7b18ec9e6be08bfc44e43fdcf1741217f257dfe2ca9a17cf86bb01ee4c49172"
+        "sha256": "6b394880a61a88b41cb0699087296cd1bc2aac83968aaba6fe0a05b1470189d0"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/template.js",
-        "sha256": "8f9016804f352e6fab8510ec028176b4d04186f79c5bc2d974914adea3a43efa"
+        "sha256": "25fbd1c69aae58eac04f096b0178fe81be16bc34d2e713860537561bcefe0fd3"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/palette.js",
