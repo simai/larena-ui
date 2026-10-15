@@ -216,6 +216,24 @@ const preferences = () => globalThis.SF?.Preferences || BundledPreferences;
 const MENU_PREFERENCE = "sf-admin-menu/main";
 const FAVOURITES_ROOT = "sf:favourites";
 
+// Larena's region contract (larena/admin, 2026-10-15): the shell's revision in
+// <meta name="larena-shell-revision">, the content region in
+// main#larena-admin-content, asked for with X-Larena-Region: content. Only
+// when both are on the page, and once.
+function enableRegionNavigation() {
+    const navigation = globalThis.SF?.RegionNavigation;
+    if (!navigation || navigation.enabled) return;
+    const document = globalThis.document;
+    if (!document?.querySelector('meta[name="larena-shell-revision"]') || !document.getElementById("larena-admin-content")) return;
+    navigation.enable({
+        region: "content",
+        root: "#larena-admin-content",
+        header: "X-Larena-Region",
+        revisionMeta: "larena-shell-revision",
+        scope: "/admin",
+    });
+}
+
 export class NavigationController {
     constructor(element, port) {
         this.element = element;
@@ -281,6 +299,46 @@ export class NavigationController {
         };
         document.addEventListener("pointerdown", this._onDocumentPointer, true);
         document.addEventListener("keydown", this._onKeyDown, true);
+        // The admin's pages without full reloads (interface fragments,
+        // 2026-10-15), piloted here: the menu turns region navigation on when
+        // the page is Larena's shell -- its revision in the head, its content
+        // region in the body -- and keeps its current row on the address the
+        // region went to, since the shell around it is not drawn again.
+        this._onRegionLoad = (event) => this.followAddress(event.detail?.url);
+        document.addEventListener("sf-region-load", this._onRegionLoad);
+        enableRegionNavigation();
+    }
+
+    // The row whose address is this one becomes current: the deepest match on
+    // the path, so /admin/storage/news/42 keeps «Новости» lit.
+    followAddress(url) {
+        if (!url) return;
+        let path;
+        try {
+            path = new URL(url, globalThis.location.href).pathname;
+        } catch {
+            return;
+        }
+        let best = null;
+        const visit = (rows) => {
+            for (const row of rows ?? []) {
+                if (row.href && !["link", "heading", "divider"].includes(row.kind)) {
+                    let target = null;
+                    try {
+                        target = new URL(row.href, globalThis.location.href).pathname;
+                    } catch {
+                        target = null;
+                    }
+                    if (target && (path === target || path.startsWith(`${target.replace(/\/$/u, "")}/`))
+                        && (!best || target.length > best.length)) best = {key: row.key, length: target.length};
+                }
+                visit(row.children);
+            }
+        };
+        visit(this.navigation?.items);
+        if (!best || best.key === this.navigation?.current) return;
+        this.navigation = {...this.navigation, current: best.key};
+        this.update("address");
     }
 
     dispose() {
@@ -291,6 +349,7 @@ export class NavigationController {
         this.wideMedia?.removeEventListener?.("change", this._onWideChange);
         document.removeEventListener("pointerdown", this._onDocumentPointer, true);
         document.removeEventListener("keydown", this._onKeyDown, true);
+        document.removeEventListener("sf-region-load", this._onRegionLoad);
         this.wideMedia = null;
     }
 
@@ -593,11 +652,17 @@ export class NavigationController {
             this.navigation = {...this.navigation, current: row.key};
             if (!this.wide) this.screen = "first";
             this.update("open");
+            const href = answer.href ?? row.href ?? null;
+            // With region navigation on, the menu goes there itself and says so:
+            // `region: true` tells a host listener the page is already on its
+            // way, so it does not load it a second time.
+            const region = Boolean(href && globalThis.SF?.RegionNavigation?.enabled);
             this.element.dispatchEvent(new CustomEvent("sf-admin-menu-navigate", {
                 bubbles: true,
                 composed: true,
-                detail: {key: row.key, href: answer.href ?? row.href ?? null},
+                detail: {key: row.key, href, region},
             }));
+            if (region) globalThis.SF.RegionNavigation.navigate(new URL(href, globalThis.location.href).href);
         }
     }
 
