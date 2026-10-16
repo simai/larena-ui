@@ -247,7 +247,7 @@
       "item-id",
       "label",
       "href",
-      "icon",
+      "left-icon",
       "badge",
       "access"
     ],
@@ -264,6 +264,10 @@
       "active",
       "current",
       "disabled"
+    ],
+    "notes": [
+      "An sf-admin-menu-item takes its glyph from the left-icon attribute; an icon attribute on the item is not read. right-icon is read into the item data but no template draws it.",
+      "A navigation node from the host (applyExternalSettingsState, simai.admin-navigation-port) carries the glyph as its icon property, which becomes the item's left icon. That is the host's data field, not an alias of the markup attribute."
     ]
   },
   "contracts": {

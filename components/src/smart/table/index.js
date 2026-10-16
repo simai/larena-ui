@@ -4379,8 +4379,8 @@ class SfTable extends SfBaseElement {
                             root-class="sf-table-column-search-input"
                             name="sf_table_column_search"
                             .value=${query}
-                            placeholder=${this.getProp('columnSearchPlaceholder')}
-                            aria-label=${this.getProp('columnSearchPlaceholder')}
+                            placeholder=${this.text("columnSearchPlaceholder", "column-search-placeholder")}
+                            aria-label=${this.text("columnSearchPlaceholder", "column-search-placeholder")}
                             @input=${(event) => this.setColumnSettingsQuery(event.target?.value ?? "")}
                         ></sf-input>
                     </label>
@@ -4391,7 +4391,7 @@ class SfTable extends SfBaseElement {
                                 label: this.text('settingsColumnLabel'),
                                 onIntent: (event) => this.onColumnSettingsIntent(event)})
                             : html`<div class="sf-table-column-empty p-1 color-on-surface-variant">
-                                ${this.getProp('columnSearchEmptyText')}
+                                ${this.text("columnSearchEmptyText", "column-search-empty-text")}
                             </div>`}
                     </div>
                     `}
@@ -4874,7 +4874,13 @@ class SfTable extends SfBaseElement {
     applyTablePreference(value, {render = false} = {}) {
         const kept = value?.columnSettings;
         if (!kept || typeof kept !== "object") return false;
-        const next = this.mergeColumnSettings(this.getColumnSettings(), kept);
+        // On the host's columns, not on what is drawn: a value that no longer
+        // names a column returns it to the host's settings. Merged onto the
+        // drawn state, a dropped key kept its old width or visibility on this
+        // device until a reload (docs trial 5).
+        const host = this.getTableData().columnSettings;
+        const base = host && typeof host === "object" && !Array.isArray(host) ? host : {};
+        const next = this.mergeColumnSettings(base, kept);
         if (render) this.setColumnSettings(next, "preferences", false);
         else this.state.columnSettings = next;
         return true;

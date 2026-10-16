@@ -883,6 +883,16 @@ class SfDataView extends HTMLElement {
         return this._raise("query.change", {sequence, query: copy(this.query), reason}, {query: true});
     }
 
+    _syncSearchBoxes(value) {
+        const text = String(value ?? "");
+        const own = this.shadowRoot?.querySelector("input[data-search]");
+        if (own && own.value !== text && this.shadowRoot.activeElement !== own) own.value = text;
+        const table = this.table;
+        if (table?.updateSearchState && (table.state?.search?.value ?? "") !== text && !table.contains(document.activeElement)) {
+            table.updateSearchState({value: text}, false);
+        }
+    }
+
     changeQuery(patch, reason = "query-change") {
         if (!patch || typeof patch !== "object" || Array.isArray(patch)) throw new TypeError("Query patch must be an object");
         this.query = {...this.query, ...copy(patch)};
@@ -958,6 +968,10 @@ class SfDataView extends HTMLElement {
                 page: echo.page ?? 1, per_page: echo.per_page ?? 25,
             };
         }
+        // The search box says what the list is searched for, whoever set it: a
+        // changeQuery({search}) from page code filtered the rows and left the
+        // box empty (docs trial 5). Written silently -- it is not a new search.
+        this._syncSearchBoxes(this.query.search ?? "");
         this._renderProjection();
         this._restoreOpenedView();
         // The empty result is shown by the table, in its own body. The view only
@@ -1366,7 +1380,17 @@ class SfDataView extends HTMLElement {
             // checkbox column with «select all rows» and a gear column, and both
             // read as leftovers from a page table -- there is no bulk band and no
             // toolbar in an embedded list for either of them to lead to.
-            table.setAttribute("selectable", this.renders("select") ? "true" : "false");
+            // A refused list offers nothing to do with it: no selection, no
+            // «Создать», no search or filter over rows the person may not see
+            // (docs trial 5: they stayed active under «no access»). The
+            // author's own toolbar setting comes back with the access.
+            const refused = this._queryRefused === true;
+            if (!table.hasAttribute?.("data-sf-host-toolbar")) table.setAttribute("data-sf-host-toolbar", table.getAttribute?.("toolbar") ?? "");
+            const authorToolbar = table.getAttribute?.("data-sf-host-toolbar");
+            if (refused) table.setAttribute("toolbar", "false");
+            else if (authorToolbar) table.setAttribute("toolbar", authorToolbar);
+            else table.removeAttribute?.("toolbar");
+            table.setAttribute("selectable", this.renders("select") && !refused ? "true" : "false");
             // A page's list becomes the compact list on a narrow container; an
             // embedded one (no toolbar) stays a table, and a layout the host
             // wrote on its table is the host's.
@@ -1382,7 +1406,7 @@ class SfDataView extends HTMLElement {
             // The column settings, without the column: it also carries each
             // row's menu, which is the host's row-actions, not this.
             table.setAttribute("settings-menu", this.hostOffers("personal-column-settings") ? "true" : "false");
-            table.setAttribute("creatable", this.hostOffers("create-record") ? "true" : "false");
+            table.setAttribute("creatable", this.hostOffers("create-record") && !refused ? "true" : "false");
             table.setAttribute("row-reorder", this.hostOffers("row-reorder") && this.treeMode !== "tree" ? "true" : "false");
             table.setAttribute("inline-edit", this.hostOffers("inline-edit") ? "true" : "false");
             // A filter template is a saved view the table keeps by itself; in a
@@ -1536,9 +1560,10 @@ class SfDataView extends HTMLElement {
         // second one: the view's fallback search stood beside the table's, two
         // searches in the documented minimal markup (docs trial 4).
         const slottedTable = this.querySelector(':scope > sf-table[slot="content"]');
-        const tableHasToolbar = Boolean(slottedTable) && slottedTable.getAttribute("toolbar") !== "false";
+        const authorToolbar = slottedTable?.getAttribute("data-sf-host-toolbar") ?? slottedTable?.getAttribute("toolbar");
+        const tableHasToolbar = Boolean(slottedTable) && authorToolbar !== "false";
         const ownToolbar = this.querySelector(':scope > [slot="toolbar"]');
-        if (toolbar) toolbar.hidden = !this.renders("toolbar") || (tableHasToolbar && !ownToolbar);
+        if (toolbar) toolbar.hidden = !this.renders("toolbar") || (tableHasToolbar && !ownToolbar) || this._queryRefused === true;
         const pageRow = this.shadowRoot.querySelector('slot[name="pagination"]');
         // A tree has no pages: a level that is long ends in Show more, and the
         // host gives no total for the page row to count. Nor is there a page
@@ -1635,6 +1660,23 @@ class SfDataView extends HTMLElement {
         }
         return this._raise(shared ? "settings.save_shared" : "settings.save_personal", {
             columnSettings: copy(columnSettings), base_revision: revision, ...(shared ? {target: "shared"} : {}),
+        }).then((answer) => {
+            // A conflict means the layer moved on: the revision this view holds
+            // is stale, and every later change conflicted with it until a reload
+            // (docs trial 5). The view takes the layer's current revision when
+            // the host names it, and otherwise reads the list again, whose
+            // answer carries the column settings as they are now.
+            if (answer?.answer === "conflict") {
+                const data = answer.data ?? {};
+                if (data.column_settings) this.columnSettings = copy(data.column_settings);
+                else if (data.current_revision != null && this.columnSettings?.layers?.[layer]) {
+                    this.columnSettings = {
+                        ...this.columnSettings,
+                        layers: {...this.columnSettings.layers, [layer]: {...this.columnSettings.layers[layer], revision: data.current_revision}},
+                    };
+                } else this.refresh("settings-conflict");
+            }
+            return answer;
         });
     }
 

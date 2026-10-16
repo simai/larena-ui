@@ -294,7 +294,7 @@
       }
     },
     "applyUnderFilter": {
-      "summary": "Raise a confirmed filter-wide action.",
+      "summary": "Raise a confirmed filter-wide action (bulk.apply_under_filter) over the current filters. Throws TypeError when confirmedTotal is not the current total.",
       "arguments": [
         {
           "name": "actionId",
@@ -303,7 +303,7 @@
         },
         {
           "name": "confirmedTotal",
-          "type": "number",
+          "type": "integer",
           "required": true
         }
       ],
@@ -356,7 +356,21 @@
         {
           "name": "options",
           "type": "object",
-          "required": false
+          "required": false,
+          "description": "{kind?: 'error'|'warning', code?: string}. kind defaults to error; code is the reason the notice carries.",
+          "properties": {
+            "kind": {
+              "enum": [
+                "error",
+                "warning"
+              ],
+              "default": "error"
+            },
+            "code": {
+              "type": "string",
+              "default": ""
+            }
+          }
         }
       ],
       "returns": {
@@ -392,37 +406,90 @@
         "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
       }
     },
+    "resetColumnSettings": {
+      "summary": "Reset the person's column layout: an empty personal layer written against its revision, which is the port's reset (a write, never a deletion). The host supplies the defaults.",
+      "arguments": [],
+      "returns": {
+        "type": "object",
+        "description": "A promise of the port answer, as saveColumnSettings returns it, including {answer: 'unavailable', reason: 'no-base-revision'}."
+      }
+    },
     "saveColumnSettings": {
-      "summary": "Write a column-settings layer with its revision.",
+      "summary": "Write a column-settings layer, personal or shared, against its revision: settings.save_personal or settings.save_shared. The base revision is the one given, else the layer's, else the port target's. After a conflict the view takes data.column_settings, or data.current_revision for that layer, when the host gives one, and otherwise re-reads the list.",
       "arguments": [
         {
           "name": "columnSettings",
           "type": "object",
-          "required": true
+          "required": true,
+          "description": "The column-preference delta to write, keyed by column key."
         },
         {
           "name": "options",
           "type": "object",
-          "required": false
+          "required": false,
+          "description": "{shared?: boolean, base_revision?: string|number}. shared writes the shared layer (default false); base_revision overrides the revision the view holds.",
+          "properties": {
+            "shared": {
+              "type": "boolean",
+              "default": false
+            },
+            "base_revision": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
         }
       ],
       "returns": {
         "type": "object",
-        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+        "description": "A promise of the port answer {answer: applied|conflict|refused|unavailable, …}, or of null when superseded. Resolves to {answer: 'unavailable', reason: 'no-base-revision'} without asking the host when no revision is known."
       }
     },
     "saveView": {
-      "summary": "Save a personal or shared view.",
+      "summary": "Save a personal or shared view: view.save, or view.save_shared on a 1.1.0 port. Throws TypeError without key and label, or for another level.",
       "arguments": [
         {
           "name": "view",
           "type": "object",
-          "required": true
+          "required": true,
+          "description": "{key, label, level?: personal|shared, revision?, roles?, layout?, settings?}. layout defaults to the current columns, settings to the current column settings; the current query is always saved.",
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "level": {
+              "enum": [
+                "personal",
+                "shared"
+              ],
+              "default": "personal"
+            },
+            "revision": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "roles": {
+              "type": "object"
+            },
+            "layout": {
+              "type": "object"
+            },
+            "settings": {
+              "type": "object"
+            }
+          }
         }
       ],
       "returns": {
         "type": "object",
-        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it."
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it. A shared level on a port other than 1.1.0 resolves to {answer: 'unavailable', reason: 'saved-view-levels-require-port-1.1.0'}."
       }
     },
     "setHostPort": {
@@ -444,7 +511,10 @@
       "arguments": [
         {
           "name": "id",
-          "type": "string",
+          "type": [
+            "string",
+            "integer"
+          ],
           "required": true
         },
         {
@@ -472,7 +542,7 @@
       ],
       "returns": {
         "type": "object",
-        "description": "A promise of the host answer, or of null when superseded."
+        "description": "A promise of the host answer, or of null when superseded; null at once when the node is unknown, has no children, or its children are already held."
       }
     },
     "collapseNode": {
@@ -534,75 +604,401 @@
   },
   "events": {
     "sf-count-request": {
-      "summary": "Runtime event sf-count-request.",
+      "summary": "Raised by the view's pagination when the person asks for the total, the last page or an action under the filter while the count is unknown. The view answers it with the query.count intent; a host does not need to listen.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "component",
+          "tagName",
+          "template",
+          "reason",
+          "current",
+          "pageSize"
+        ],
+        "properties": {
+          "component": {
+            "type": "object",
+            "description": "The pagination element that asked."
+          },
+          "tagName": {
+            "type": "string",
+            "description": "Its tag name."
+          },
+          "template": {
+            "type": "string",
+            "description": "Its template name."
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "total",
+              "last-page",
+              "action-for-all"
+            ],
+            "description": "What the number is for."
+          },
+          "current": {
+            "type": "integer",
+            "description": "The current page."
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size."
+          }
+        }
       }
     },
     "sf-data-view-answer": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "Fires after every port answer the view acts on, including the ones it makes itself (port not connected, capability not provided, action not allowed), so a page can watch outcomes without wrapping the port.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "intent",
+          "answer",
+          "instance_id"
+        ],
+        "properties": {
+          "intent": {
+            "type": "string",
+            "description": "The port intent answered, e.g. query.change, view.save, settings.save_personal, record.mutate."
+          },
+          "answer": {
+            "type": "string",
+            "enum": [
+              "applied",
+              "conflict",
+              "refused",
+              "unavailable"
+            ],
+            "description": "The port answer."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why, when the answer is not applied: the host's reason, or the view's own (port-not-connected, capability-not-provided, action-not-allowed, no-base-revision)."
+          },
+          "data": {
+            "type": "object",
+            "description": "The host's data, copied as it answered."
+          },
+          "sequence": {
+            "type": "integer",
+            "description": "The query sequence the host echoed, when it did."
+          },
+          "effects": {
+            "type": "array",
+            "description": "Effects the host reported for the rest of the page."
+          },
+          "instance_id": {
+            "type": "string",
+            "description": "The view's instance id, sf-data-view-<n>."
+          }
+        },
+        "additionalProperties": true,
+        "description": "The host's answer object spread in full; any further fields it carries pass through."
       }
     },
     "sf-data-view-saved-view-intent": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "Declared but not raised: no code path in this version dispatches it. Saved-view writes go through the port as view.open, view.save, view.save_shared and view.delete, and their outcome is reported by sf-data-view-answer.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "properties": {},
+        "description": "No detail: the event is never dispatched."
       }
     },
     "sf-data-view-state": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "Fires whenever the view's data state changes (loading, populated, empty, error), with the line it announces in its live region; for a page that mirrors the state elsewhere.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "state",
+          "message",
+          "instance_id"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "loading",
+              "populated",
+              "empty",
+              "error"
+            ],
+            "description": "The new state, also written to data-state."
+          },
+          "message": {
+            "type": "string",
+            "description": "The announced status text; empty when there is none."
+          },
+          "instance_id": {
+            "type": "string",
+            "description": "The view's instance id, sf-data-view-<n>."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-action-intent": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: a row or bulk action chosen in its table. The view checks the row allows it and raises record.open (view), record.mutate (one row) or bulk.apply_selected, with the records' revisions; move and create on a tree open the move dialog or view.create_record.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "action_id",
+          "record_ids"
+        ],
+        "properties": {
+          "action_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The opaque id of the row or bulk action chosen."
+          },
+          "record_ids": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "minItems": 1,
+            "description": "The records it applies to: the row's own id, or the selected ids for a bulk action."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-column-settings-change": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: the person resized, moved, pinned or hid a column. The view writes it with saveColumnSettings as settings.save_personal, or settings.save_shared when the detail says target: shared.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "reason",
+          "columnSettings",
+          "tableSettingsKey"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "What changed: column-resize, column-resize-reset, column-drag, column-order, column-pin, column-visibility, column-settings-restore, column-settings."
+          },
+          "columnSettings": {
+            "type": "object",
+            "description": "The whole column-preference delta after the change, keyed by column key (width, order, hidden, pinned)."
+          },
+          "tableSettingsKey": {
+            "type": "string",
+            "description": "The table's settings key, so a host can tell several tables apart."
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "personal",
+              "shared"
+            ],
+            "description": "Not sent by the table. Another source may send shared to write the shared layer."
+          },
+          "base_revision": {
+            "type": [
+              "string",
+              "number"
+            ],
+            "description": "Not sent by the table. Another source may name the base revision; otherwise the view uses the layer's."
+          }
+        }
       }
     },
     "sf-table-column-settings-reset": {
-      "summary": "Runtime event sf-table-column-settings-reset.",
+      "summary": "A table event the view listens to: the person asked for the default columns back. The view calls resetColumnSettings, an empty personal layer written against its revision; the host supplies the defaults.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "target",
+          "tableSettingsKey"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "const": "personal",
+            "description": "The layer to reset. The table only resets the person's own layer."
+          },
+          "tableSettingsKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The table's settings key, or null when it has none."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-create-intent": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: the create button or one of its menu items was pressed. The view raises view.create_record with the detail as it came.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "item"
+        ],
+        "properties": {
+          "item": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "null for the main create button; the declared create item's id when one was chosen from its menu."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-query-intent": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: its table's context input port changed. The view ignores the table's sequence and re-reads the list with its own query.change.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "reason",
+          "context",
+          "sequence"
+        ],
+        "properties": {
+          "reason": {
+            "const": "context",
+            "description": "Always context: the context input port changed."
+          },
+          "context": {
+            "type": "object",
+            "description": "The immutable context last received through the context input port."
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "The pending query's sequence; only the newest is applied."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-template-delete": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: a saved template was deleted on the Templates tab, one event per template. The view raises view.delete with the key.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The saved template's key."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-template-save": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: a filter template was saved. The view turns it into saveView (view.save) with key, label, revision, level, roles, layout and settings; an array detail carries no single key and is refused by saveView.",
       "payload": {
-        "type": "object"
+        "description": "One template object when a single template is saved from the form, or an array of them when Apply on the Templates tab changed several (order, pin, default, selected).",
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "key",
+              "label",
+              "settings"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "The template's key; a new template gets filter_template_<n>."
+              },
+              "label": {
+                "type": "string",
+                "description": "The name the person gave it."
+              },
+              "selected": {
+                "type": "boolean",
+                "description": "Whether it is the applied template."
+              },
+              "data": {
+                "type": "object",
+                "description": "The filter draft it keeps: the form values, `values` and `tags`."
+              },
+              "settings": {
+                "type": "object",
+                "properties": {
+                  "filter_fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The filter fields it was showing, so opening it shows them again."
+                  }
+                },
+                "description": "Passed through by the port as it is."
+              }
+            }
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "label",
+                "settings"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "The template's key; a new template gets filter_template_<n>."
+                },
+                "label": {
+                  "type": "string",
+                  "description": "The name the person gave it."
+                },
+                "selected": {
+                  "type": "boolean",
+                  "description": "Whether it is the applied template."
+                },
+                "data": {
+                  "type": "object",
+                  "description": "The filter draft it keeps: the form values, `values` and `tags`."
+                },
+                "settings": {
+                  "type": "object",
+                  "properties": {
+                    "filter_fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The filter fields it was showing, so opening it shows them again."
+                    }
+                  },
+                  "description": "Passed through by the port as it is."
+                }
+              }
+            },
+            "minItems": 1
+          }
+        ]
       }
     },
     "sf-table-template-select": {
-      "summary": "Port intent or response observed by the host.",
+      "summary": "A table event the view listens to: a different saved template was applied on the Templates tab. The view raises view.open with the key and restores the filter fields the view was saved with.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The saved template's key."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-host-port-request": {
@@ -661,21 +1057,96 @@
       }
     },
     "sf-data-view-files-drop": {
-      "summary": "Files from the computer were dropped on the view: {files}. The view uploads nothing; the host does.",
+      "summary": "Files from the computer were dropped on a view that has accept-files. The view uploads nothing and the files do not go through the port; the host uploads them.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "minItems": 1,
+            "description": "The dropped File objects, at least one."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-cell-set": {
-      "summary": "record.set of simai.dataview-port 1.11.0: a checkable cell pressed in the view's table, raised through the port as the view receives it.",
+      "summary": "A table event the view listens to: a checkable cell was pressed. The view raises record.set of simai.dataview-port 1.11.0 (capability inline-edit) with record_id, key, value and revision, and resets the box when the answer is not applied.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "id",
+          "key",
+          "value",
+          "revision"
+        ],
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "integer"
+            ],
+            "description": "The record's id."
+          },
+          "key": {
+            "type": "string",
+            "description": "The column (field) key of the cell."
+          },
+          "value": {
+            "description": "The value the cell now asks for (a checkbox: true or false)."
+          },
+          "revision": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ],
+            "description": "The record's _revision or revision, or null."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-rows-reorder": {
-      "summary": "record.reorder of simai.dataview-port 1.11.0: rows dragged into another order in the view's table, raised through the port as the view receives it.",
+      "summary": "A table event the view listens to: rows were dragged into another order. The view shows the new order at once and raises record.reorder of simai.dataview-port 1.11.0 (capability row-reorder); a refusal or conflict puts the old order back.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "ids",
+          "before",
+          "order"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "The ids of the rows that moved."
+          },
+          "before": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The id of the row they now stand before; null for the end of the list."
+          },
+          "order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Every row id shown, in the new order."
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
@@ -783,7 +1254,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "da5ddb7bf5eb6442391eb60aed58e91031c68e2d44f49791cbd2e62130e0f684"
+        "sha256": "6dfcbf8c933845ee992ac85c1c909db2bf96c5c5dbdc6ddbe8ceed48ead25695"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

@@ -1185,9 +1185,28 @@
       }
     },
     "sf-table-column-settings-reset": {
-      "summary": "Runtime event sf-table-column-settings-reset.",
+      "summary": "The person asked for the default columns back. The table drops its own stored arrangement and names no defaults: the host (or a data view) resets the person's layer and answers with its defaults.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "target",
+          "tableSettingsKey"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "const": "personal",
+            "description": "The layer to reset. The table only resets the person's own layer."
+          },
+          "tableSettingsKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The table's settings key, or null when it has none."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-create-intent": {
@@ -1209,9 +1228,34 @@
       }
     },
     "sf-table-filter-change": {
-      "summary": "Request a host-side query after the active filter draft changes.",
+      "summary": "Request a host-side query after the active filter changes: Apply in the filter window, a chip removed, or the filter cleared. A data view turns it into query.change with filters from values.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "templateKey",
+          "templateLabel",
+          "values",
+          "tags"
+        ],
+        "properties": {
+          "templateKey": {
+            "type": "string",
+            "description": "The selected template's key, or an empty string."
+          },
+          "templateLabel": {
+            "type": "string",
+            "description": "The selected template's label, or an empty string."
+          },
+          "values": {
+            "type": "object",
+            "description": "The filter values now in force, keyed by filter field."
+          },
+          "tags": {
+            "type": "object",
+            "description": "The active filter chips, keyed by filter field."
+          }
+        },
+        "description": "The table's getFilterPayload(): the selected template's own data fields spread first, then these four."
       }
     },
     "sf-table-query-intent": {
@@ -1377,9 +1421,31 @@
       }
     },
     "sf-table-rows-drag": {
-      "summary": "Rows began to be dragged out of the list: {ids, source}.",
+      "summary": "Rows began to be dragged out of a list with drag-rows, for a drop target such as a tree; the same {ids, source} rides in the drag data as application/x-sf-records+json.",
       "payload": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "ids",
+          "source"
+        ],
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "The ids dragged: every selected id when the dragged row is selected, otherwise that row's id alone."
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Where the rows come from: the table's preferences-key, table-settings-key or id, or null."
+          }
+        },
+        "additionalProperties": false
       }
     },
     "sf-table-rows-reorder": {
@@ -1647,7 +1713,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "94bbb0eafe2fec02a81089cb06318720b14217ec4382ce4e50fe9fbb53eab743"
+        "sha256": "421a31b55f548c4373a1efd66a2ccb3acdcbe649b07f64b1688e64d239714081"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
