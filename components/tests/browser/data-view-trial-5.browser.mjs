@@ -97,7 +97,7 @@ try {
         }
         if (intent === 'settings.save_personal') {
           host.saves.push(payload.base_revision);
-          if (payload.base_revision !== `p${host.revision}`) return {answer: 'conflict', reason: 'stale-revision'};
+          if (payload.base_revision !== `p${host.revision}`) return {answer: 'conflict', reason: 'stale-revision', current_revision: `p${host.revision}`, columns: {}};
           return {answer: 'applied'};
         }
         return {answer: 'applied'};

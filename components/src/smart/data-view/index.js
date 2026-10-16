@@ -44,7 +44,7 @@ function projectColumn(column) {
     return projected;
 }
 
-const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0"];
+const SUPPORTED_PORT_VERSIONS = ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0", "1.7.0", "1.8.0", "1.9.0", "1.10.0", "1.11.0", "1.12.0"];
 
 // Creating a record and saving personal column settings became capabilities in
 // port 1.10.0. A host that declares an earlier version was offered both without
@@ -1669,14 +1669,17 @@ class SfDataView extends HTMLElement {
             // (docs trial 5). The view takes the layer's current revision when
             // the host names it, and otherwise reads the list again, whose
             // answer carries the column settings as they are now.
+            // The conflict carries current_revision (and the layer's columns)
+            // beside answer, as port 1.12.0 states and every host gives it;
+            // data.* is read too, for a host that followed 1.10.0's words.
             if (answer?.answer === "conflict") {
-                const data = answer.data ?? {};
-                if (data.column_settings) this.columnSettings = copy(data.column_settings);
-                else if (data.current_revision != null && this.columnSettings?.layers?.[layer]) {
-                    this.columnSettings = {
-                        ...this.columnSettings,
-                        layers: {...this.columnSettings.layers, [layer]: {...this.columnSettings.layers[layer], revision: data.current_revision}},
-                    };
+                const current = answer.current_revision ?? answer.data?.current_revision;
+                const columns = answer.columns ?? answer.data?.columns;
+                if (answer.data?.column_settings) this.columnSettings = copy(answer.data.column_settings);
+                else if (current != null) {
+                    const layers = {...(this.columnSettings?.layers ?? {})};
+                    layers[layer] = {...(layers[layer] ?? {}), revision: current, ...(columns ? {columns: copy(columns)} : {})};
+                    this.columnSettings = {...(this.columnSettings ?? {}), layers};
                 } else this.refresh("settings-conflict");
             }
             return answer;
