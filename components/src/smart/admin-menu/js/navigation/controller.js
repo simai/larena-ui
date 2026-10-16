@@ -339,7 +339,22 @@ export class NavigationController {
         // Drawn again whichever row it is: «Уведомления» reads its own mark
         // from the address, not from a row of the tree.
         if (best && best.key !== this.navigation?.current) this.navigation = {...this.navigation, current: best.key};
+        this.followCurrentRoot();
         this.update("address");
+    }
+
+    // An open second column shows the root that holds the page: on a page of
+    // «Настройки» it still showed «Данные», the root left open on another page
+    // (Larena, 2026-10-16). It switches; it never opens or closes by itself --
+    // a column the person closed stays closed (owner, 2026-10-13: the menu
+    // must not jump).
+    followCurrentRoot() {
+        if (!this.wide || !this.openRoot) return;
+        const holder = this.roots().find((root) => this.holdsCurrent(root)
+            && root.key !== this.navigation?.current && (root.children ?? []).length > 0);
+        if (!holder || holder.key === this.openRoot) return;
+        this.openRoot = holder.key;
+        this.rememberRoot(holder.key);
     }
 
     dispose() {
@@ -432,6 +447,7 @@ export class NavigationController {
                 const remembered = this.rememberedRoot();
                 if (remembered !== undefined) {
                     this.openRoot = remembered && this.roots().some((root) => root.key === remembered) ? remembered : null;
+                    this.followCurrentRoot();
                 } else {
                     const holder = this.roots().find((root) => this.holdsCurrent(root)
                         && root.key !== answer.current && (root.children ?? []).length > 0);

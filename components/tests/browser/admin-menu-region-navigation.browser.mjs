@@ -8,7 +8,9 @@
 // - a row of the menu changes the region, not the page: the address, the
 //   heading, focus on it; the menu stays the same element;
 // - the menu's current row follows the address, on Back too;
-// - a link inside the region goes the same way.
+// - a link inside the region goes the same way;
+// - an open second column follows the page to another root, and a closed
+//   one stays closed (Larena, 2026-10-16).
 import {resolve, join} from 'node:path';
 import {existsSync, readFileSync} from 'node:fs';
 import {chromium} from 'playwright';
@@ -42,6 +44,7 @@ const pages = {
   '/admin/cms': {title: 'Минимальная CMS', html: '<nav class="larena-page-path">Данные / Минимальная CMS</nav><h1>Минимальная CMS</h1><p><a id="to-files" href="/admin/files">К файлам</a></p>'},
   '/admin/files': {title: 'Файлы', html: '<nav class="larena-page-path">Данные / Файлы</nav><h1>Файлы</h1>'},
   '/admin/notifications': {title: 'Уведомления', html: '<h1>Уведомления</h1>'},
+  '/admin/settings/sites': {title: 'Сайты', html: '<nav class="larena-page-path">Настройки / Сайты</nav><h1>Сайты</h1>'},
 };
 const regionRequests = [];
 await context.route('http://probe.test/**', (route) => {
@@ -75,6 +78,9 @@ const NAVIGATION = {
     {key: 'data', kind: 'root', level: 'site', label: 'Данные', icon: 'database', children: [
       {key: 'cms', kind: 'page', level: 'site', label: 'Минимальная CMS', icon: 'table', href: '/admin/cms'},
       {key: 'files', kind: 'page', level: 'site', label: 'Файлы', icon: 'folder', href: '/admin/files'},
+    ]},
+    {key: 'settings', kind: 'root', level: 'site', label: 'Настройки', icon: 'settings', children: [
+      {key: 'sites', kind: 'page', level: 'site', label: 'Сайты', icon: 'language', href: '/admin/settings/sites'},
     ]},
   ],
   notifications: {unread: 2, href: '/admin/notifications'},
@@ -141,7 +147,20 @@ try {
     marked: document.querySelector('#m .sf-admin-nav-bottom a.sf-admin-nav-row[aria-current="page"]')?.textContent.includes('Уведомления') ?? false}));
   if (notices.path !== '/admin/notifications' || notices.marker !== 'same document' || notices.heading !== 'Уведомления' || !notices.marked) note({case: '«Уведомления» goes by region and is marked', got: notices});
   if (regionRequests.length !== 4) note({case: 'one region request per move', got: regionRequests});
-  console.log(JSON.stringify({first, files, back, linked, regionRequests}));
+  // The second column: open on «Данные», then a page of «Настройки».
+  const column = async (open) => {
+    await page.evaluate((key) => { const nav = window.__menu._navigation; nav.openRoot = key; nav.update('root'); }, open);
+    await page.evaluate(() => window.SF.RegionNavigation.navigate('/admin/settings/sites'));
+    await page.waitForTimeout(600);
+    const shown = await page.evaluate(() => window.__menu._navigation.openRoot);
+    await page.evaluate(() => window.SF.RegionNavigation.navigate('/admin/cms'));
+    await page.waitForTimeout(600);
+    return shown;
+  };
+  const followed = await column('data');
+  const stayedClosed = await column(null);
+  if (followed !== 'settings' || stayedClosed !== null) note({case: 'an open column follows the page to its root; a closed one stays closed', got: {followed, stayedClosed}});
+  console.log(JSON.stringify({first, files, back, linked, regionRequests, followed, stayedClosed}));
 } finally {
   await browser.close();
 }

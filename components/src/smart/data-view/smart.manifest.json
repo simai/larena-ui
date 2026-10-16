@@ -918,7 +918,7 @@
       }
     },
     "sf-table-template-save": {
-      "summary": "A table event the view listens to: a filter template was saved. The view turns it into saveView (view.save) with key, label, revision, level, roles, layout and settings; an array detail carries no single key and is refused by saveView.",
+      "summary": "A table event the view listens to: a filter template was saved. The view turns it into saveView (view.save) with key, label, revision, level, roles, layout and settings; an array detail is saved template by template, each one its own view.save, entries without a key skipped.",
       "payload": {
         "description": "One template object when a single template is saved from the form, or an array of them when Apply on the Templates tab changed several (order, pin, default, selected).",
         "oneOf": [
