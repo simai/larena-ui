@@ -1,8 +1,8 @@
 {
   "schema": "larena.ui.frontend_runtime_lock.v5",
   "runtime": "simai-framework",
-  "pair_id": "ui-b67288e349e0-larena-8ca46f49f308",
-  "bundle_id": "ui-b67288e349e0-larena-8ca46f49f308-registry-0e5d37b4-exact-git-tree-v2",
+  "pair_id": "ui-b67288e349e0-larena-7c8831498dab",
+  "bundle_id": "ui-b67288e349e0-larena-7c8831498dab-registry-0e5d37b4-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -16,17 +16,17 @@
     "files": 8352
   },
   "larena": {
-    "release": "larena-8ca46f49f308",
+    "release": "larena-7c8831498dab",
     "repository": "simai/larena-ui",
     "tag": null,
-    "commit": "8ca46f49f30847f5e8c328dfadb4d117389616a1",
+    "commit": "7c8831498dabec046f68a55b455a7dd4d44a9c72",
     "tree": "smart",
     "mount": "larena",
-    "sha256": "65294728d341f780c9183824008f52bdc9e09a4657ef3e871e64251e2eed4915",
+    "sha256": "bdc9b3c41b64c23185f69011579bf028526f42ea8df5377105cc1054088c6ce4",
     "files": 62,
     "requires_framework": "ui-b67288e349e0",
     "package_path": "components",
-    "package_tree": "55208adb6a2dba66e07b32266a1c7bb785b54418",
+    "package_tree": "8c77b5339838ba1a9642a099d6690f6682234080",
     "framework_source": {
       "repository": "simai/ui-source",
       "revision": "d28ac099cc09450d60f0e0d1895fe3bc5dc8a082"
@@ -35,8 +35,8 @@
       "repository": "simai/ui-builder",
       "revision": "e7c2fc2c332818f97cb6c17a89953393b622e26f"
     },
-    "manifest_sha256": "1b75d438750dd8f3159b9d7f05b806ab8891ba1c0d0504b414eab9ad117b7e96",
-    "receipt_sha256": "e96c2cfa15900c0ad6eab801a76e374b59b613145d141800dfaad2dedb502ae0"
+    "manifest_sha256": "b84edb33c1d8f2f86e853be2e93ebb0b4070292d47e7b9d19f138c92c4b61ebb",
+    "receipt_sha256": "d15d94428521c42b346b8c353dd6b6f9cf2cf682ac0617a1fa96bf794f80152f"
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
