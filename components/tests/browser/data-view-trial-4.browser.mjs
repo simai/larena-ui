@@ -8,7 +8,8 @@
 //   3. the page size in force is one of the sizes the pager offers;
 //   4. no «Всего» before the first answer, nor over a failed list;
 //   5. a row action the host's catalogue does not name gets a word, not its id;
-//   6. SF.Preferences.remove() puts the host's columns back at once.
+//   6. SF.Preferences.remove() puts the host's columns back at once;
+//   7. a refused list keeps none of the rows it had.
 import {resolve, join} from 'node:path';
 import {chromium} from 'playwright';
 
@@ -117,6 +118,19 @@ try {
     await wait(300);
     const shownAfterRemove = emailShown();
 
+    // 7. Access withdrawn: the same list, refused.
+    const rowsBeforeRefusal = document.querySelectorAll('#named-table tbody tr[data-row-id]').length;
+    named.setHostPort({
+      version: '1.11.0', capabilities: [],
+      async raise(intent, payload) {
+        if (intent !== 'query.change') return {answer: 'applied'};
+        return {answer: 'refused', reason: 'forbidden', sequence: payload.sequence};
+      },
+    });
+    await wait(700);
+    const rowsAfterRefusal = document.querySelectorAll('#named-table tbody tr[data-row-id]').length;
+    const pagesAfterRefusal = pageRow(named)?.hidden ?? null;
+
     // 4b. A failed list.
     const failing = document.getElementById('failing');
     failing.setHostPort({
@@ -134,6 +148,7 @@ try {
       tableToolbar: Boolean(table.querySelector('.sf-table-toolbar, [data-table-toolbar]')) || Boolean(table.shadowRoot?.querySelector?.('.sf-table-toolbar')),
       pageSizes, rowHasRawId: rowText.includes('publish-later'),
       shownAtFirst, shownWhileHidden, shownAfterRemove,
+      rowsBeforeRefusal, rowsAfterRefusal, pagesAfterRefusal,
     };
   });
 
@@ -149,6 +164,9 @@ try {
   if (!warnings.some((text) => text.includes('publish-later'))) note({case: 'the host is told an action has no catalogue entry', got: warnings});
   if (m.shownAtFirst !== true || m.shownWhileHidden !== false || m.shownAfterRemove !== true) {
     note({case: "SF.Preferences.remove() puts the host's columns back at once", got: {first: m.shownAtFirst, hidden: m.shownWhileHidden, removed: m.shownAfterRemove}});
+  }
+  if (m.rowsBeforeRefusal !== 3 || m.rowsAfterRefusal !== 0 || m.pagesAfterRefusal !== true) {
+    note({case: 'a refused list keeps none of its rows and no page row', got: {before: m.rowsBeforeRefusal, after: m.rowsAfterRefusal, pages: m.pagesAfterRefusal}});
   }
   console.log(JSON.stringify(m));
 } finally {

@@ -787,6 +787,14 @@ class SfDataView extends HTMLElement {
                 // the page host's outputs (simai.interface-fragment, effects);
                 // the page's routes take it to whoever listens.
                 if (Array.isArray(answer.effects) && answer.effects.length) globalThis.SF?.Composition?.publishEffects?.(answer.effects, {origin: this});
+            } else if (query && answer.answer === "refused") {
+                // A refused list shows nothing it had: the rows of the last
+                // allowed answer stayed under «no access» (docs trial 4).
+                this.records = [];
+                this.appended = null;
+                this.total = 0;
+                this.countKnown = false;
+                this._renderProjection();
             } else if (query && answer.answer === "unavailable") {
                 this._setState("error", pageText(DATA_VIEW_TEXT, "stateUnavailable", this));
                 this.notify(pageText(DATA_VIEW_TEXT, "noticeFetchFailed", this), {code: answer.reason || ""});
@@ -1536,7 +1544,7 @@ class SfDataView extends HTMLElement {
         // host gives no total for the page row to count. Nor is there a page
         // row before the first answer or when there is no list to page: it
         // said «Всего: 10» over a loading, failed or refused list (docs trial 4).
-        const nothingToCount = !this._answered || ["error", "no-access"].includes(this.getAttribute("data-state"));
+        const nothingToCount = !this._answered || this._queryRefused || ["error", "no-access"].includes(this.getAttribute("data-state"));
         if (pageRow) pageRow.hidden = !this.renders("pagination") || this.treeMode === "tree" || nothingToCount;
         if (!this.capHidesRows) {
             if (this._showAll?.isConnected) this._showAll.remove();
