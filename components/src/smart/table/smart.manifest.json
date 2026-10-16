@@ -1517,7 +1517,129 @@
     "mode": "external-host",
     "source_of_truth": "host",
     "network_owner": "host",
-    "revision_field": "base_revision"
+    "revision_field": "base_revision",
+    "view_preference": {
+      "key": "sf-table/<preferences-key>",
+      "general_key": "sf-table/*",
+      "v": 1,
+      "fields": {
+        "columnSettings": {
+          "type": "object",
+          "description": "The person's column arrangement, per column key: visible (boolean), width (CSS length), order (number), pinned (start or end). Merged onto the host's column settings, so a column it does not name keeps the host's.",
+          "seed": true,
+          "written_by": [
+            "sf-table"
+          ],
+          "schema": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "visible": {
+                  "type": "boolean"
+                },
+                "width": {
+                  "type": "string"
+                },
+                "order": {
+                  "type": "number"
+                },
+                "pinned": {
+                  "enum": [
+                    "start",
+                    "end",
+                    null
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "widths": {
+          "type": "object",
+          "description": "Column widths the person dragged, per column key, as \"<N>px\". Kept also without a preferences-key when the table has remember-widths (then under the table's own key).",
+          "seed": true,
+          "written_by": [
+            "sf-table"
+          ],
+          "schema": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "view": {
+          "type": "object",
+          "description": "The table's look: density (compact, normal, spacious), stripes, lines, singleLine, stickyHead. Under sf-table/* it is the person's look for every table, read under this table's own.",
+          "seed": true,
+          "written_by": [
+            "sf-table"
+          ],
+          "schema": {
+            "type": "object",
+            "properties": {
+              "density": {
+                "enum": [
+                  "compact",
+                  "normal",
+                  "spacious"
+                ]
+              },
+              "stripes": {
+                "type": "boolean"
+              },
+              "lines": {
+                "type": "boolean"
+              },
+              "singleLine": {
+                "type": "boolean"
+              },
+              "stickyHead": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "sort": {
+          "type": "array",
+          "description": "The sort the person chose: [{key, direction}]. Written and read by the data view the table is in, so the first query comes in this order.",
+          "seed": true,
+          "written_by": [
+            "sf-data-view"
+          ],
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "direction"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "direction": {
+                  "enum": [
+                    "asc",
+                    "desc"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "The page size the person chose. Written and read by the data view, so the first query asks for it.",
+          "seed": true,
+          "written_by": [
+            "sf-data-view"
+          ]
+        }
+      }
+    }
   },
   "ownership": {
     "source": "simai/ui-source",
