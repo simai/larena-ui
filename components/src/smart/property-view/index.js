@@ -2072,8 +2072,10 @@ class SfPropertyView extends SfBaseElement {
     // everyone cannot be undone in a personal view stays in one place).
     get canConfigureView() {
         // Arranging is offered where it can be saved, and not on a surface
-        // placed only to show the object or to make one.
-        if (this.mode === "view" || this.mode === "create") return false;
+        // placed only to show the object. A new record is laid out by the same
+        // arrangement as an existing one, so the form is arranged where it is
+        // filled in too (owner, 2026-10-16: «нет настройки формы» on create).
+        if (this.mode === "view") return false;
         return Boolean(this.hostPort?.capabilities?.includes?.("view-settings"))
             && Boolean(this.view)
             && this.editableLayers.length > 0;

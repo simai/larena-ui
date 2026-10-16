@@ -163,8 +163,10 @@ try {
   if (fullReader.inputs || fullReader.save) note({case: 'mode edit for a reader', got: fullReader, expected: 'read-only'});
 
   const create = await make({mode: 'create', actions: [], version: '1.12.0', capabilities: ['view-settings']});
-  if (create.loads[0]?.mode !== 'create' || create.loads[0]?.record_id !== null || create.inputs !== 2 || create.save !== 'create' || create.configure) {
-    note({case: 'mode create', got: create, expected: 'an empty object read for a create, every field open, a create button'});
+  // The form is arranged where it is filled in (owner, 2026-10-16): with the
+  // host's view-settings and a layer this person may write, create offers it.
+  if (create.loads[0]?.mode !== 'create' || create.loads[0]?.record_id !== null || create.inputs !== 2 || create.save !== 'create' || !create.configure) {
+    note({case: 'mode create', got: create, expected: 'an empty object read for a create, every field open, a create button, the form arrangeable'});
   }
   const made = await page.evaluate(async () => {
     const view = document.getElementById('view');
