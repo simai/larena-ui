@@ -4892,6 +4892,13 @@ class SfTable extends SfBaseElement {
         // The host's value, when it differs from this browser's, arrives later.
         const own = preferences()?.subscribe(key, (value) => {
             if (value) this.applyTablePreference(value, {render: true});
+            // SF.Preferences.remove() from page code: back to the columns as the
+            // host gave them, drawn now (docs trial 4: the table kept the
+            // removed arrangement until a reload).
+            else {
+                const host = this.getTableData().columnSettings;
+                this.setColumnSettings(host && typeof host === "object" && !Array.isArray(host) ? {...host} : {}, "preferences", false);
+            }
             this.applyTableView();
         });
         const general = preferences()?.subscribe(GENERAL_TABLE_PREFERENCE, () => this.applyTableView());

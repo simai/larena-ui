@@ -757,14 +757,14 @@ try {
 
   // And the spacing, which the other Framework session asked for: a control is
   // told its spacing by name now, and the class the Smart component writes from
-  // it -- tightness-<step> -- has to be written on update as well as at
+  // it -- spacing-<step> since ui-a2d9554ab5ee, tightness-<step> before -- has to be written on update as well as at
   // creation, on the element that is kept.
   const controlSpacing = await audit.evaluate(async () => {
     const table = document.getElementById('t');
     const control = () => document.querySelector('#t tbody tr[data-row-id="1"] td[data-key="city"] sf-button');
     const tightnessOf = () => {
       const button = control()?.querySelector('button');
-      return button ? [...button.classList].filter((name) => name.startsWith('tightness-')).sort().join(' ') : null;
+      return button ? [...button.classList].filter((name) => name.startsWith('spacing-') || name.startsWith('tightness-')).sort().join(' ') : null;
     };
     const row = (spacingName) => ({id: '1', name: 'Name 0', city: {component: {type: 'button', props: {
       text: 'Open', type: 'link', scheme: 'on-surface', spacing: spacingName,

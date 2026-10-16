@@ -62,6 +62,7 @@ const portAtLeast = (version, minimum) => {
 const DATA_VIEW_TEXT = {
     en: {
         showAll: "Show all",
+        unnamedAction: "Action",
         emptyText: "No data",
         dropFiles: "Drop the files here to upload them",
         closeNoticeLabel: "Close the message",
@@ -98,6 +99,7 @@ const DATA_VIEW_TEXT = {
     },
     ru: {
         showAll: "Показать все",
+        unnamedAction: "Действие",
         emptyText: "Нет данных",
         dropFiles: "Отпустите, чтобы загрузить файлы сюда",
         closeNoticeLabel: "Закрыть сообщение",
@@ -681,6 +683,10 @@ class SfDataView extends HTMLElement {
         // fails is an alert; any other failed load is said politely.
         if (this.table && state === "error") this.table.emptyContext = {caused: ["search", "filter"].includes(this._queryReason)};
         this.table?.setDataState?.(state);
+        // A failed or refused list has nothing to count: the page row goes with
+        // it until a list comes back (docs trial 4: «Всего: 10» over an error).
+        const pageRow = this.shadowRoot.querySelector('slot[name="pagination"]');
+        if (pageRow && ["error", "no-access"].includes(state)) pageRow.hidden = true;
         const status = this.shadowRoot.querySelector('[part="status"]');
         status.hidden = !message;
         status.textContent = message;
@@ -1432,9 +1438,13 @@ class SfDataView extends HTMLElement {
                         component: {type: "button", props: {text: entry.label, appearance: "link", ...(entry.icon ? {icon: entry.icon} : {})}},
                     };
                 }
-                return known.find((action) => action.id === id) ?? {
-                    id, name: id, component: {type: "button", props: {text: id, appearance: "link"}},
-                };
+                // An id the host's catalogue does not name gets a word, not its
+                // raw id clipped in the column, and the host is told (docs trial 4).
+                const found = known.find((action) => action.id === id);
+                if (found) return found;
+                console.warn(`[sf-data-view] row action «${id}» has no row_actions entry; name it in the host's catalogue.`);
+                const label = pageText(DATA_VIEW_TEXT, "unnamedAction", this);
+                return {id, name: label, inline: false, component: {type: "button", props: {text: label, appearance: "link", title: id}}};
             };
             const groups = new Map();
             const listed = [];
@@ -1484,6 +1494,14 @@ class SfDataView extends HTMLElement {
         const counted = this._answered
             ? {total: this.total, countKnown: this.countKnown, hasNext: this.hasNext}
             : {};
+        // The page size in force is one of the sizes offered: 25 by default
+        // against the pager's 10/20/30/40 showed a size the select could not
+        // name (docs trial 4). An author's own page-sizes is kept, the size added.
+        const sizes = String(pagination?.getAttribute?.("page-sizes") ?? "10,20,30,40").split(/[\s,]+/u).map(Number).filter((size) => Number.isInteger(size) && size > 0);
+        const perPage = Number(this.query.per_page);
+        if (pagination && Number.isInteger(perPage) && perPage > 0 && !sizes.includes(perPage)) {
+            pagination.setAttribute("page-sizes", [...sizes, perPage].sort((a, b) => a - b).join(","));
+        }
         pagination?.setState?.({
             current: this.query.page,
             pageSize: this.query.per_page,
@@ -1498,17 +1516,28 @@ class SfDataView extends HTMLElement {
         // is built before the element is anywhere. These two are named here,
         // where the page is readable.
         const layout = this.shadowRoot.querySelector('[part="layout"]');
-        if (layout) layout.setAttribute("aria-label", pageText(DATA_VIEW_TEXT, "layoutLabel", this));
+        // The author's name for the view, when it has one: the generic «Представление
+        // данных» replaced it (docs trial 4).
+        if (layout) layout.setAttribute("aria-label", this.getAttribute("aria-label") || pageText(DATA_VIEW_TEXT, "layoutLabel", this));
         const fallbackTable = this.shadowRoot.querySelector('slot[name="content"] > sf-table');
         if (fallbackTable && !fallbackTable.getAttribute("aria-label")) {
             fallbackTable.setAttribute("aria-label", pageText(DATA_VIEW_TEXT, "recordsLabel", this));
         }
         const toolbar = this.shadowRoot.querySelector('[part="toolbar"]');
-        if (toolbar) toolbar.hidden = !this.renders("toolbar");
+        // A slotted table that draws its own toolbar (search, filter) needs no
+        // second one: the view's fallback search stood beside the table's, two
+        // searches in the documented minimal markup (docs trial 4).
+        const slottedTable = this.querySelector(':scope > sf-table[slot="content"]');
+        const tableHasToolbar = Boolean(slottedTable) && slottedTable.getAttribute("toolbar") !== "false";
+        const ownToolbar = this.querySelector(':scope > [slot="toolbar"]');
+        if (toolbar) toolbar.hidden = !this.renders("toolbar") || (tableHasToolbar && !ownToolbar);
         const pageRow = this.shadowRoot.querySelector('slot[name="pagination"]');
         // A tree has no pages: a level that is long ends in Show more, and the
-        // host gives no total for the page row to count.
-        if (pageRow) pageRow.hidden = !this.renders("pagination") || this.treeMode === "tree";
+        // host gives no total for the page row to count. Nor is there a page
+        // row before the first answer or when there is no list to page: it
+        // said «Всего: 10» over a loading, failed or refused list (docs trial 4).
+        const nothingToCount = !this._answered || ["error", "no-access"].includes(this.getAttribute("data-state"));
+        if (pageRow) pageRow.hidden = !this.renders("pagination") || this.treeMode === "tree" || nothingToCount;
         if (!this.capHidesRows) {
             if (this._showAll?.isConnected) this._showAll.remove();
             this._showAll = null;
@@ -1586,8 +1615,16 @@ class SfDataView extends HTMLElement {
     }
     saveColumnSettings(columnSettings, {shared = false, base_revision} = {}) {
         const layer = shared ? "shared" : "personal";
-        const revision = base_revision ?? this.columnSettings?.layers?.[layer]?.revision;
-        if (revision == null) throw new TypeError("Column settings need a base revision");
+        // The port's target.revision is the base when the host sent no layer of
+        // that kind yet: the first personal save had none, and a column drag
+        // threw an uncaught TypeError that never reached the host (docs trial 4).
+        const target = this.columnSettings?.target;
+        const targetRevision = target && (target.kind ?? target.target ?? target) === layer ? target.revision : (target?.revision ?? null);
+        const revision = base_revision ?? this.columnSettings?.layers?.[layer]?.revision ?? targetRevision;
+        if (revision == null) {
+            this._showAnswer(shared ? "settings.save_shared" : "settings.save_personal", {answer: "unavailable", reason: "no-base-revision"});
+            return Promise.resolve({answer: "unavailable", reason: "no-base-revision"});
+        }
         return this._raise(shared ? "settings.save_shared" : "settings.save_personal", {
             columnSettings: copy(columnSettings), base_revision: revision, ...(shared ? {target: "shared"} : {}),
         });
