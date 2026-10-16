@@ -494,7 +494,7 @@ class SfDataView extends HTMLElement {
             "sf-table-retry", "sf-port-output", "sf-page-change", "sf-page-size-change",
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
-            "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open",
+            "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open", "sf-data-view-saved-view-intent",
             "sf-table-cell-set", "sf-table-rows-reorder",
         ];
         for (const name of events) this.shadowRoot.addEventListener(name, this._bound);
@@ -555,7 +555,7 @@ class SfDataView extends HTMLElement {
             "sf-table-retry", "sf-port-output", "sf-page-change", "sf-page-size-change",
             "sf-action-apply", "sf-show-more", "sf-selection-clear", "sf-count-request",
             "sf-table-column-settings-reset", "sf-action-change", "sf-action-for-all-change",
-            "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open",
+            "sf-table-tree-toggle", "sf-table-tree-more", "sf-table-reference-open", "sf-data-view-saved-view-intent",
             "sf-table-cell-set", "sf-table-rows-reorder",
         ];
         for (const name of events) this.shadowRoot.removeEventListener(name, this._bound);
@@ -1613,7 +1613,10 @@ class SfDataView extends HTMLElement {
     saveView({key, label, level = "personal", revision, roles, layout, settings} = {}) {
         if (!key || !label) throw new TypeError("Saved view needs key and label");
         if (!["personal", "shared"].includes(level)) throw new TypeError("Only personal and shared views can be written");
-        if (level === "shared" && this.hostPort?.version !== "1.1.0") {
+        // Shared views came with port 1.1.0 and stay in every later edition: the
+        // test was for 1.1.0 exactly, so 1.2.0 onwards refused them.
+        const [major, minor] = String(this.hostPort?.version ?? "0.0.0").split(".").map(Number);
+        if (level === "shared" && !(major > 1 || (major === 1 && minor >= 1))) {
             return Promise.resolve({answer: "unavailable", reason: "saved-view-levels-require-port-1.1.0"});
         }
         return this._raise(level === "shared" ? "view.save_shared" : "view.save", {
@@ -1768,6 +1771,14 @@ class SfDataView extends HTMLElement {
     _onEvent(event) {
         if (this._seenEvents.has(event)) return;
         this._seenEvents.add(event);
+        // The port's event for a shared saved view (view.save_shared): a page
+        // raises it on the view itself, so it is taken before the rule that
+        // ignores the view's own events. It was declared and never listened to.
+        if (event.type === "sf-data-view-saved-view-intent") {
+            if (event.currentTarget !== this) return;
+            const view = event.detail ?? {};
+            return this.saveView({key: view.key, label: view.label ?? view.key, revision: view.revision, level: "shared", roles: view.roles});
+        }
         if (event.target === this || event.target?.closest?.("sf-data-view") !== this && !this.shadowRoot.contains(event.target)) return;
         // An event crossing the shadow boundary is observed once, at the shadow root.
         if (event.currentTarget === this && this.shadowRoot.contains(event.target)) return;
@@ -1833,9 +1844,13 @@ class SfDataView extends HTMLElement {
         const intent = EVENTS[event.type];
         if (intent === "query.change") return this.refresh("table-context");
         if (intent === "view.save") {
-            const view = event.detail ?? {};
-            return this.saveView({key: view.key, label: view.label ?? view.name ?? view.key, revision: view.revision,
+            // Reordering or pinning on the templates tab sends every changed
+            // template at once, as an array: each one is its own save (it threw
+            // «Saved view needs key and label» on the array itself).
+            const save = (view = {}) => this.saveView({key: view.key, label: view.label ?? view.name ?? view.key, revision: view.revision,
                 level: view.level ?? "personal", roles: view.roles, layout: view.layout, settings: view.settings});
+            const detail = event.detail ?? {};
+            return Array.isArray(detail) ? Promise.all(detail.filter((view) => view?.key).map(save)) : save(detail);
         }
         if (intent) return this._raise(intent, copy(event.detail ?? {}));
     }

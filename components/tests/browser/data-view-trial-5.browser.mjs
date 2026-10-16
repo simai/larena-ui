@@ -10,7 +10,9 @@
 //   11. changeQuery({search}) from page code shows the search in the box;
 //   12. a refused list offers no toolbar, selection or «Создать», and they
 //       come back with the access;
-//   13. the column search speaks the page's language.
+//   13. the column search speaks the page's language;
+//   and, found while describing the events: the port's sf-data-view-saved-view-intent
+//   saves a shared view, and several templates saved at once are each saved.
 import {resolve, join} from 'node:path';
 import {chromium} from 'playwright';
 
@@ -71,7 +73,7 @@ try {
     const rows = (search) => Array.from({length: 3}, (_, index) => ({id: String(index), name: `Статья ${index}`, email: `a${index}@x.ru`, revision: 'r1', actions: []}))
       .filter((row) => !search || row.name.includes(search));
     view.setHostPort({
-      version: '1.11.0', capabilities: ['personal-column-settings', 'create-record'],
+      version: '1.11.0', capabilities: ['personal-column-settings', 'create-record', 'saved-views', 'shared-saved-views'],
       async raise(intent, payload) {
         if (intent === 'query.change') {
           host.queries += 1;
@@ -88,6 +90,10 @@ try {
               echo: {search, filters: {}, sort: [], page: 1, per_page: 25},
             },
           };
+        }
+        if (intent === 'view.save' || intent === 'view.save_shared') {
+          host.views = [...(host.views ?? []), [intent, payload.key]];
+          return {answer: 'applied'};
         }
         if (intent === 'settings.save_personal') {
           host.saves.push(payload.base_revision);
@@ -122,6 +128,12 @@ try {
     const searchBox = box?.querySelector('input')?.value ?? box?.getAttribute('value') ?? null;
     const searchedRows = table.querySelectorAll('tbody tr[data-row-id]').length;
 
+    // Shared view from page code; several templates at once.
+    view.dispatchEvent(new CustomEvent('sf-data-view-saved-view-intent', {detail: {key: 'team', label: 'Команда'}}));
+    table.dispatchEvent(new CustomEvent('sf-table-template-save', {bubbles: true, composed: true, detail: [{key: 'a', label: 'A'}, {key: 'b', label: 'B'}]}));
+    await wait(400);
+    const views = (host.views ?? []).map((entry) => entry.join(':'));
+
     // 12. Access withdrawn, then given back.
     const offered = () => ({
       toolbar: table.getAttribute('toolbar'), selectable: table.getAttribute('selectable'), creatable: table.getAttribute('creatable'),
@@ -139,7 +151,7 @@ try {
 
     // 13. The page's language.
     const columnSearch = table.text('columnSearchPlaceholder', 'column-search-placeholder');
-    return {conflict, hiddenByPreference, backWithoutIt, searchBox, searchedRows, refused, restored, columnSearch};
+    return {views, conflict, hiddenByPreference, backWithoutIt, searchBox, searchedRows, refused, restored, columnSearch};
   });
 
   if (m.conflict.first !== 'conflict' || m.conflict.second !== 'applied' || m.conflict.saves.join() !== 'p1,p2') {
@@ -153,6 +165,7 @@ try {
   if (m.restored.toolbar === 'false' || m.restored.selectable !== 'true' || m.restored.creatable !== 'true' || !m.restored.searchDrawn) {
     note({case: 'they come back with the access', got: m.restored});
   }
+  if (m.views.join() !== 'view.save_shared:team,view.save:a,view.save:b') note({case: 'a shared view from page code, and several templates at once', got: m.views});
   if (m.columnSearch !== 'Поиск по полям') note({case: "the column search speaks the page's language", got: m.columnSearch});
   console.log(JSON.stringify(m));
 } finally {

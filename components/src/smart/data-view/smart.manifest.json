@@ -448,7 +448,7 @@
       }
     },
     "saveView": {
-      "summary": "Save a personal or shared view: view.save, or view.save_shared on a 1.1.0 port. Throws TypeError without key and label, or for another level.",
+      "summary": "Save a personal or shared view: view.save, or view.save_shared on a port of 1.1.0 or later. Throws TypeError without key and label, or for another level.",
       "arguments": [
         {
           "name": "view",
@@ -489,7 +489,7 @@
       ],
       "returns": {
         "type": "object",
-        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it. A shared level on a port other than 1.1.0 resolves to {answer: 'unavailable', reason: 'saved-view-levels-require-port-1.1.0'}."
+        "description": "A promise of the host answer: {answer: applied|conflict|refused|unavailable, …}, or of null when a newer request superseded it. A shared level on a port older than 1.1.0 resolves to {answer: 'unavailable', reason: 'saved-view-levels-require-port-1.1.0'}."
       }
     },
     "setHostPort": {
@@ -698,11 +698,34 @@
       }
     },
     "sf-data-view-saved-view-intent": {
-      "summary": "Declared but not raised: no code path in this version dispatches it. Saved-view writes go through the port as view.open, view.save, view.save_shared and view.delete, and their outcome is reported by sf-data-view-answer.",
+      "summary": "An event a page raises on the view to save a shared saved view (port 1.1.0 or later): the view raises view.save_shared with the detail's key and label.",
       "payload": {
         "type": "object",
-        "properties": {},
-        "description": "No detail: the event is never dispatched."
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The saved view's key."
+          },
+          "label": {
+            "type": "string",
+            "description": "Its name as shown."
+          },
+          "revision": {
+            "type": [
+              "string",
+              "integer"
+            ],
+            "description": "The revision it is written against, when it exists."
+          },
+          "roles": {
+            "type": "object",
+            "description": "Who may open it, as the host names roles."
+          }
+        }
       }
     },
     "sf-data-view-state": {
@@ -767,7 +790,7 @@
       }
     },
     "sf-table-column-settings-change": {
-      "summary": "A table event the view listens to: the person resized, moved, pinned or hid a column. The view writes it with saveColumnSettings as settings.save_personal, or settings.save_shared when the detail says target: shared.",
+      "summary": "A table event the view listens to: the person resized, moved, pinned or hid a column. The view writes it to the person's layer (settings.save_personal): the table offers no choice of layer, and the table it draws sends no target. The shared layer is written from page code with saveColumnSettings(settings, {shared: true}).",
       "payload": {
         "type": "object",
         "required": [
@@ -1254,7 +1277,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "6dfcbf8c933845ee992ac85c1c909db2bf96c5c5dbdc6ddbe8ceed48ead25695"
+        "sha256": "4eb55d0907a606fd3933ef7e3d42c2543b5fcd6f7d074be98a17080731e6fcf5"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",
