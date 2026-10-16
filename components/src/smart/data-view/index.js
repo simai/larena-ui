@@ -80,6 +80,12 @@ const DATA_VIEW_TEXT = {
         noticeCapabilityNotProvided: "The host does not support that action.",
         noticePortNotConnected: "The data source is not connected.",
         noticeSavedViewLevels: "Shared views need a newer port.",
+        noticeConfirmRequired: "The action has to be confirmed first.",
+        noticeNotConfirmed: "The action was cancelled.",
+        noticeNoBaseRevision: "The settings cannot be saved yet: the view has no current version of them. Read the view again.",
+        noticeRecordInvalid: "The record was not found.",
+        noticeForbidden: "You may not do this.",
+        noticeStaleRevision: "Someone changed this in the meantime. Read the view again and repeat the action.",
         noticeConflict: "The data changed. Read the view again and repeat the action.",
         noticeRefused: "The action was refused.",
         noticeUnavailable: "The action is unavailable.",
@@ -117,6 +123,12 @@ const DATA_VIEW_TEXT = {
         noticeCapabilityNotProvided: "Хост не поддерживает это действие.",
         noticePortNotConnected: "Источник данных не подключён.",
         noticeSavedViewLevels: "Общие виды требуют более новой версии порта.",
+        noticeConfirmRequired: "Действие нужно сначала подтвердить.",
+        noticeNotConfirmed: "Действие отменено.",
+        noticeNoBaseRevision: "Настройки пока нельзя сохранить: у представления нет их текущей версии. Обновите представление.",
+        noticeRecordInvalid: "Запись не найдена.",
+        noticeForbidden: "Недостаточно прав для этого действия.",
+        noticeStaleRevision: "Данные успели изменить. Обновите представление и повторите действие.",
         noticeConflict: "Данные изменились. Обновите представление и повторите действие.",
         noticeRefused: "Действие отклонено.",
         noticeUnavailable: "Действие недоступно.",
@@ -383,6 +395,14 @@ class SfDataView extends HTMLElement {
             "capability-not-provided": "noticeCapabilityNotProvided",
             "port-not-connected": "noticePortNotConnected",
             "saved-view-levels-require-port-1.1.0": "noticeSavedViewLevels",
+            // The rest of the reasons simai.dataview-port 1.12.0 lists: each
+            // has its own words rather than the answer's general one.
+            "confirm_required": "noticeConfirmRequired",
+            "not-confirmed": "noticeNotConfirmed",
+            "no-base-revision": "noticeNoBaseRevision",
+            "record_invalid": "noticeRecordInvalid",
+            "forbidden": "noticeForbidden",
+            "stale-revision": "noticeStaleRevision",
         };
         if (keys[answer.reason]) return pageText(DATA_VIEW_TEXT, keys[answer.reason], this);
         const byAnswer = {

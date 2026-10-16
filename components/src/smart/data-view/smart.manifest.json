@@ -416,7 +416,7 @@
       }
     },
     "saveColumnSettings": {
-      "summary": "Write a column-settings layer, personal or shared, against its revision: settings.save_personal or settings.save_shared. The base revision is the one given, else the layer's, else the port target's. After a conflict the view takes data.column_settings, or data.current_revision for that layer, when the host gives one, and otherwise re-reads the list.",
+      "summary": "Write a column-settings layer, personal or shared, against its revision: settings.save_personal or settings.save_shared. The base revision is the one given, else the layer's, else the port target's. After a conflict the view takes the current_revision (and the layer's columns) the answer carries beside answer, as simai.dataview-port 1.12.0 states; it still reads data.current_revision and data.column_settings from a host that followed 1.10.0's words, and re-reads the list when the conflict names no revision.",
       "arguments": [
         {
           "name": "columnSettings",
@@ -1278,7 +1278,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "1be65bfb0abba0ced18ebaf70738c7c3d7c481809d63729fc6f794f4081f1b18"
+        "sha256": "c5e9ca960f5df2bcb599ee13e68e2904ecf91c3256db21405f6b4d0ccc74dae6"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",

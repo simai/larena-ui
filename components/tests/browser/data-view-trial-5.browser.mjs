@@ -149,9 +149,14 @@ try {
     await wait(700);
     const restored = offered();
 
+    // Every reason simai.dataview-port 1.12.0 lists has words of its own.
+    const reasons = ['capability-not-provided', 'confirm_required', 'not-confirmed', 'port-not-connected', 'no-base-revision', 'record_invalid', 'forbidden', 'stale-revision'];
+    const general = view._noticeText({answer: 'refused', reason: 'something-else'});
+    const worded = reasons.map((reason) => [reason, view._noticeText({answer: 'refused', reason})]);
+
     // 13. The page's language.
     const columnSearch = table.text('columnSearchPlaceholder', 'column-search-placeholder');
-    return {views, conflict, hiddenByPreference, backWithoutIt, searchBox, searchedRows, refused, restored, columnSearch};
+    return {general, worded, views, conflict, hiddenByPreference, backWithoutIt, searchBox, searchedRows, refused, restored, columnSearch};
   });
 
   if (m.conflict.first !== 'conflict' || m.conflict.second !== 'applied' || m.conflict.saves.join() !== 'p1,p2') {
@@ -166,6 +171,8 @@ try {
     note({case: 'they come back with the access', got: m.restored});
   }
   if (m.views.join() !== 'view.save_shared:team,view.save:a,view.save:b') note({case: 'a shared view from page code, and several templates at once', got: m.views});
+  const unworded = m.worded.filter(([, text]) => !text || text === m.general || !/[а-я]/u.test(text)).map(([reason]) => reason);
+  if (unworded.length || new Set(m.worded.map(([, text]) => text)).size !== m.worded.length) note({case: 'every reason the port lists has its own words', got: m.worded});
   if (m.columnSearch !== 'Поиск по полям') note({case: "the column search speaks the page's language", got: m.columnSearch});
   console.log(JSON.stringify(m));
 } finally {
