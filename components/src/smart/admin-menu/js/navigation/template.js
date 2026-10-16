@@ -257,7 +257,8 @@ function renderSecondColumn(context) {
         ${context.edit.on ? nothing : html`<div class="sf-admin-nav-scroll">
             ${rows.length
                 ? rows.map((row) => renderRow(context, row))
-                : html`<p class="sf-admin-nav-empty">${text("nothingFound")}</p>`}
+                : html`<sf-empty-state class="sf-admin-nav-empty" layout="inline" kind="nothing-found" size="1/2"
+                    text=${text("nothingFound")}></sf-empty-state>`}
         </div>`}
         ${openRoot.action ? html`<div class="sf-admin-nav-second-foot">
             <a class="sf-admin-nav-action" href=${openRoot.action.href ?? "#"}>
@@ -270,13 +271,22 @@ function renderSecondColumn(context) {
 export function renderNavigationTemplate(context) {
     const {status, text, controller, wide, screen, compact} = context;
     if (status === "loading") {
+        // Loading is the menu's skeleton -- rows of bars where the rows will be
+        // (simai.interaction-rules, loading-is-a-skeleton), the word for a
+        // screen reader only.
+        const bar = (width) => html`<div class="sf-admin-nav-row sf-admin-nav-row--first" aria-hidden="true">
+            <div class="sf-skeleton sf-skeleton--animation-pulse"><div class="sf-skeleton-circle sf-skeleton-icon"></div></div>
+            <div class="sf-skeleton sf-skeleton--animation-pulse" style="flex:1"><div class="sf-skeleton-text sf-skeleton-text--size-1/2 ${width}"></div></div></div>`;
         return html`<nav class="sf-admin-nav" aria-busy="true"><div class="sf-admin-nav-first">
-            <p class="sf-admin-nav-empty">${text("loading")}</p></div></nav>`;
+            ${["w-3/4", "w-1/2", "w-2/3", "w-1/2", "w-3/4"].map(bar)}
+            <span class="sr-only" role="status">${text("loading")}</span></div></nav>`;
     }
     if (status !== "ready") {
+        // A menu that could not load says so as every component does, with
+        // «Повторить» asking again.
         return html`<nav class="sf-admin-nav"><div class="sf-admin-nav-first">
-            <p class="sf-admin-nav-empty">${context.message || text("unavailable")}</p>
-            <sf-button size="1/2" appearance="outline" @click=${() => controller.load("requested")} text=${text("retry")}></sf-button>
+            <sf-empty-state kind="error" size="1/2" text=${context.message || text("unavailable")}
+                @sf-empty-state-action=${(event) => { if (event.detail?.id === "retry") controller.load("requested"); }}></sf-empty-state>
         </div></nav>`;
     }
     // On a phone the two columns are two screens; the second has «←».

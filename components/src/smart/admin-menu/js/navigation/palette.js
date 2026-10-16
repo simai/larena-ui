@@ -13,7 +13,8 @@ function renderResults(context) {
     if (!palette.groups.length) {
         return palette.loading
             ? nothing
-            : html`<p class="sf-admin-nav-empty">${text("nothingFound")}</p>`;
+            : html`<sf-empty-state class="sf-admin-nav-empty" layout="inline" kind="nothing-found" size="1/2"
+                text=${text("nothingFound")}></sf-empty-state>`;
     }
     let index = -1;
     return palette.groups.map((group) => html`

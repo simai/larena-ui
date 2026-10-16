@@ -806,11 +806,11 @@
       },
       {
         "path": "src/smart/admin-menu/js/navigation/template.js",
-        "sha256": "c2215dcb2d7a13ac9e22984c825d14dbc51301b672f25d17b7e3d421655806b0"
+        "sha256": "ec030f7b8506a565c66e1a821148fd87d27e169263ffbc8997f123e8b3b43a25"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/palette.js",
-        "sha256": "896e35837d3971bb2720417fcc27f31756bacd3e49bbace0b9816e4cc408bfed"
+        "sha256": "3613d902b3b3e0f2246f5a2c4d7879214642a888886ebc1b9be012f11cc2b960"
       },
       {
         "path": "src/smart/admin-menu/js/navigation/account.js",
