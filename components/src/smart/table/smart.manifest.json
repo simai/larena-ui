@@ -1655,7 +1655,7 @@
       },
       {
         "path": "src/smart/table/js/templates/default.css",
-        "sha256": "a8b817561d85f1a7ff39dba45cf90858205d43600ae0e6ff2fcc5889084e358e"
+        "sha256": "83c01b7c6548e64346ff44bebbabd45d895762f93fbcee036dec5412a2ad889f"
       },
       {
         "path": "src/smart/helpers/option-badge.js",

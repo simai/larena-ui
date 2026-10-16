@@ -1054,9 +1054,13 @@
   }
 
   /* Alternate rows on the container surface, under the hover and selection
-     layers, which are images over it. */
+     layers, which are images over it. Opaque: the container surface is an
+     alpha colour, and a pinned cell inherits its row's colour, so the rows
+     scrolling under the pinned columns read through them (owner,
+     2026-10-16). The same tint, mixed with the surface it lies on. */
   sf-table[data-sf-view-stripes] tbody tr:nth-child(even) {
-    --sf-table-row--background-color: var(--sf-surface-container);
+    --sf-table-row--background-color: color-mix(in srgb,
+      light-dark(var(--sf-neutral-50), var(--sf-neutral-90)) 16%, var(--sf-surface-0));
   }
 
   /* A line between the columns, the table's own line colour. */

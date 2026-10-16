@@ -380,6 +380,15 @@
     flex-direction: column;
     gap: var(--sf-px);
     padding: var(--sf-a4);
+  }
+
+  /* The person stands apart from the rows above it: a line between
+     «Уведомления» (or «Избранное») and the profile, and none over them --
+     they read as the end of the menu, not as a block of their own (owner,
+     2026-10-16). With nothing above the profile there is no line. */
+  .sf-admin-nav-bottom > :not(.sf-admin-nav-person-row) ~ .sf-admin-nav-person-row {
+    margin-block-start: var(--sf-a4);
+    padding-block-start: var(--sf-a4);
     border-block-start: var(--sf-px) solid var(--sf-outline-variant);
   }
 
@@ -494,12 +503,14 @@
     padding: var(--sf-e2) var(--sf-space-1) var(--sf-space-1);
   }
 
+  /* The same dimming as the record panel's (sf-drawer's overlay, black at 60):
+     at 20 it all but vanished in the dark theme (owner, 2026-10-16). */
   .sf-admin-nav-palette::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--sf-black);
-    opacity: var(--sf-opacity-20);
+    background: var(--sf-drawer-overlay-background, var(--sf-black));
+    opacity: var(--sf-drawer-overlay-opacity, var(--sf-opacity-60));
   }
 
   .sf-admin-nav-palette-dialog {
