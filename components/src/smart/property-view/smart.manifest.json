@@ -123,9 +123,9 @@
       },
       "host_port": {
         "port": "simai.property-view-port",
-        "version": "1.12.0",
-        "path": "src/core/contracts/ports/simai.property-view-port/1.12.0/port.json",
-        "sha256": "f4fd7b814a4920e9db6356209b67679c663790f9cca61996005eae31c9fe36f7",
+        "version": "1.13.0",
+        "path": "src/core/contracts/ports/simai.property-view-port/1.13.0/port.json",
+        "sha256": "d0a8823e59728cdd20538f84043438fa16d75bc685b69b013324375c52096b07",
         "supported_versions": [
           "1.0.0",
           "1.1.0",
@@ -138,7 +138,8 @@
           "1.8.0",
           "1.10.0",
           "1.11.0",
-          "1.12.0"
+          "1.12.0",
+          "1.13.0"
         ]
       }
     }
@@ -1108,7 +1109,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "dcc4f285ce4229c44d0db8c5abbfeb3434fb1611b49f088d2cb81e4bf8dd44d5"
+        "sha256": "fb92901522a17835e2e03ae4b2521797045824ec38cb102bbb6863bd2cc47825"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
