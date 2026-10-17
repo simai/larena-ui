@@ -141,15 +141,18 @@
     overscroll-behavior: contain;
   }
 
-  /* The record reaches the panel's end: the drawer's own inline padding is taken
-     back here, the way the rail takes it back at the start, so the space left of
-     the tabs, between them and the record, and right of the record is one step
-     rather than three different ones (owner, 2026-10-08). */
+  /* The space left of the tabs, between them and the record, and right of the
+     record is one step (owner, 2026-10-08): the record's end is the drawer's own
+     inline padding, the same step as the gap. It used to be reached by pulling
+     the column into that padding with a negative margin, but the scroller that
+     holds both columns clips at its own box, so the last pixels of every card
+     were cut -- the card «Фон» lost its right border and «Добавить область» ran
+     to the edge while the view was arranged (Larena, 2026-10-18). Room for the
+     column's scrollbar, so a row's last control does not sit under it, is
+     reserved only where the scrollbar takes room. */
   .sf-property-view-panel--railed .sf-property-view-frame {
-    margin-inline-end: calc(-1 * var(--sf-drawer-gutter, var(--sf-space-1)));
-    /* Room for the column's own scrollbar: without it the control at the end of
-       a row -- a section's bin, a field's gear -- sat underneath one. */
-    padding-inline-end: var(--sf-space-1\/2);
+    padding-inline-end: 0;
+    scrollbar-gutter: stable;
   }
 
   .sf-property-view-panel--railed .sf-property-view-sections {

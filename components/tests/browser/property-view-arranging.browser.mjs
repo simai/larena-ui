@@ -443,6 +443,32 @@ try {
               ?? content?.querySelector('.sf-property-view-panel');
             return panel ? getComputedStyle(panel).flexGrow !== '0' : null;
           })(),
+          // Nothing of a card or of «Добавить область» is cut by a box that
+          // clips it, and the record keeps a step from the panel's end: in
+          // the arranging mode the card «Фон» lost its right border and the
+          // button ran to the edge (Larena, 2026-10-18, 1280 and 1600 wide).
+          clipped: (() => {
+            const scope = content?.closest('.sf-property-view-panel') ?? content;
+            const parts = [...(scope?.querySelectorAll('.sf-property-view-group, .sf-property-view-add') ?? [])];
+            const cut = [];
+            for (const part of parts) {
+              const box = part.getBoundingClientRect();
+              if (!box.width) continue;
+              for (let up = part.parentElement; up && up !== document.body; up = up.parentElement) {
+                const style = getComputedStyle(up);
+                if (style.overflowX === 'visible') continue;
+                const edge = up.getBoundingClientRect().left + up.clientLeft + up.clientWidth;
+                if (box.right > edge + 0.5) { cut.push({part: part.className.split(' ')[0], right: round(box.right), edge: round(edge), by: up.className.split(' ')[0]}); break; }
+              }
+            }
+            return cut;
+          })(),
+          endGap: (() => {
+            const panel = content?.closest('.sf-property-view-panel') ?? content?.querySelector('.sf-property-view-panel');
+            const parts = [...(panel?.querySelectorAll('.sf-property-view-group') ?? [])].filter((part) => part.getBoundingClientRect().width);
+            if (!panel || !parts.length) return null;
+            return round(panel.getBoundingClientRect().right - Math.max(...parts.map((part) => part.getBoundingClientRect().right)));
+          })(),
         };
       })(),
     };
@@ -478,7 +504,7 @@ try {
     || !(steps.frameInset?.start > 0) || !(steps.frameInset?.end > 0)
     || steps.betweenInset?.start !== 0 || steps.betweenInset?.end !== 0
     || steps.footFromFloor !== 0 || steps.panelGrows !== true
-    || steps.panelOverflow !== 0) {
+    || steps.panelOverflow !== 0 || steps.clipped?.length || !(steps.endGap >= 8)) {
     note({case: 'the step above the first tab and the first card is inside its column',
       got: steps,
       expected: 'each column against the head, its first row a step below the column\'s own top'});
