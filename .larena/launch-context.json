@@ -369,7 +369,8 @@
     "src/Contracts/SmartComponentManifest.php",
     "src/Developer/InstalledSmartAdapterCatalog.php",
     "src/Frontend/SourceBackedAssetProvenanceLock.php",
-    "tests/Unit/SourceBackedAssetProvenanceLockTest.php"
+    "tests/Unit/SourceBackedAssetProvenanceLockTest.php",
+    "README.md"
   ],
   "forbidden_files": [
     "config/*",
