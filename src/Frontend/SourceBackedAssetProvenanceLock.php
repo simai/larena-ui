@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larena\Ui\Frontend;
 
+use Larena\Core\Support\SchemaName;
 use RuntimeException;
 
 final readonly class SourceBackedAssetProvenanceLock
@@ -251,7 +252,7 @@ final readonly class SourceBackedAssetProvenanceLock
 
     private function assertValid(): void
     {
-        if (($this->data['schema'] ?? null) !== 'larena.ui.source_backed_asset_provenance_lock.v1'
+        if (!SchemaName::is($this->data, 'larena.ui.source_backed_asset_provenance_lock', 1)
             || ($this->data['runtime'] ?? null) !== 'simai-framework'
             || ($this->data['contract']['required_validation'] ?? null) !== 'vendored_assets_match_tracked_provenance'
             || ($this->data['contract']['external_source_audit'] ?? null) !== 'opt_in'

@@ -21,7 +21,7 @@ final readonly class SourceSmartContractCatalog
         $directory = $this->contractDirectory();
         $materializationContent = $this->read($directory . '/materialization.json', 'materialization');
         $materialization = $this->decode($materializationContent, 'materialization');
-        if (($materialization['schema'] ?? null) !== 'larena.ui.source_contract_materialization.v1') {
+        if (!SchemaName::is($materialization, 'larena.ui.source_contract_materialization', 1)) {
             throw new InvalidArgumentException('ui_source_contract_materialization_invalid');
         }
 

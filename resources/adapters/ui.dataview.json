@@ -1,5 +1,6 @@
 {
-  "schema": "larena.ui.smart_adapter.v1",
+  "schema": "larena.ui.smart_adapter",
+  "schema_version": 1,
   "id": "ui.dataview",
   "component_key": "ui.dataview",
   "source_contract": {"id": "smart.data-view", "version": "1.0.0"},

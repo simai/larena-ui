@@ -1,5 +1,6 @@
 {
-  "schema": "larena.ui.source_backed_asset_provenance_lock.v1",
+  "schema": "larena.ui.source_backed_asset_provenance_lock",
+  "schema_version": 1,
   "runtime": "simai-framework",
   "contract": {
     "required_validation": "vendored_assets_match_tracked_provenance",

@@ -1,5 +1,6 @@
 {
-  "schema": "larena.ui.smart_adapter.v1",
+  "schema": "larena.ui.smart_adapter",
+  "schema_version": 1,
   "id": "ui.admin_menu",
   "component_key": "ui.admin_menu",
   "source_contract": {"id": "smart.admin-menu", "version": "1.0.0"},

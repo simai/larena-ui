@@ -5,11 +5,16 @@ declare(strict_types=1);
 namespace Larena\Ui\Contracts;
 
 use InvalidArgumentException;
+use Larena\Core\Support\SchemaName;
 use Larena\Ui\Enums\RenderStrategy;
 use Larena\Ui\Enums\UiAssetKind;
 
 final readonly class SmartComponentManifest
 {
+    /** A component's manifest, shipped by its owner package (`resources/smart/<key>/manifest.json`). */
+    public const SCHEMA = 'larena.ui.smart_manifest';
+    public const SCHEMA_VERSION = 1;
+
     public const SIMAI_FRAMEWORK_RENDERER_ID = 'ui.sf.element';
     public const COMPOSITE_RENDERER_ID = 'ui.composite.template';
 
@@ -74,7 +79,7 @@ final readonly class SmartComponentManifest
     /** @param array<string, mixed> $data */
     public static function fromArray(array $data, ?string $sourcePath = null): self
     {
-        if (($data['schema'] ?? null) !== 'larena.ui.smart_manifest.v1') {
+        if (!SchemaName::is($data, self::SCHEMA, self::SCHEMA_VERSION)) {
             throw new InvalidArgumentException('ui_smart_manifest_schema_unknown');
         }
         $render = is_array($data['render'] ?? null) ? $data['render'] : [];
@@ -175,7 +180,7 @@ final readonly class SmartComponentManifest
     public function toArray(): array
     {
         return [
-            'schema' => 'larena.ui.smart_manifest.v1',
+            ...SchemaName::stamp(self::SCHEMA, self::SCHEMA_VERSION),
             'key' => $this->componentKey,
             'version' => $this->version,
             'owner_package' => $this->ownerPackage,

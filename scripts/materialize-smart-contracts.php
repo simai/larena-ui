@@ -78,7 +78,8 @@ foreach ($required as $id) {
 }
 
 $materialization = [
-    'schema' => 'larena.ui.source_contract_materialization.v1',
+    'schema' => 'larena.ui.source_contract_materialization',
+    'schema_version' => 1,
     'contracts' => $contracts,
     'registry_sha256' => hash('sha256', $registryContent),
     'registry_schema_sha256' => hash('sha256', $schemaContent),

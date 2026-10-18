@@ -1,5 +1,6 @@
 {
-    "schema": "larena.ui.source_contract_materialization.v1",
+    "schema": "larena.ui.source_contract_materialization",
+    "schema_version": 1,
     "contracts": [
         {
             "id": "smart.admin-menu",

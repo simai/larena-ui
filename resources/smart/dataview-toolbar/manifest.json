@@ -1,5 +1,6 @@
 {
-  "schema": "larena.ui.smart_manifest.v1",
+  "schema": "larena.ui.smart_manifest",
+  "schema_version": 1,
   "key": "dataview.toolbar",
   "version": "1.0.0",
   "owner_package": "larena/ui",

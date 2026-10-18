@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larena\Ui\Developer;
 
 use InvalidArgumentException;
+use Larena\Core\Support\SchemaName;
 use Larena\Ui\Registry\SmartRegistry;
 
 final readonly class InstalledSmartAdapterCatalog
@@ -110,7 +111,7 @@ final readonly class InstalledSmartAdapterCatalog
         }
         $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($data)
-            || ($data['schema'] ?? null) !== 'larena.ui.smart_adapter.v1'
+            || !SchemaName::is($data, 'larena.ui.smart_adapter', 1)
             || ($data['id'] ?? null) !== $id
             || ($data['component_key'] ?? null) !== $id
         ) {

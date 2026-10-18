@@ -1,5 +1,5 @@
 {
-  "schema": "larena.ui.smart_manifest.v1", "key": "ui.avatar", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
+  "schema": "larena.ui.smart_manifest", "schema_version": 1, "key": "ui.avatar", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
   "props": {"type": "object", "properties": {
     "size": {"type": "string", "enum": ["1/2", "1", "2"]}, "text": {"type": "string", "minLength": 1, "maxLength": 12, "pattern": "\\S"},
     "status": {"type": "string", "enum": ["none", "online", "offline", "busy", "away", "company"]}, "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},

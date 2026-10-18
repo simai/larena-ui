@@ -10,7 +10,7 @@ $packageRoot = dirname(__DIR__, 2);
 $lock = SourceBackedAssetProvenanceLock::bundled();
 $data = $lock->toArray();
 
-assert($data['schema'] === 'larena.ui.source_backed_asset_provenance_lock.v1');
+assert($data['schema'] === 'larena.ui.source_backed_asset_provenance_lock' && $data['schema_version'] === 1);
 assert($data['runtime'] === 'simai-framework');
 assert(array_keys($data['sources']) === ['ui', 'ui_smart', 'ui_smart_pagination', 'ui_play']);
 assert(count($lock->assets()) === 14);

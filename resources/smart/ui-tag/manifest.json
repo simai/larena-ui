@@ -1,5 +1,5 @@
 {
-  "schema": "larena.ui.smart_manifest.v1", "key": "ui.tag", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
+  "schema": "larena.ui.smart_manifest", "schema_version": 1, "key": "ui.tag", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
   "props": {"type": "object", "properties": {
     "type": {"type": "string", "enum": ["checkbox", "icon", "quantity", "color", "avatar", "success", "error", "warning", "primary"]}, "size": {"type": "string", "enum": ["1/2", "1"]},
     "text": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"}, "count": {"type": "integer"},

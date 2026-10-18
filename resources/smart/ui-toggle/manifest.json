@@ -1,5 +1,5 @@
 {
-  "schema": "larena.ui.smart_manifest.v1", "key": "ui.toggle", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
+  "schema": "larena.ui.smart_manifest", "schema_version": 1, "key": "ui.toggle", "version": "1.0.0", "owner_package": "larena/ui", "kind": "smart",
   "props": {"type": "object", "properties": {
     "size": {"type": "string", "enum": ["1/2", "1", "2"]}, "type": {"type": "string", "enum": ["simple", "icon"]},
     "label": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"}, "icon": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z0-9_.-]+$"},
