@@ -40,7 +40,9 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     setHostPort(port) { this.port = port; }};
     const document = {readyState: 'complete', documentElement: {dataset: {}},
         getElementById: id => id === 'minimal-cms-record-count' ? badge : null,
-        querySelector: selector => selector === 'sf-data-view' ? view : null,
+        // The page names the port editions it speaks (meta larena-port-editions).
+        querySelector: selector => selector === 'sf-data-view' ? view
+            : selector === 'meta[name="larena-port-editions"]' ? {content: '{"simai.dataview-port":"9.8.7"}'} : null,
         querySelectorAll: selector => selector === 'sf-data-view' ? [view] : []};
     const assigned = [];
     const location = new URL('http://localhost/admin/cms');
@@ -65,7 +67,7 @@ test('composite consumes only owner-projected cells and scoped port answers', as
             values: {owner: 'user:secret'}, display_values: {owner: 'Alice'}}],
         echo: {filters_chosen: {}, search: '', sort: [], page: 1, per_page: 20},
     }});
-    assert.equal(h.view.port.version, '1.4.0');
+    assert.equal(h.view.port.version, '9.8.7', 'the edition the page names');
     assert.deepEqual(Array.from(h.view.port.capabilities), ['saved-views', 'row-actions']);
     assert.equal(h.view.query.search, 'needle');
     assert.deepEqual(JSON.parse(JSON.stringify(h.view.query.sort)), [{key: 'owner', direction: 'desc'}]);

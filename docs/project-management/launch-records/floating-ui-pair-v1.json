@@ -339,6 +339,7 @@
     "src/Developer/SourceSmartContractCatalog.php",
     "src/Runtime/RegisteredDocumentRenderer.php",
     "tests/Unit/FrameworkDocumentSchemaValidatorTest.php",
-    "src/Runtime/FrameworkDocumentSchemaValidator.php"
+    "src/Runtime/FrameworkDocumentSchemaValidator.php",
+    "src/Frontend/FrameworkPortEdition.php"
   ]
 }

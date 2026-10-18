@@ -697,7 +697,10 @@
         return false;
       }
     };
-    view.setHostPort({version: '1.4.0', capabilities: Array.isArray(permissions) ? permissions : [],
+    // The edition of the data view port the admin speaks comes with the page (meta larena-port-editions, the pinned release).
+    let edition;
+    try { edition = JSON.parse(document.querySelector?.('meta[name="larena-port-editions"]')?.content || '{}')['simai.dataview-port']; } catch { edition = undefined; }
+    view.setHostPort({version: edition, capabilities: Array.isArray(permissions) ? permissions : [],
     raise: async function (intent, payload, options) {
       if (intent === 'query.change') latestQuerySequence = payload?.sequence;
       // A linked value of a cell (record.open {field, value, href}) opens its record in the admin's panel, with no
