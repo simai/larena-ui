@@ -1835,11 +1835,11 @@
     "source_artifacts": [
       {
         "path": "src/smart/table/index.js",
-        "sha256": "421a31b55f548c4373a1efd66a2ccb3acdcbe649b07f64b1688e64d239714081"
+        "sha256": "cac55d23546db0b263a6f8810534757991a4e0e737f4389ecba7375c4ebdc801"
       },
       {
         "path": "src/smart/table/js/templates/default.js",
-        "sha256": "67a91ed40b287a8d78f0f2f3f589aa97823e9523b6e40ea6325beafeed2b9956"
+        "sha256": "572f833e11dc4b2f7a6134381168678a8f3ae9bce78d1a7422c10e3db821fa80"
       },
       {
         "path": "src/smart/table/js/templates/default.css",
