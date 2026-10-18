@@ -26,7 +26,7 @@ $view = new DataviewViewDescriptor('auth.users.table', $source, DataviewViewType
 ]);
 $page = (new DataviewTableRuntime())->project($provider, $view, DataviewActionPolicy::readOnly());
 $activation = [
-    'schema' => 'larena.core_assets.activation_contract.v1', 'status' => 'ready', 'activation_owner' => 'larena/core:core.assets',
+    'schema' => 'larena.core_assets.activation_contract', 'status' => 'ready', 'activation_owner' => 'larena/core:core.assets',
     'activation_mode' => 'read_only_route', 'physical_publication_ready' => true, 'writes_database' => false,
     'copies_to_root' => false, 'uses_hardcoded_cdn' => false, 'asset_count' => 1,
     'runtime_pair' => FrontendRuntimeLock::bundled()->pairId(), 'renderable_tags' => ['<link rel="stylesheet" href="/ui.css">'],

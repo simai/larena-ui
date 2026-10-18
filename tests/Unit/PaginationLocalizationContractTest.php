@@ -8,7 +8,7 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 use Larena\Ui\Runtime\SmartManager;
 
 $activation = [
-    'schema' => 'larena.core_assets.activation_contract.v1',
+    'schema' => 'larena.core_assets.activation_contract',
     'status' => 'ready',
     'activation_owner' => 'larena/core:core.assets',
     'activation_mode' => 'verified_immutable_bundle',

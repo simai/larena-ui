@@ -394,7 +394,15 @@
     "tests/Unit/InstalledSmartAdapterCatalogTest.php",
     "tests/Unit/SmartAiCatalogProjectionTest.php",
     "tests/Unit/SmartCatalogProjectionTest.php",
-    "tests/Unit/SmartViewDescriptorTest.php"
+    "tests/Unit/SmartViewDescriptorTest.php",
+    "tests/Unit/AdminChromeSmartComponentTest.php",
+    "tests/Unit/AdminRecordEditorSmartViewTest.php",
+    "tests/Unit/CompositeSmartViewTest.php",
+    "tests/Unit/RegisteredListRendererTest.php",
+    "tests/Unit/SmartComponentLibraryTest.php",
+    "tests/Unit/SmartComponentReferenceTest.php",
+    "tests/Unit/SmartFacadeTest.php",
+    "tests/Unit/SmartManagerTest.php"
   ],
   "forbidden_files": [
     "config/*",

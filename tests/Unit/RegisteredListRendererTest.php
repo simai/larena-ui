@@ -16,7 +16,7 @@ use Larena\Ui\Registry\SmartRegistry;
 use Larena\Ui\Runtime\SmartManager;
 use Larena\Ui\Runtime\RegisteredListRenderer;
 
-$activation = ['schema' => 'larena.core_assets.activation_contract.v1', 'status' => 'ready',
+$activation = ['schema' => 'larena.core_assets.activation_contract', 'status' => 'ready',
     'activation_owner' => 'larena/core:core.assets', 'activation_mode' => 'verified_immutable_bundle',
     'physical_publication_ready' => true, 'writes_database' => false, 'copies_to_root' => false,
     'uses_hardcoded_cdn' => false, 'asset_count' => 1, 'runtime_pair' => FrontendRuntimeLock::bundled()->pairId(),

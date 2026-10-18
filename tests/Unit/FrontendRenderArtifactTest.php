@@ -42,7 +42,7 @@ $render = $runtime->renderBackend($manifest, [
 ]);
 $assetGraph = $runtime->collectAssetGraph($manifest);
 $activation = [
-    'schema' => 'larena.core_assets.activation_contract.v1',
+    'schema' => 'larena.core_assets.activation_contract',
     'status' => 'activation_contract_ready_package_asset_descriptor_pilot',
     'activation_owner' => 'larena/core:core.assets',
     'activation_mode' => 'package_asset_descriptor_read_only_route',
