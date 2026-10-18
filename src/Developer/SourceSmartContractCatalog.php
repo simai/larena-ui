@@ -32,7 +32,7 @@ final readonly class SourceSmartContractCatalog
             throw new InvalidArgumentException('ui_source_contract_materialization_drift');
         }
         $registry = $this->decode($registryContent, 'registry');
-        if (($registry['schema'] ?? null) !== 'simai.smart-component-contract-registry.v1'
+        if (!self::isSchema($registry, 'simai.smart-component-contract-registry', 1)
             || ($registry['schema_id'] ?? null) !== 'https://simai.io/contracts/smart-component-manifest.v1.schema.json'
             || !hash_equals((string) ($registry['schema_sha256'] ?? ''), hash('sha256', $schemaContent))
         ) {
@@ -148,5 +148,21 @@ final readonly class SourceSmartContractCatalog
         }
 
         return $decoded;
+    }
+
+    /**
+     * A data format by its name and version (owner decision 2026-10-11: format names carry no version). The old form
+     * names the version in the label (`<name>.v1`, with no schema_version or the same one); the new form is the bare
+     * name with `schema_version`. Both are read while the Framework moves its writers.
+     *
+     * @param array<array-key, mixed> $data
+     */
+    private static function isSchema(array $data, string $name, int $version): bool
+    {
+        $schema = $data['schema'] ?? null;
+        $declared = $data['schema_version'] ?? null;
+
+        return ($schema === $name.'.v'.$version && ($declared === null || $declared === $version))
+            || ($schema === $name && $declared === $version);
     }
 }
