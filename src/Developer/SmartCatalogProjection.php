@@ -331,7 +331,7 @@ final readonly class SmartCatalogProjection
         }
 
         return [
-            'schema' => 'larena.ui.smart_manifest_projection.v1',
+            'schema' => 'larena.ui.smart_manifest_projection',
             'key' => $manifest->componentKey,
             'version' => $manifest->version,
             'owner_package' => $manifest->ownerPackage,

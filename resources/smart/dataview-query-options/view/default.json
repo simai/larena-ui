@@ -1,5 +1,5 @@
 {
-  "schema": "larena.ui.smart_view.v1", "component": "dataview.query_options", "view": "default", "template": "default",
+  "schema": "larena.ui.smart_view", "schema_version": 1, "component": "dataview.query_options", "view": "default", "template": "default",
   "props": {"title": "Filter and sort", "expanded": false}, "presets": {}, "modifiers": {},
   "children": {
     "filter_field": {"component": "ui.dropdown", "view": "default", "preset": null, "modifiers": [], "slot": "filters", "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "title", "name": "filter_field", "label": "Filter field", "required": true, "placeholder": "Field", "search-placeholder": "Find field", "search": false, "disabled": false, "aria-label": "Filter field", "id": "dataview-filter-field", "options": [{"text": "Title", "value": "title", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Title"}]}, "children": {}},

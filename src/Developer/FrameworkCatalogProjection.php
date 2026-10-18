@@ -63,7 +63,7 @@ final readonly class FrameworkCatalogProjection
         }
 
         return [
-            'schema' => 'larena.ui.framework_catalog_explorer.v1',
+            'schema' => 'larena.ui.framework_catalog_explorer',
             'compatibility_id' => $this->upstream->compatibilityId(),
             'registry_sha256' => $this->upstream->sha256(),
             'profile' => $this->upstream->profile(),
@@ -158,7 +158,7 @@ final readonly class FrameworkCatalogProjection
         }
 
         return [
-            'schema' => 'larena.ui.framework_utility_explorer.v1',
+            'schema' => 'larena.ui.framework_utility_explorer',
             'compatibility_id' => $this->upstream->compatibilityId(),
             'registry_sha256' => $this->upstream->sha256(),
             'profile' => $this->upstream->profile(),
@@ -277,7 +277,7 @@ final readonly class FrameworkCatalogProjection
         }
 
         return [
-            'schema' => 'larena.ui.framework_catalog_projection.v1',
+            'schema' => 'larena.ui.framework_catalog_projection',
             'upstream' => $this->upstream->toArray(),
             'registry_sha256' => $this->upstream->sha256(),
             'larena_adapters' => $this->adapters->adapters(),

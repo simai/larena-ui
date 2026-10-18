@@ -63,7 +63,7 @@ final readonly class FrontendRenderArtifact
     public function toArray(): array
     {
         return [
-            'schema' => 'larena.ui.frontend_render_artifact.v1',
+            'schema' => 'larena.ui.frontend_render_artifact',
             'owner_package' => 'larena/ui',
             'renderable' => $this->isRenderable(),
             'html_is_render_artifact' => true,

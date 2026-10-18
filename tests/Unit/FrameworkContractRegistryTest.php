@@ -151,7 +151,7 @@ assert($projected['upstream_merged_into_adapters'] === false);
 assert($projected['larena_adapters'][0] === adapter($registry));
 
 $explorer = $projection->explorer();
-assert($explorer['schema'] === 'larena.ui.framework_catalog_explorer.v1');
+assert($explorer['schema'] === 'larena.ui.framework_catalog_explorer');
 assert($explorer['source'] === 'immutable_upstream_registry');
 assert($explorer['counts'] === ['utility' => 14, 'component' => 2, 'smart-component' => 2, 'recipe' => 1, 'total' => 19]);
 assert(array_column($explorer['entries'], 'id') === [
@@ -177,7 +177,7 @@ assert(array_column($explorer['entries'], 'id') === [
 ]);
 
 $utilityExplorer = $projection->utilities();
-assert($utilityExplorer['schema'] === 'larena.ui.framework_utility_explorer.v1');
+assert($utilityExplorer['schema'] === 'larena.ui.framework_utility_explorer');
 assert($utilityExplorer['source'] === 'immutable_upstream_registry');
 assert($utilityExplorer['counts'] === ['utilities' => 14, 'recipes' => 6, 'demonstrations' => 1]);
 assert(array_column($utilityExplorer['recipes'], 'id') === [

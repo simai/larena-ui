@@ -16,7 +16,7 @@ final readonly class SmartAiCatalogProjection
     public function toArray(string $locale = 'en'): array
     {
         $projection = [
-            'schema' => 'larena.ui.smart_ai_catalog.v1',
+            'schema' => 'larena.ui.smart_ai_catalog',
             'source' => 'SmartRegistry',
             'locale' => $locale,
             'components' => array_map(

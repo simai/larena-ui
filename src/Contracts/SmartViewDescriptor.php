@@ -6,10 +6,13 @@ namespace Larena\Ui\Contracts;
 
 use InvalidArgumentException;
 use JsonException;
+use Larena\Core\Support\SchemaName;
 
 final readonly class SmartViewDescriptor
 {
-    public const SCHEMA = 'larena.ui.smart_view.v1';
+    /** A component view, shipped by its owner package (`resources/smart/<key>/view/<view>.json`). */
+    public const SCHEMA = 'larena.ui.smart_view';
+    public const SCHEMA_VERSION = 1;
 
     /**
      * @param array<string, mixed> $constraints
@@ -51,8 +54,11 @@ final readonly class SmartViewDescriptor
     /** @param array<string, mixed> $data */
     public static function fromArray(array $data): self
     {
-        self::exactKeys($data, ['children', 'component', 'constraints', 'modifiers', 'presets', 'props', 'schema', 'template', 'view']);
-        if (($data['schema'] ?? null) !== self::SCHEMA) {
+        // A view written before the names lost their version has no schema_version and labels the schema `….v1`.
+        self::exactKeys($data, array_key_exists('schema_version', $data)
+            ? ['children', 'component', 'constraints', 'modifiers', 'presets', 'props', 'schema', 'schema_version', 'template', 'view']
+            : ['children', 'component', 'constraints', 'modifiers', 'presets', 'props', 'schema', 'template', 'view']);
+        if (!SchemaName::is($data, self::SCHEMA, self::SCHEMA_VERSION)) {
             throw new InvalidArgumentException('ui_smart_view_schema_unknown');
         }
         foreach (['props', 'presets', 'modifiers', 'children', 'constraints'] as $key) {
@@ -135,7 +141,7 @@ final readonly class SmartViewDescriptor
     public function toArray(): array
     {
         return [
-            'schema' => self::SCHEMA,
+            ...SchemaName::stamp(self::SCHEMA, self::SCHEMA_VERSION),
             'component' => $this->componentKey,
             'view' => $this->viewKey,
             'template' => $this->template,

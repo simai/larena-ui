@@ -810,7 +810,8 @@ final readonly class UiResourcePackManifest
     public static function sourceBackedSfCatalogAssetDescriptor(): array
     {
         return [
-            'schema' => 'larena.core_assets.set.v1',
+            'schema' => 'larena.core_assets.set',
+            'schema_version' => 1,
             'asset_set' => 'source_backed_sf.catalog_adapter_pipeline',
             'owner_package' => 'larena/ui',
             'activation_owner' => 'larena/core:core.assets',
@@ -856,7 +857,8 @@ final readonly class UiResourcePackManifest
     public static function sourceBackedSfButtonAssetDescriptor(): array
     {
         return [
-            'schema' => 'larena.core_assets.set.v1',
+            'schema' => 'larena.core_assets.set',
+            'schema_version' => 1,
             'asset_set' => 'source_backed_sf.buttons',
             'owner_package' => 'larena/ui',
             'activation_owner' => 'larena/core:core.assets',
@@ -900,7 +902,8 @@ final readonly class UiResourcePackManifest
     public static function adminReadOnlyShellAssetDescriptor(): array
     {
         return [
-            'schema' => 'larena.core_assets.set.v1',
+            'schema' => 'larena.core_assets.set',
+            'schema_version' => 1,
             'asset_set' => 'admin.read_only_shell',
             'owner_package' => 'larena/ui',
             'activation_owner' => 'larena/core:core.assets',
@@ -950,7 +953,7 @@ final readonly class UiResourcePackManifest
     public static function adminFrontendArtifactAdapterPublicationPlan(): array
     {
         return [
-            'schema' => 'larena.ui.admin_frontend_artifact_adapter_publication_plan.v1',
+            'schema' => 'larena.ui.admin_frontend_artifact_adapter_publication_plan',
             'status' => 'adapter_plan_ready_with_reference_warnings',
             'owners' => [
                 'smart_manifest' => 'larena/ui',

@@ -104,7 +104,7 @@ final readonly class SourceBackedAssetProvenanceLock
         }
 
         return [
-            'schema' => 'larena.ui.source_backed_asset_package_verification.v1',
+            'schema' => 'larena.ui.source_backed_asset_package_verification',
             'status' => $matched === count($checks) && $checks !== [] ? 'passed' : 'failed',
             'provenance_lock' => self::RELATIVE_PATH,
             'asset_count' => count($checks),
@@ -146,7 +146,7 @@ final readonly class SourceBackedAssetProvenanceLock
 
         if (!$requested || !$available) {
             return [
-                'schema' => 'larena.ui.source_backed_external_source_audit.v1',
+                'schema' => 'larena.ui.source_backed_external_source_audit',
                 'status' => 'source_audit_unavailable',
                 'requested' => $requested,
                 'reason' => !$requested ? 'not_requested' : 'one_or_more_roots_unavailable',
@@ -161,7 +161,7 @@ final readonly class SourceBackedAssetProvenanceLock
         $passed = $this->checksPassed($assetChecks) && $this->checksPassed($exampleChecks);
 
         return [
-            'schema' => 'larena.ui.source_backed_external_source_audit.v1',
+            'schema' => 'larena.ui.source_backed_external_source_audit',
             'status' => $passed ? 'passed' : 'failed',
             'requested' => true,
             'reason' => $passed ? 'all_locked_sources_match' : 'source_drift_detected',

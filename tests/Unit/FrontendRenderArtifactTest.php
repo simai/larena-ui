@@ -68,7 +68,7 @@ assert(count($artifact->assetTags()) === 2);
 assert(str_contains($artifact->assetTags()[0], 'type="module"'));
 
 $serialized = $artifact->toArray();
-assert($serialized['schema'] === 'larena.ui.frontend_render_artifact.v1');
+assert($serialized['schema'] === 'larena.ui.frontend_render_artifact');
 assert($serialized['owner_package'] === 'larena/ui');
 assert($serialized['renderable'] === true);
 assert($serialized['html_is_render_artifact'] === true);

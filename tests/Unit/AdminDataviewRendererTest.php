@@ -50,7 +50,7 @@ assert(($artifact->toArray()['diagnostics']['row_count'] ?? null) === 1);
 assert(in_array('smart-component:ui.dataview', $artifact->assetGraph->explain, true));
 
 $frameworkPlan = [
-    'schema' => 'larena.ui.framework_resolved_plan.v1',
+    'schema' => 'larena.ui.framework_resolved_plan',
     'adapter' => [
         'id' => 'docara.pages.admin.collection',
         'upstream_recipe' => 'recipe.admin.collection',

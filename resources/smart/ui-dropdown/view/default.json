@@ -1,5 +1,6 @@
 {
-  "schema": "larena.ui.smart_view.v1",
+  "schema": "larena.ui.smart_view",
+  "schema_version": 1,
   "component": "ui.dropdown",
   "view": "default",
   "template": "default",

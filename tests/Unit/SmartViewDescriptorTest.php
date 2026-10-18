@@ -38,6 +38,7 @@ $unsafeKeyRejected = false;
 try {
     SmartViewDescriptor::fromArray([
         'schema' => SmartViewDescriptor::SCHEMA,
+        'schema_version' => SmartViewDescriptor::SCHEMA_VERSION,
         'component' => 'ui.dataview',
         'view' => 'unsafe',
         'template' => 'default',

@@ -43,7 +43,7 @@ assert(str_contains((string) $english[0]->examples['frontend']['value'], '<sf-bu
 assert($english[0]->provenance['manifest_path'] === 'resources/smart/ui-button/manifest.json');
 assert(preg_match('/^[a-f0-9]{64}$/', $english[0]->provenance['manifest_sha256']) === 1);
 assert(!str_starts_with($english[0]->provenance['manifest_path'], '/'));
-assert(($english[0]->manifestProjection['schema'] ?? null) === 'larena.ui.smart_manifest_projection.v1');
+assert(($english[0]->manifestProjection['schema'] ?? null) === 'larena.ui.smart_manifest_projection');
 assert(!array_key_exists('atlas', $english[0]->manifestProjection));
 assert(($english[0]->toArray()['manifest']['key'] ?? null) === 'ui.button');
 

@@ -55,7 +55,7 @@ final readonly class SmartManager
         $assetRequirementsSatisfied = $this->assertAssetContract($manifest, $graph, $assetActivation);
 
         return new FrontendRenderArtifact($render, $graph, $assetActivation, [
-            'schema' => 'larena.ui.smart_render_diagnostics.v1',
+            'schema' => 'larena.ui.smart_render_diagnostics',
             'component_key' => $manifest->componentKey,
             'manifest_version' => $manifest->version,
             'owner_package' => $manifest->ownerPackage,

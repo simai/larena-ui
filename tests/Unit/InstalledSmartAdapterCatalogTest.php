@@ -19,7 +19,7 @@ assert($dataview['frontend']['tag'] === 'sf-table');
 assert($dataview['adapter_available'] === true);
 
 $packet = $catalog->describe('ui.admin_menu', true);
-assert($packet['schema'] === 'larena.ui.smart_adapter_technology_packet.v1');
+assert($packet['schema'] === 'larena.ui.smart_adapter_technology_packet');
 assert($packet['decision']['reuse_mode'] === 'whole');
 assert($packet['identity']['source_contract']['id'] === 'smart.admin-menu');
 assert($packet['public_abi']['compatibility']['contract_schema']['version'] === 1);

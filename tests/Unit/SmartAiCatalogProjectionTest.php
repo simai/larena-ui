@@ -32,7 +32,7 @@ $secondJson = $ai->toJson('en');
 
 assert($first === $second);
 assert($firstJson === $secondJson);
-assert($first['schema'] === 'larena.ui.smart_ai_catalog.v1');
+assert($first['schema'] === 'larena.ui.smart_ai_catalog');
 assert($first['source'] === 'SmartRegistry');
 assert($first['locale'] === 'en');
 assert(array_column($first['components'], 'key') === $expectedKeys);

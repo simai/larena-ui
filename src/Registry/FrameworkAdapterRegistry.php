@@ -123,7 +123,7 @@ final class FrameworkAdapterRegistry
         }
 
         $plan = [
-            'schema' => 'larena.ui.framework_resolved_plan.v1',
+            'schema' => 'larena.ui.framework_resolved_plan',
             'adapter' => $adapter,
             'compatibility_id' => $this->upstream->compatibilityId(),
             'profile' => $this->upstream->profile(),

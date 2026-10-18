@@ -49,7 +49,7 @@ final readonly class InstalledSmartAdapterCatalog
         $sourceContract = $this->sourceCatalog()->validateAdapter($id, $descriptor, $manifest);
         $sourceManifest = $this->sourceCatalog()->contract($sourceContract['id']);
         $result = [
-            'schema' => $forAi ? 'larena.ui.smart_adapter_technology_packet.v1' : 'larena.ui.smart_adapter_description.v1',
+            'schema' => $forAi ? 'larena.ui.smart_adapter_technology_packet' : 'larena.ui.smart_adapter_description',
             'identity' => [
                 'id' => $manifest->componentKey,
                 'version' => $manifest->version,

@@ -42,7 +42,7 @@ final readonly class SmartCatalogEntry
     public function toArray(): array
     {
         return [
-            'schema' => 'larena.ui.smart_catalog_entry.v1',
+            'schema' => 'larena.ui.smart_catalog_entry',
             'key' => $this->key,
             'version' => $this->manifest->version,
             'owner_package' => $this->manifest->ownerPackage,
