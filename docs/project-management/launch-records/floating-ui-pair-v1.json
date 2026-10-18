@@ -337,6 +337,8 @@
     "src/Contracts/UiResourcePackManifest.php",
     "tests/Unit/UiContractTest.php",
     "src/Developer/SourceSmartContractCatalog.php",
-    "src/Runtime/RegisteredDocumentRenderer.php"
+    "src/Runtime/RegisteredDocumentRenderer.php",
+    "tests/Unit/FrameworkDocumentSchemaValidatorTest.php",
+    "src/Runtime/FrameworkDocumentSchemaValidator.php"
   ]
 }

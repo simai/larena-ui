@@ -63,7 +63,7 @@ final readonly class FrameworkDocumentSchemaValidator
         }
         $supported = ['$schema', '$id', '$defs', 'title', 'description', '$ref', 'type', 'const', 'enum',
             'required', 'properties', 'additionalProperties', 'propertyNames', 'minLength', 'maxLength', 'pattern',
-            'items', 'minItems', 'maxItems', 'uniqueItems'];
+            'items', 'minItems', 'maxItems', 'uniqueItems', 'anyOf'];
         foreach (array_keys($schema) as $keyword) {
             if (!in_array($keyword, $supported, true)) $this->reject($path, 'schema_keyword_unsupported');
         }
@@ -72,6 +72,21 @@ final readonly class FrameworkDocumentSchemaValidator
             if (!is_string($ref) || !preg_match('~^#/\$defs/([A-Za-z0-9_-]+)$~D', $ref, $matches)
                 || !is_array($this->schema['$defs'][$matches[1]] ?? null)) $this->reject($path, 'schema_ref_unsupported');
             $this->check($value, $this->schema['$defs'][$matches[1]], $path, $depth + 1);
+        }
+        // anyOf: the value holds if it holds against at least one branch (the format name in both forms, 2026-10-11).
+        if (isset($schema['anyOf'])) {
+            if (!is_array($schema['anyOf']) || $schema['anyOf'] === []) $this->reject($path, 'schema_any_of_invalid');
+            $held = false;
+            foreach ($schema['anyOf'] as $branch) {
+                if (!is_array($branch) && !is_bool($branch)) $this->reject($path, 'schema_any_of_invalid');
+                try {
+                    $this->check($value, $branch, $path, $depth + 1);
+                    $held = true;
+                    break;
+                } catch (InvalidArgumentException) {
+                }
+            }
+            if (!$held) $this->reject($path, 'schema_any_of');
         }
         if (array_key_exists('const', $schema) && $value !== $schema['const']) $this->reject($path, 'schema_const');
         if (isset($schema['enum']) && !in_array($value, $schema['enum'], true)) $this->reject($path, 'schema_enum');

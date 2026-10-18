@@ -9,7 +9,7 @@ use Larena\Ui\Runtime\RegisteredDocumentRenderer;
 $root = getenv('SIMAI_UI_ROOT');
 if (!is_string($root) || $root === '') throw new RuntimeException('Exact SIMAI_UI_ROOT required for Document schema proof');
 $path = $root.'/distr/core/contracts/composition-document.v1.schema.json';
-$digest = 'sha256:a3eb3e2d2dc6505a9848174da60e0afab812b38b809e45a1fb583d2b6c2e6d80';
+$digest = 'sha256:5e4309ad97a84309bb5cfd6f21c21c5079a68e65adcb3fd6f6c88bbe2fed0710';
 $validator = FrameworkDocumentSchemaValidator::fromPinnedSchema($path, $digest);
 $json = '{"schema":"simai.composition.document.v1","id":"page.lists","profile":"ui-layout","root":{"id":"page","type":"layout.page","props":{},"data":{},"slots":{"default":[{"id":"list","type":"larena.registered-list","props":{"source_key":"auth.users","column_preset":"users","title":"Пользователи"}}]}}}';
 $document = $validator->document($json);
@@ -38,6 +38,13 @@ $changes = [
 foreach ($changes as $invalid) {
     try { $validator->document($invalid); throw new RuntimeException('Invalid document shape accepted'); }
     catch (InvalidArgumentException) {}
+}
+// The format name in both forms (owner decision 2026-10-11): the old label, and the bare name with schema_version 1.
+$newForm = str_replace('"schema":"simai.composition.document.v1"', '"schema":"simai.composition.document","schema_version":1', $json);
+assert($validator->document($newForm)['schema_version'] === 1);
+foreach (['"schema":"simai.composition.document"' => 'schema_any_of', '"schema":"simai.composition.document","schema_version":2' => 'schema_const'] as $form => $refusal) {
+    try { $validator->document(str_replace('"schema":"simai.composition.document.v1"', $form, $json)); throw new LogicException('accepted '.$form); }
+    catch (InvalidArgumentException $error) { assert(str_contains($error->getMessage(), $refusal), $error->getMessage()); }
 }
 $modified = $document;
 $modified['root']['slots']['default'][0]['props']['source_key'] = 'storage.probe';
