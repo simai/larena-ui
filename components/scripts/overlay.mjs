@@ -27,7 +27,11 @@ export const PACKAGE_COMPONENTS = ['admin-menu', 'data-view', 'property-view', '
 
 export function readLock(root = PACKAGE_ROOT) {
   const lock = JSON.parse(readFileSync(join(root, 'framework.lock.json'), 'utf8'));
-  if (lock.schema !== 'simai.framework.product-package-source-lock.v1') throw new Error('framework.lock.json: unknown schema');
+  // Read in both forms: the name with its version, or without it and
+  // schema_version beside (names carry no version, owner decision 2026-10-11).
+  const lockForm = lock.schema === 'simai.framework.product-package-source-lock.v1'
+    || (lock.schema === 'simai.framework.product-package-source-lock' && lock.schema_version === 1);
+  if (!lockForm) throw new Error('framework.lock.json: unknown schema');
   if (lock.source?.repository !== 'simai/ui-source' || !/^[0-9a-f]{40}$/u.test(lock.source?.revision ?? '')) {
     throw new Error('framework.lock.json: source must name simai/ui-source and a full revision');
   }
