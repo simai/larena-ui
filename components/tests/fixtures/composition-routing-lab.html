@@ -66,7 +66,7 @@
         extensions: {'simai.composition:endpoint': {name: id.split('-').pop()}},
       });
       const type = {
-        schema: 'simai.composition.type-manifest.v1', type: 'example.records', version: '1.0.0', category: 'smart', mode: 'leaf',
+        schema: 'simai.composition.type-manifest', schema_version: 1, type: 'example.records', version: '1.0.0', category: 'smart', mode: 'leaf',
         profiles: ['ui-layout'], data_schema: {type: 'object', additionalProperties: false, properties: {}},
         props_schema: {type: 'object', additionalProperties: false, properties: {'aria-label': {type: 'string'}, 'table-settings-key': {type: 'string'}}},
         presentation: {views: ['default'], presets: [], modifiers: []}, slots: {},
@@ -88,7 +88,7 @@
         props: {routes: [route('archive-lines', 'orders', 'lines')]},
         slots: {default: [records('ar-orders', 'Архив заказов'), records('ar-lines', 'Архив строк')]},
       };
-      const document_ = {schema: 'simai.composition.document.v1', id: 'routing-lab', profile: 'ui-layout', root: {
+      const document_ = {schema: 'simai.composition.document', schema_version: 1, id: 'routing-lab', profile: 'ui-layout', root: {
         id: 'page', type: 'layout.section', slots: {default: [workspace, archive]},
       }};
       const registry = composition.createRegistry([...(await fetch(`${assets}/core/contracts/composition-types.v1.json`).then((r) => r.json())).entries, type]);
