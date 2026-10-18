@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larena\Ui\Frontend;
 
 use InvalidArgumentException;
+use Larena\Core\Assets\VerifiedAssetBundlePublisher;
 use RuntimeException;
 
 /**
@@ -51,7 +52,7 @@ final readonly class FrameworkContractRegistry
         }
 
         $marker = self::readJson($bundleRoot . DIRECTORY_SEPARATOR . '.larena-bundle.json');
-        if (($marker['schema'] ?? null) !== 'larena.core_assets.immutable_bundle.v2'
+        if (!VerifiedAssetBundlePublisher::isBundleMarker($marker)
             || ($marker['publication_profile'] ?? null) !== $lock->publicationProfile()
             || ($marker['bundle_id'] ?? null) !== $lock->bundleId()
         ) {

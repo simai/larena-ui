@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larena\Ui\Frontend;
 
+use Larena\Core\Support\SchemaName;
 use RuntimeException;
 
 final readonly class FrontendRuntimeLock
@@ -159,7 +160,7 @@ final readonly class FrontendRuntimeLock
 
     private function assertValid(): void
     {
-        if (($this->data['schema'] ?? null) !== 'larena.ui.frontend_runtime_lock.v5'
+        if (!SchemaName::is($this->data, 'larena.ui.frontend_runtime_lock', 5)
             || ($this->data['runtime'] ?? null) !== 'simai-framework'
             || ($this->data['publication_profile'] ?? null) !== 'exact-git-tree-v2'
             || !array_key_exists('tag', $this->data) || $this->data['tag'] !== null

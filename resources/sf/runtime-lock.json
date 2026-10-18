@@ -1,5 +1,6 @@
 {
-  "schema": "larena.ui.frontend_runtime_lock.v5",
+  "schema": "larena.ui.frontend_runtime_lock",
+  "schema_version": 5,
   "runtime": "simai-framework",
   "pair_id": "ui-1082208bdcef-larena-a81054778e78",
   "bundle_id": "ui-1082208bdcef-larena-a81054778e78-registry-203b620e-exact-git-tree-v2",

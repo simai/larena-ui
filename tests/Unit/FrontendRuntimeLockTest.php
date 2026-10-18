@@ -98,7 +98,9 @@ foreach ([
     static function (array &$data): void { $data['runtime'] = 'other-framework'; },
     static function (array &$data): void { $data['bundle_id'] = $data['pair_id']; },
     static function (array &$data): void { $data['publication_profile'] = 'unverified-copy'; },
-    static function (array &$data): void { $data['schema'] = 'larena.ui.frontend_runtime_lock.v4'; },
+    static function (array &$data): void { $data['schema'] = 'larena.ui.frontend_runtime_lock.v4'; unset($data['schema_version']); },
+    static function (array &$data): void { $data['schema_version'] = 4; },
+    static function (array &$data): void { unset($data['schema_version']); },
     static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.4.0-local.2-wrong-wrong'; },
     static function (array &$data): void { $data['framework_registry']['relative_path'] = '../registry.json'; },
     static function (array &$data): void { $data['framework_registry']['source']['commit'] = str_repeat('0', 39); },
@@ -152,5 +154,12 @@ foreach ([
     }
     assert($failed);
 }
+
+// The lock is named without a version; a lock written before the move (`….v5`, no schema_version) is still read.
+assert($lock->toArray()['schema'] === 'larena.ui.frontend_runtime_lock' && $lock->toArray()['schema_version'] === 5);
+$legacy = $lock->toArray();
+$legacy['schema'] = 'larena.ui.frontend_runtime_lock.v5';
+unset($legacy['schema_version']);
+assert(FrontendRuntimeLock::fromArray($legacy)->pairId() === $lock->pairId());
 
 echo "FrontendRuntimeLockTest passed.\n";

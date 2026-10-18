@@ -22,6 +22,12 @@ import tarfile
 import tempfile
 
 
+def is_schema(data: dict, name: str, version: int) -> bool:
+    """A format is named once and carries its version as a field; data written before the move names it in the label."""
+    schema, declared = data.get("schema"), data.get("schema_version")
+    return (schema == name and declared == version) or (schema == f"{name}.v{version}" and declared in (None, version))
+
+
 def git_bytes(repository: Path, *arguments: str) -> bytes:
     return subprocess.check_output(["git", "-C", str(repository), *arguments])
 
@@ -143,7 +149,7 @@ def main() -> None:
     arguments = parser.parse_args()
 
     lock = json.loads(arguments.lock.read_text())
-    if lock.get("schema") != "larena.ui.frontend_runtime_lock.v5":
+    if not is_schema(lock, "larena.ui.frontend_runtime_lock", 5):
         raise RuntimeError("runtime_lock_schema_invalid")
     if lock.get("publication_profile") != "exact-git-tree-v2":
         raise RuntimeError("runtime_publication_profile_invalid")
