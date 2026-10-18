@@ -3142,6 +3142,18 @@ class SfTable extends SfBaseElement {
         return Array.isArray(fields) ? fields : [];
     }
 
+    // Whether the toolbar offers a filter at all: when the host gave fields to
+    // filter by or saved templates to choose from, or a filter is already on.
+    // Without them the button opened a panel of templates and fields with no
+    // value to set, which read as broken (documentation trial 6; owner and
+    // Larena, 2026-10-18).
+    offersFilter(activeCount = 0) {
+        const templates = this.state?.filter?.templates;
+        return this.getFilterFields().length > 0
+            || (Array.isArray(templates) && templates.length > 0)
+            || activeCount > 0;
+    }
+
     getFilterField(fieldKey) {
         if (!fieldKey) return null;
 

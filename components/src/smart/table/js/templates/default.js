@@ -54,7 +54,7 @@ function renderListToolbar(context) {
                         @keyup=${(e) => context.component.handleSearchKeyUp(e)}
                         hint-icon="search"
                 ></sf-input>
-                <span class="sf-table-list-filter">
+                ${context.component.offersFilter(active.length) ? html`<span class="sf-table-list-filter">
                     <sf-icon-button
                             size=${context.size}
                             appearance=${active.length ? 'default' : 'outline'}
@@ -66,7 +66,7 @@ function renderListToolbar(context) {
                             @click=${(e) => context.component.openContextMenu(e, {type: 'bottom', menu: 'filter-settings'})}
                     ></sf-icon-button>
                     ${active.length ? html`<span class="sf-table-list-filter-count" aria-hidden="true">${active.length}</span>` : nothing}
-                </span>
+                </span>` : nothing}
                 ${context.component.getColumns().some((column) => column?.sortable && !column.system) ? html`
                     <sf-icon-button
                             size=${context.size}
@@ -124,7 +124,7 @@ function renderToolbar(context) {
                 data-sf-filter-tags="${activeFilterTags.length ? '1' : '0'}"
         >
             <div class="sf-table-toolbar-start flex items-cross-center gap-1/3 flex-wrap min-w-0">
-                <div class="flex items-cross-center">
+                ${context.component.offersFilter(activeFilterTags.length) ? html`<div class="flex items-cross-center">
                     <sf-button
                             size=${context.size}
                             appearance="default"
@@ -156,7 +156,7 @@ function renderToolbar(context) {
                                 })
                             }}
                     ></sf-icon-button>` : nothing}
-                </div>
+                </div>` : nothing}
                 ${activeFilterTags.map(([k, tag]) => {
                     const filterValue = filterValues?.[k] || {};
                     const hasFilteredValues = Object.prototype.hasOwnProperty.call(
