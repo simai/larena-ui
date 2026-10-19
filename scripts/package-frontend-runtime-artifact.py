@@ -174,7 +174,7 @@ def main() -> None:
             source_receipt(lock["framework_registry"]["source"], arguments.ui_repository, "contract.tar.gz", sources),
         ]
         manifest = {
-            "schema": "larena.ui.frontend_runtime_artifact.v1",
+            "schema": "larena.ui.frontend_runtime_artifact",
             "publication_profile": "exact-git-tree-v2",
             "bundle_id": bundle_id,
             "sources": receipts,

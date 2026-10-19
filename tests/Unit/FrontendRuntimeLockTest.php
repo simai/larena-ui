@@ -22,7 +22,7 @@ assert(($registry['compatibility_id'] ?? null) === $lock->frameworkId());
 assert(($registry['file_sha256'] ?? null) === '7c7f877ab344f1f50eecabd9ecc0c5f9e74a6846c52a36a428cf12632d9557b9');
 
 $expectation = $lock->publicationExpectation();
-assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact.v1');
+assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact');
 assert($expectation['runtime'] === 'simai-framework');
 assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());

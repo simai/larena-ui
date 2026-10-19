@@ -85,7 +85,7 @@ final readonly class FrontendRuntimeLock
     public function publicationExpectation(): array
     {
         return [
-            'schema' => 'larena.ui.frontend_runtime_artifact.v1',
+            'schema' => 'larena.ui.frontend_runtime_artifact',
             'runtime' => 'simai-framework',
             'bundle_id' => $this->bundleId(),
             'publication_profile' => $this->publicationProfile(),
