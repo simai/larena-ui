@@ -13,10 +13,10 @@ are built for Larena, so they live here rather than in the free Framework
 | `src/smart/property-view` | `sf-property-view` | `smart.property-view` |
 | `src/smart/admin-menu` | `sf-admin-menu` | `smart.admin-menu` |
 
-Documentation (Russian): [sf-table and sf-data-view](https://simai.github.io/ui-doc/ru/smart-components/content/table/),
-[sf-property-view](https://simai.github.io/ui-doc/ru/smart-components/composite/property-view/),
-[sf-admin-menu](https://simai.github.io/ui-doc/ru/smart-components/composite/admin-menu/); the whole
-Framework at https://simai.github.io/ui-doc/.
+Documentation (Russian): [sf-table and sf-data-view](https://ui.simai.io/ru/smart-components/content/table/),
+[sf-property-view](https://ui.simai.io/ru/smart-components/composite/property-view/),
+[sf-admin-menu](https://ui.simai.io/ru/smart-components/composite/admin-menu/); the whole
+Framework at https://ui.simai.io/.
 
 The elements keep the Framework's `sf-` prefix: they came from the Framework
 and pages already use them, which the standard allows with that reason stated.
