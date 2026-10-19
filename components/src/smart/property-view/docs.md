@@ -72,6 +72,15 @@ the host, and a flat list of values would make the component invent one. One
 section renders as its groups alone, with no section list — a list of one is a
 control that cannot be used.
 
+## Password fields
+
+A `string` field with `variant: "password"` is write-only. The host never sends
+the password: its `value` is `{"set": true}` or `{"set": false}` (`null` reads as
+not set), and the field reads «задан» or «не задан». In edit the control starts
+empty; a save carries the field only when the person typed a new password, and
+erasing what they typed takes the change back. An untouched password field is
+never in `values`, so a save neither clears nor echoes one.
+
 ## Rare fields
 
 A host marks a section, group or field `rare: true` and **sends it every time**.

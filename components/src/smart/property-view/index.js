@@ -1898,9 +1898,13 @@ class SfPropertyView extends SfBaseElement {
         return answer;
     }
 
+    // `undefined` takes a change back: the person erased what they typed into a
+    // write-only field (a password), and a save must carry nothing for it --
+    // not an empty value that would clear what the host keeps.
     changeField(field, value) {
         const key = String(field.key ?? "");
-        this.changed.set(key, value);
+        if (value === undefined) this.changed.delete(key);
+        else this.changed.set(key, value);
         this.errors.delete(key);
         this.requestComponentUpdate("changed");
         return this;

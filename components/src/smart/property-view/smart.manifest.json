@@ -690,7 +690,7 @@
       }
     },
     "changeField": {
-      "summary": "Record that a field was changed. Called by the edit template; a host does not need it.",
+      "summary": "Record that a field was changed; undefined takes the change back, so a save carries nothing for that field. Called by the edit template; a host does not need it.",
       "arguments": [
         {
           "name": "field",
@@ -1109,7 +1109,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "fb92901522a17835e2e03ae4b2521797045824ec38cb102bbb6863bd2cc47825"
+        "sha256": "7d749d19c135286aea178215fcd95709b30dce02ce2d508fd38bcedaae594086"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
@@ -1129,7 +1129,7 @@
       },
       {
         "path": "src/smart/property-view/docs.md",
-        "sha256": "313d955c2ab75f1206acb22c378f58a20b908d72562a573eb2aa50531e92d121"
+        "sha256": "016ea112aab7f1e5014a992340f7c9c9ba3679cfb9847c1e8d2f92fd05a60499"
       }
     ],
     "generated_runtime": []
