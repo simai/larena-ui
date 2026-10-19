@@ -6,7 +6,7 @@ feedback and overlays. Real admin collections render the canonical
 `ui.dataview` path with assets activated through `core.assets`. This does not
 claim production readiness or readiness of every Larena package.
 
-Documentation of SIMAI Framework and its components (in Russian): https://simai.github.io/ui-doc/
+Documentation of SIMAI Framework and its components (in Russian): https://ui.simai.io/
 
 Universal UI/frontend package for Larena smart components, backend-first rendering, hydration, design packs, UI asset graph, component registry, playground and frontend behavior contracts.
 

@@ -9,7 +9,7 @@ use Larena\Ui\Runtime\RegisteredDocumentRenderer;
 $root = getenv('SIMAI_UI_ROOT');
 if (!is_string($root) || $root === '') throw new RuntimeException('Exact SIMAI_UI_ROOT required for Document schema proof');
 $path = $root.'/distr/core/contracts/composition-document.v1.schema.json';
-$digest = 'sha256:5e4309ad97a84309bb5cfd6f21c21c5079a68e65adcb3fd6f6c88bbe2fed0710';
+$digest = 'sha256:344b41cdcfd72bc60ff75bb7b71612ae217c023983f5d98f67ffeee0def06f14';
 $validator = FrameworkDocumentSchemaValidator::fromPinnedSchema($path, $digest);
 $json = '{"schema":"simai.composition.document.v1","id":"page.lists","profile":"ui-layout","root":{"id":"page","type":"layout.page","props":{},"data":{},"slots":{"default":[{"id":"list","type":"larena.registered-list","props":{"source_key":"auth.users","column_preset":"users","title":"Пользователи"}}]}}}';
 $document = $validator->document($json);
