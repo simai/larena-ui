@@ -1109,15 +1109,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/property-view/index.js",
-        "sha256": "7d749d19c135286aea178215fcd95709b30dce02ce2d508fd38bcedaae594086"
+        "sha256": "11715d0b592b4e2ab7bd2ed06da6cf879283d7d1e3f258a1d825768f63b09d28"
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "6716d7eca6ec806519967474ac82e2f55f6e8ba61fdeeb8f901b65785e9be369"
+        "sha256": "c498c83be0a682158d8dc5eadf336cd7347d47a0b31be1bca5b8c1d4b2ad4f4d"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
-        "sha256": "0bc29d6119dcee78942a9f8a989525557fd1f0ceea4cea81410bf4ad1fd3e0d9"
+        "sha256": "1c31ca1451c2c17c978b9202a9a56b298d09bcc725109503c3fd2fccf7756bff"
       },
       {
         "path": "src/smart/property-view/rule.js",

@@ -644,16 +644,48 @@ class SfPropertyView extends SfBaseElement {
     // window grows by the column beside them. Taken out, a 40rem panel showing
     // sections gave its fields 26rem and the two-column arrangement collapsed --
     // the same record looked narrower for having more in it.
+    //
+    // Never wider than the window less the strip of controls beside it: the
+    // close, copy-link and open-full controls stand on the drawer's edge,
+    // outside the panel's inline start, and the drawer places them a step
+    // beyond the panel's width without looking at the window. The cap used to
+    // be the window less space-4 (32px at the default root size) while the
+    // strip takes a control and a step on each side (64px), so in a frame
+    // under ~1024px the controls stood half off the screen (docs review,
+    // round 4, 2026-10-20). The cap holds for every width, not only for one
+    // grown by the rail: a consumer's own panel-width meets the same edge.
     get drawerWidth() {
         const width = this.panelWidth;
         if (!width) return null;
-        if (!this.wide || this.sectionsAs !== "list") return width;
+        if (!this.wide) return width;
         // The rail is drawn while the view is arranged even with one section,
         // because that is where a second one is made.
-        if ((this.sections ?? []).length < 2 && !this.configuring) return width;
+        const railed = this.sectionsAs === "list" && ((this.sections ?? []).length >= 2 || this.configuring);
+        const wanted = railed ? `calc(${width} + ${SECTIONS_WIDTH} + var(--sf-space-4))` : width;
         // Never wider than the window: grown by the rail, a 40rem panel ran past
         // the left edge and its sections were cut off (owner, 2026-10-14).
-        return `min(calc(${width} + ${SECTIONS_WIDTH} + var(--sf-space-4)), calc(100vw - var(--sf-space-4)))`;
+        return `min(${wanted}, calc(100vw - ${this.edgeRoom}))`;
+    }
+
+    // One edge control: an sf-icon-button of the panel's size is its text
+    // height and the ladder's padding on each side, the same sum the button
+    // draws itself with (40px at size 1 on a desktop, 36px on a phone).
+    get edgeControlWidth() {
+        const step = this.size === "1/2" ? "1\\/2" : "1";
+        return `calc(var(--sf-text-height-${step}) + 2 * var(--sf-ui-${step}--space-y-tightness-default))`;
+    }
+
+    // What the strip beside a wide panel takes from the window: the drawer's
+    // step between the panel and the strip (space-1/2), one control, and the
+    // same step again to the window's edge.
+    get edgeRoom() {
+        return `calc(${this.edgeControlWidth} + 2 * var(--sf-space-1\\/2))`;
+    }
+
+    // How many controls the strip carries: close always, copy-link with an
+    // address, open-full when the host can open the record as a page.
+    get edgeControlCount() {
+        return 1 + (this.address ? 1 : 0) + (this.canOpenFullPage ? 1 : 0);
     }
 
     get closeLabel() {
@@ -1529,6 +1561,8 @@ class SfPropertyView extends SfBaseElement {
             openFullLabel: this.openFullLabel,
             inheritedText: this.inheritedText,
             wide: this.wide,
+            edgeControlWidth: this.edgeControlWidth,
+            edgeControlCount: this.edgeControlCount,
             phoneSection: this.phoneSection,
             phoneSectionLabel: this.phoneSectionLabel,
             backLabel: this.backLabel,

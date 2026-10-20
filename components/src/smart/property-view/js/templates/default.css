@@ -855,6 +855,14 @@
   .sf-property-view-edge sf-icon-button button {
     border-radius: 50%;
   }
+  /* A panel filling the screen has the strip inside it, in a row along its top
+     at the drawer's inline step (space-1). The head starts its line after the
+     strip and a step more, so the record's name is not under the controls
+     (docs review, round 4, 2026-10-20). The strip's width is the template's:
+     how many controls it carries times one control, and the steps between. */
+  .sf-property-view-panel--fills .sf-property-view-head {
+    padding-inline-start: calc(var(--sf-space-1) + var(--sf-property-view--edge-room, 0px) + var(--sf-space-1\/2));
+  }
 
 
   /* A value is a button that opens its group, so reading and changing are one

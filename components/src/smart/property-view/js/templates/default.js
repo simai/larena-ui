@@ -1076,9 +1076,19 @@ const EDGE_SURFACE = '--sf-icon-button--background-color: var(--sf-elevation-3--
 // Round, and on the panel's outer edge rather than inside its head: in a stack
 // each panel keeps its own set visible past the one above it, which is what the
 // mockup shows and what a row inside the head cannot do.
+//
+// A panel filling the screen has no outside, and the drawer brings the strip in
+// along the top of it, at its inline start. There the controls stand in a row,
+// as the drawer lays its own edge out, and the head keeps their room
+// (panelFills): a column there stood over the record's name and the first rows
+// on a phone (docs review, round 4, 2026-10-20).
+function panelFills(context) {
+    return !context.wide || context.panelSize === 'full';
+}
+
 function renderPanelControls(context) {
     return html`
-        <div class="sf-property-view-edge flex flex-col gap-1/2" slot="edge"
+        <div class="sf-property-view-edge flex ${panelFills(context) ? 'flex-row' : 'flex-col'} gap-1/2" slot="edge"
              aria-label=${context.closeLabel}>
             <sf-icon-button
                     appearance="tonal"
@@ -1477,7 +1487,10 @@ export function renderPropertyViewTemplate(context) {
                 label=${context.panelLabel || context.recordId || ''}
         >
             ${renderPanelControls(context)}
-            <div class="sf-property-view-panel relative flex flex-col gap-2${rail ? ' sf-property-view-panel--railed' : ''}"
+            <div class="sf-property-view-panel relative flex flex-col gap-2${rail ? ' sf-property-view-panel--railed' : ''}${panelFills(context) ? ' sf-property-view-panel--fills' : ''}"
+                 style=${panelFills(context)
+                         ? `--sf-property-view--edge-room: calc(${context.edgeControlCount} * ${context.edgeControlWidth} + ${context.edgeControlCount - 1} * var(--sf-space-1\\/2));`
+                         : nothing}
                  data-record-id=${context.recordId || ''}
                  data-stack-depth=${String(context.stackDepth)}
                  data-stacked=${context.isTopPanel ? 'false' : 'true'}
