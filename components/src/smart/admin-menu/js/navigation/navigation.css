@@ -186,17 +186,46 @@
     font-family: inherit;
   }
 
-  /* The rail keeps only a dot where a row has something waiting. */
-  /* In the rail a count is a dot on the icon's corner, small beside the icon
-     (owner, 2026-10-14: it was nearly half the icon). */
-  .sf-admin-nav-dot {
-    position: absolute;
-    inset-block-start: var(--sf-a6);
-    inset-inline-end: var(--sf-a8);
-    inline-size: var(--sf-a6);
-    block-size: var(--sf-a6);
-    border-radius: 50%;
-    background-color: var(--sf-error);
+  /* In the rail a row's counter sits on its icon (simai/ui-source#12): the
+     icon is wrapped in the Framework's .sf-badge-anchor and the badge sheet
+     places the count; it stood at the row's corner before, beside the icon. The
+     rail's surface is surface-1, so that is the ring round the count. */
+  .sf-admin-nav-first {
+    --sf-badge--surface: var(--sf-surface-1);
+  }
+
+  .sf-admin-nav-row[data-current="true"],
+  .sf-admin-nav-row[data-open="true"] {
+    --sf-badge--surface: var(--sf-secondary-container);
+  }
+
+  /* ─── the items menu (no navigation port) ─────────────────────────────── */
+
+  /* An item's counter is the last child of its container (simai/ui-source#12).
+     Expanded, the words take the room between the icon and the counter, so the
+     counter stands at the row's end, and it is never squeezed. */
+  .sf-admin-menu-item-container > .sf-admin-menu-item-label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    text-align: start;
+  }
+
+  .sf-admin-menu-item-counter,
+  .sf-admin-menu-item-counter > .sf-badge {
+    flex: none;
+  }
+
+  /* Compact, the free admin-menu sheet moves the counter onto the icon and
+     hides every span in the container but an image icon -- the initials of an
+     item without an icon among them, which left the counter nothing to stand
+     on. The initials are the item's avatar: they stay, and being round, the
+     counter's centre is on their circle at 45 degrees, not on the box's corner. */
+  .sf-admin-menu-panel.small .sf-admin-menu-item .sf-admin-menu-item-container > span.sf-admin-menu-item-placeholder {
+    display: flex;
+  }
+
+  .sf-admin-menu-panel.small .sf-admin-menu-item .sf-admin-menu-item-container:has(> .sf-admin-menu-item-placeholder) > .sf-badge {
+    --sf-badge--anchor-radius: var(--sf-admin-menu-item-placeholder--border-radius, var(--sf-radius-rounded));
   }
 
   .sf-admin-nav-first[data-compact="true"] .sf-admin-nav-row {

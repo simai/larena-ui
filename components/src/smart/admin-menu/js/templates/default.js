@@ -102,6 +102,66 @@ function renderIcon(icon, alt = "", rootClass = "flex-none") {
   ></sf-icon>`;
 }
 
+// An item's counter (simai/ui-source#12). A number is a count the Framework's
+// badge runtime (SF.AnchoredBadge, component badges) keeps from the attribute
+// alone: it draws it capped at 99+, hides it at 0, and joins «8 непрочитанных»
+// to the item's name. It is the last thing in the item's container, so it
+// stands at the row's end, and in the compact menu the free admin-menu sheet
+// puts it on the item's icon or avatar, the way chat apps do. A word that is
+// not a number stays a label at the row's end, and a dot on the icon when
+// compact, the word in the name.
+function badgeCount(item) {
+  const text = String(item.badge ?? "").trim();
+  if (!text) return null;
+  const count = Number(text);
+  return Number.isFinite(count) ? String(Math.trunc(count)) : null;
+}
+
+function badgeShows(item) {
+  const text = String(item.badge ?? "").trim();
+  if (!text) return false;
+  const count = badgeCount(item);
+  return count === null || Number(count) > 0;
+}
+
+function renderCounter(item, compact) {
+  const text = String(item.badge ?? "").trim();
+  if (!text) return nothing;
+  const count = badgeCount(item);
+  if (count !== null) {
+    return html`<span
+      class="sf-badge sf-badge--main sf-badge--primary sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center"
+      data-count=${count}
+    ></span>`;
+  }
+  if (compact) {
+    return html`<span
+      class="sf-badge sf-badge--main sf-badge--primary sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center"
+      data-dot
+      data-label=${text}
+    ></span>`;
+  }
+  return html`<sf-badge
+    class="sf-admin-menu-item-counter"
+    size="1/3"
+    appearance="main"
+    scheme="primary"
+    text="${text}"
+  ></sf-badge>`;
+}
+
+// The item's name: its words, which the compact item does not show. The badge
+// runtime adds a count's phrase to it; a word that is not a number is read
+// after the words when it stands at the row's end, and is the compact dot's
+// phrase otherwise.
+function itemName(item, compact) {
+  const label = String(item.label ?? "");
+  const text = String(item.badge ?? "").trim();
+  if (!label) return nothing;
+  if (compact || !text || badgeCount(item) !== null) return label;
+  return `${label}, ${text}`;
+}
+
 function renderBadge(item) {
   if (!item.badge) return nothing;
 
@@ -131,6 +191,10 @@ export function renderAdminMenuTemplate(context) {
     settingsError,
   } = component.state;
 
+  // The counter is the container's last child in both modes (renderCounter).
+  // Compact, the container holds the icon alone in the flow, so it is as big as
+  // the icon -- the counter's anchor -- and the item's words are its
+  // aria-label (renderMenuButton, renderMenuLink).
   function renderItemContent(item, trailing = nothing, showSettings = false) {
     return !context.compact
       ? html`
@@ -142,20 +206,22 @@ export function renderAdminMenuTemplate(context) {
               : item.placeholder
                 ? renderPlaceholder(item.label)
                 : nothing}
-            <span class="overflow-hidden whitespace-nowrap t-ellipsis"
+            <span class="sf-admin-menu-item-label overflow-hidden whitespace-nowrap t-ellipsis"
               >${item.label}</span
             >
+            ${showSettings ? nothing : renderCounter(item, false)}
           </span>
-          ${showSettings ? nothing : item.badge ? renderBadge(item) : trailing}
+          ${showSettings || badgeShows(item) ? nothing : trailing}
         `
       : html`<span
-          class="sf-admin-menu-item-container flex items-cross-center flex-1"
+          class="sf-admin-menu-item-container flex items-cross-center"
         >
               ${item.leftIcon
                   ? renderIcon(item.leftIcon)
                   : item.placeholder
                       ? renderPlaceholder(item.label)
                       : nothing}
+              ${showSettings ? nothing : renderCounter(item, true)}
         </span> `;
   }
 
@@ -170,6 +236,8 @@ export function renderAdminMenuTemplate(context) {
       <button
         type="button"
         class=${className}
+        aria-label=${itemName(item, context.compact)}
+        title=${context.compact && item.label ? item.label : nothing}
         aria-expanded=${panels[item.panelId]?.open ? "true" : "false"}
         @click=${(event) => {
           event.preventDefault();
@@ -195,6 +263,8 @@ export function renderAdminMenuTemplate(context) {
     return html`
       <a
         class=${className}
+        aria-label=${itemName(item, context.compact)}
+        title=${context.compact && item.label ? item.label : nothing}
         href=${item.href || "#"}
         target=${item.target || nothing}
         rel=${item.rel || nothing}
