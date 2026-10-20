@@ -2,6 +2,7 @@ import {html, nothing} from "lit";
 import "./navigation.css";
 import {getInitials} from "../../../helpers/text";
 import {renderPalette, renderSearchRow} from "./palette";
+import {counterOf, dotPhrase, nameWithCounter} from "../templates/default";
 import {renderPersonButton} from "./account";
 import {renderEditBanner, renderEditRoots, renderEditRows} from "./edit";
 
@@ -34,31 +35,21 @@ const attention = (row) => {
 };
 
 // In the rail a row's counter sits on its icon, the way chat apps put one on
-// an avatar (simai/ui-source#12): the icon is wrapped in the Framework's badge
-// anchor (step 1, square, as the free compact menus anchor theirs) and the
-// counter is an anchored badge the Framework's badge runtime keeps from its
-// attributes -- the number capped at 99+, nothing at 0, the phrase joined to the
-// row's name («Задачи, 3 непрочитанных»). Something that needs attention and
-// carries no number is a dot, its words in the name.
-const railBadge = (value) => {
-    const text = String(value ?? "").trim();
-    if (!text) return nothing;
-    const count = Number(text);
-    if (Number.isFinite(count)) {
-        return html`<span class="sf-badge sf-badge--anchored" data-count=${String(Math.trunc(count))}></span>`;
-    }
-    return html`<span class="sf-badge sf-badge--anchored" data-dot data-label=${text}></span>`;
-};
-
+// an avatar (simai/ui-source#12): the icon is wrapped in the SIMAI Framework's
+// badge anchor (step 1, square, as the free compact menus anchor theirs) and
+// the counter is an anchored badge -- the number capped at 99+, nothing at 0,
+// the phrase in the row's name («Задачи, 3 непрочитанных»). Something that
+// needs attention and carries no number is a dot, its words in the name. The
+// menu draws the counter itself, with no data-count for the Framework's badge
+// runtime to keep (counterOf in ../templates/default.js says why).
 const railCounter = (row) => {
-    if (row.attention) {
-        return html`<span class="sf-badge sf-badge--anchored" data-dot data-label=${row.attention.label || nothing}></span>`;
-    }
-    if (row.badge) return railBadge(row.badge);
-    return nothing;
+    if (row.attention) return {dot: true, text: "", phrase: row.attention.label || dotPhrase()};
+    return counterOf(row.badge);
 };
 
-const railIcon = (name, badge) => html`<span class="sf-badge-anchor sf-badge-anchor--size-1 sf-badge-anchor--square sf-admin-nav-rail-anchor">${icon(name, "sf-admin-nav-row-icon")}${badge}</span>`;
+const railIcon = (name, counter) => html`<span class="sf-badge-anchor sf-badge-anchor--size-1 sf-badge-anchor--square sf-admin-nav-rail-anchor">${icon(name, "sf-admin-nav-row-icon")}${counter
+    ? html`<span class="sf-badge sf-badge--anchored${counter.dot ? " sf-badge--dot" : ""}" aria-hidden="true" title=${counter.phrase}>${counter.text}</span>`
+    : nothing}</span>`;
 
 const mark = (site) => html`<span class="sf-admin-nav-mark" aria-hidden="true">${site?.mark || getInitials(site?.label ?? "")}</span>`;
 
@@ -112,7 +103,7 @@ function renderFirstRow(context, row) {
         data-current=${current ? "true" : nothing}
         data-open=${open ? "true" : nothing}
         title=${compact ? row.label : nothing}
-        aria-label=${compact ? row.label : nothing}
+        aria-label=${compact ? nameWithCounter(row.label, railCounter(row)) : nothing}
         @click=${(event) => controller.openRow(row, event)}>
         ${compact ? railIcon(row.icon, railCounter(row)) : html`
             ${icon(row.icon, "sf-admin-nav-row-icon")}
@@ -138,8 +129,8 @@ function renderNotifications(context, notifications) {
     const {text, compact} = context;
     const content = html`
         ${compact
-            ? html`${railIcon("notifications", notifications.unread ? railBadge(notifications.unread) : nothing)}
-                <span class="sr-only">${text("notifications")}</span>`
+            ? html`${railIcon("notifications", counterOf(notifications.unread))}
+                <span class="sr-only">${nameWithCounter(text("notifications"), counterOf(notifications.unread))}</span>`
             : html`${icon("notifications", "sf-admin-nav-row-icon")}
                 <span class="sf-admin-nav-row-label">${text("notifications")}</span>
                 ${notifications.unread ? html`<sf-badge class="sf-admin-nav-attention" size="1/3" status="error"

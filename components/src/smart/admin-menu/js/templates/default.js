@@ -102,64 +102,118 @@ function renderIcon(icon, alt = "", rootClass = "flex-none") {
   ></sf-icon>`;
 }
 
-// An item's counter (simai/ui-source#12). A number is a count the Framework's
-// badge runtime (SF.AnchoredBadge, component badges) keeps from the attribute
-// alone: it draws it capped at 99+, hides it at 0, and joins «8 непрочитанных»
-// to the item's name. It is the last thing in the item's container, so it
-// stands at the row's end, and in the compact menu the free admin-menu sheet
-// puts it on the item's icon or avatar, the way chat apps do. A word that is
-// not a number stays a label at the row's end, and a dot on the icon when
-// compact, the word in the name.
-function badgeCount(item) {
-  const text = String(item.badge ?? "").trim();
-  if (!text) return null;
-  const count = Number(text);
-  return Number.isFinite(count) ? String(Math.trunc(count)) : null;
+// An item's counter (simai/ui-source#12). The menu draws it itself, with the
+// SIMAI Framework's anchored-badge classes and its rules: a number capped at
+// 99+, nothing at 0, the digits hidden from assistive technology and the
+// phrase («8 непрочитанных») in the item's name. It is the last thing in the
+// item's container, so it stands at the row's end, and in the compact menu the
+// free admin-menu sheet puts it on the item's icon or avatar, the way chat apps
+// do. A word that is not a number stays a label at the row's end, and is a dot
+// on the icon when compact, the word in the name.
+//
+// It carries no data-count, so the Framework's badge runtime leaves it alone.
+// The loader injects the badges component's script once per plugin that names
+// it as a relation -- four times on ui-admin's mock-api page -- and each copy
+// boots its own observer and its own record of the names it wrote; on a count
+// whose phrase the runtime joins to an aria-label, the copies took each other's
+// names for the author's and appended the phrase without end, and the page
+// never settled (2026-10-21). Drawn here, the counter follows the item's data
+// on every render and does not depend on how many copies there are.
+const COUNTER_CAP = 99;
+const COUNTER_TEXT = {
+  en: {count: "{count} unread", dot: "new"},
+  ru: {
+    count: "{count} непрочитанное|{count} непрочитанных|{count} непрочитанных|{count} непрочитанного",
+    dot: "есть новое",
+  },
+};
+const PLURAL_CATEGORIES = ["zero", "one", "two", "few", "many", "other"];
+
+function pageLocale() {
+  return String(document.documentElement?.lang || "en").toLowerCase().split("-")[0];
+}
+
+function countPhrase(count) {
+  // The Framework's own phrase when its badge runtime is on the page (it knows
+  // the languages registered with SF.language); the same words otherwise.
+  try {
+    const phrase = globalThis.SF?.AnchoredBadge?.state?.({count}, document.documentElement)?.phrase;
+    if (phrase) return phrase;
+  } catch {
+    // The menu's own words below.
+  }
+  const locale = pageLocale();
+  const forms = (COUNTER_TEXT[locale] || COUNTER_TEXT.en).count.split("|");
+  let form = forms[forms.length - 1];
+  try {
+    const rules = new Intl.PluralRules(locale);
+    const has = new Set(rules.resolvedOptions().pluralCategories);
+    const index = PLURAL_CATEGORIES.filter((category) => has.has(category)).indexOf(rules.select(count));
+    form = forms[Math.min(Math.max(index, 0), forms.length - 1)];
+  } catch {
+    // The last form.
+  }
+  return form.replaceAll("{count}", String(count));
+}
+
+/**
+ * What a counter shows and says: null when it shows nothing (empty, 0 or
+ * less); else {dot, text, phrase} -- `text` the figures drawn (capped), empty
+ * for a dot; `phrase` what joins the name.
+ */
+export function counterOf(value, dotPhrase = "") {
+  const source = String(value ?? "").trim();
+  if (!source) return null;
+  const number = Number(source);
+  if (Number.isFinite(number)) {
+    const count = Math.trunc(number);
+    if (count <= 0) return null;
+    return {dot: false, text: count > COUNTER_CAP ? `${COUNTER_CAP}+` : String(count), phrase: countPhrase(count)};
+  }
+  return {dot: true, text: "", phrase: dotPhrase || source};
+}
+
+/** A name with a counter's phrase after it: «Входящие, 8 непрочитанных». */
+export function nameWithCounter(name, counter) {
+  const words = String(name ?? "").trim();
+  if (!counter?.phrase) return words;
+  return words ? `${words}, ${counter.phrase}` : counter.phrase;
+}
+
+/** The dot phrase of the page language, for a dot that names nothing. */
+export function dotPhrase() {
+  return (COUNTER_TEXT[pageLocale()] || COUNTER_TEXT.en).dot;
 }
 
 function badgeShows(item) {
-  const text = String(item.badge ?? "").trim();
-  if (!text) return false;
-  const count = badgeCount(item);
-  return count === null || Number(count) > 0;
+  return Boolean(counterOf(item.badge));
 }
 
 function renderCounter(item, compact) {
-  const text = String(item.badge ?? "").trim();
-  if (!text) return nothing;
-  const count = badgeCount(item);
-  if (count !== null) {
-    return html`<span
-      class="sf-badge sf-badge--main sf-badge--primary sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center"
-      data-count=${count}
-    ></span>`;
+  const counter = counterOf(item.badge);
+  if (!counter) return nothing;
+  if (counter.dot && !compact) {
+    return html`<sf-badge
+      class="sf-admin-menu-item-counter"
+      aria-hidden="true"
+      size="1/3"
+      appearance="main"
+      scheme="primary"
+      text="${String(item.badge).trim()}"
+    ></sf-badge>`;
   }
-  if (compact) {
-    return html`<span
-      class="sf-badge sf-badge--main sf-badge--primary sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center"
-      data-dot
-      data-label=${text}
-    ></span>`;
-  }
-  return html`<sf-badge
-    class="sf-admin-menu-item-counter"
-    size="1/3"
-    appearance="main"
-    scheme="primary"
-    text="${text}"
-  ></sf-badge>`;
+  return html`<span
+    class="sf-badge sf-badge--main sf-badge--primary sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center${counter.dot ? " sf-badge--dot" : ""}"
+    aria-hidden="true"
+    title=${counter.phrase}
+  >${counter.text}</span>`;
 }
 
-// The item's name: its words, which the compact item does not show. The badge
-// runtime adds a count's phrase to it; a word that is not a number is read
-// after the words when it stands at the row's end, and is the compact dot's
-// phrase otherwise.
-function itemName(item, compact) {
-  const label = String(item.label ?? "");
-  const text = String(item.badge ?? "").trim();
-  if (!label) return nothing;
-  if (compact || !text || badgeCount(item) !== null) return label;
-  return `${label}, ${text}`;
+// The item's name: its words, which the compact item does not show, and the
+// counter's phrase.
+function itemName(item) {
+  const name = nameWithCounter(item.label, counterOf(item.badge));
+  return name || nothing;
 }
 
 function renderBadge(item) {
@@ -236,7 +290,7 @@ export function renderAdminMenuTemplate(context) {
       <button
         type="button"
         class=${className}
-        aria-label=${itemName(item, context.compact)}
+        aria-label=${itemName(item)}
         title=${context.compact && item.label ? item.label : nothing}
         aria-expanded=${panels[item.panelId]?.open ? "true" : "false"}
         @click=${(event) => {
@@ -263,7 +317,7 @@ export function renderAdminMenuTemplate(context) {
     return html`
       <a
         class=${className}
-        aria-label=${itemName(item, context.compact)}
+        aria-label=${itemName(item)}
         title=${context.compact && item.label ? item.label : nothing}
         href=${item.href || "#"}
         target=${item.target || nothing}

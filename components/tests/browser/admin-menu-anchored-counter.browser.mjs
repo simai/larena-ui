@@ -32,8 +32,11 @@ const styles = [
 ].map((p) => join(out, p));
 const modules = [
   'core/core/js/core.js', 'core/core/js/smart-base.js',
-  // The badges component: SF.AnchoredBadge keeps the counts (a relation of the
-  // package component, rule.js `badges`).
+  // The badges component, twice: the SIMAI Framework loader injects a
+  // component's classic script once per plugin that names it as a relation
+  // (four times on ui-admin's mock-api page, 2026-10-21), and each copy of the
+  // badge runtime boots its own observer. The menu must not depend on one copy.
+  'component/component/badges/js/badges.js',
   'component/component/badges/js/badges.js',
   'smart/smart/icons/js/icons.js', 'smart/smart/buttons/js/buttons.js',
   'smart/smart/icon-buttons/js/icon-buttons.js', 'smart/smart/badges/js/badges.js',
@@ -127,6 +130,22 @@ async function measure(page, badgeSelector, anchorSelector, surfaceSelector) {
 
 const on = (m) => !m.missing && Math.hypot(m.dx, m.dy) <= 1;
 
+// The page settles: no change in the document for a second once the menu has
+// drawn. Two copies of the badge runtime fed each other a growing aria-label
+// without end on ui-admin (2026-10-21), and the page never went quiet.
+async function settles(page) {
+  return page.evaluate(() => new Promise((done) => {
+    let changes = 0;
+    const seen = [];
+    const observer = new MutationObserver((records) => {
+      changes += records.length;
+      for (const record of records) if (seen.length < 3) seen.push(`${record.type} ${record.attributeName ?? ''} ${record.target.nodeName}.${String(record.target.className ?? '').slice(0, 40)}`);
+    });
+    observer.observe(document, {subtree: true, childList: true, attributes: true, characterData: true});
+    setTimeout(() => { observer.disconnect(); done({changes, seen}); }, 1000);
+  }));
+}
+
 try {
   for (const width of [1000, 390]) {
     for (const theme of ['light', 'dark']) {
@@ -136,6 +155,8 @@ try {
       {
         const page = await open({width, theme, body: ITEMS.replace('COMPACT', 'compact="true"')});
         const item = (id) => `#m .sf-admin-menu-main [data-panel-id="${id}"] .sf-admin-menu-item`;
+        const quiet = await settles(page);
+        check(`items ${where}: the page settles`, quiet.changes === 0, quiet);
         const result = {
           small: await page.evaluate(() => Boolean(document.querySelector('#m .sf-admin-menu-panel.small'))),
           inbox: await measure(page, `${item('inbox')} .sf-badge`, `${item('inbox')} .sf-icon`, '#m .sf-admin-menu-panel'),
@@ -154,7 +175,7 @@ try {
         }
         check(`items ${where}: the avatar's counter is on its circle at 45 degrees`, on(result.tasks) && result.tasks.radius >= result.tasks.anchor[0] / 2, result.tasks);
         check(`items ${where}: 120 reads 99+`, result.tasks.text === '99+', result.tasks);
-        check(`items ${where}: 0 hides`, result.none.hidden, result.none);
+        check(`items ${where}: 0 hides`, result.none.hidden || result.none.missing?.badge === false, result.none);
         check(`items ${where}: a word is a dot on the icon`, on(result.word) && result.word.text === '' && result.word.width === result.word.height, result.word);
         for (const name of ['Входящие, 8 непрочитанных', 'Задачи, 120 непрочитанных', 'Главная', 'Обновления, new', 'Пользователи, 3 непрочитанных']) {
           check(`items ${where}: an item is named «${name}»`, result.names.includes(name), {names: result.names});
@@ -207,6 +228,8 @@ try {
           });
         }, NAVIGATION);
         await page.waitForTimeout(900);
+        const quiet = await settles(page);
+        check(`navigation ${where}: the page settles`, quiet.changes === 0, quiet);
         const row = (label) => `.sf-admin-nav-first .sf-admin-nav-row--first[title="${label}"]`;
         const rail = await page.evaluate(() => document.querySelector('.sf-admin-nav-first')?.getAttribute('data-compact') === 'true');
         evidence[`navigation ${where} rail`] = rail;
