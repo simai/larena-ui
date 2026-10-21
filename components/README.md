@@ -21,7 +21,7 @@ Framework at https://ui.simai.io/.
 The elements keep the Framework's `sf-` prefix: they came from the Framework
 and pages already use them, which the standard allows with that reason stated.
 
-Everything they are built on is the free Framework (MIT), in `simai/ui-source`:
+Everything they are built on is the free SIMAI Framework (Apache-2.0), in `simai/ui-source`:
 Core and the Loader, `smart-base`, `page-language`, `position`, the Smart
 helpers, the typed renderer set `smart/field-renderers`, `component/admin-menu`,
 the badges and clipboard components. So are the public contracts they answer
