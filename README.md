@@ -16,7 +16,7 @@ Universal UI/frontend package for Larena smart components, backend-first renderi
 package contributions. The reference library contains `ui.button`, `ui.input`,
 `ui.textarea`, `ui.checkbox`, `ui.dropdown`, `ui.dataview`, `ui.pagination`,
 `ui.badge`, `ui.alert` and `ui.modal`. `SmartManager` renders every entry as its
-pinned Simai Framework custom element; manifests declare the exact asset graph
+pinned SIMAI Framework custom element; manifests declare the exact asset graph
 for that element.
 `SmartCatalogProjection` turns visible, complete manifests into localized typed
 entries, and `SmartAiCatalogProjection` serializes the same entries as stable
