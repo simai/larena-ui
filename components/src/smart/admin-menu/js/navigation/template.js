@@ -27,7 +27,7 @@ const attention = (row) => {
             status=${row.attention.tone} text=${row.attention.label}></sf-badge>`;
     }
     if (row.badge) {
-        return html`<sf-badge class="sf-admin-nav-attention" size="1/3" scheme="primary"
+        return html`<sf-badge class="sf-admin-nav-attention" size="1/3" status="error"
             text=${String(row.badge)}></sf-badge>`;
     }
     if (row.shortcut) return html`<kbd class="sf-admin-nav-kbd">${row.shortcut}</kbd>`;
@@ -36,10 +36,10 @@ const attention = (row) => {
 
 // In the rail a row's counter sits on its icon, the way chat apps put one on
 // an avatar (simai/ui-source#12): the icon is wrapped in the SIMAI Framework's
-// badge anchor (step 1, square, as the free compact menus anchor theirs) and
-// the counter is an anchored badge -- the number capped at 99+, nothing at 0,
-// the phrase in the row's name («Задачи, 3 непрочитанных»). Something that
-// needs attention and carries no number is a dot, its words in the name. The
+// badge anchor at the icon's own step. The rail icon is a 1/2 step, and at 1/2
+// the rule draws a dot: the number and the attention words go to the row's
+// name («Задачи, 3 непрочитанных»), nothing at 0. Counters take the danger
+// role, as in the expanded menu (owner, 2026-10-21). The
 // menu draws the counter itself, with no data-count for the Framework's badge
 // runtime to keep (counterOf in ../templates/default.js says why).
 const railCounter = (row) => {
@@ -47,8 +47,8 @@ const railCounter = (row) => {
     return counterOf(row.badge);
 };
 
-const railIcon = (name, counter) => html`<span class="sf-badge-anchor sf-badge-anchor--size-1 sf-badge-anchor--square sf-admin-nav-rail-anchor">${icon(name, "sf-admin-nav-row-icon")}${counter
-    ? html`<span class="sf-badge sf-badge--anchored${counter.dot ? " sf-badge--dot" : ""}" aria-hidden="true" title=${counter.phrase}>${counter.text}</span>`
+const railIcon = (name, counter) => html`<span class="sf-badge-anchor sf-badge-anchor--size-1/2 sf-badge-anchor--square sf-admin-nav-rail-anchor">${icon(name, "sf-admin-nav-row-icon")}${counter
+    ? html`<span class="sf-badge sf-badge--anchored sf-badge--danger sf-badge--dot" aria-hidden="true" title=${counter.phrase}></span>`
     : nothing}</span>`;
 
 const mark = (site) => html`<span class="sf-admin-nav-mark" aria-hidden="true">${site?.mark || getInitials(site?.label ?? "")}</span>`;

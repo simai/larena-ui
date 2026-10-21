@@ -193,6 +193,22 @@ try {
         await page.close();
       }
 
+      // Every counter takes the danger role, compact and expanded alike
+      // (owner, 2026-10-21).
+      {
+        const fills = {};
+        for (const [mode, compact] of [['compact', 'compact="true"'], ['expanded', '']]) {
+          const page = await open({width, theme, body: ITEMS.replace('COMPACT', compact) + '<span id="ref" class="sf-badge sf-badge--main sf-badge--danger">1</span>'});
+          fills[mode] = await page.evaluate(() => ({
+            counter: getComputedStyle(document.querySelector('#m .sf-admin-menu-main [data-panel-id="inbox"] .sf-badge')).backgroundColor,
+            danger: getComputedStyle(document.getElementById('ref')).backgroundColor,
+          }));
+          await page.close();
+        }
+        evidence[`items fill ${where}`] = fills;
+        check(`items ${where}: compact and expanded counters are the danger colour`, fills.compact.counter === fills.compact.danger && fills.expanded.counter === fills.expanded.danger && fills.compact.counter === fills.expanded.counter, fills);
+      }
+
       // 2. The items menu, expanded: the counter at the row's end.
       {
         const page = await open({width, theme, body: ITEMS.replace('COMPACT', '')});
@@ -251,11 +267,12 @@ try {
           };
           evidence[`navigation rail ${where}`] = result;
           check(`navigation ${where}: the anchor is the icon's box`, result.icon.same, result.icon);
+          // The rail icon is a 1/2 step: the rule draws a dot there (8px), the
+          // number in the row's name (owner, 2026-10-21).
           for (const id of ['inbox', 'tasks', 'notifications']) {
-            check(`navigation ${where}: ${id}'s counter is on its icon's top end corner`, on(result[id]) && result[id].height === 16, result[id]);
+            check(`navigation ${where}: ${id}'s counter is a dot on its icon's top end corner`, on(result[id]) && result[id].height === 8 && result[id].width === 8 && result[id].text === '', result[id]);
             check(`navigation ${where}: ${id}'s ring is the rail's colour`, result[id].ring, result[id]);
           }
-          check(`navigation ${where}: 120 reads 99+`, result.tasks.text === '99+', result.tasks);
           check(`navigation ${where}: 0 hides`, result.zero.hidden || result.zero.missing?.badge === false, result.zero);
           check(`navigation ${where}: attention is a dot on the icon`, on(result.data) && result.data.text === '' && result.data.width === result.data.height, result.data);
           for (const name of ['Входящие, 8 непрочитанных', 'Задачи, 120 непрочитанных', 'Платежи', 'Данные, Требует внимания', 'Уведомления, 3 непрочитанных']) {

@@ -198,12 +198,12 @@ function renderCounter(item, compact) {
       aria-hidden="true"
       size="1/3"
       appearance="main"
-      scheme="primary"
+      status="error"
       text="${String(item.badge).trim()}"
     ></sf-badge>`;
   }
   return html`<span
-    class="sf-badge sf-badge--main sf-badge--primary sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center${counter.dot ? " sf-badge--dot" : ""}"
+    class="sf-badge sf-badge--main sf-badge--danger sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center${counter.dot ? " sf-badge--dot" : ""}"
     aria-hidden="true"
     title=${counter.phrase}
   >${counter.text}</span>`;
@@ -222,7 +222,7 @@ function renderBadge(item) {
   return html` <sf-badge
     size="1/3"
     appearance="main"
-    scheme="primary"
+    status="error"
     text="${item.badge}"
   ></sf-badge>`;
 }
