@@ -561,7 +561,7 @@ export function renderAdminMenuTemplate(context) {
           <span
             class="sf-admin-menu-item-container flex items-cross-center flex-1"
           >
-            <i class="sf-icon sf-icon-loaded">star</i>
+            <i class="sf-icon sf-icon-loaded" aria-hidden="true">star</i>
             <span>${menuText("favorites")}</span>
           </span>
         </button>
