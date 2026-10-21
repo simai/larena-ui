@@ -6722,7 +6722,8 @@ class SfTable extends SfBaseElement {
 
     // Why there are no rows, as a data view knows it: {kind: 'no-access' |
     // 'nothing-found' | 'no-data', reset: 'search' | 'filters' | 'both',
-    // headingLevel}. A table on its own knows only no data and could not load.
+    // headingLevel, message}. `message` is the host's own sentence for a list
+    // it refused or could not give; it is the brick's title, drawn as text. A table on its own knows only no data and could not load.
     get emptyContext() {
         return this._emptyContext;
     }
@@ -6754,12 +6755,13 @@ class SfTable extends SfBaseElement {
         const context = this._emptyContext ?? {};
         const size = this.size === "1/2" ? "1/2" : "1";
         const headingLevel = String(context.headingLevel ?? 3);
+        const message = typeof context.message === "string" ? context.message.trim() : "";
         if (dataState === "error") {
-            return {kind: "error", size, headingLevel, title: this.getAttribute("error-text") || "", text: "", live: context.caused ? "alert" : "auto",
+            return {kind: "error", size, headingLevel, title: message || this.getAttribute("error-text") || "", text: "", live: context.caused ? "alert" : "auto",
                 actions: [{id: "retry", text: this.text("retryText", "retry-text"), appearance: "outline"}]};
         }
         const kind = ["no-access", "nothing-found"].includes(context.kind) ? context.kind : "no-data";
-        if (kind === "no-access") return {kind, size, headingLevel, title: "", text: "", actions: []};
+        if (kind === "no-access") return {kind, size, headingLevel, title: message, text: "", actions: []};
         if (kind === "nothing-found") {
             const key = {search: "resetSearchText", filters: "resetFiltersText"}[context.reset] ?? "resetBothText";
             return {kind, size, headingLevel, title: "", text: "",

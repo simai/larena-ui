@@ -111,6 +111,14 @@ a reason the component knows is translated, and the reason code itself goes on a
 second line for whoever reads codes. `notify(text, {kind, code})` shows one, and
 `notify("")` takes it away; the next good answer clears it too.
 
+A list the host refused or could not give says the host's own sentence when the
+answer to `query.change` carries a non-empty `message`: it is the title of the
+table's empty state (no access) or error state (could not load) and the line the
+status region announces, drawn as text, never markup. An `unavailable` list with
+a message raises no error notice — the state already says why, e.g. «Список
+готовится…» while a large storage's list is built. Without a message the view
+keeps its own words («Данные временно недоступны») and the notice.
+
 ## Port 1.2.0: the column that leads a record
 
 Port [1.2.0](../../core/contracts/ports/simai.dataview-port/1.2.0/port.json) adds one optional column property, `role`,

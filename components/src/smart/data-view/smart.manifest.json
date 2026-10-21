@@ -677,6 +677,10 @@
             "type": "string",
             "description": "Why, when the answer is not applied: the host's reason, or the view's own (port-not-connected, capability-not-provided, action-not-allowed, no-base-revision)."
           },
+          "message": {
+            "type": "string",
+            "description": "The host's own sentence for a person, as the port answer carries it. On a refused or unavailable query.change a non-empty message is what the view shows: the title of its empty or error state and the line its live region announces, drawn as text, never markup; an unavailable list with a message raises no error notice. Without one the view's own words, as before."
+          },
           "data": {
             "type": "object",
             "description": "The host's data, copied as it answered."
@@ -1211,7 +1215,8 @@
     "untrusted_inputs": [
       "query",
       "records",
-      "saved_views"
+      "saved_views",
+      "answer messages"
     ],
     "network_policy": "deny"
   },
@@ -1278,7 +1283,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/data-view/index.js",
-        "sha256": "c5e9ca960f5df2bcb599ee13e68e2904ecf91c3256db21405f6b4d0ccc74dae6"
+        "sha256": "0b910e074e06d691ab86caaf9b57ff3df2d4de3bc75fea4930ad0f8481432f72"
       },
       {
         "path": "src/core/contracts/ports/simai.dataview-port/1.5.0/port.json",
@@ -1286,7 +1291,7 @@
       },
       {
         "path": "src/smart/data-view/docs.md",
-        "sha256": "ee4f65454d6bb7fd61274912eb1d5335c716661cc2c81edac128138e0469c804"
+        "sha256": "c0ac19e67b161ed93bc94f92ced253075247d9941f9446ef61208b38c1aa1b59"
       },
       {
         "path": "tests/fixtures/data-view-composite-lab.html",

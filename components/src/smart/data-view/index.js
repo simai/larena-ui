@@ -34,6 +34,12 @@ const COLUMN_PRESENTATION = {
     min_width: "minWidth",
 };
 
+// The sentence a host answer carries for a person (port answer `message`):
+// a non-empty string, trimmed; anything else is no message.
+function hostMessage(answer) {
+    return typeof answer?.message === "string" ? answer.message.trim() : "";
+}
+
 function projectColumn(column) {
     const projected = copy(column);
     for (const [sent, read] of Object.entries(COLUMN_PRESENTATION)) {
@@ -387,7 +393,8 @@ class SfDataView extends HTMLElement {
     // read codes. A code is never the message: the consumer saw
     // `minimal_cms_action_rejected` where a sentence belonged.
     _noticeText(answer = {}) {
-        if (typeof answer.message === "string" && answer.message.trim()) return answer.message.trim();
+        const message = hostMessage(answer);
+        if (message) return message;
         // The host's own sentence wins; these are what to say when it sent
         // none. They follow the page's language like every other word.
         const keys = {
@@ -701,7 +708,10 @@ class SfDataView extends HTMLElement {
         if (this.table && state === "empty") this.table.emptyContext = this._emptyContext();
         // A load the person caused -- a search or a filter they set -- that
         // fails is an alert; any other failed load is said politely.
-        if (this.table && state === "error") this.table.emptyContext = {caused: ["search", "filter"].includes(this._queryReason)};
+        if (this.table && state === "error") {
+            this.table.emptyContext = {caused: ["search", "filter"].includes(this._queryReason),
+                ...(this._queryMessage ? {message: this._queryMessage} : {})};
+        }
         this.table?.setDataState?.(state);
         // A failed or refused list has nothing to count: the page row goes with
         // it until a list comes back (docs trial 4: «Всего: 10» over an error).
@@ -720,7 +730,7 @@ class SfDataView extends HTMLElement {
     // filter is on -- nothing found, and what a reset would clear; otherwise
     // no data. The table draws it.
     _emptyContext() {
-        if (this._queryRefused) return {kind: "no-access"};
+        if (this._queryRefused) return this._queryMessage ? {kind: "no-access", message: this._queryMessage} : {kind: "no-access"};
         const search = String(this.query.search ?? "").trim() !== "";
         const filters = hasValue(this.query.filters);
         if (search || filters) return {kind: "nothing-found", reset: search && filters ? "both" : search ? "search" : "filters"};
@@ -738,6 +748,7 @@ class SfDataView extends HTMLElement {
 
     async _raise(intent, payload, {query = false} = {}) {
         if (!this.hostPort) {
+            if (query) this._queryMessage = "";
             this._setState("error", pageText(DATA_VIEW_TEXT, "statePortNotConnected", this));
             this.notify(pageText(DATA_VIEW_TEXT, "noticePortNotConnected", this));
             return {answer: "unavailable", reason: "port-not-connected"};
@@ -774,6 +785,11 @@ class SfDataView extends HTMLElement {
             if (query && answer.sequence != null && answer.sequence !== sequence) return null;
             if (query) this.pending = null;
             if (query) this._queryRefused = answer.answer === "refused";
+            // The host's own sentence for a list it cannot give or will not
+            // give (Larena, 2026-10-21: «Список готовится…» while a large
+            // storage's read model is built). It is shown as the state's own
+            // words, as text: it is the host's, and never markup.
+            if (query) this._queryMessage = ["refused", "unavailable"].includes(answer.answer) ? hostMessage(answer) : "";
             // A write the host confirms first (port 1.8.0): it answered with what
             // it is about to do and a digest of it. The person reads it; if they
             // confirm, the same intent goes again with the digest, which the
@@ -816,8 +832,12 @@ class SfDataView extends HTMLElement {
                 this.countKnown = false;
                 this._renderProjection();
             } else if (query && answer.answer === "unavailable") {
-                this._setState("error", pageText(DATA_VIEW_TEXT, "stateUnavailable", this));
-                this.notify(pageText(DATA_VIEW_TEXT, "noticeFetchFailed", this), {code: answer.reason || ""});
+                // A host that says why the list is not there is believed, and
+                // its sentence is the state: the error brick and the live
+                // region say it, and no error notice says something else over
+                // it. Without one, the general words and the notice as before.
+                this._setState("error", this._queryMessage || pageText(DATA_VIEW_TEXT, "stateUnavailable", this));
+                if (!this._queryMessage) this.notify(pageText(DATA_VIEW_TEXT, "noticeFetchFailed", this), {code: answer.reason || ""});
             }
             this._showAnswer(intent, answer);
             return answer;
@@ -825,6 +845,7 @@ class SfDataView extends HTMLElement {
             if (!this.isConnected || epoch !== this.epoch) return null;
             const answer = {answer: "unavailable", reason: error?.message || "port-error"};
             if (query) {
+                this._queryMessage = "";
                 this._setState("error", pageText(DATA_VIEW_TEXT, "stateLoadFailed", this));
                 this.notify(pageText(DATA_VIEW_TEXT, "noticeLoadFailed", this), {code: answer.reason || ""});
             }
