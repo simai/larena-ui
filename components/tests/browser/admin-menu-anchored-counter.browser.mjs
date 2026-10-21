@@ -285,7 +285,7 @@ try {
           });
           await page.waitForTimeout(400);
           const live = {inbox: await measure(page, `${row('Входящие')} .sf-badge`, `${row('Входящие')} .sf-badge-anchor`, '.sf-admin-nav-first'), names: await names(page)};
-          check(`navigation ${where}: a new count is drawn and named`, live.inbox.text === '4' && on(live.inbox) && live.names.includes('Входящие, 4 непрочитанных'), live);
+          check(`navigation ${where}: a new count keeps the dot and is named`, live.inbox.text === '' && live.inbox.height === 8 && on(live.inbox) && live.names.includes('Входящие, 4 непрочитанных'), live);
         } else {
           check(`navigation ${where}: a phone has no rail`, !rail);
           const result = await page.evaluate(() => {
