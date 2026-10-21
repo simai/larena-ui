@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../bootstrap.php';
 
+use Larena\Core\Assets\VerifiedAssetBundlePublisher;
 use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
@@ -11,15 +12,32 @@ $lock = FrontendRuntimeLock::bundled();
 assert($lock->pairId() === 'ui-e19da1d40f07-larena-3f6c86da4dd6');
 assert($lock->frameworkId() === 'ui-e19da1d40f07');
 assert($lock->larenaId() === 'larena-3f6c86da4dd6');
-assert($lock->toArray()['larena']['requires_framework'] === $lock->frameworkId());
-assert($lock->toArray()['larena']['repository'] === 'simai/larena-ui' && $lock->toArray()['larena']['package_path'] === 'components');
+assert($lock->packageIds() === ['larena' => 'larena-3f6c86da4dd6']);
+assert($lock->package('larena')['requires_framework'] === $lock->frameworkId());
+assert($lock->package('larena')['repository'] === 'simai/larena-ui' && $lock->package('larena')['package_path'] === 'components');
+assert($lock->packageLicence('larena') === ['ref' => 'Apache-2.0', 'tier' => 'bundled-larena']);
 assert($lock->bundleId() === 'ui-e19da1d40f07-larena-3f6c86da4dd6-registry-35a02d9c-exact-git-tree-v2');
 assert($lock->uiBase() === 'ui/distr/' && $lock->smartBase() === 'ui/distr/smart/' && $lock->larenaBase() === 'larena/smart/');
+assert($lock->packageBases() === ['larena' => 'larena/smart/']);
+assert($lock->bootPackagesScript('/b/') === '{larena:{base:"\/b\/larena\/smart\/"}}');
 assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->frameworkId());
 assert(($registry['file_sha256'] ?? null) === '35a02d9c62d1978d61069b164c43717f25a16dc14a74f0b4c0b8971c671b65e2');
+
+// The lock file is written in the current shape: packages, no top-level larena slot, no boot.larena_base.
+$file = json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/resources/sf/runtime-lock.json'), true, 512, JSON_THROW_ON_ERROR);
+assert($file['schema'] === 'larena.ui.frontend_runtime_lock' && $file['schema_version'] === FrontendRuntimeLock::SCHEMA_VERSION);
+assert(array_keys($file['packages']) === ['larena'] && !array_key_exists('larena', $file) && !array_key_exists('larena_base', $file['boot']));
+assert($file === $lock->toArray());
+
+// The single-package bundle id is byte-identical to the one every bundle had before packages were a list.
+assert(FrontendRuntimeLock::composeBundleId(
+    FrontendRuntimeLock::composePairId('e19da1d40f07c52ea9f47990d8805375cc8b6258', ['larena' => '3f6c86da4dd6e003a00d39e25e8330bc851db5ce']),
+    '35a02d9c62d1978d61069b164c43717f25a16dc14a74f0b4c0b8971c671b65e2',
+    'exact-git-tree-v2',
+) === 'ui-e19da1d40f07-larena-3f6c86da4dd6-registry-35a02d9c-exact-git-tree-v2');
 
 $expectation = $lock->publicationExpectation();
 assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact');
@@ -86,6 +104,7 @@ $sources = $lock->publicationSources('/tmp/ui', '/tmp/package-larena.tar');
 assert(count($sources) === 3);
 assert($sources[0]['repository'] === '/tmp/ui');
 assert($sources[1]['repository'] === '/tmp/package-larena.tar');
+assert($sources === $lock->publicationSources('/tmp/ui', ['larena' => '/tmp/package-larena.tar']));
 assert($sources[2] === [
     'repository' => '/tmp/ui',
     'commit' => '46f4298c0b719ec6e97c66c22755fba89e030b6d',
@@ -94,12 +113,24 @@ assert($sources[2] === [
     'sha256' => '2b1e229bdf2961259ff2e04865a881af61bf02f77103e1e5f3e4f683b55a56e7',
 ]);
 
+$rejected = static function (array $data): bool {
+    try {
+        FrontendRuntimeLock::fromArray($data);
+    } catch (RuntimeException) {
+        return true;
+    }
+
+    return false;
+};
+
 foreach ([
     static function (array &$data): void { $data['runtime'] = 'other-framework'; },
     static function (array &$data): void { $data['bundle_id'] = $data['pair_id']; },
     static function (array &$data): void { $data['publication_profile'] = 'unverified-copy'; },
     static function (array &$data): void { $data['schema'] = 'larena.ui.frontend_runtime_lock.v4'; unset($data['schema_version']); },
     static function (array &$data): void { $data['schema_version'] = 4; },
+    // A lock in the current shape that declares the legacy version is refused (it is no legacy lock).
+    static function (array &$data): void { $data['schema_version'] = 5; },
     static function (array &$data): void { unset($data['schema_version']); },
     static function (array &$data): void { $data['framework_registry']['compatibility_id'] = 'sf-v5.4.0-local.2-wrong-wrong'; },
     static function (array &$data): void { $data['framework_registry']['relative_path'] = '../registry.json'; },
@@ -110,21 +141,31 @@ foreach ([
     static function (array &$data): void { $data['ui']['mount'] = '../ui'; },
     static function (array &$data): void { $data['ui']['files'] = 0; },
     static function (array &$data): void { $data['ui']['files'] = '2671'; },
-    static function (array &$data): void { $data['larena']['tree'] = 'distr'; },
-    static function (array &$data): void { $data['larena']['mount'] = 'ui'; },
-    static function (array &$data): void { unset($data['larena']); },
+    static function (array &$data): void { $data['packages']['larena']['tree'] = 'distr'; },
+    static function (array &$data): void { $data['packages']['larena']['mount'] = 'ui'; },
+    static function (array &$data): void { $data['packages']['larena']['mount'] = 'admin'; },
+    static function (array &$data): void { unset($data['packages']['larena']); },
+    static function (array &$data): void { unset($data['packages']); },
+    static function (array &$data): void { $data['packages'] = [$data['packages']['larena']]; },
+    // The legacy slot next to packages is refused: a lock names its packages once.
+    static function (array &$data): void { $data['larena'] = $data['packages']['larena']; },
+    static function (array &$data): void { $data['boot']['larena_base'] = 'larena/smart/'; },
     // A package built over another free release is refused: the two are always pinned together.
-    static function (array &$data): void { $data['larena']['requires_framework'] = 'ui-000000000000'; },
-    static function (array &$data): void { $data['larena']['release'] = 'larena-000000000000'; },
-    static function (array &$data): void { $data['larena']['repository'] = 'simai/ui-pro'; },
-    static function (array &$data): void { $data['larena']['package_path'] = 'src'; },
-    static function (array &$data): void { $data['larena']['builder']['revision'] = 'main'; },
-    static function (array &$data): void { $data['larena']['framework_source']['repository'] = 'simai/ui'; },
-    static function (array &$data): void { unset($data['larena']['receipt_sha256']); },
+    static function (array &$data): void { $data['packages']['larena']['requires_framework'] = 'ui-000000000000'; },
+    static function (array &$data): void { $data['packages']['larena']['release'] = 'larena-000000000000'; },
+    static function (array &$data): void { $data['packages']['larena']['repository'] = 'simai/ui-pro'; },
+    static function (array &$data): void { $data['packages']['larena']['package_path'] = 'src'; },
+    static function (array &$data): void { $data['packages']['larena']['builder']['revision'] = 'main'; },
+    static function (array &$data): void { $data['packages']['larena']['framework_source']['repository'] = 'simai/ui'; },
+    static function (array &$data): void { unset($data['packages']['larena']['receipt_sha256']); },
+    static function (array &$data): void { unset($data['packages']['larena']['manifest_sha256']); },
+    static function (array &$data): void { unset($data['packages']['larena']['licence']); },
+    static function (array &$data): void { $data['packages']['larena']['licence'] = ['ref' => 'Apache-2.0']; },
+    static function (array &$data): void { $data['packages']['larena']['licence']['tier'] = 'Bundled Larena'; },
+    static function (array &$data): void { $data['packages']['larena']['licence']['ref'] = ''; },
     static function (array &$data): void { $data['components']['sf-table']['package'] = 'framework'; },
     static function (array &$data): void { $data['components']['sf-button']['package'] = 'larena'; },
     static function (array &$data): void { $data['components']['sf-button']['package'] = 'pro'; },
-    static function (array &$data): void { $data['boot']['larena_base'] = 'ui/distr/'; },
     static function (array &$data): void { $data['framework_registry']['source']['files'] = 0; },
     static function (array &$data): void { $data['framework_registry']['source']['mount'] = 'smart'; },
     static function (array &$data): void { unset($data['framework_registry']['source']); },
@@ -144,22 +185,344 @@ foreach ([
     static function (array &$data): void { $data['components']['sf-button']['css'] = ''; },
     static function (array &$data): void { $data['components']['sf-button']['css'] = 'contract/button.css'; },
 ] as $mutate) {
-    $failed = false;
     $data = $lock->toArray();
     $mutate($data);
+    assert($rejected($data));
+}
+
+// The lock is named without a version; a lock written before the move (`….v6`, no schema_version) is still read.
+$labelled = $lock->toArray();
+$labelled['schema'] = 'larena.ui.frontend_runtime_lock.v6';
+unset($labelled['schema_version']);
+assert(FrontendRuntimeLock::fromArray($labelled)->pairId() === $lock->pairId());
+
+// A legacy lock (schema_version 5: one package in a top-level larena slot, its base in boot.larena_base) is read
+// as packages.larena, licence Apache-2.0 / bundled-larena; it comes back in the current shape.
+$legacyFrom = static function (array $current): array {
+    $legacy = [];
+    foreach ($current as $key => $value) {
+        if ($key === 'schema_version') {
+            $legacy[$key] = 5;
+        } elseif ($key === 'packages') {
+            $package = $value['larena'];
+            unset($package['licence']);
+            $legacy['larena'] = $package;
+        } elseif ($key === 'boot') {
+            $legacy['boot'] = [...$value, 'larena_base' => 'larena/smart/'];
+        } else {
+            $legacy[$key] = $value;
+        }
+    }
+
+    return $legacy;
+};
+$legacy = $legacyFrom($lock->toArray());
+$fromLegacy = FrontendRuntimeLock::fromArray($legacy);
+assert($fromLegacy->toArray() === $lock->toArray());
+assert($fromLegacy->bundleId() === $lock->bundleId() && $fromLegacy->larenaBase() === 'larena/smart/');
+assert($fromLegacy->packageLicence('larena') === ['ref' => 'Apache-2.0', 'tier' => 'bundled-larena']);
+assert($fromLegacy->publicationExpectation() === $lock->publicationExpectation());
+$legacyLabelled = $legacy;
+$legacyLabelled['schema'] = 'larena.ui.frontend_runtime_lock.v5';
+unset($legacyLabelled['schema_version']);
+assert(FrontendRuntimeLock::fromArray($legacyLabelled)->toArray() === $lock->toArray());
+foreach ([
+    static function (array &$data): void { $data['boot']['larena_base'] = 'ui/distr/'; },
+    static function (array &$data): void { unset($data['boot']['larena_base']); },
+    static function (array &$data): void { $data['packages'] = ['larena' => $data['larena']]; },
+    static function (array &$data): void { unset($data['larena']); },
+    static function (array &$data): void { $data['larena']['licence'] = ['ref' => 'LicenseRef-SIMAI-Pro', 'tier' => 'bundled-larena']; },
+    // The legacy shape is read only under its own version.
+    static function (array &$data): void { $data['schema_version'] = FrontendRuntimeLock::SCHEMA_VERSION; },
+] as $mutate) {
+    $data = $legacy;
+    $mutate($data);
+    assert($rejected($data));
+}
+
+// Two packages: each pinned over the same free release, mounted under its own name, composed in lock order.
+$second = '0123456789abcdef0123456789abcdef01234567';
+$twoPackages = static function (array $current, string $commit): array {
+    $data = $current;
+    $data['packages']['admin'] = [
+        ...$data['packages']['larena'],
+        'release' => 'admin-' . substr($commit, 0, 12),
+        'commit' => $commit,
+        'mount' => 'admin',
+        'sha256' => str_repeat('a', 64),
+        'files' => 3,
+        'licence' => ['ref' => 'LicenseRef-SIMAI-Pro', 'tier' => 'bundled-larena'],
+    ];
+    $data['components']['sf-admin-menu'] = [
+        ...$data['components']['sf-admin-menu'],
+        'source' => 'admin/smart/admin-menu',
+        'javascript' => 'admin/smart/admin-menu/js/admin-menu.js',
+        'css' => 'admin/smart/admin-menu/css/admin-menu.css',
+        'package' => 'admin',
+    ];
+    $data['pair_id'] = FrontendRuntimeLock::composePairId($data['ui']['commit'], array_map(
+        static fn (array $package): string => $package['commit'],
+        $data['packages'],
+    ));
+    $data['bundle_id'] = FrontendRuntimeLock::composeBundleId($data['pair_id'], $data['framework_registry']['file_sha256'], $data['publication_profile']);
+
+    return $data;
+};
+$two = FrontendRuntimeLock::fromArray($twoPackages($lock->toArray(), $second));
+assert($two->pairId() === 'ui-e19da1d40f07-larena-3f6c86da4dd6-admin-0123456789ab');
+assert($two->bundleId() === 'ui-e19da1d40f07-larena-3f6c86da4dd6-admin-0123456789ab-registry-35a02d9c-exact-git-tree-v2');
+assert($two->packageIds() === ['larena' => 'larena-3f6c86da4dd6', 'admin' => 'admin-0123456789ab']);
+assert($two->packageBases() === ['larena' => 'larena/smart/', 'admin' => 'admin/smart/']);
+assert($two->packageLicence('admin') === ['ref' => 'LicenseRef-SIMAI-Pro', 'tier' => 'bundled-larena']);
+// The boot config declares every pinned package, in lock order.
+assert($two->bootPackagesScript('/b/') === '{larena:{base:"\/b\/larena\/smart\/"},admin:{base:"\/b\/admin\/smart\/"}}');
+assert(array_column($two->publicationExpectation()['sources'], 'mount') === ['ui', 'larena', 'admin', 'contract']);
+assert(in_array('admin/smart/admin-menu/js/admin-menu.js', $two->requiredRuntimeFiles(), true));
+$twoSources = $two->publicationSources('/tmp/ui', ['admin' => '/tmp/package-admin.tar', 'larena' => '/tmp/package-larena.tar']);
+assert(array_column($twoSources, 'repository') === ['/tmp/ui', '/tmp/package-larena.tar', '/tmp/package-admin.tar', '/tmp/ui']);
+foreach ([
+    static fn () => $two->publicationSources('/tmp/ui', '/tmp/package-larena.tar'),
+    static fn () => $two->publicationSources('/tmp/ui', ['larena' => '/tmp/package-larena.tar']),
+] as $call) {
+    $failed = false;
     try {
-        FrontendRuntimeLock::fromArray($data);
+        $call();
     } catch (RuntimeException) {
         $failed = true;
     }
     assert($failed);
 }
+foreach ([
+    // The order is part of the identity: the packages listed the other way round give another pair id.
+    static function (array &$data): void { $data['packages'] = array_reverse($data['packages'], true); },
+    static function (array &$data): void { $data['packages']['admin']['requires_framework'] = 'ui-000000000000'; },
+    static function (array &$data): void { $data['packages']['admin']['release'] = 'larena-0123456789ab'; },
+    static function (array &$data): void { $data['packages']['admin']['mount'] = 'larena'; },
+    static function (array &$data): void { $data['components']['sf-admin-menu']['javascript'] = 'larena/smart/admin-menu/js/admin-menu.js'; },
+    static function (array &$data): void { $data['packages']['contract'] = $data['packages']['admin']; },
+] as $mutate) {
+    $data = $two->toArray();
+    $mutate($data);
+    assert($rejected($data));
+}
 
-// The lock is named without a version; a lock written before the move (`….v5`, no schema_version) is still read.
-assert($lock->toArray()['schema'] === 'larena.ui.frontend_runtime_lock' && $lock->toArray()['schema_version'] === 5);
-$legacy = $lock->toArray();
-$legacy['schema'] = 'larena.ui.frontend_runtime_lock.v5';
-unset($legacy['schema_version']);
-assert(FrontendRuntimeLock::fromArray($legacy)->pairId() === $lock->pairId());
+// Asset sync over a two-package fixture: the packager copies every package into its own mount, the publisher
+// installs both, and a hash mismatch of either package fails closed.
+$fixture = sys_get_temp_dir() . '/larena-ui-two-package-lock-' . bin2hex(random_bytes(6));
+// A child's output goes to files, not pipes: one that fills a pipe nobody reads yet would never finish.
+$run = static function (array $command, ?string $cwd = null) use ($fixture): array {
+    @mkdir($fixture, 0700, true);
+    $capture = $fixture . '/.run-' . bin2hex(random_bytes(4));
+    $process = proc_open(
+        $command,
+        [0 => ['file', '/dev/null', 'r'], 1 => ['file', $capture . '.out', 'w'], 2 => ['file', $capture . '.err', 'w']],
+        $pipes,
+        $cwd,
+    );
+    assert(is_resource($process));
+    $result = [proc_close($process), (string) file_get_contents($capture . '.out'), (string) file_get_contents($capture . '.err')];
+    unlink($capture . '.out');
+    unlink($capture . '.err');
+
+    return $result;
+};
+$removeTree = static function (string $path) use (&$removeTree): void {
+    if (is_link($path) || is_file($path)) {
+        unlink($path);
+        return;
+    }
+    if (!is_dir($path)) {
+        return;
+    }
+    foreach (scandir($path) ?: [] as $entry) {
+        if ($entry !== '.' && $entry !== '..') {
+            $removeTree($path . '/' . $entry);
+        }
+    }
+    rmdir($path);
+};
+try {
+    $repository = $fixture . '/ui';
+    $files = [
+        'distr/core/css/core.min.css' => "body{}\n",
+        'distr/core/js/core.min.js' => "window.sf=1;\n",
+        'distr/core/js/smart-base.js' => "window.sfBase=1;\n",
+        'distr/smart/buttons/js/buttons.js' => "window.sfButton=1;\n",
+        'contracts/generated/framework-contract-registry.json' => "{\"compatibility\":{}}\n",
+        'contracts/generated/documentation-source.json' => "{}\n",
+    ];
+    foreach ($files as $path => $contents) {
+        @mkdir(dirname($repository . '/' . $path), 0700, true);
+        file_put_contents($repository . '/' . $path, $contents);
+    }
+    $git = static function (string ...$arguments) use ($run, $repository): string {
+        [$exit, $stdout] = $run(['git', '-C', $repository, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+            '-c', 'commit.gpgsign=false', ...$arguments]);
+        assert($exit === 0);
+
+        return $stdout;
+    };
+    $git('init', '-q');
+    $git('add', '.');
+    $git('commit', '-q', '-m', 'fixture');
+    $uiCommit = trim($git('rev-parse', 'HEAD'));
+    $archiveSha = static fn (string $tree): string => hash('sha256', $git('archive', '--format=tar', $uiCommit, $tree));
+    $packageTar = static function (string $path, array $members) use ($run): string {
+        $script = 'import io,sys,tarfile,json' . "\n"
+            . 'members=json.loads(sys.argv[2])' . "\n"
+            . 'with tarfile.open(sys.argv[1],"w",format=tarfile.USTAR_FORMAT) as t:' . "\n"
+            . ' for n,c in members.items():' . "\n"
+            . '  d=c.encode();i=tarfile.TarInfo(n);i.size=len(d);i.mode=0o644;i.mtime=0;t.addfile(i,io.BytesIO(d))' . "\n";
+        [$exit] = $run(['python3', '-I', '-c', $script, $path, json_encode($members, JSON_THROW_ON_ERROR)]);
+        assert($exit === 0);
+
+        return (string) hash_file('sha256', $path);
+    };
+    $archives = [
+        'larena' => $fixture . '/package-larena.tar',
+        'admin' => $fixture . '/package-admin.tar',
+    ];
+    $packageFiles = [
+        'larena' => ['smart/table/js/table.js' => "window.sfTable=1;\n"],
+        'admin' => ['smart/admin-menu/js/admin-menu.js' => "window.sfAdminMenu=1;\n", 'smart/admin-menu/css/admin-menu.css' => ".m{}\n"],
+    ];
+    $packageEntry = static fn (string $name, string $commit, string $sha, int $count, string $licence): array => [
+        'release' => FrontendRuntimeLock::packageRelease($name, $commit),
+        'repository' => 'simai/larena-ui',
+        'tag' => null,
+        'commit' => $commit,
+        'tree' => 'smart',
+        'mount' => $name,
+        'sha256' => $sha,
+        'files' => $count,
+        'requires_framework' => 'ui-' . substr($uiCommit, 0, 12),
+        'package_path' => 'components',
+        'package_tree' => str_repeat('1', 40),
+        'framework_source' => ['repository' => 'simai/ui-source', 'revision' => str_repeat('2', 40)],
+        'builder' => ['repository' => 'simai/ui-builder', 'revision' => str_repeat('3', 40)],
+        'manifest_sha256' => str_repeat('4', 64),
+        'receipt_sha256' => str_repeat('5', 64),
+        'licence' => ['ref' => $licence, 'tier' => 'bundled-larena'],
+    ];
+    $registrySha = hash('sha256', $files['contracts/generated/framework-contract-registry.json']);
+    $fixtureLock = [
+        'schema' => FrontendRuntimeLock::SCHEMA,
+        'schema_version' => FrontendRuntimeLock::SCHEMA_VERSION,
+        'runtime' => 'simai-framework',
+        'pair_id' => '',
+        'bundle_id' => '',
+        'publication_profile' => 'exact-git-tree-v2',
+        'tag' => null,
+        'ui' => ['release' => 'ui-' . substr($uiCommit, 0, 12), 'repository' => 'simai/ui', 'tag' => null, 'commit' => $uiCommit,
+            'tree' => 'distr', 'mount' => 'ui', 'sha256' => $archiveSha('distr'), 'files' => 4],
+        'packages' => [
+            'larena' => $packageEntry('larena', str_repeat('6', 40), $packageTar($archives['larena'], $packageFiles['larena']), 1, 'Apache-2.0'),
+            'admin' => $packageEntry('admin', str_repeat('7', 40), $packageTar($archives['admin'], $packageFiles['admin']), 2, 'LicenseRef-SIMAI-Pro'),
+        ],
+        'framework_registry' => [
+            'schema_id' => 'simai.framework.contract-registry',
+            'compatibility_id' => 'ui-' . substr($uiCommit, 0, 12),
+            'profile' => 'plain-assets-v1',
+            'relative_path' => 'contract/contracts/generated/framework-contract-registry.json',
+            'file_sha256' => $registrySha,
+            'source' => ['tag' => null, 'commit' => $uiCommit, 'tree' => 'contracts/generated', 'mount' => 'contract',
+                'sha256' => $archiveSha('contracts/generated'), 'files' => 2, 'tree_oid' => trim($git('rev-parse', $uiCommit . ':contracts/generated'))],
+            'documentation_source' => ['schema' => 'docara.documentation_source.v1',
+                'relative_path' => 'contract/contracts/generated/documentation-source.json', 'file_sha256' => hash('sha256', "{}\n")],
+        ],
+        'boot' => ['css' => 'ui/distr/core/css/core.min.css', 'javascript' => 'ui/distr/core/js/core.min.js',
+            'smart_base' => 'ui/distr/core/js/smart-base.js', 'ui_base' => 'ui/distr/', 'smart_base_path' => 'ui/distr/smart/'],
+        'components' => [
+            'sf-button' => ['source' => 'ui/distr/smart/buttons', 'javascript' => 'ui/distr/smart/buttons/js/buttons.js', 'css' => null, 'attributes' => [], 'package' => 'framework'],
+            'sf-table' => ['source' => 'larena/smart/table', 'javascript' => 'larena/smart/table/js/table.js', 'css' => null, 'attributes' => [], 'package' => 'larena'],
+            'sf-admin-menu' => ['source' => 'admin/smart/admin-menu', 'javascript' => 'admin/smart/admin-menu/js/admin-menu.js',
+                'css' => 'admin/smart/admin-menu/css/admin-menu.css', 'attributes' => [], 'package' => 'admin'],
+        ],
+    ];
+    $fixtureLock['pair_id'] = FrontendRuntimeLock::composePairId($uiCommit, ['larena' => str_repeat('6', 40), 'admin' => str_repeat('7', 40)]);
+    $fixtureLock['bundle_id'] = FrontendRuntimeLock::composeBundleId($fixtureLock['pair_id'], $registrySha, 'exact-git-tree-v2');
+    $fixtureRuntime = FrontendRuntimeLock::fromArray($fixtureLock);
+    assert($fixtureRuntime->bundleId() === 'ui-' . substr($uiCommit, 0, 12) . '-larena-666666666666-admin-777777777777-registry-'
+        . substr($registrySha, 0, 8) . '-exact-git-tree-v2');
+
+    $packager = dirname(__DIR__, 2) . '/scripts/package-frontend-runtime-artifact.py';
+    $package = static function (array $lockData, string $output, array $archiveArguments) use ($fixture, $packager, $repository, $run): array {
+        $lockPath = $fixture . '/lock-' . bin2hex(random_bytes(4)) . '.json';
+        file_put_contents($lockPath, json_encode($lockData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n");
+
+        return $run(['python3', $packager, '--lock', $lockPath, '--ui-repository', $repository, ...$archiveArguments, '--output-root', $output]);
+    };
+    $archiveArguments = ['--package-archive', 'larena=' . $archives['larena'], '--package-archive', 'admin=' . $archives['admin']];
+    [$exit, $stdout, $stderr] = $package($fixtureLock, $fixture . '/out', $archiveArguments);
+    assert($exit === 0, $stderr);
+    $artifact = $fixture . '/out/' . $fixtureRuntime->bundleId();
+    $manifest = json_decode((string) file_get_contents($artifact . '/manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+    assert(array_column($manifest['sources'], 'mount') === ['ui', 'larena', 'admin', 'contract']);
+    assert(array_column($manifest['sources'], 'archive') === ['sources/ui.tar.gz', 'sources/larena.tar.gz', 'sources/admin.tar.gz', 'sources/contract.tar.gz']);
+    assert(is_file($artifact . '/sources/larena.tar.gz') && is_file($artifact . '/sources/admin.tar.gz'));
+
+    // Every package's archive is required; a package left out is refused.
+    [$exit] = $package($fixtureLock, $fixture . '/out-missing', ['--package-archive', 'larena=' . $archives['larena']]);
+    assert($exit !== 0);
+    // A hash mismatch of either package fails closed and names that package.
+    foreach (['larena', 'admin'] as $name) {
+        $drifted = $fixtureLock;
+        $drifted['packages'][$name]['sha256'] = str_repeat('0', 64);
+        [$exit, , $stderr] = $package($drifted, $fixture . '/out-drift-' . $name, $archiveArguments);
+        assert($exit !== 0 && str_contains($stderr, 'runtime_archive_sha256_mismatch:' . $name), $stderr);
+    }
+
+    // The publisher installs both packages into their mounts of the bundle.
+    $public = $fixture . '/public';
+    mkdir($public, 0700, true);
+    (new VerifiedAssetBundlePublisher())->publishArtifactDirectory(
+        $fixtureRuntime->publicationExpectation(),
+        $artifact,
+        $public,
+        $fixture . '/state/sf-active.json',
+    );
+    $bundle = $public . '/' . $fixtureRuntime->bundleId();
+    assert(file_get_contents($bundle . '/larena/smart/table/js/table.js') === "window.sfTable=1;\n");
+    assert(file_get_contents($bundle . '/admin/smart/admin-menu/js/admin-menu.js') === "window.sfAdminMenu=1;\n");
+    foreach ($fixtureRuntime->requiredRuntimeFiles() as $required) {
+        assert(is_file($bundle . '/' . $required), $required);
+    }
+
+    // An artifact whose package archive was swapped fails integrity for that package, whichever it is.
+    foreach (['larena', 'admin'] as $name) {
+        $tampered = $fixture . '/tampered-' . $name;
+        $run(['cp', '-R', $artifact, $tampered]);
+        $other = $name === 'larena' ? 'admin' : 'larena';
+        copy($artifact . '/sources/' . $other . '.tar.gz', $tampered . '/sources/' . $name . '.tar.gz');
+        $failed = null;
+        try {
+            (new VerifiedAssetBundlePublisher())->publishArtifactDirectory(
+                $fixtureRuntime->publicationExpectation(),
+                $tampered,
+                $fixture . '/public-' . $name,
+                $fixture . '/state-' . $name . '/sf-active.json',
+            );
+        } catch (RuntimeException $exception) {
+            $failed = $exception->getMessage();
+        }
+        assert(is_string($failed) && str_ends_with($failed, ':' . $name), (string) $failed);
+    }
+
+    // A legacy one-package lock is still packaged with --larena-package-archive, into the same manifest bytes.
+    $single = $fixtureLock;
+    unset($single['packages']['admin'], $single['components']['sf-admin-menu']);
+    $single['pair_id'] = FrontendRuntimeLock::composePairId($uiCommit, ['larena' => str_repeat('6', 40)]);
+    $single['bundle_id'] = FrontendRuntimeLock::composeBundleId($single['pair_id'], $registrySha, 'exact-git-tree-v2');
+    FrontendRuntimeLock::fromArray($single);
+    [$exit, $current, $stderr] = $package($single, $fixture . '/out-single', ['--larena-package-archive', $archives['larena']]);
+    assert($exit === 0, $stderr);
+    $singleLegacy = $legacyFrom($single);
+    assert(FrontendRuntimeLock::fromArray($singleLegacy)->bundleId() === $single['bundle_id']);
+    [$exit, $legacyRun, $stderr] = $package($singleLegacy, $fixture . '/out-single-legacy', ['--larena-package-archive', $archives['larena']]);
+    assert($exit === 0, $stderr);
+    assert(json_decode($current, true)['manifest_sha256'] === json_decode($legacyRun, true)['manifest_sha256']);
+} finally {
+    $removeTree($fixture);
+}
 
 echo "FrontendRuntimeLockTest passed.\n";

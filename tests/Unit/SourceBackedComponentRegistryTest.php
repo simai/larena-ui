@@ -12,7 +12,7 @@ assert($lock->tag() === null);
 assert($lock->pairId() === 'ui-e19da1d40f07-larena-3f6c86da4dd6');
 assert(str_starts_with($lock->pairId(), 'ui-'));
 assert($lock->toArray()['ui']['commit'] === 'e19da1d40f07c52ea9f47990d8805375cc8b6258');
-assert($lock->toArray()['larena']['commit'] === '3f6c86da4dd6e003a00d39e25e8330bc851db5ce');
+assert($lock->package('larena')['commit'] === '3f6c86da4dd6e003a00d39e25e8330bc851db5ce');
 
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'ui/distr/smart/buttons');

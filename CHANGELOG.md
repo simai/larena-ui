@@ -1,5 +1,6 @@
 # Changelog
 
+- The runtime lock names its component packages in `packages.<name>` (schema_version 6), each with its release, commit, archive hash, mount (its name), builder inputs and `licence: {ref, tier}`; the one package today is `larena` (Apache-2.0, bundled-larena). A lock written before (schema_version 5, a top-level `larena` slot and `boot.larena_base`) is still read as `packages.larena`. A package's base is `<mount>/<tree>/`; the boot config declares every package (`SF_BOOT_CONFIG.packages.<name> = {base}`). Identity is composed in lock order: `ui-<12>` + `-<name>-<12>` per package, then `-registry-<8>-exact-git-tree-v2`, so the single-package bundle id is unchanged. The packager takes `--package-archive <name>=<path>` per package (`--larena-package-archive` names the one pinned package).
 - Keep unsaved column choices visible on a revision conflict and let the user refresh the layer revision before retrying.
 
 ## Unreleased — current Framework pair
