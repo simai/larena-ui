@@ -48,7 +48,7 @@ const railCounter = (row) => {
 };
 
 const railIcon = (name, counter) => html`<span class="sf-badge-anchor sf-badge-anchor--size-1/2 sf-badge-anchor--square sf-admin-nav-rail-anchor">${icon(name, "sf-admin-nav-row-icon")}${counter
-    ? html`<span class="sf-badge sf-badge--anchored sf-badge--danger sf-badge--dot" aria-hidden="true" title=${counter.phrase}></span>`
+    ? html`<span class="sf-badge sf-badge--anchored sf-badge--error sf-badge--dot" aria-hidden="true" title=${counter.phrase}></span>`
     : nothing}</span>`;
 
 const mark = (site) => html`<span class="sf-admin-nav-mark" aria-hidden="true">${site?.mark || getInitials(site?.label ?? "")}</span>`;

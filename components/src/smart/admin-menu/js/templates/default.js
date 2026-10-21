@@ -203,7 +203,7 @@ function renderCounter(item, compact) {
     ></sf-badge>`;
   }
   return html`<span
-    class="sf-badge sf-badge--main sf-badge--danger sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center${counter.dot ? " sf-badge--dot" : ""}"
+    class="sf-badge sf-badge--main sf-badge--error sf-badge--size-1/3 sf-admin-menu-item-counter inline-flex flex-nowrap justify-center items-center${counter.dot ? " sf-badge--dot" : ""}"
     aria-hidden="true"
     title=${counter.phrase}
   >${counter.text}</span>`;

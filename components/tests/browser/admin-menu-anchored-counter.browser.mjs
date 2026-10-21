@@ -198,7 +198,7 @@ try {
       {
         const fills = {};
         for (const [mode, compact] of [['compact', 'compact="true"'], ['expanded', '']]) {
-          const page = await open({width, theme, body: ITEMS.replace('COMPACT', compact) + '<span id="ref" class="sf-badge sf-badge--main sf-badge--danger">1</span>'});
+          const page = await open({width, theme, body: ITEMS.replace('COMPACT', compact) + '<span id="ref" class="sf-badge sf-badge--main sf-badge--error">1</span>'});
           fills[mode] = await page.evaluate(() => ({
             counter: getComputedStyle(document.querySelector('#m .sf-admin-menu-main [data-panel-id="inbox"] .sf-badge')).backgroundColor,
             danger: getComputedStyle(document.getElementById('ref')).backgroundColor,

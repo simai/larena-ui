@@ -67,11 +67,11 @@ test('the navigation rail anchors a row\'s counter on its icon', async () => {
   // The rail icon is a 1/2 step, so the counter is a danger dot, the number in
   // the row's name (owner, 2026-10-21).
   assert.match(template, /class="sf-badge-anchor sf-badge-anchor--size-1\/2 sf-badge-anchor--square sf-admin-nav-rail-anchor">\$\{icon\(name, "sf-admin-nav-row-icon"\)\}/);
-  assert.match(template, /<span class="sf-badge sf-badge--anchored sf-badge--danger sf-badge--dot" aria-hidden="true" title=\$\{counter\.phrase\}><\/span>/);
+  assert.match(template, /<span class="sf-badge sf-badge--anchored sf-badge--error sf-badge--dot" aria-hidden="true" title=\$\{counter\.phrase\}><\/span>/);
   // Counters take the danger role in both modes.
   const items = await read('src/smart/admin-menu/js/templates/default.js');
   assert.doesNotMatch(items, /<sf-badge[^>]*scheme="primary"/);
-  assert.match(items, /sf-badge--main sf-badge--danger sf-badge--size-1\/3 sf-admin-menu-item-counter/);
+  assert.match(items, /sf-badge--main sf-badge--error sf-badge--size-1\/3 sf-admin-menu-item-counter/);
   assert.doesNotMatch(template, /sf-admin-nav-attention" size="1\/3" scheme="primary"/);
   assert.match(template, /\$\{compact \? railIcon\(row\.icon, railCounter\(row\)\)/);
   assert.match(template, /aria-label=\$\{compact \? nameWithCounter\(row\.label, railCounter\(row\)\) : nothing\}/);
