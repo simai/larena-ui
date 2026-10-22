@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-c408b1c544f9-larena-9f3e80fb16e3",
-  "bundle_id": "ui-c408b1c544f9-larena-9f3e80fb16e3-registry-8bfdb6e5-exact-git-tree-v2",
+  "pair_id": "ui-f2f3e8f912cf-larena-2d4acf45e73f",
+  "bundle_id": "ui-f2f3e8f912cf-larena-2d4acf45e73f-registry-eee18594-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-c408b1c544f9",
+    "release": "ui-f2f3e8f912cf",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "c408b1c544f94b19b20a0bd2ae953e5bb67a6d50",
+    "commit": "f2f3e8f912cf618b95b509040465e618208e7322",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "b74a16573fca1fa73578a42d6895f6565da6fbac11692c4b132433393b7ce06a",
+    "sha256": "9fb1007e1d0ec7034739ee5ac22e26342fc7dad77635d7f8cbefe25b6acfbd79",
     "files": 8563
   },
   "packages": {
     "larena": {
-      "release": "larena-9f3e80fb16e3",
+      "release": "larena-2d4acf45e73f",
       "repository": "simai/ui-admin",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "9f3e80fb16e3d66d860ddea8828f6640a0ac5ca4",
+      "commit": "2d4acf45e73f0e65809726ca6553336edd808125",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "8c53e5430a0eb015a3aa9eb1114bcb8ccb1000aa140ad0a71706667c29469fa8",
+      "sha256": "dadbd49b77bfcbf4eba45379ecb46b4b7ee43a12c10fc7c792bcea9cdd00a0f3",
       "files": 62,
-      "requires_framework": "ui-c408b1c544f9",
+      "requires_framework": "ui-f2f3e8f912cf",
       "package_path": "components",
-      "package_tree": "f2e34be0a0fba0120f7361b15ec840d3b01a3be4",
+      "package_tree": "08018d2a5e83c7d56cdb5f5ce10265cb3a795f19",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "148f5becc9b336cb5684702ed128fd0833b0eed9"
+        "revision": "8dce3f88a508571c6a93542c593eea354763c49b"
       },
       "builder": {
         "repository": "simai/ui-builder",
         "revision": "0460ee479efeb5735a095149519ae3f039a878f5"
       },
-      "manifest_sha256": "7866912c68b01f66bb401c7d2ff1895220b33b739aa3edc3d664b7e66aeaac02",
-      "receipt_sha256": "25df7ef3d6c25e075f6883524d00ca2fd1578ff28e6e45b029bbb7c4d3de5c53",
+      "manifest_sha256": "b158f3ba59888f1e5fb32e13dc27c06a0fe9e2ab8afd76e5c4c7d3f189f1909b",
+      "receipt_sha256": "e18e9905897a743c3be97ee17e9e88ad794d7016a9952fa6499c97c1613f1927",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-c408b1c544f9",
+    "compatibility_id": "ui-f2f3e8f912cf",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "8bfdb6e565b09a8e58b057fd392dd6c5de4f27aa986a7d2932770287a4c67fc5",
+    "file_sha256": "eee18594bcc851c58dad73843117de83ce5d20b4cadffaa375cc52ed4e4973a6",
     "source": {
       "tag": null,
-      "commit": "eda97bf44b8c6fa868f28a6f2960633d8c46d0f0",
+      "commit": "7da5ee993f183b0e4b65e3cf48d9980ab8a18aa3",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "0495f8a6e2f68d003b43882ea0aaedcd7f6f139d33ff754f2a74cd063f6df36d",
+      "sha256": "14c6afeef97529212685254a61505c8f83bd8bf824f52f4a14d806f4899cb7da",
       "files": 2,
-      "tree_oid": "446e67e2dd6500786e6c4adce392eff3d078b6bd"
+      "tree_oid": "d468c04cbf35ae3c4658b72cf11dd413839cdc0a"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "114bd78bfd103e2ba1e95df91b54dd425767a4fab7503a6ff67ddcea7ada7c71"
+      "file_sha256": "0a8dbfc3e88351c11053af370fdaa5f630fa856b244b1e6bee89cccba53fd1ed"
     }
   },
   "boot": {
