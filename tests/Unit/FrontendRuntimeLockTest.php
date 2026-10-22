@@ -155,7 +155,7 @@ foreach ([
     // A package built over another free release is refused: the two are always pinned together.
     static function (array &$data): void { $data['packages']['larena']['requires_framework'] = 'ui-000000000000'; },
     static function (array &$data): void { $data['packages']['larena']['release'] = 'larena-000000000000'; },
-    static function (array &$data): void { $data['packages']['larena']['repository'] = 'simai/ui-pro'; },
+    static function (array &$data): void { $data['packages']['larena']['repository'] = 'simai/ui-chat'; },
     static function (array &$data): void { $data['packages']['larena']['package_path'] = 'src'; },
     static function (array &$data): void { $data['packages']['larena']['builder']['revision'] = 'main'; },
     static function (array &$data): void { $data['packages']['larena']['framework_source']['repository'] = 'simai/ui'; },
@@ -193,7 +193,7 @@ foreach ([
 }
 
 // Sources and releases are separate. A package is built from an allowed source (ComponentPackageRequirements::
-// SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin) and released from an allowed release repository
+// SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin, simai/ui-pro) and released from an allowed release repository
 // (simai/larena-ui). A lock without release_repository is released from its repository, as before the split.
 $pinned = $lock->toArray();
 $pinnedName = array_key_first($pinned['packages']);
@@ -224,7 +224,7 @@ $adminSourced['packages'][$pinnedName]['repository'] = 'simai/ui-admin';
 foreach ([
     // An unknown source is refused.
     ['repository', 'simai/elsewhere', 'ui_frontend_runtime_source_invalid:' . $pinnedName],
-    ['repository', 'simai/ui-pro', 'ui_frontend_runtime_source_invalid:' . $pinnedName],
+    ['repository', 'simai/ui-chat', 'ui_frontend_runtime_source_invalid:' . $pinnedName],
     // An ui-admin source without a release repository would be released from ui-admin, which publishes no releases.
     ['release_repository', null, 'ui_frontend_runtime_package_release_repository_invalid:' . $pinnedName],
     ['release_repository', 'simai/ui-admin', 'ui_frontend_runtime_package_release_repository_invalid:' . $pinnedName],

@@ -48,11 +48,12 @@ final class ComponentPackageRequirements
     public const ANY_RELEASE = '*';
     /**
      * The repositories a component set may be built from: package_source.repository of its receipt, `repository` in
-     * the lock. The Larena admin set moved its source from components/ of simai/larena-ui to simai/ui-admin (owner
-     * decision 2026-10-22); a later set (the chat kit) adds its repository here. FrontendRuntimeLock and the Root
-     * release scripts read this one list.
+     * the lock. The Larena admin set moved its source from components/ of simai/larena-ui to simai/ui-admin and then,
+     * with the advanced Smart components a second kit needs, to simai/ui-pro (owner decisions 2026-10-22); the
+     * earlier sources stay here so the locks they pin keep validating. A later set (the chat kit) adds its
+     * repository here. FrontendRuntimeLock and the Root release scripts read this one list.
      */
-    public const SOURCE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-admin'];
+    public const SOURCE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro'];
     /**
      * Where the sets are released: the GitHub release <set>-<12> with package-<set>.tar, .sha256 and
      * package-receipt.json. The lock names it in `release_repository`; a lock without it is released from its
