@@ -8,6 +8,21 @@ claim production readiness or readiness of every Larena package.
 
 Documentation of SIMAI Framework and its components (in Russian): https://ui.simai.io/
 
+## Admin components moved to simai/ui-admin
+
+The admin Smart components (`sf-table`, `sf-data-view`, `sf-property-view`,
+`sf-admin-menu`; the component package `larena`) used to live here in
+`components/`. Since 2026-10-22 their source is
+[`simai/ui-admin`](https://github.com/simai/ui-admin), in its `components/`
+folder, under that repository's licence; their history up to the move stays
+readable here (the last commit that wrote them is
+`1cee9e276c26834031153f25ac2a8f9ba5cbb26c`). Versions published from this
+repository remain Apache-2.0.
+
+The built package archives (`package-larena.tar` with its sha256 and receipt)
+are still published as releases of this repository, where Larena's installer
+and checks fetch them: https://github.com/simai/larena-ui/releases.
+
 Universal UI/frontend package for Larena smart components, backend-first rendering, hydration, design packs, UI asset graph, component registry, playground and frontend behavior contracts.
 
 ## Smart Registry and reference contract
