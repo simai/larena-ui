@@ -2,68 +2,69 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-3d6921cd2516-larena-1cee9e276c26",
-  "bundle_id": "ui-3d6921cd2516-larena-1cee9e276c26-registry-5f77fd17-exact-git-tree-v2",
+  "pair_id": "ui-c408b1c544f9-larena-9f3e80fb16e3",
+  "bundle_id": "ui-c408b1c544f9-larena-9f3e80fb16e3-registry-8bfdb6e5-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-3d6921cd2516",
+    "release": "ui-c408b1c544f9",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "3d6921cd25169dc9b29fd277466bd0dccbef1691",
+    "commit": "c408b1c544f94b19b20a0bd2ae953e5bb67a6d50",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "4c2f659f5471f56574acd4db3f0fb5b7781e2f8d00f92b1a441e639df02061ce",
+    "sha256": "b74a16573fca1fa73578a42d6895f6565da6fbac11692c4b132433393b7ce06a",
     "files": 8563
   },
   "packages": {
     "larena": {
-      "release": "larena-1cee9e276c26",
-      "repository": "simai/larena-ui",
+      "release": "larena-9f3e80fb16e3",
+      "repository": "simai/ui-admin",
       "tag": null,
-      "commit": "1cee9e276c26834031153f25ac2a8f9ba5cbb26c",
+      "release_repository": "simai/larena-ui",
+      "commit": "9f3e80fb16e3d66d860ddea8828f6640a0ac5ca4",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "defe2ef922ad9189bfc206eb0abb8e46d3656176c83f938f741f11361233c88b",
+      "sha256": "8c53e5430a0eb015a3aa9eb1114bcb8ccb1000aa140ad0a71706667c29469fa8",
       "files": 62,
-      "requires_framework": "ui-3d6921cd2516",
+      "requires_framework": "ui-c408b1c544f9",
       "package_path": "components",
-      "package_tree": "dd035bdfaebdb209906f6718b085a2bc96031388",
+      "package_tree": "f2e34be0a0fba0120f7361b15ec840d3b01a3be4",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "f6835d3393f37b796d40b8692efda4b23f5faff8"
+        "revision": "148f5becc9b336cb5684702ed128fd0833b0eed9"
       },
       "builder": {
         "repository": "simai/ui-builder",
         "revision": "0460ee479efeb5735a095149519ae3f039a878f5"
       },
-      "manifest_sha256": "05550899662f66f6ff36c019b90c23e18c86eaa46cd0405007c478958bf3f713",
-      "receipt_sha256": "4fcbffd5ed2f74f8d8bd1e54dc044925ee50d176977305138e2c3111559be3a1",
+      "manifest_sha256": "7866912c68b01f66bb401c7d2ff1895220b33b739aa3edc3d664b7e66aeaac02",
+      "receipt_sha256": "25df7ef3d6c25e075f6883524d00ca2fd1578ff28e6e45b029bbb7c4d3de5c53",
       "licence": {
-        "ref": "Apache-2.0",
+        "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
       }
     }
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-3d6921cd2516",
+    "compatibility_id": "ui-c408b1c544f9",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "5f77fd1704cb8d3eae789a24a7d89d9b04176da14c8203817404807bf8d26942",
+    "file_sha256": "8bfdb6e565b09a8e58b057fd392dd6c5de4f27aa986a7d2932770287a4c67fc5",
     "source": {
       "tag": null,
-      "commit": "00524a87c19cf381ed6ce67c2d439790714ed72d",
+      "commit": "eda97bf44b8c6fa868f28a6f2960633d8c46d0f0",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "872629bdf4a8829327818e4ab997c9644a028cecef59b5fe1a4cfc4752e0f33d",
+      "sha256": "0495f8a6e2f68d003b43882ea0aaedcd7f6f139d33ff754f2a74cd063f6df36d",
       "files": 2,
-      "tree_oid": "8a9a422bca29c1e024aeb176a9bad87b47f6cb96"
+      "tree_oid": "446e67e2dd6500786e6c4adce392eff3d078b6bd"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "7af2cdce8884049721f9b40f9605aa241546d3a53049daf080a8caa7064d27c1"
+      "file_sha256": "114bd78bfd103e2ba1e95df91b54dd425767a4fab7503a6ff67ddcea7ada7c71"
     }
   },
   "boot": {

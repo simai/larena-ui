@@ -75,11 +75,17 @@ $adminSourced['packages']['larena']['release_repository'] = 'simai/larena-ui';
 $adminSourcedCheck = ComponentPackageRequirements::fromComposerManifests([$admin])->check($adminSourced);
 assert($adminSourcedCheck['status'] === 'passed' && $adminSourcedCheck['errors'] === []);
 assert(ComponentPackageRequirements::releaseRepository($adminSourced['packages']['larena']) === 'simai/larena-ui');
-assert(ComponentPackageRequirements::releaseRepository($lock['packages']['larena']) === $lock['packages']['larena']['repository']);
+// Without release_repository a set is released from its own repository (locks written before the split).
+$unsplit = $lock['packages']['larena'];
+unset($unsplit['release_repository']);
+assert(ComponentPackageRequirements::releaseRepository($unsplit) === $unsplit['repository']);
 $larenaUiOnly = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'source_repositories' => ['simai/larena-ui']]]);
 assert(ComponentPackageRequirements::fromComposerManifests([$larenaUiOnly])->check($adminSourced)['errors']
     === ['component_package_source_repository_not_accepted:larena:larena/admin']);
-assert(ComponentPackageRequirements::fromComposerManifests([$larenaUiOnly])->check($lock)['errors'] === []);
+$larenaUiSourced = $lock;
+$larenaUiSourced['packages']['larena']['repository'] = 'simai/larena-ui';
+unset($larenaUiSourced['packages']['larena']['release_repository']);
+assert(ComponentPackageRequirements::fromComposerManifests([$larenaUiOnly])->check($larenaUiSourced)['errors'] === []);
 $unknownSource = $lock;
 $unknownSource['packages']['larena']['repository'] = 'simai/elsewhere';
 $unknownSource['packages']['larena']['release_repository'] = 'simai/larena-ui';
