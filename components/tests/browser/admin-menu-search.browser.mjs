@@ -253,9 +253,20 @@ try {
     field.value = 'платёж';
     field.dispatchEvent(new Event('input', {bubbles: true}));
   });
-  await page.waitForTimeout(350);
-  const yo = await page.evaluate(() => [...document.querySelectorAll('#m .sf-admin-menu-search-row')]
-    .map((row) => row.textContent.replace(/\s+/gu, ' ').trim()));
+  // Wait for the list to answer this query rather than for a duration: the debounce restarts whenever the
+  // field is re-rendered under the typing, so a fixed pause can still read the previous query's rows.
+  const yo = await page.evaluate(async () => {
+    const rows = () => [...document.querySelectorAll('#m .sf-admin-menu-search-row')]
+      .map((row) => row.textContent.replace(/\s+/gu, ' ').trim());
+    for (let waited = 0; waited < 3000; waited += 50) {
+      const now = rows();
+      if (now.length && !now.some((text) => text.includes('Роли'))) {
+        return now;
+      }
+      await new Promise((done) => setTimeout(done, 50));
+    }
+    return rows();
+  });
   if (!yo.some((text) => text.includes('Платежи'))) {
     note({case: 'ё', got: yo, expected: 'платёж finds Платежи'});
   }
