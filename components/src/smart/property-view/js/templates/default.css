@@ -901,9 +901,10 @@
     border-radius: var(--sf-radius-1);
   }
 
-  .sf-property-view-hint {
-    cursor: help;
-  }
+  /* The hint is sf-help-mark now, not a glyph with a native title, so it carries
+     no hover cursor of its own: what stands on the label's line is a button, and
+     the mark's own stylesheet keeps it out of the line's height. The class is
+     kept as the hook a probe and a consumer already address the hint by. */
 
 
 

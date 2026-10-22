@@ -410,8 +410,18 @@ function renderField(context, field, editing, sectionKey = '', groupKey = '') {
                         ? html`<span class="sf-property-view-required color-error" aria-hidden="true">*</span>`
                         : nothing}
                 ${field.hint
-                        ? html`<i class="sf-icon sf-icon--size-2 sf-property-view-hint" tabindex="0" role="img"
-                                  title=${String(field.hint)} aria-label=${String(field.hint)}>info</i>`
+                        // The hint is the Framework's own affordance for a hint,
+                        // sf-help-mark: a button that opens a short explanation on
+                        // a press, by touch, by pointer and by keyboard alike, and
+                        // announces it politely. It was a glyph carrying the words
+                        // in a native `title`, which needs a hover -- so on a touch
+                        // device the hint could not be read at all (Larena storage
+                        // QA, 2026-10-22). The accessible name stays the hint
+                        // itself, as it was on the glyph's aria-label: `label` names
+                        // the button, `text` is the explanation it opens.
+                        ? html`<sf-help-mark class="sf-property-view-hint"
+                                             label=${String(field.hint)}
+                                             text=${String(field.hint)}></sf-help-mark>`
                         : nothing}
                 ${field.rare ? html`<span class="sf-property-view-rare color-on-surface-variant">${context.rareText}</span>` : nothing}
                 ${field.inherited && !editing

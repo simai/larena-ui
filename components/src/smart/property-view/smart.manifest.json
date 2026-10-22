@@ -46,6 +46,7 @@
       "smart.dropdown",
       "smart.file-preview",
       "smart.file-upload",
+      "smart.help-mark",
       "smart.icon-buttons",
       "smart.inputs",
       "smart.list-item",
@@ -1113,15 +1114,15 @@
       },
       {
         "path": "src/smart/property-view/js/templates/default.js",
-        "sha256": "c498c83be0a682158d8dc5eadf336cd7347d47a0b31be1bca5b8c1d4b2ad4f4d"
+        "sha256": "143e7d4a24b50fff002cd12a6195e15d70aedab7dad2610b36df8bb4106011d6"
       },
       {
         "path": "src/smart/property-view/js/templates/default.css",
-        "sha256": "1c31ca1451c2c17c978b9202a9a56b298d09bcc725109503c3fd2fccf7756bff"
+        "sha256": "b27d193dd10ff0c933ab65aa7605b5724c995d43dfbde00a036cf4940e1677ea"
       },
       {
         "path": "src/smart/property-view/rule.js",
-        "sha256": "00a8ccc6a8abe65341aa203f3cf1d0dddf2734a3bd9971b90dc9209f8e261a3c"
+        "sha256": "98d1c2f96404201314f3682d636ae1a9d83897efd7a49cc92f2e00220a588a4e"
       },
       {
         "path": "src/core/contracts/ports/simai.property-view-port/1.4.0/port.json",
@@ -1129,7 +1130,7 @@
       },
       {
         "path": "src/smart/property-view/docs.md",
-        "sha256": "016ea112aab7f1e5014a992340f7c9c9ba3679cfb9847c1e8d2f92fd05a60499"
+        "sha256": "0688949a3b01441b26d91c02efca9ef8c58eedc374b6bd65d53738e375cef520"
       }
     ],
     "generated_runtime": []

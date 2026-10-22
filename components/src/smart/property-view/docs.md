@@ -90,6 +90,15 @@ view twice would see two different objects.
 
 Showing them changes no value. It is a view decision, not a write.
 
+## Field hints
+
+A field's `hint` is drawn beside its label as `sf-help-mark`: a «?» that opens
+the words on a press — by pointer, by finger and by Enter or space — and
+announces them politely. It was a glyph carrying the words in a native `title`,
+which needs a hover, so a touch device had no way to read a hint at all. The
+button's accessible name is the hint itself, so what a screen reader says on
+focus is what the mark opens.
+
 ## Inputs
 
 | input | what it does |
