@@ -10,6 +10,9 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 $lockFile = dirname(__DIR__, 2) . '/resources/sf/runtime-lock.json';
 $lock = json_decode((string) file_get_contents($lockFile), true, 512, JSON_THROW_ON_ERROR);
 assert(is_array($lock));
+// The pinned pair moves with every repin; the test reads it from the lock instead of naming it.
+$pinnedRelease = $lock['packages']['larena']['release'];
+$pinnedFramework = $lock['packages']['larena']['requires_framework'];
 
 /** @param array<string, mixed> $sets */
 function componentConsumer(string $name, array $sets): array
@@ -22,12 +25,12 @@ $admin = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'rep
 // ok: the bundled lock pins the set admin declares, built over the pinned Framework release, with every hash.
 $ok = ComponentPackageRequirements::fromComposerManifests([$admin, ['name' => 'larena/core', 'extra' => []]])->check($lock);
 assert($ok['schema'] === 'larena.ui.component_package_check' && $ok['status'] === 'passed' && $ok['errors'] === []);
-assert($ok['framework_release'] === 'ui-e19da1d40f07');
-assert($ok['pinned'] === ['larena' => 'larena-3f6c86da4dd6']);
+assert($ok['framework_release'] === $pinnedFramework);
+assert($ok['pinned'] === ['larena' => $pinnedRelease]);
 assert($ok['declared'] === ['larena' => ['larena/admin']] && $ok['unrequested'] === []);
 
 // An exact release list accepts the pinned release.
-$exact = componentConsumer('larena/admin', ['larena' => ['releases' => ['larena-000000000000', 'larena-3f6c86da4dd6']]]);
+$exact = componentConsumer('larena/admin', ['larena' => ['releases' => ['larena-000000000000', $pinnedRelease]]]);
 assert(ComponentPackageRequirements::fromComposerManifests([$exact])->check($lock)['errors'] === []);
 
 // missing: a package needs a set the lock does not pin.
@@ -71,7 +74,7 @@ $twoSets['packages']['chat'] = [
 ];
 $extra = ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets);
 assert($extra['status'] === 'passed' && $extra['unrequested'] === ['chat']);
-assert($extra['pinned'] === ['larena' => 'larena-3f6c86da4dd6', 'chat' => 'chat-cccccccccccc']);
+assert($extra['pinned'] === ['larena' => $pinnedRelease, 'chat' => 'chat-cccccccccccc']);
 $twoSets['packages']['chat']['requires_framework'] = 'ui-000000000000';
 assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets)['errors'] === ['component_package_framework_mismatch:chat']);
 $twoSets['packages']['chat']['requires_framework'] = $lock['ui']['release'];
