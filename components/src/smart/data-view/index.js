@@ -1397,6 +1397,49 @@ class SfDataView extends HTMLElement {
         return applied;
     }
 
+    // The catalogue of row actions the table names in its own constructor --
+    // the eye for «view», the pencil for «edit». It is captured once and kept,
+    // because the projection writes its own narrowed list onto the very same
+    // property: reading that list back would make the narrowed list the
+    // catalogue, which is what the single read guarded against.
+    //
+    // The capture used to be one `??=` read of the table's own property with an
+    // empty list behind it, which is where the defect was.
+    // A list the view draws itself stands in the shadow template, so it is in
+    // the tree before sf-table is defined, and an element that has not upgraded
+    // carries no ACTIONS_SETTINGS_ROW at all: `[]` was cached, and `??=` never
+    // looked again, because `[]` is not nullish. From then on every id was
+    // unknown -- the warning below fired and «view» came out as a generic word
+    // instead of the eye, on every list (Larena storage QA, 2026-10-22). So the
+    // capture looks again while it holds nothing, and the list this view wrote
+    // is remembered so it is never taken for the table's own.
+    _captureRowActions(table) {
+        if (this._knownRowActions?.length) return this._knownRowActions;
+        const own = table?.ACTIONS_SETTINGS_ROW;
+        const named = Array.isArray(own) && own.length > 0 && own !== this._projectedRowActions;
+        this._knownRowActions = named ? own : [];
+        if (!named) this._awaitRowActions();
+        return this._knownRowActions;
+    }
+
+    // Waited for once, and the projection drawn again when the definition
+    // lands: on a page whose list has settled nothing else would make the view
+    // draw, and the catalogue can only be read from an upgraded element. The
+    // Loader is told which tag is wanted, as it is for the move dialog's own
+    // elements.
+    _awaitRowActions() {
+        if (this._awaitingRowActions) return;
+        this._awaitingRowActions = true;
+        globalThis.SF?.Loader?.ensureSmartElementLoaded?.("sf-table");
+        // Read off globalThis and asked for softly: a stand that renders this
+        // view over a document of its own need not keep a registry, and a view
+        // that cannot wait simply keeps the fallback words.
+        const defined = globalThis.customElements?.whenDefined?.("sf-table");
+        defined?.then?.(() => {
+            if (this.isConnected) this._renderProjection();
+        });
+    }
+
     _renderProjection() {
         // The saved-view controls appear when the host keeps saved views and
         // not before: this is the only place that runs both when a host is set
@@ -1482,14 +1525,14 @@ class SfDataView extends HTMLElement {
             const own = this.getAttribute("aria-label");
             if (own && slot && !slot.assignedElements().length) table.setAttribute("aria-label", own);
             const allowed = new Set(this.records.flatMap((record) => Array.isArray(record.actions) ? record.actions : []));
-            // The catalogue is read once and kept. This used to narrow the
-            // table's own list in place, which is destructive: the first
-            // projection of an empty list left the catalogue empty, and from
-            // then on every id the host named was unknown. «view» came out as a
-            // link labelled "view" instead of the eye, and in a narrow column
-            // the label broke mid-word and set the row height.
-            this._knownRowActions ??= table.ACTIONS_SETTINGS_ROW ?? [];
-            const known = this._knownRowActions;
+            // The catalogue is read once and kept, from an element that has
+            // upgraded: narrowing the table's own list in place is destructive,
+            // and so is capturing from an element that has nothing to read yet.
+            // Both left the catalogue empty, and from then on every id the host
+            // named was unknown -- «view» came out as a link labelled "view"
+            // instead of the eye, and in a narrow column the label broke
+            // mid-word and set the row height. _captureRowActions above.
+            const known = this._captureRowActions(table);
             // The host's own actions are named by its catalogue (row_actions,
             // port 1.8.0); an action the catalogue groups is offered once, as
             // the group, with a submenu of the members a record allows. Which
@@ -1537,6 +1580,9 @@ class SfDataView extends HTMLElement {
                 groups.get(group).members.push(single(id));
             }
             table.ACTIONS_SETTINGS_ROW = listed;
+            // Remembered by identity, so the capture never reads this narrowed
+            // list back as the table's own catalogue.
+            this._projectedRowActions = listed;
             // A list whose every action lives in the row menu has no actions
             // column to draw.
             if (listed.length && listed.every((action) => action.inline === false)) {
