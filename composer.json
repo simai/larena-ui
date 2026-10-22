@@ -71,6 +71,7 @@
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedComponentRegistryTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkContractRegistryTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeLockTest.php",
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/ComponentPackageRequirementsTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedAssetProvenanceLockTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartManagerTest.php",
@@ -98,6 +99,7 @@
     "analyse": "@php scripts/analyse.php",
     "validate:larena": "@php scripts/validate-larena-package.php",
     "evidence:check": "@php scripts/check-evidence.php",
+    "component-packages:check": "@php scripts/check-component-packages.php",
     "scope:check": "@php tools/larena-scope-check.php",
     "quality:gate": [
       "@validate:larena",
@@ -111,6 +113,7 @@
       "@test:composition-schema",
       "@test:composition-list",
       "@test:dependency",
+      "@component-packages:check",
       "@evidence:check",
       "@scope:check"
     ],
