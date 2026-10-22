@@ -20,7 +20,11 @@ function componentConsumer(string $name, array $sets): array
     return ['name' => $name, 'extra' => ['larena' => ['component_packages' => $sets]]];
 }
 
-$admin = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'repository' => 'simai/larena-ui']]);
+$admin = componentConsumer('larena/admin', ['larena' => [
+    'releases' => '*',
+    'release_repository' => 'simai/larena-ui',
+    'source_repositories' => ['simai/larena-ui', 'simai/ui-admin'],
+]]);
 
 // ok: the bundled lock pins the set admin declares, built over the pinned Framework release, with every hash.
 $ok = ComponentPackageRequirements::fromComposerManifests([$admin, ['name' => 'larena/core', 'extra' => []]])->check($lock);
@@ -43,10 +47,51 @@ $older = componentConsumer('larena/admin', ['larena' => ['releases' => ['larena-
 $notAccepted = ComponentPackageRequirements::fromComposerManifests([$older])->check($lock);
 assert($notAccepted['errors'] === ['component_package_release_not_accepted:larena:larena/admin']);
 
-// repository: the pinned set is built from another repository than the declaration names.
-$elsewhere = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'repository' => 'simai/elsewhere']]);
+// The declaration is read as release repository and accepted sources.
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->declarations() === ['larena/admin' => ['larena' => [
+    'releases' => '*',
+    'release_repository' => 'simai/larena-ui',
+    'source_repositories' => ['simai/larena-ui', 'simai/ui-admin'],
+]]]);
+
+// release repository: the pinned set is released from another repository than the declaration names.
+$elsewhere = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'release_repository' => 'simai/elsewhere']]);
 assert(ComponentPackageRequirements::fromComposerManifests([$elsewhere])->check($lock)['errors']
-    === ['component_package_repository_mismatch:larena:larena/admin']);
+    === ['component_package_release_repository_mismatch:larena:larena/admin']);
+// `repository`, the key used before sources and releases were split, is the release repository.
+$aliased = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'repository' => 'simai/larena-ui']]);
+assert(ComponentPackageRequirements::fromComposerManifests([$aliased])->declarations()['larena/admin']['larena']
+    === ['releases' => '*', 'release_repository' => 'simai/larena-ui', 'source_repositories' => null]);
+assert(ComponentPackageRequirements::fromComposerManifests([$aliased])->check($lock)['errors'] === []);
+$aliasedElsewhere = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'repository' => 'simai/elsewhere']]);
+assert(ComponentPackageRequirements::fromComposerManifests([$aliasedElsewhere])->check($lock)['errors']
+    === ['component_package_release_repository_mismatch:larena:larena/admin']);
+
+// source repositories: a set built from simai/ui-admin and released from simai/larena-ui passes; a declaration that
+// accepts only larena-ui refuses it; a lock that names an unknown source or release repository fails for everyone.
+$adminSourced = $lock;
+$adminSourced['packages']['larena']['repository'] = 'simai/ui-admin';
+$adminSourced['packages']['larena']['release_repository'] = 'simai/larena-ui';
+$adminSourcedCheck = ComponentPackageRequirements::fromComposerManifests([$admin])->check($adminSourced);
+assert($adminSourcedCheck['status'] === 'passed' && $adminSourcedCheck['errors'] === []);
+assert(ComponentPackageRequirements::releaseRepository($adminSourced['packages']['larena']) === 'simai/larena-ui');
+assert(ComponentPackageRequirements::releaseRepository($lock['packages']['larena']) === $lock['packages']['larena']['repository']);
+$larenaUiOnly = componentConsumer('larena/admin', ['larena' => ['releases' => '*', 'source_repositories' => ['simai/larena-ui']]]);
+assert(ComponentPackageRequirements::fromComposerManifests([$larenaUiOnly])->check($adminSourced)['errors']
+    === ['component_package_source_repository_not_accepted:larena:larena/admin']);
+assert(ComponentPackageRequirements::fromComposerManifests([$larenaUiOnly])->check($lock)['errors'] === []);
+$unknownSource = $lock;
+$unknownSource['packages']['larena']['repository'] = 'simai/elsewhere';
+$unknownSource['packages']['larena']['release_repository'] = 'simai/larena-ui';
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($unknownSource)['errors'] === [
+    'component_package_source_repository_invalid:larena',
+    'component_package_source_repository_not_accepted:larena:larena/admin',
+]);
+// Released from where it is built (no release_repository) works only for a release repository.
+$unreleased = $adminSourced;
+unset($unreleased['packages']['larena']['release_repository']);
+assert(ComponentPackageRequirements::fromComposerManifests([])->check($unreleased)['errors']
+    === ['component_package_release_repository_invalid:larena']);
 
 // framework mismatch: a pinned set built over another Framework release.
 $drifted = $lock;
@@ -90,6 +135,14 @@ foreach ([
     ['Larena' => ['releases' => '*']],
     ['ui' => ['releases' => '*']],
     ['larena' => ['releases' => '*', 'repository' => 'not a repository']],
+    ['larena' => ['releases' => '*', 'release_repository' => 'not a repository']],
+    // The alias and its new name together are ambiguous.
+    ['larena' => ['releases' => '*', 'repository' => 'simai/larena-ui', 'release_repository' => 'simai/larena-ui']],
+    ['larena' => ['releases' => '*', 'source_repositories' => 'simai/ui-admin']],
+    ['larena' => ['releases' => '*', 'source_repositories' => []]],
+    ['larena' => ['releases' => '*', 'source_repositories' => ['simai/ui-admin', 'not a repository']]],
+    ['larena' => ['releases' => '*', 'source_repositories' => ['admin' => 'simai/ui-admin']]],
+    ['larena' => ['releases' => '*', 'source_repository' => 'simai/ui-admin']],
     [['releases' => '*']],
 ] as $index => $sets) {
     $invalid = ComponentPackageRequirements::fromComposerManifests([componentConsumer('larena/admin', $sets)])->check($lock);

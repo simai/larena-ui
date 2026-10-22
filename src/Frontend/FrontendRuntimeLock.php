@@ -12,9 +12,15 @@ use RuntimeException;
  * (`packages`, in lock order) and the release's contract registry.
  *
  * Lock format (schema_version 6):
- *   packages: {<name>: {release, repository, tag, commit, tree, mount, sha256, files, requires_framework,
- *              package_path, package_tree, framework_source, builder, manifest_sha256, receipt_sha256,
- *              licence: {ref, tier}}}
+ *   packages: {<name>: {release, repository, [release_repository], tag, commit, tree, mount, sha256, files,
+ *              requires_framework, package_path, package_tree, framework_source, builder, manifest_sha256,
+ *              receipt_sha256, licence: {ref, tier}}}
+ * `repository` is where the package is built from (package_source.repository of its receipt), one of
+ * ComponentPackageRequirements::SOURCE_REPOSITORIES; `release_repository` is where its GitHub release (the archive) is
+ * published, one of ComponentPackageRequirements::RELEASE_REPOSITORIES. A lock written before the two were split has
+ * no release_repository: the package is released from its `repository`.
+ * licence.ref is an SPDX licence expression (ids and LicenseRef-…, AND/OR/WITH, parentheses); licence.tier says how
+ * Larena carries the package (bundled-larena: covered by the Larena licence).
  * A lock written before packages were a list (schema_version 5) holds its one package in a top-level `larena` slot
  * and its Smart tree base in boot.larena_base; it is read as packages.larena (licence Apache-2.0, bundled-larena).
  *
@@ -32,8 +38,10 @@ final readonly class FrontendRuntimeLock
     private const LEGACY_PACKAGE = 'larena';
     /** The licence the package of a legacy lock carries: the components package was Apache-2.0 when it was written. */
     private const LEGACY_LICENCE = ['ref' => 'Apache-2.0', 'tier' => 'bundled-larena'];
-    /** Component packages are built from components/ of simai/larena-ui. */
-    private const PACKAGE_REPOSITORIES = ['simai/larena-ui'];
+    /** The longest licence expression a lock may name. */
+    private const LICENCE_EXPRESSION_LENGTH = 256;
+    /** How deep a licence expression may nest its parentheses. */
+    private const LICENCE_EXPRESSION_DEPTH = 8;
     /** Mounts and component owners a package may not be named after. */
     private const RESERVED_NAMES = ['ui', 'contract', 'framework'];
 
@@ -128,6 +136,12 @@ final readonly class FrontendRuntimeLock
         }
 
         return $bases;
+    }
+
+    /** Where a package's GitHub release (package-<name>.tar) is published. */
+    public function packageReleaseRepository(string $name): string
+    {
+        return (string) ComponentPackageRequirements::releaseRepository($this->package($name));
     }
 
     /** @return array{ref:string,tier:string} */
@@ -415,8 +429,9 @@ final readonly class FrontendRuntimeLock
     }
 
     /**
-     * A component package: the Smart tree the Framework builder made from components/ of its repository, built over
-     * exactly the pinned free release, mounted under its own name.
+     * A component package: the Smart tree the Framework builder made from components/ of an allowed source repository,
+     * built over exactly the pinned free release, released from an allowed release repository, mounted under its own
+     * name.
      */
     private function assertPackage(mixed $name, mixed $package, string $frameworkId): void
     {
@@ -425,10 +440,13 @@ final readonly class FrontendRuntimeLock
         }
         if (!is_array($package)
             || !array_key_exists('tag', $package) || $package['tag'] !== null
-            || !in_array($package['repository'] ?? null, self::PACKAGE_REPOSITORIES, true)
+            || !in_array($package['repository'] ?? null, ComponentPackageRequirements::SOURCE_REPOSITORIES, true)
             || !$this->validPublicationSource($package)
         ) {
             throw new RuntimeException('ui_frontend_runtime_source_invalid:' . $name);
+        }
+        if (!in_array(ComponentPackageRequirements::releaseRepository($package), ComponentPackageRequirements::RELEASE_REPOSITORIES, true)) {
+            throw new RuntimeException('ui_frontend_runtime_package_release_repository_invalid:' . $name);
         }
         if (($package['tree'] ?? null) !== 'smart' || ($package['mount'] ?? null) !== $name
             || ($package['package_path'] ?? null) !== 'components'
@@ -444,7 +462,7 @@ final readonly class FrontendRuntimeLock
         }
         $licence = $package['licence'] ?? null;
         if (!is_array($licence) || array_keys($licence) !== ['ref', 'tier']
-            || preg_match('/^[A-Za-z0-9][A-Za-z0-9.+-]*$/', (string) ($licence['ref'] ?? '')) !== 1
+            || !self::licenceExpression($licence['ref'] ?? null)
             || preg_match('/^[a-z][a-z0-9-]*$/', (string) ($licence['tier'] ?? '')) !== 1
         ) {
             throw new RuntimeException('ui_frontend_runtime_package_licence_invalid:' . $name);
@@ -456,6 +474,97 @@ final readonly class FrontendRuntimeLock
         if (($package['requires_framework'] ?? null) !== $frameworkId) {
             throw new RuntimeException('ui_frontend_runtime_package_framework_mismatch:' . $name);
         }
+    }
+
+    /**
+     * An SPDX licence expression: licence ids (Apache-2.0, GPL-2.0+) and LicenseRef-…, joined by AND and OR, an
+     * exception after WITH, grouped by parentheses. Nothing else: no free text, no lower-case operators, bounded
+     * length and depth.
+     */
+    private static function licenceExpression(mixed $expression): bool
+    {
+        if (!is_string($expression) || $expression === '' || strlen($expression) > self::LICENCE_EXPRESSION_LENGTH
+            || preg_match('/\A[A-Za-z0-9.+() -]+\z/', $expression) !== 1
+            || preg_match('/\A | \z|  /', $expression) === 1
+            || preg_match_all('/[()]|[^ ()]+/', $expression, $matches) === false
+        ) {
+            return false;
+        }
+        $tokens = $matches[0];
+        $position = 0;
+
+        return self::licenceOr($tokens, $position, 0) && $position === count($tokens);
+    }
+
+    /** @param list<string> $tokens */
+    private static function licenceOr(array $tokens, int &$position, int $depth): bool
+    {
+        if (!self::licenceAnd($tokens, $position, $depth)) {
+            return false;
+        }
+        while (($tokens[$position] ?? null) === 'OR') {
+            ++$position;
+            if (!self::licenceAnd($tokens, $position, $depth)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** @param list<string> $tokens */
+    private static function licenceAnd(array $tokens, int &$position, int $depth): bool
+    {
+        if (!self::licenceTerm($tokens, $position, $depth)) {
+            return false;
+        }
+        while (($tokens[$position] ?? null) === 'AND') {
+            ++$position;
+            if (!self::licenceTerm($tokens, $position, $depth)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** @param list<string> $tokens a licence id with an optional WITH exception, or a parenthesized expression */
+    private static function licenceTerm(array $tokens, int &$position, int $depth): bool
+    {
+        $token = $tokens[$position] ?? null;
+        if ($token === '(') {
+            ++$position;
+            if ($depth >= self::LICENCE_EXPRESSION_DEPTH || !self::licenceOr($tokens, $position, $depth + 1)
+                || ($tokens[$position] ?? null) !== ')') {
+                return false;
+            }
+            ++$position;
+
+            return true;
+        }
+        if (!is_string($token) || self::licenceOperator($token)
+            || preg_match('/\A(?:LicenseRef-)?[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\+?\z/', $token) !== 1
+        ) {
+            return false;
+        }
+        ++$position;
+        if (($tokens[$position] ?? null) === 'WITH') {
+            $exception = $tokens[$position + 1] ?? null;
+            if (!is_string($exception) || self::licenceOperator($exception)
+                || preg_match('/\A(?:AdditionRef-)?[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?\z/', $exception) !== 1
+            ) {
+                return false;
+            }
+            $position += 2;
+        }
+
+        return true;
+    }
+
+    /** The operators, in any case, are never ids: "mit and apache-2.0" is refused, not read as one id. */
+    private static function licenceOperator(string $token): bool
+    {
+        return in_array(strtoupper($token), ['AND', 'OR', 'WITH'], true);
     }
 
     /** @param array<string, string> $packageMounts name => mount */

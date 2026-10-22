@@ -190,6 +190,99 @@ foreach ([
     assert($rejected($data));
 }
 
+// Sources and releases are separate. A package is built from an allowed source (ComponentPackageRequirements::
+// SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin) and released from an allowed release repository
+// (simai/larena-ui). A lock without release_repository is released from its repository, as before the split.
+$pinned = $lock->toArray();
+$pinnedName = array_key_first($pinned['packages']);
+assert(is_string($pinnedName));
+assert(!array_key_exists('release_repository', $pinned['packages'][$pinnedName]));
+assert($lock->packageReleaseRepository($pinnedName) === $pinned['packages'][$pinnedName]['repository']);
+foreach (\Larena\Ui\Frontend\ComponentPackageRequirements::SOURCE_REPOSITORIES as $sourceRepository) {
+    $sourced = $pinned;
+    $sourced['packages'][$pinnedName]['repository'] = $sourceRepository;
+    $sourced['packages'][$pinnedName]['release_repository'] = 'simai/larena-ui';
+    $sourcedLock = FrontendRuntimeLock::fromArray($sourced);
+    assert($sourcedLock->package($pinnedName)['repository'] === $sourceRepository);
+    assert($sourcedLock->packageReleaseRepository($pinnedName) === 'simai/larena-ui');
+}
+$refusal = static function (array $data): ?string {
+    try {
+        FrontendRuntimeLock::fromArray($data);
+    } catch (RuntimeException $exception) {
+        return $exception->getMessage();
+    }
+
+    return null;
+};
+$adminSourced = $pinned;
+$adminSourced['packages'][$pinnedName]['repository'] = 'simai/ui-admin';
+foreach ([
+    // An unknown source is refused.
+    ['repository', 'simai/elsewhere', 'ui_frontend_runtime_source_invalid:' . $pinnedName],
+    ['repository', 'simai/ui-pro', 'ui_frontend_runtime_source_invalid:' . $pinnedName],
+    // An ui-admin source without a release repository would be released from ui-admin, which publishes no releases.
+    ['release_repository', null, 'ui_frontend_runtime_package_release_repository_invalid:' . $pinnedName],
+    ['release_repository', 'simai/ui-admin', 'ui_frontend_runtime_package_release_repository_invalid:' . $pinnedName],
+    ['release_repository', '', 'ui_frontend_runtime_package_release_repository_invalid:' . $pinnedName],
+] as [$field, $value, $error]) {
+    $data = $adminSourced;
+    if ($value === null) {
+        unset($data['packages'][$pinnedName][$field]);
+    } else {
+        $data['packages'][$pinnedName][$field] = $value;
+    }
+    assert($refusal($data) === $error, $field . '=' . var_export($value, true));
+}
+
+// licence.ref is an SPDX licence expression: ids, LicenseRef-…, AND/OR/WITH and parentheses; nothing else.
+foreach ([
+    'Apache-2.0',
+    'LicenseRef-SIMAI-Commercial',
+    'PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial',
+    'MIT AND (Apache-2.0 OR LicenseRef-SIMAI-Commercial)',
+    '(MIT OR Apache-2.0) AND BSD-3-Clause',
+    'GPL-2.0-or-later WITH Classpath-exception-2.0',
+    'GPL-2.0+ WITH AdditionRef-SIMAI-exception',
+    '( MIT OR Apache-2.0 )',
+] as $expression) {
+    $licensed = $pinned;
+    $licensed['packages'][$pinnedName]['licence']['ref'] = $expression;
+    assert(FrontendRuntimeLock::fromArray($licensed)->packageLicence($pinnedName)['ref'] === $expression, $expression);
+}
+foreach ([
+    '',
+    ' MIT',
+    'MIT ',
+    'MIT  OR Apache-2.0',
+    'MIT or Apache-2.0',
+    'MIT OR',
+    'OR MIT',
+    'MIT Apache-2.0',
+    'MIT AND AND Apache-2.0',
+    '(MIT OR Apache-2.0',
+    'MIT OR Apache-2.0)',
+    '()',
+    '(MIT) WITH Classpath-exception-2.0',
+    'MIT WITH',
+    'MIT WITH OR',
+    'Licensed to SIMAI customers only',
+    'Proprietary; see LICENSE.md',
+    "MIT\nOR Apache-2.0",
+    'MIT/Apache-2.0',
+    '-MIT',
+    'LicenseRef-',
+    str_repeat('(', 9) . 'MIT' . str_repeat(')', 9),
+    implode(' OR ', array_fill(0, 40, 'Apache-2.0')),
+] as $expression) {
+    $licensed = $pinned;
+    $licensed['packages'][$pinnedName]['licence']['ref'] = $expression;
+    assert($refusal($licensed) === 'ui_frontend_runtime_package_licence_invalid:' . $pinnedName, $expression);
+}
+$licensed = $pinned;
+$licensed['packages'][$pinnedName]['licence']['ref'] = ['MIT'];
+assert($rejected($licensed));
+
 // The lock is named without a version; a lock written before the move (`….v6`, no schema_version) is still read.
 $labelled = $lock->toArray();
 $labelled['schema'] = 'larena.ui.frontend_runtime_lock.v6';
