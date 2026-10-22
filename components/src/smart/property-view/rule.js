@@ -62,9 +62,14 @@ SF.RuleLoader["cl-property-view"] = {
     // renderer set instead -- so nothing would have caught its absence until a
     // page showed an element that never upgraded.
     { name: "cl-country-code" },
-    // The ⓘ beside a label carries its words in a title. sf-tooltip is the bubble
-    // itself rather than a wrapper around a trigger, so wrapping the glyph in one
-    // printed the hint as text beside the label.
+    // A field's hint beside its label is sf-help-mark, a button that opens the
+    // words on a press. It was a glyph carrying them in a native title, which
+    // needs a hover and left a touch device with no way to read the hint at all
+    // (Larena storage QA, 2026-10-22). sf-tooltip was tried first and is the
+    // wrong half of the pair: it is the bubble itself rather than a wrapper
+    // around a trigger, so wrapping the glyph in one printed the hint as text
+    // beside the label.
+    { name: "cl-help-mark" },
     // A group of related records composes a data view, which brings its own table
     // and page row through cl-data-view. Without the relation the group would hold
     // an undefined element: present, empty, and indistinguishable from a host that

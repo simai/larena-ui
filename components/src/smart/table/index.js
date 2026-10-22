@@ -481,6 +481,17 @@ class SfTable extends SfBaseElement {
                 {
                     name: this.text('deleteActionText'),
                     id: 'delete',
+                    // The kit marks its own delete destructive, as the template
+                    // menu already does (`danger: !isDeleted`): the row menu
+                    // draws a danger entry in `error`, and a host that narrows
+                    // this catalogue gets the entry back untouched, so naming
+                    // delete in a host catalogue only to restore the red row is
+                    // no longer the price of leaving it to the kit (Larena
+                    // storage QA, 2026-10-22). The icon in the actions column
+                    // keeps its stated `on-surface`: whether a destructive
+                    // inline icon-button paints `error` is a repaint of every
+                    // table, not a property of this entry.
+                    danger: true,
                     component: {
                         type: 'icon-button',
                         props: {
