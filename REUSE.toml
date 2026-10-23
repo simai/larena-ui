@@ -1,0 +1,16 @@
+version = 1
+SPDX-PackageName = "Larena UI"
+SPDX-PackageSupplier = "Rim Zabarov <rim@zabarov.com>"
+SPDX-PackageDownloadLocation = "https://github.com/simai/larena-ui"
+
+[[annotations]]
+path = "**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Rim Zabarov"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "resources/assets/source-backed-sf/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2008-2026 Rim Zabarov"
+SPDX-License-Identifier = "Apache-2.0"

@@ -405,7 +405,11 @@
     "tests/Unit/SmartComponentLibraryTest.php",
     "tests/Unit/SmartComponentReferenceTest.php",
     "tests/Unit/SmartFacadeTest.php",
-    "tests/Unit/SmartManagerTest.php"
+    "tests/Unit/SmartManagerTest.php",
+    "NOTICE",
+    "AUTHORS",
+    "CITATION.cff",
+    "REUSE.toml"
   ],
   "forbidden_files": [
     "config/*",
