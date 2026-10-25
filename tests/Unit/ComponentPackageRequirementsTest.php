@@ -23,7 +23,7 @@ function componentConsumer(string $name, array $sets): array
 $admin = componentConsumer('larena/admin', ['larena' => [
     'releases' => '*',
     'release_repository' => 'simai/larena-ui',
-    'source_repositories' => ['simai/larena-ui', 'simai/ui-admin'],
+    'source_repositories' => ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro'],
 ]]);
 
 // ok: the bundled lock pins the set admin declares, built over the pinned Framework release, with every hash.
@@ -51,7 +51,7 @@ assert($notAccepted['errors'] === ['component_package_release_not_accepted:laren
 assert(ComponentPackageRequirements::fromComposerManifests([$admin])->declarations() === ['larena/admin' => ['larena' => [
     'releases' => '*',
     'release_repository' => 'simai/larena-ui',
-    'source_repositories' => ['simai/larena-ui', 'simai/ui-admin'],
+    'source_repositories' => ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro'],
 ]]]);
 
 // release repository: the pinned set is released from another repository than the declaration names.

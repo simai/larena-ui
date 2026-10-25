@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-720203c5b5e5-larena-063c28143245",
-  "bundle_id": "ui-720203c5b5e5-larena-063c28143245-registry-dda7797e-exact-git-tree-v2",
+  "pair_id": "ui-045432a6fb24-larena-cf2521fb4694",
+  "bundle_id": "ui-045432a6fb24-larena-cf2521fb4694-registry-d5287c8e-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-720203c5b5e5",
+    "release": "ui-045432a6fb24",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1",
+    "commit": "045432a6fb2474758fbc8c47022800801e6333e8",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "4a082cc047e1a463927c6930d8b93a188e0d15280cf7d997e295bd5baed46508",
-    "files": 8669
+    "sha256": "eec2cbb93a2b73c1d1db2fb12eecc989ee76760a93d6d39ccd570df9a581ba74",
+    "files": 8701
   },
   "packages": {
     "larena": {
-      "release": "larena-063c28143245",
-      "repository": "simai/ui-admin",
+      "release": "larena-cf2521fb4694",
+      "repository": "simai/ui-pro",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "063c2814324592bc39ecdcb2b9379cca9fe09977",
+      "commit": "cf2521fb4694144f0ddcb9f9ea0ef61982fe8205",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "29b92548fc5b925bcf41aa64c6a91fbb75c2e4bf6737d388063a1b9aee03e5e7",
+      "sha256": "43e837d33158a0e3c0a3c88f769e6b4a74fe0d48403620b8f498e834433329e5",
       "files": 62,
-      "requires_framework": "ui-720203c5b5e5",
+      "requires_framework": "ui-045432a6fb24",
       "package_path": "components",
-      "package_tree": "a069201946e2d36a062408987f4136716450c8c1",
+      "package_tree": "cac8193159619a38804893553e5e666c0f86d582",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "aa81305b14f103def02dead1ffc0b0451c877f0f"
+        "revision": "3611b57e08b6f316eb3e90510206f7e286ae1a45"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "0460ee479efeb5735a095149519ae3f039a878f5"
+        "revision": "d0e093c4e44132978ce0b90d89da8878e5808ab5"
       },
-      "manifest_sha256": "da07876c99edd0c64749feb07682d0f25de16bc903101acbb0b8c6128100868e",
-      "receipt_sha256": "50ce3d8ed2d6e1342cbab86be818f794a19345ea7d282dcbe11a6923b4076060",
+      "manifest_sha256": "c70cebf1883c7c0d4177391559dc0bcb61768428d6096e614424751bf3a385e7",
+      "receipt_sha256": "d45bad4d96d9f4d4ad4c24317e2ef547f66be4042d3fbf90b15b31c2562ef341",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-720203c5b5e5",
+    "compatibility_id": "ui-045432a6fb24",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "dda7797e3b982665c765c114f9e7ed69cd6fdd08ea126a4f8b2c906351199293",
+    "file_sha256": "d5287c8e3ee4d9df191f4b8829d9f94a984a0bbc38a2d90960e81bbe6b5a5651",
     "source": {
       "tag": null,
-      "commit": "3d9bf903a590fc7c21e5ea14983742b0225edbe7",
+      "commit": "14f58a015c1a8901f3cbc5792acf7bafcd044ead",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "9096650f653997bff02ab46035d121da9867e488b1935be8b88b8ba34af642e2",
+      "sha256": "f02d687ce02a4682a60334f7b8d06ad1049f57724f7767da48b36c6f32783bc9",
       "files": 2,
-      "tree_oid": "7b184a99a37c25128aaa95a2174d631f536376e4"
+      "tree_oid": "c09e745862cea05890dbf93eb34d59565d687439"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "72635de0a3589d882f6139b48fe16536d757d906b945e8e6923aa3fa82243c7f"
+      "file_sha256": "888fc0f645f5f67830761ada74bee7cc3433dd2c64844a0c32e3aad8593476d6"
     }
   },
   "boot": {
