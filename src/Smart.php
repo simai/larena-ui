@@ -16,11 +16,23 @@ use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 /** Laravel-native entry point for pinned Simai Framework smart elements. */
 final class Smart
 {
-    /** @param array<string, mixed> $props */
-    public static function render(string $tag, array $props = [], ?SourceBackedComponentRegistry $registry = null): BackendRenderResult
+    /**
+     * @param array<string, mixed> $props The element's own Framework attributes, checked against the pinned runtime.
+     * @param array<string, string> $host Host attributes the page reads, never the element: `slot`, `hidden`, `style`
+     *                                    and `data-*` names the Framework does not own. They come first on the element.
+     * @param string $content Trusted inner markup from the same renderer (a Document's slot children), placed after
+     *                        the element's own children.
+     */
+    public static function render(string $tag, array $props = [], ?SourceBackedComponentRegistry $registry = null, array $host = [], string $content = ''): BackendRenderResult
     {
         $registry ??= SourceBackedComponentRegistry::bundled();
         $registry->assertPropsAllowed($tag, $props);
+        foreach (array_keys($host) as $name) {
+            if (preg_match('/^(?:slot|hidden|style|data-[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$/D', $name) !== 1
+                || $name === 'data-larena-smart-runtime' || array_key_exists($name, $props)) {
+                throw new \InvalidArgumentException('ui_smart_host_attribute_invalid:' . $tag . ':' . (string) $name);
+            }
+        }
 
         $hash = hash('sha256', json_encode($props, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $payload = null;
@@ -33,6 +45,7 @@ final class Smart
         if ($id !== null) {
             $attributes = ['id' => $id] + $attributes;
         }
+        $attributes = $host + $attributes;
         foreach ($props as $key => $value) {
             if ($key === 'data' && $tag === 'sf-table') {
                 $payload = $value;
@@ -80,7 +93,7 @@ final class Smart
                 . self::escape($paginationNextHref) . '">' . self::escape($label) . '</a>';
         }
 
-        $html = '<' . $tag . self::attributes($attributes) . '>' . $children . '</' . $tag . '>';
+        $html = '<' . $tag . self::attributes($attributes) . '>' . $children . $content . '</' . $tag . '>';
         if ($payload !== null && $id !== null) {
             if (!is_array($payload)) {
                 throw new \InvalidArgumentException('ui_smart_table_data_must_be_array');

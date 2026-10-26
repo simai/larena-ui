@@ -402,6 +402,8 @@
     "NOTICE",
     "AUTHORS",
     "CITATION.cff",
-    "REUSE.toml"
+    "REUSE.toml",
+    "src/Runtime/SfElementDocumentNodeTypes.php",
+    "tests/Unit/SfElementDocumentNodeTypesTest.php"
   ]
 }
