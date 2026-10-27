@@ -64,10 +64,11 @@
             }
         }
     };
-    document.addEventListener('sf-admin-menu-search', async (event) => {
+    document.addEventListener('sf-admin-menu-query', async (event) => {
+        if (event.detail?.kind !== 'menu') return;
         const menu = event.target?.closest?.('sf-admin-menu');
         const query = String(event.detail?.query ?? '').trim();
-        const requestId = event.detail?.requestId;
+        const requestId = event.detail?.['request-id'];
         if (!menu || typeof menu.setSearchResults !== 'function') return;
         searchRequest?.abort();
         if (query.length < 2) {
@@ -151,14 +152,15 @@
         }
     });
 
-    document.addEventListener('sf-admin-menu-settings-reset', async (event) => {
+    document.addEventListener('sf-admin-menu-reset', async (event) => {
+        if (event.detail?.kind !== 'settings') return;
         const menu = menuFromEvent(event);
         if (!menu) return;
         const target = event.detail?.target === 'system' ? 'system' : 'user';
         try {
             const result = await request(endpoint(menu, target, true), {
                 method: 'DELETE',
-                body: JSON.stringify({base_revision: event.detail?.base_revision}),
+                body: JSON.stringify({base_revision: event.detail?.['base-revision'] ?? event.detail?.base_revision}),
             });
             menu.applySettingsResult?.(result);
         } catch (error) {
@@ -410,7 +412,7 @@
         };
         const currentProfile = () => JSON.parse(JSON.stringify(profileForMode()));
 
-        listen(table, 'sf-table-query-intent', (event) => {
+        listen(table, 'sf-table-query', (event) => {
             if (!ownedEvent(event, table) || disposed || contextIds === null) return;
             const detail = event.detail;
             const ids = detail?.context?.record_ids;
@@ -433,16 +435,17 @@
             const origin = event.composedPath?.()[0] || event.target;
             return origin === component;
         };
-        listen(table, 'sf-table-action-intent', async (event) => {
+        listen(table, 'sf-table-apply', async (event) => {
             if (!ownedEvent(event, table) || disposed) return;
-            const detail = event.detail;
-            const valid = detail && typeof detail === 'object' && !Array.isArray(detail)
-                && Object.keys(detail).length === 2
-                && Object.hasOwn(detail, 'action_id') && Object.hasOwn(detail, 'record_ids')
-                && typeof detail.action_id === 'string' && detail.action_id.trim()
-                && Array.isArray(detail.record_ids) && detail.record_ids.length > 0
-                && Array.from(detail.record_ids).every(id => typeof id === 'string' && id.length > 0 || Number.isSafeInteger(id));
+            // apply {action, scope, ids, revisions} (standard 1.3.8), read as the {action_id, record_ids} the handlers take.
+            const given = event.detail;
+            const valid = given && typeof given === 'object' && !Array.isArray(given)
+                && Object.keys(given).every((key) => ['action', 'scope', 'ids', 'revisions'].includes(key))
+                && typeof given.action === 'string' && given.action.trim()
+                && Array.isArray(given.ids) && given.ids.length > 0
+                && Array.from(given.ids).every(id => typeof id === 'string' && id.length > 0 || Number.isSafeInteger(id));
             if (!valid) { setStatus('Некорректный запрос действия', 'error'); return; }
+            const detail = {action_id: given.action, record_ids: [...given.ids]};
             const registration = actionRegistrations.get(table);
             const handler = registration?.handlers.get(detail.action_id);
             if (!handler || registration.controller.signal.aborted) {
@@ -528,9 +531,9 @@
             event.preventDefault();
             toolbarSearch();
         });
-        listen(table, 'onSearchEnd', (event) => runQuery({search: String(event.detail || ''), page: 1}));
-        listen(table, 'onFilterUpdate', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
-        listen(table, 'onTemplateSave', (event) => {
+        listen(table, 'sf-table-search-change', (event) => runQuery({search: String(event.detail?.search || ''), page: 1}));
+        listen(table, 'sf-table-filter-change', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
+        listen(table, 'sf-table-template-save', (event) => {
             const profile = currentProfile();
             const incoming = Array.isArray(event.detail) ? event.detail : [event.detail];
             const byKey = new Map((profile.filters?.templates || []).map((item) => [item.key, item]));
@@ -543,23 +546,24 @@
                 runQuery({filters: selectedTemplate.data.values, page: 1});
             }
         });
-        listen(table, 'onColumnSettingsChange', (event) => {
+        listen(table, 'sf-table-save', (event) => {
+            if (event.detail?.kind !== 'columns') return;
             const profile = currentProfile();
             profile.columns = event.detail?.columnSettings || {};
             saveProfile(profile);
         });
-        listen(pagination, 'sf-page-change', (event) => runQuery({page: event.detail?.current || 1}));
-        listen(pagination, 'sf-page-size-change', (event) => {
+        listen(pagination, 'sf-pagination-change', (event) => runQuery({page: event.detail?.current || 1}));
+        listen(pagination, 'sf-pagination-size-change', (event) => {
             const profile = currentProfile();
-            profile.pagination = {page_size: event.detail?.pageSize || 10};
+            profile.pagination = {page_size: event.detail?.['page-size'] || 10};
             if (mode === 'system' ? state.system_endpoint : state.user_endpoint) saveProfile(profile);
-            runQuery({page: 1, page_size: event.detail?.pageSize || 10});
+            runQuery({page: 1, page_size: event.detail?.['page-size'] || 10});
         });
-        listen(pagination, 'sf-show-more', (event) => runQuery({page: Math.min((event.detail?.current || 1) + 1, event.detail?.pageCount || 1)}));
-        listen(pagination, 'sf-action-apply', (event) => {
+        listen(pagination, 'sf-pagination-load-more', (event) => runQuery({page: Math.min((event.detail?.current || 1) + 1, event.detail?.['page-count'] || 1)}));
+        listen(pagination, 'sf-pagination-apply', (event) => {
             if (!ownedEvent(event, pagination)) return;
             const actionId = event.detail?.action;
-            if (event.detail?.actionForAll === true) {
+            if (event.detail?.scope === 'filter') {
                 setStatus('Действие для всех записей не подключено', 'unavailable'); return;
             }
             if (typeof actionId !== 'string' || !actionRegistrations.get(table)?.handlers.has(actionId)

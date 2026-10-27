@@ -51,7 +51,7 @@ async function harness() {
 
 function intent(table, sequence, ids) {
     table.pendingSequence = sequence;
-    const event = new Event('sf-table-query-intent');
+    const event = new Event('sf-table-query');
     event.detail = {reason: 'context', sequence, context: {record_ids: ids}};
     table.dispatchEvent(event);
 }

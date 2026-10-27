@@ -411,7 +411,9 @@
     "CITATION.cff",
     "REUSE.toml",
     "src/Runtime/SfElementDocumentNodeTypes.php",
-    "tests/Unit/SfElementDocumentNodeTypesTest.php"
+    "tests/Unit/SfElementDocumentNodeTypesTest.php",
+    "tests/JavaScript/composition-routing-host.test.mjs",
+    "tests/JavaScript/dataview-host-lifecycle.test.mjs"
   ],
   "forbidden_files": [
     "config/*",

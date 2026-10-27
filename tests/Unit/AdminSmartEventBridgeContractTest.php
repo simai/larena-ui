@@ -18,14 +18,14 @@ assert(str_contains($bridge, "customElements.whenDefined('sf-admin-menu')"));
 assert(!str_contains($bridge, 'localStorage'));
 assert(str_contains($bridge, '[data-larena-dataview-workbench]'));
 assert(str_contains($bridge, 'runQuery({filters: selectedTemplate.data.values, page: 1})'));
-assert(str_contains($bridge, "listen(table, 'onFilterUpdate'"));
-assert(str_contains($bridge, "listen(table, 'onTemplateSave'"));
-assert(str_contains($bridge, "listen(table, 'onColumnSettingsChange'"));
-assert(str_contains($bridge, "listen(pagination, 'sf-page-change'"));
-assert(str_contains($bridge, "listen(pagination, 'sf-action-apply'"));
+assert(str_contains($bridge, "listen(table, 'sf-table-filter-change'"));
+assert(str_contains($bridge, "listen(table, 'sf-table-template-save'"));
+assert(str_contains($bridge, "listen(table, 'sf-table-save'"));
+assert(str_contains($bridge, "listen(pagination, 'sf-pagination-change'"));
+assert(str_contains($bridge, "listen(pagination, 'sf-pagination-apply'"));
 assert(str_contains($bridge, "'sf-data-view-create-request'"));
 // Framework row/bulk operations use the immutable typed port, not legacy data-view events.
-assert(str_contains($bridge, "listen(table, 'sf-table-action-intent'"));
+assert(str_contains($bridge, "listen(table, 'sf-table-apply'"));
 assert(str_contains($bridge, "Object.defineProperty(globalThis, 'LarenaDataviewActions'"));
 assert(str_contains($bridge, 'const actionRegistrations = new WeakMap()'));
 assert(str_contains($bridge, 'registration?.handlers.get(detail.action_id)'));
@@ -55,6 +55,6 @@ assert(str_contains($runtimeBridge, 'new MutationObserver(function (mutations)')
 assert(str_contains($runtimeBridge, "mutation.type === 'childList'"));
 assert(str_contains($runtimeBridge, 'selectionSyncTimer = setTimeout(syncPaginationSelection, 0)'));
 assert(str_contains($runtimeBridge, "attributeFilter: ['checked']"));
-assert(str_contains($runtimeBridge, "target.addEventListener('sf-table-selection-change'"));
+assert(str_contains($runtimeBridge, "target.addEventListener('sf-table-select'"));
 
 echo "AdminSmartEventBridgeContractTest passed.\n";

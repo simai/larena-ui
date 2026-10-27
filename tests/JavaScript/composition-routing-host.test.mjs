@@ -46,11 +46,11 @@ async function harness(endpoint) {
 }
 const intent = (table, ids, sequence) => {
     table.pendingSequence = sequence;
-    const event = new Event('sf-table-query-intent');
+    const event = new Event('sf-table-query');
     event.detail = Object.freeze({reason: 'context', context: Object.freeze({record_ids: ids}), sequence});
     table.dispatchEvent(event);
 };
-const search = (table, text) => { const e = new Event('onSearchEnd'); e.detail = text; table.dispatchEvent(e); };
+const search = (table, text) => { const e = new Event('sf-table-search-change'); e.detail = {search: text}; table.dispatchEvent(e); };
 const answer = ids => ({query: {page: 1, filters: {record_id: {operator: 'in', value: ids}}}, rows: ids.map(id => ({id})), pagination: {page: 1, total: ids.length, pageSize: 10}});
 const body = request => JSON.parse(request.options.body).query;
 

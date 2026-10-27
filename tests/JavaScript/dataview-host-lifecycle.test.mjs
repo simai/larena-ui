@@ -9,7 +9,7 @@ class Element extends EventTarget {
     setRows(rows) { this.rows = rows; }
     setState() {} setAttribute() {} setFilterFields() {} setTemplates() {} setTableSettings() {}
 }
-const search = (table, text) => { const e = new Event('onSearchEnd'); e.detail = text; table.dispatchEvent(e); };
+const search = (table, text) => { const e = new Event('sf-table-search-change'); e.detail = {search: text}; table.dispatchEvent(e); };
 async function harness(count = 1, statePatch = {}) {
     const pending = []; const observers = [];
     const benches = Array.from({length: count}, () => {
@@ -96,7 +96,7 @@ test('trusted refresh retains owning current search and page; a removed registra
 });
 test('query-only page size changes query without requesting an absent persistence endpoint', async () => {
     const h = await harness(); const b = h.benches[0];
-    emit(b.pagination, 'sf-page-size-change', {pageSize: 20});
+    emit(b.pagination, 'sf-pagination-size-change', {'page-size': 20});
     assert.equal(h.pending.length, 1);
     assert.equal(h.pending[0].url, '/query');
     assert.equal(h.pending[0].options.method, 'POST');
@@ -106,7 +106,7 @@ test('query-only page size changes query without requesting an absent persistenc
 });
 test('a connected preferences store still receives page size changes', async () => {
     const h = await harness(1, {user_endpoint: '/preferences'}); const b = h.benches[0];
-    emit(b.pagination, 'sf-page-size-change', {pageSize: 20});
+    emit(b.pagination, 'sf-pagination-size-change', {'page-size': 20});
     assert.equal(h.pending.length, 2);
     assert.equal(h.pending[0].url, '/preferences');
     assert.equal(h.pending[0].options.method, 'PUT');
@@ -115,7 +115,7 @@ test('a connected preferences store still receives page size changes', async () 
 });
 test('explicit save without a store reports unavailable and makes no request', async () => {
     const h = await harness(); const b = h.benches[0];
-    emit(b.table, 'onColumnSettingsChange', {columnSettings: {title: {visible: true}}});
+    emit(b.table, 'sf-table-save', {kind: 'columns', columnSettings: {title: {visible: true}}});
     await tick(); assert.equal(h.pending.length, 0);
     assert.equal(b.status.dataset.state, 'unavailable'); h.mount([]);
 });
@@ -123,7 +123,7 @@ test('explicit save without a store reports unavailable and makes no request', a
 test('unregistered bulk intent is unavailable and cannot imply backend success', async () => {
     const h = await harness(); const b = h.benches[0]; let forwarded = 0;
     b.table.addEventListener('sf-data-view-bulk-action', () => forwarded++);
-    emit(b.pagination, 'sf-action-apply', {action: 'archive', ids: [1]});
+    emit(b.pagination, 'sf-pagination-apply', {action: 'archive', scope: 'selection'});
     assert.equal(forwarded, 0);
     assert.equal(h.pending.length, 0);
     assert.equal(b.status.dataset.state, 'unavailable'); h.mount([]);
@@ -157,7 +157,7 @@ test('saved reset with invalid dataset response reports error instead of success
     assert.match(b.status.textContent, /Не удалось загрузить данные/); h.mount([]);
 });
 
-const intent = (table, ids, action = 'archive', extras = {}) => emit(table, 'sf-table-action-intent', {action_id: action, record_ids: ids, ...extras});
+const intent = (table, ids, action = 'archive', extras = {}) => emit(table, 'sf-table-apply', {action, scope: 'selection', ids, ...extras});
 test('typed owned intent preserves opaque IDs including zero and waits for owner result', async () => {
     const h = await harness(); const b = h.benches[0]; let seen; let resolve;
     h.actions.register(b.table, new Map([['archive', arg => {seen = arg; return new Promise(r => {resolve = r;});}]]));
@@ -179,7 +179,7 @@ test('nested and sibling component intents cannot enter another instance handler
     const h = await harness(2); let calls = 0; const b = h.benches[0];
     h.actions.register(b.table, new Map([['archive', () => {calls++;}]]));
     intent(h.benches[1].table, [0]);
-    const e = new Event('sf-table-action-intent'); e.detail = {action_id: 'archive', record_ids: [0]};
+    const e = new Event('sf-table-apply'); e.detail = {action: 'archive', scope: 'entry', ids: [0]};
     e.composedPath = () => [h.benches[1].table, b.table]; b.table.dispatchEvent(e);
     assert.equal(calls, 0); h.mount([]);
 });
@@ -196,9 +196,9 @@ test('bulk current selection uses table port and all-result scope fails closed',
     h.actions.register(b.table, new Map([['archive', arg => {seen = arg; return {state: 'cancelled'};}]]));
     b.table.getSelectedRecordIds = () => ['opaque_a_b', 0];
     b.table.requestActionIntent = (action, ids) => intent(b.table, ids, action);
-    emit(b.pagination, 'sf-action-apply', {action: 'archive', actionForAll: true});
+    emit(b.pagination, 'sf-pagination-apply', {action: 'archive', scope: 'filter'});
     assert.equal(seen, undefined); assert.equal(b.status.dataset.state, 'unavailable');
-    emit(b.pagination, 'sf-action-apply', {action: 'archive', actionForAll: false, ids: ['forged']});
+    emit(b.pagination, 'sf-pagination-apply', {action: 'archive', scope: 'selection', ids: ['forged']});
     await tick(); assert.deepEqual(Array.from(seen.record_ids), ['opaque_a_b', 0]); h.mount([]);
 });
 test('handler resolution alone is not business success; rejected handler reports error', async () => {
@@ -235,7 +235,7 @@ test('explicit shadow host routes exact owner only, unregister aborts pending an
     let calls = 0, input, resolve;
     const release = h.actions.registerHost(b.host, b.table, new Map([['archive', value => {calls++; input=value; return new Promise(r=>{resolve=r;});}]]));
     await tick();
-    const foreign = new Event('sf-table-action-intent'); foreign.detail={action_id:'archive',record_ids:['nested_γ_03']}; foreign.composedPath=()=>[h.benches[0].table,b.table]; b.table.dispatchEvent(foreign);
+    const foreign = new Event('sf-table-apply'); foreign.detail={action:'archive',scope:'entry',ids:['nested_γ_03']}; foreign.composedPath=()=>[h.benches[0].table,b.table]; b.table.dispatchEvent(foreign);
     assert.equal(calls,0); intent(b.table,['nested_γ_03']); assert.equal(calls,1);
     release(); assert.equal(input.signal.aborted,true); intent(b.table,['nested_γ_03']); assert.equal(calls,1);
     resolve({state:'completed'}); await tick();
@@ -254,6 +254,6 @@ test('owner discovery skips nested pagination and state even when they occur fir
     foreign.closest=()=>({}); owned.closest=()=>b.host;
     b.host.querySelector=key=>key==='sf-pagination'?foreign:b.nodes[key]||null;
     b.host.querySelectorAll=key=>key==='sf-pagination'?[foreign,owned]:[];
-    h.reconcile(); emit(owned,'sf-page-size-change',{pageSize:20});assert.equal(h.pending.length,1);
-    emit(foreign,'sf-page-size-change',{pageSize:30});assert.equal(h.pending.length,1);h.mount([]);
+    h.reconcile(); emit(owned,'sf-pagination-size-change',{'page-size':20});assert.equal(h.pending.length,1);
+    emit(foreign,'sf-pagination-size-change',{'page-size':30});assert.equal(h.pending.length,1);h.mount([]);
 });

@@ -47,8 +47,8 @@
             : 'Revision refreshed. Your draft remains on screen. '), retry);
           retry.addEventListener('click', function () {
             failed = false;
-            target.dispatchEvent(new CustomEvent('sf-table:column-settings-change',
-              {detail: {columnSettings: latest}}));
+            target.dispatchEvent(new CustomEvent('sf-table-save',
+              {detail: {kind: 'columns', columnSettings: latest}}));
           }, {once: true, signal: lifecycle.signal});
         } catch (error) {
           if (!lifecycle.signal.aborted) {
@@ -74,8 +74,9 @@
     }
     var latest = fieldColumns(state.columns);
     connectSharedColumns(target, form, lifecycle, function () { return latest; });
-    target.addEventListener('sf-table:column-settings-change', function (event) {
-      if (event.target !== target || lifecycle.signal.aborted) return;
+    // save {kind: columns} (standard 1.3.8) carries the table's column settings.
+    target.addEventListener('sf-table-save', function (event) {
+      if (event.target !== target || lifecycle.signal.aborted || event.detail?.kind !== 'columns') return;
       var columns = fieldColumns(event.detail?.columnSettings);
       latest = columns;
       if (failed) return;
@@ -207,13 +208,13 @@
       url.searchParams.set('per_page', String(size));
       window.location.assign(url.href);
     }
-    pagination.addEventListener('sf-page-change', function (event) {
+    pagination.addEventListener('sf-pagination-change', function (event) {
       if (event.target !== pagination) return;
       navigate(event.detail?.current, query.per_page || 20);
     }, {signal: lifecycle.signal});
-    pagination.addEventListener('sf-page-size-change', function (event) {
+    pagination.addEventListener('sf-pagination-size-change', function (event) {
       if (event.target !== pagination) return;
-      navigate(1, event.detail?.pageSize);
+      navigate(1, event.detail?.['page-size']);
     }, {signal: lifecycle.signal});
     var fallback = pagination.querySelector('[data-larena-pagination-next]');
     var nextHref = fallback?.getAttribute('href') || null;
@@ -221,7 +222,7 @@
     var loading = false;
     var status = form.querySelector('[data-larena-pagination-status]');
     var ru = document.documentElement.lang.startsWith('ru');
-    pagination.addEventListener('sf-show-more', async function (event) {
+    pagination.addEventListener('sf-pagination-load-more', async function (event) {
       if (event.target !== pagination || loading || !nextHref) return;
       loading = true;
       // Every request of this instance is numbered; a response that is no longer the newest,
@@ -306,7 +307,7 @@
         return row;
       });
     }
-    target.addEventListener('sf-table-query-intent', async function (event) {
+    target.addEventListener('sf-table-query', async function (event) {
       if (event.target !== target || lifecycle.signal.aborted || event.detail?.reason !== 'context') return;
       var sequence = event.detail?.sequence;
       var ids = event.detail?.context?.record_ids;
@@ -495,14 +496,12 @@
             selectionSyncTimer = setTimeout(syncPaginationSelection, 0);
           }
         })).observe(target, {subtree: true, childList: true, attributes: true, attributeFilter: ['checked']});
-        target.addEventListener('sf-table-selection-change', function (event) {
+        // select {ids} (standard 1.3.8): the marked rows of this page.
+        target.addEventListener('sf-table-select', function (event) {
           if (event.target !== target) return;
-          var detail = event.detail || {};
-          if (!Array.isArray(detail.selectedIds) || !Number.isInteger(detail.selectedCount)
-            || detail.selectedCount < 0 || detail.selectedCount > rows.length
-            || detail.selectedIds.length !== detail.selectedCount
-            || detail.rowCount !== rows.length) return;
-          pagination.setAttribute('selected-count', String(detail.selectedCount));
+          var ids = event.detail?.ids;
+          if (!Array.isArray(ids) || ids.length > rows.length) return;
+          pagination.setAttribute('selected-count', String(ids.length));
           pagination.setAttribute('selection-total', String(rows.length));
         }, {signal: lifecycle.signal});
       }
