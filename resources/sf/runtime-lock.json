@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-357568a20a7e-larena-9cbe0610b74b",
-  "bundle_id": "ui-357568a20a7e-larena-9cbe0610b74b-registry-bc44e9c2-exact-git-tree-v2",
+  "pair_id": "ui-9e143bcd37c1-larena-c6f3cfc0b36b",
+  "bundle_id": "ui-9e143bcd37c1-larena-c6f3cfc0b36b-registry-47b6cc57-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-357568a20a7e",
+    "release": "ui-9e143bcd37c1",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "357568a20a7ef6c6825217b7346c1f08870003a2",
+    "commit": "9e143bcd37c11c2b23822398a4a1a9010f89a670",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "260f52e81a5e4cc375e275214d0631e724729386b93a481ce223e92f476f8956",
-    "files": 8766
+    "sha256": "a30e5f55f0f47982cb38240a56c8e4fd61edc46741b39c5ee7014962e27385e5",
+    "files": 9672
   },
   "packages": {
     "larena": {
-      "release": "larena-9cbe0610b74b",
+      "release": "larena-c6f3cfc0b36b",
       "repository": "simai/ui-pro",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "9cbe0610b74b781c86721de77273819a046adda0",
+      "commit": "c6f3cfc0b36b959ba0d9b9381126261c388084ef",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "0d3f7dd2433d7fbb0a1a7576a7af19d48b9cb625f842d017e5bb895bb484b4c8",
-      "files": 104,
-      "requires_framework": "ui-357568a20a7e",
+      "sha256": "cc636073d1bfdebdf348d82c378d75123d0638a3c265a8f425c1dc2c05e971d8",
+      "files": 200,
+      "requires_framework": "ui-9e143bcd37c1",
       "package_path": "components",
-      "package_tree": "32750ec8cbce5533ac6727bd6bb29d5da4ee3ce1",
+      "package_tree": "63aba5d29002c6f8433080dec4c0453666167316",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "51002278751d887da2fc4950f4d6d34d573c69bf"
+        "revision": "0be7afdfb23e6c8f47121b07882e441ef227b496"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "d0e093c4e44132978ce0b90d89da8878e5808ab5"
+        "revision": "74ad2e84813c889c3ca3d40bc700023aa7809190"
       },
-      "manifest_sha256": "904eb5f5a8d3d43dcfb04ce02ef0d7f70353cbf3d2a6f89f4bb63bfe0c18b229",
-      "receipt_sha256": "0782b8eb4cf2005aa38dbba75cb2718a64309f7c022dafd1addfcd35f9773000",
+      "manifest_sha256": "1234cf3b6e6d81b8c2b6b66fb919a0e1a35f8a69b276c79f45c02154dce1ad88",
+      "receipt_sha256": "fd4a6e41f15fba9126da4bfbd12c72db6932d92671f941fb582ed0d2ec34ec8d",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-357568a20a7e",
+    "compatibility_id": "ui-9e143bcd37c1",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "bc44e9c278f352adc3440e269da6dbeedc51173603e0a16bbe2e479b690ef812",
+    "file_sha256": "47b6cc5733debf25f08e1a531f8d6277625df3a1ae2f0fa87f5c3a0ba4a27712",
     "source": {
       "tag": null,
-      "commit": "c2ddfb0c7cb80548c435bcdbbe62f620830c3736",
+      "commit": "c605bc4952f249effcd281b7c5124e2433aeedc8",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "9596fc0a7050374996995775b58b67948b34d283044d10c5f9698832f17f57b4",
+      "sha256": "2d22b51779f1bf1e9ccd6c426bf5996a22e9e8a627d2c603f9cb1b0906758c7d",
       "files": 2,
-      "tree_oid": "8914f8654a75ca028d7889448923baab748b243a"
+      "tree_oid": "9072da3d13a79b789366ae88ef94a69d230c9dc6"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "8a07fcdcb0a79c9df8726e80d50641945f3700753aab9b23ebff0d422e17cf29"
+      "file_sha256": "95fd711ccb872f36adf3449ddd46498d96e597109fdccadaa9ff6faa86d26a46"
     }
   },
   "boot": {
@@ -114,7 +114,9 @@
         "page-size-label",
         "pagination-aria-label",
         "preferences-key",
-        "accept-files"
+        "accept-files",
+        "collection",
+        "current"
       ],
       "package": "larena"
     },
@@ -211,7 +213,8 @@
         "row-actions-visible",
         "drag-rows",
         "row-reorder",
-        "inline-edit"
+        "inline-edit",
+        "current"
       ],
       "package": "larena"
     },
@@ -715,7 +718,9 @@
         "delete-view-text",
         "last-shared-view-text",
         "size",
-        "mode"
+        "mode",
+        "full",
+        "open"
       ],
       "package": "larena"
     },
