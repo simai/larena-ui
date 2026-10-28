@@ -854,11 +854,13 @@
     // The record panel saved a record: write its row again in every list connected to the port.
     // Without a record id (a create, delete or restore) the lists ask for their page again.
     refreshRecord: function (id) {
-      // Only lists answered by the host port can ask again; a list with rows in place cannot.
+      // Only lists answered by a port can ask again; a list with rows in place cannot. A records list rewrites the one
+      // row it knows; any other connected list (a host port's: the fields of a storage, the users) reads its page again,
+      // so a field added in the panel shows in the list at once.
       var views = Array.prototype.slice.call(document.querySelectorAll('sf-data-view[data-larena-port-connected="true"]'))
-        .filter(function (view) { return typeof view.larenaRefreshRecord === 'function'; });
+        .filter(function (view) { return typeof view.larenaRefreshRecord === 'function' || typeof view.refresh === 'function'; });
       views.forEach(function (view) {
-        if (id) void view.larenaRefreshRecord(id);
+        if (id && typeof view.larenaRefreshRecord === 'function') void view.larenaRefreshRecord(id);
         else view.refresh?.('record-saved');
       });
       return views.length > 0;
