@@ -78,12 +78,12 @@ foreach ([
     'ui/distr/core/js/core.min.js',
     'ui/distr/core/js/smart-base.js',
     'contract/contracts/generated/framework-contract-registry.json',
-    'ui/distr/smart/buttons/js/buttons.js',
-    'ui/distr/smart/inputs/js/inputs.js',
-    'ui/distr/smart/inputs/css/inputs.css',
-    'larena/smart/table/js/table.js',
-    'larena/smart/table/css/table.css',
-    'larena/smart/data-view/js/data-view.js',
+    'ui/distr/smart/buttons/js/buttons.min.js',
+    'ui/distr/smart/inputs/js/inputs.min.js',
+    'ui/distr/smart/inputs/css/inputs.min.css',
+    'larena/smart/table/js/table.min.js',
+    'larena/smart/table/css/table.min.css',
+    'larena/smart/data-view/js/data-view.min.js',
 ] as $requiredRuntimeFile) {
     assert(in_array($requiredRuntimeFile, $requiredRuntimeFiles, true));
 }

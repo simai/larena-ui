@@ -30,8 +30,8 @@ assert(array_column($core, 'relative_path') === [
 ]);
 assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
     'ui/distr/core/css/core.min.css',
-    'ui/distr/smart/icon-buttons/css/icon-buttons.css',
-    'larena/smart/table/css/table.css',
+    'ui/distr/smart/icon-buttons/css/icon-buttons.min.css',
+    'larena/smart/table/css/table.min.css',
 ]);
 $dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-data-view'));
 assert(array_column($dataViewAssets, 'asset_key') === [

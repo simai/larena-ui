@@ -77,8 +77,8 @@
   "components": {
     "sf-data-view": {
       "source": "larena/smart/data-view",
-      "javascript": "larena/smart/data-view/js/data-view.js",
-      "css": "larena/smart/data-view/css/data-view.css",
+      "javascript": "larena/smart/data-view/js/data-view.min.js",
+      "css": "larena/smart/data-view/css/data-view.min.css",
       "requires": [
         "sf-table",
         "sf-pagination"
@@ -123,7 +123,7 @@
     },
     "sf-icon": {
       "source": "ui/distr/smart/icons",
-      "javascript": "ui/distr/smart/icons/js/icons.js",
+      "javascript": "ui/distr/smart/icons/js/icons.min.js",
       "css": null,
       "attributes": [
         "icon",
@@ -137,7 +137,7 @@
     },
     "sf-button": {
       "source": "ui/distr/smart/buttons",
-      "javascript": "ui/distr/smart/buttons/js/buttons.js",
+      "javascript": "ui/distr/smart/buttons/js/buttons.min.js",
       "css": null,
       "attributes": [
         "template",
@@ -164,8 +164,8 @@
     },
     "sf-table": {
       "source": "larena/smart/table",
-      "javascript": "larena/smart/table/js/table.js",
-      "css": "larena/smart/table/css/table.css",
+      "javascript": "larena/smart/table/js/table.min.js",
+      "css": "larena/smart/table/css/table.min.css",
       "requires": [
         "sf-icon-button"
       ],
@@ -221,7 +221,7 @@
     },
     "sf-badge": {
       "source": "ui/distr/smart/badges",
-      "javascript": "ui/distr/smart/badges/js/badges.js",
+      "javascript": "ui/distr/smart/badges/js/badges.min.js",
       "css": null,
       "attributes": [
         "template",
@@ -241,7 +241,7 @@
     },
     "sf-alert": {
       "source": "ui/distr/smart/alert",
-      "javascript": "ui/distr/smart/alert/js/alert.js",
+      "javascript": "ui/distr/smart/alert/js/alert.min.js",
       "css": null,
       "requires": [
         "sf-icon"
@@ -265,7 +265,7 @@
     },
     "sf-pagination": {
       "source": "ui/distr/smart/pagination",
-      "javascript": "ui/distr/smart/pagination/js/pagination.js",
+      "javascript": "ui/distr/smart/pagination/js/pagination.min.js",
       "css": null,
       "attributes": [
         "top",
@@ -317,8 +317,8 @@
     },
     "sf-input": {
       "source": "ui/distr/smart/inputs",
-      "javascript": "ui/distr/smart/inputs/js/inputs.js",
-      "css": "ui/distr/smart/inputs/css/inputs.css",
+      "javascript": "ui/distr/smart/inputs/js/inputs.min.js",
+      "css": "ui/distr/smart/inputs/css/inputs.min.css",
       "attributes": [
         "template",
         "size",
@@ -359,7 +359,7 @@
     },
     "sf-modal": {
       "source": "ui/distr/smart/modal",
-      "javascript": "ui/distr/smart/modal/js/modal.js",
+      "javascript": "ui/distr/smart/modal/js/modal.min.js",
       "css": null,
       "attributes": [
         "template",
@@ -384,7 +384,7 @@
     },
     "sf-textarea": {
       "source": "ui/distr/smart/textarea",
-      "javascript": "ui/distr/smart/textarea/js/textarea.js",
+      "javascript": "ui/distr/smart/textarea/js/textarea.min.js",
       "css": null,
       "attributes": [
         "template",
@@ -410,7 +410,7 @@
     },
     "sf-dropdown": {
       "source": "ui/distr/smart/dropdown",
-      "javascript": "ui/distr/smart/dropdown/js/dropdown.js",
+      "javascript": "ui/distr/smart/dropdown/js/dropdown.min.js",
       "css": null,
       "attributes": [
         "template",
@@ -435,8 +435,8 @@
     },
     "sf-checkbox": {
       "source": "ui/distr/smart/checkbox",
-      "javascript": "ui/distr/smart/checkbox/js/checkbox.js",
-      "css": "ui/distr/smart/checkbox/css/checkbox.css",
+      "javascript": "ui/distr/smart/checkbox/js/checkbox.min.js",
+      "css": "ui/distr/smart/checkbox/css/checkbox.min.css",
       "attributes": [
         "size",
         "label",
@@ -457,8 +457,8 @@
     },
     "sf-admin-menu": {
       "source": "larena/smart/admin-menu",
-      "javascript": "larena/smart/admin-menu/js/admin-menu.js",
-      "css": "larena/smart/admin-menu/css/admin-menu.css",
+      "javascript": "larena/smart/admin-menu/js/admin-menu.min.js",
+      "css": "larena/smart/admin-menu/css/admin-menu.min.css",
       "requires": [
         "sf-icon",
         "sf-badge",
@@ -507,8 +507,8 @@
     },
     "sf-breadcrumbs": {
       "source": "ui/distr/smart/breadcrumbs",
-      "javascript": "ui/distr/smart/breadcrumbs/js/breadcrumbs.js",
-      "css": "ui/distr/component/breadcrumbs/css/breadcrumbs.css",
+      "javascript": "ui/distr/smart/breadcrumbs/js/breadcrumbs.min.js",
+      "css": "ui/distr/component/breadcrumbs/css/breadcrumbs.min.css",
       "requires": [
         "sf-icon"
       ],
@@ -533,8 +533,8 @@
     },
     "sf-icon-button": {
       "source": "ui/distr/smart/icon-buttons",
-      "javascript": "ui/distr/smart/icon-buttons/js/icon-buttons.js",
-      "css": "ui/distr/smart/icon-buttons/css/icon-buttons.css",
+      "javascript": "ui/distr/smart/icon-buttons/js/icon-buttons.min.js",
+      "css": "ui/distr/smart/icon-buttons/css/icon-buttons.min.css",
       "requires": [
         "sf-icon"
       ],
@@ -563,8 +563,8 @@
     },
     "sf-avatar": {
       "source": "ui/distr/smart/avatar",
-      "javascript": "ui/distr/smart/avatar/js/avatar.js",
-      "css": "ui/distr/component/avatars/css/avatars.css",
+      "javascript": "ui/distr/smart/avatar/js/avatar.min.js",
+      "css": "ui/distr/component/avatars/css/avatars.min.css",
       "attributes": [
         "template",
         "size",
@@ -588,8 +588,8 @@
     },
     "sf-tag": {
       "source": "ui/distr/smart/tags",
-      "javascript": "ui/distr/smart/tags/js/tags.js",
-      "css": "ui/distr/smart/tags/css/tags.css",
+      "javascript": "ui/distr/smart/tags/js/tags.min.js",
+      "css": "ui/distr/smart/tags/css/tags.min.css",
       "requires": [
         "sf-avatar",
         "sf-icon"
@@ -617,8 +617,8 @@
     },
     "sf-toggle": {
       "source": "ui/distr/smart/toggle",
-      "javascript": "ui/distr/smart/toggle/js/toggle.js",
-      "css": "ui/distr/component/toggle/css/toggle.css",
+      "javascript": "ui/distr/smart/toggle/js/toggle.min.js",
+      "css": "ui/distr/component/toggle/css/toggle.min.css",
       "requires": [
         "sf-icon"
       ],
@@ -640,8 +640,8 @@
     },
     "sf-property-view": {
       "source": "larena/smart/property-view",
-      "javascript": "larena/smart/property-view/js/property-view.js",
-      "css": "larena/smart/property-view/css/property-view.css",
+      "javascript": "larena/smart/property-view/js/property-view.min.js",
+      "css": "larena/smart/property-view/css/property-view.min.css",
       "requires": [],
       "attributes": [
         "panel-label",
@@ -731,8 +731,8 @@
     },
     "sf-tree": {
       "source": "ui/distr/smart/tree",
-      "javascript": "ui/distr/smart/tree/js/tree.js",
-      "css": "ui/distr/smart/tree/css/tree.css",
+      "javascript": "ui/distr/smart/tree/js/tree.min.js",
+      "css": "ui/distr/smart/tree/css/tree.min.css",
       "requires": [
         "sf-tree-item"
       ],
@@ -750,8 +750,8 @@
     },
     "sf-tree-item": {
       "source": "ui/distr/smart/tree-item",
-      "javascript": "ui/distr/smart/tree-item/js/tree-item.js",
-      "css": "ui/distr/component/tree-item/css/tree-item.css",
+      "javascript": "ui/distr/smart/tree-item/js/tree-item.min.js",
+      "css": "ui/distr/component/tree-item/css/tree-item.min.css",
       "requires": [
         "sf-icon",
         "sf-icon-button"
