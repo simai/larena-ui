@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-36116c01a792-larena-4730c086703c",
-  "bundle_id": "ui-36116c01a792-larena-4730c086703c-registry-e4702e56-exact-git-tree-v2",
+  "pair_id": "ui-519fa0814a02-larena-c1f242121132",
+  "bundle_id": "ui-519fa0814a02-larena-c1f242121132-registry-5df92712-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-36116c01a792",
+    "release": "ui-519fa0814a02",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "36116c01a792b69bc2d21b9ec938f83503ff016c",
+    "commit": "519fa0814a02374aae3f0662833ad87c13314b58",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "cc59a0b61a3fe92b24e061db7722c8d8ed9bd9cb28fc38f6ab5d5e40b2bb5178",
-    "files": 10734
+    "sha256": "19421b14aa8bf8d281906bb82cbeac6b5707330ce2e14c7aee40f3d85ad74ce4",
+    "files": 10795
   },
   "packages": {
     "larena": {
-      "release": "larena-4730c086703c",
+      "release": "larena-c1f242121132",
       "repository": "simai/ui-pro",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "4730c086703c6dbcf887c7b841d873e709afd850",
+      "commit": "c1f2421211326cf946e8b138a299f33ddc6ef64b",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "d9dfceb03be3c24b7913f5c79d47fd0702adc92de0dce9402d538bfe44aa9593",
+      "sha256": "4a98ac6e45d5c71c886361beeb1227001fe938a94a2f8034719fdf9d8710a7ab",
       "files": 488,
-      "requires_framework": "ui-36116c01a792",
+      "requires_framework": "ui-519fa0814a02",
       "package_path": "components",
-      "package_tree": "c134babf81b3690d1213b93279198ef56490c540",
+      "package_tree": "64cb18e097db5c0faae260c69d3dbf9713653538",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "8583e3787dc5e4c0bf090d85e7000160978c52cd"
+        "revision": "7389e4d84d8104c8c9bda816c0255f0f9b623bfb"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "76caa783f47ed8174dfcb9eb2a6b5be5a54348fd"
+        "revision": "faed36f0f10b221054618679cfe89ed0cd90bbc8"
       },
-      "manifest_sha256": "bbf998d6d5ba80d7f119632d0636d1231ca2965d03cbf3b912f7d707f5b44ddf",
-      "receipt_sha256": "611c7608a7ee55b62a6ea9e1dde278805c5d60a5245ef9d85e4b4abc902ce99b",
+      "manifest_sha256": "cb169187c46066fa2cd2e42eb6ea8a790545aacae7bd85a330fce0b39b37b75b",
+      "receipt_sha256": "230c4e2bbde1d07841976f684ace8e43378cc0148b43b12c036a50ecb05b7e1a",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-36116c01a792",
+    "compatibility_id": "ui-519fa0814a02",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "e4702e56e2da4452bda7e68a92d03629f9c78c3fb15e22cac40f5024e3020aa4",
+    "file_sha256": "5df92712e27047db2537e088ce11bbc1b2d7996c80d837d51701106b0dbe587c",
     "source": {
       "tag": null,
-      "commit": "1c7c7342543ffae2b9a8e6097f8758b341420eeb",
+      "commit": "a453eb4a1f46b37275ff799700a29f0884dc5792",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "db32c40c970384f1381b4cf448b6c041c6b3af7a12d8672ffd67de5ec5ed3dd2",
+      "sha256": "8afc580553ffb9a1aec441b1a12ed58ba70ffb26c6d7c86718115931c20fe1bc",
       "files": 2,
-      "tree_oid": "0276295a6039537c3347f5be3863a61e6916866d"
+      "tree_oid": "0793bdf5bc316cbd15d591688728c644fdf28fd2"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "b62337aafa18afa62add01f19e71219b640adf152ed4fcd8929c71e3f8457ab8"
+      "file_sha256": "2c43ee195cb4b35645a22322d220cb1fc6e1e2f730d83c9de671b12bc47926ca"
     }
   },
   "boot": {
@@ -215,7 +215,8 @@
         "drag-rows",
         "row-reorder",
         "inline-edit",
-        "current"
+        "current",
+        "empty-description"
       ],
       "package": "larena"
     },
