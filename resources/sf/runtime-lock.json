@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-9e143bcd37c1-larena-c6f3cfc0b36b",
-  "bundle_id": "ui-9e143bcd37c1-larena-c6f3cfc0b36b-registry-47b6cc57-exact-git-tree-v2",
+  "pair_id": "ui-194f75ac620f-larena-db37a4d1cf18",
+  "bundle_id": "ui-194f75ac620f-larena-db37a4d1cf18-registry-d477077d-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-9e143bcd37c1",
+    "release": "ui-194f75ac620f",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "9e143bcd37c11c2b23822398a4a1a9010f89a670",
+    "commit": "194f75ac620fe7af4cf053360c3e4db4dff8ba57",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "a30e5f55f0f47982cb38240a56c8e4fd61edc46741b39c5ee7014962e27385e5",
-    "files": 9672
+    "sha256": "c3032c22e275974ee499c2641762316dfa88c06ecd83a173a7758b1b6cd65874",
+    "files": 10734
   },
   "packages": {
     "larena": {
-      "release": "larena-c6f3cfc0b36b",
+      "release": "larena-db37a4d1cf18",
       "repository": "simai/ui-pro",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "c6f3cfc0b36b959ba0d9b9381126261c388084ef",
+      "commit": "db37a4d1cf188c5700b1a17b1d3d10ea785001ad",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "cc636073d1bfdebdf348d82c378d75123d0638a3c265a8f425c1dc2c05e971d8",
-      "files": 200,
-      "requires_framework": "ui-9e143bcd37c1",
+      "sha256": "3095a02786f33aa9aa77c0567a8553a1b07a4223b3fbe490c248c0d7a9427545",
+      "files": 302,
+      "requires_framework": "ui-194f75ac620f",
       "package_path": "components",
-      "package_tree": "63aba5d29002c6f8433080dec4c0453666167316",
+      "package_tree": "5b3c5dae121b391e67dcdae23dc64ce6d7de2014",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "0be7afdfb23e6c8f47121b07882e441ef227b496"
+        "revision": "465fbee3ddb060cba919d6961f64036aa6cce204"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "74ad2e84813c889c3ca3d40bc700023aa7809190"
+        "revision": "71ef256903381a17f546f17f6f9feb7f400204f8"
       },
-      "manifest_sha256": "1234cf3b6e6d81b8c2b6b66fb919a0e1a35f8a69b276c79f45c02154dce1ad88",
-      "receipt_sha256": "fd4a6e41f15fba9126da4bfbd12c72db6932d92671f941fb582ed0d2ec34ec8d",
+      "manifest_sha256": "9e6558ab8df8c2df0c0352dbba0a1f12d3b12b720985565a1bcb507acf400f15",
+      "receipt_sha256": "35d08b7f210c8bfc37fee1165de543049d37f18e85b67446541b744482cc58c8",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-9e143bcd37c1",
+    "compatibility_id": "ui-194f75ac620f",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "47b6cc5733debf25f08e1a531f8d6277625df3a1ae2f0fa87f5c3a0ba4a27712",
+    "file_sha256": "d477077d32d16ac715898e00f0a1de460d6f8fbaaebf532a681efcdf9c321de6",
     "source": {
       "tag": null,
-      "commit": "c605bc4952f249effcd281b7c5124e2433aeedc8",
+      "commit": "274d39770d38b51d66ca0502029257992dd54604",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "2d22b51779f1bf1e9ccd6c426bf5996a22e9e8a627d2c603f9cb1b0906758c7d",
+      "sha256": "d18c005c33f14ab84619dcbc5a162c777734289e7aa9e43c4d81297ecc301e6f",
       "files": 2,
-      "tree_oid": "9072da3d13a79b789366ae88ef94a69d230c9dc6"
+      "tree_oid": "d59e4d03b112c3ec07a61954da2f69b1db05cae0"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "95fd711ccb872f36adf3449ddd46498d96e597109fdccadaa9ff6faa86d26a46"
+      "file_sha256": "1318543a9e68590613fc1b137e6b86289190f9d37fddc77070a447c8a67c41e4"
     }
   },
   "boot": {
@@ -116,7 +116,8 @@
         "preferences-key",
         "accept-files",
         "collection",
-        "current"
+        "current",
+        "expected-columns"
       ],
       "package": "larena"
     },
@@ -496,7 +497,11 @@
         "root-class",
         "id",
         "class",
-        "search-title"
+        "search-title",
+        "source",
+        "current",
+        "expected-columns",
+        "open"
       ],
       "package": "larena"
     },
