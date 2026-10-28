@@ -6,7 +6,7 @@ import fs from 'node:fs';
 const source = fs.readFileSync(new URL('../../resources/js/sf-runtime-bridge.js', import.meta.url), 'utf8');
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-async function harness(data, {bulkAll = false, storageWorkbench = false, openViewInQuery = false} = {}) {
+async function harness(data, {bulkAll = false, storageWorkbench = false, openViewInQuery = false, island = null, early = null} = {}) {
     const calls = [];
     const surface = {hidden: true};
     const legacy = {open: true};
@@ -34,7 +34,9 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     elements: {namedItem: name => inputs[name] ?? null}};
     const table = {setFilterFields(fields) { this.fields = fields; }};
     const pagination = {attributes: {}, setAttribute(name, value) { this.attributes[name] = value; }};
-    const view = {dataset: {}, table, pagination, closest: selector => selector === 'form[data-larena-dataview-query]' ? form
+    const view = {dataset: {}, table, pagination,
+        children: island ? [{localName: 'script', hasAttribute: (name) => name === 'data-sf-port', textContent: JSON.stringify(island)}] : [],
+        closest: selector => selector === 'form[data-larena-dataview-query]' ? form
         : selector === '[data-larena-row-revisions]' ? records : null,
     listeners: {}, addEventListener(type, listener) { this.listeners[type] = listener; },
     setHostPort(port) { this.port = port; }};
@@ -48,7 +50,8 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     const location = new URL('http://localhost/admin/cms');
     location.assign = (href) => assigned.push(String(href));
     const confirmed = [];
-    const window = {location, dispatchEvent() {}, confirm: (message) => { confirmed.push(message); return true; }};
+    const window = {location, dispatchEvent() {}, confirm: (message) => { confirmed.push(message); return true; },
+        ...(early ? {SF: {EarlyPort: early}} : {})};
     const context = {document, window, URL, JSON, Object, AbortController,
         customElements: {whenDefined: async () => {}},
         MutationObserver: class { observe() {} disconnect() {} },
@@ -265,4 +268,56 @@ test('a linked value of a cell opens its record without asking the host port, an
     assert.equal(h.calls.filter((call) => String(call.options?.body || '').includes('record.open')).length, 0);
     const foreign = await h.view.port.raise('record.open', {field: 'section', value: 'x', href: 'https://elsewhere.test/admin/cms?record_id=x'}, {});
     assert.equal(foreign.answer, 'refused');
+});
+
+// The list's port declared in the element (SF.EarlyPort): Core sent the first call early; the bridge's first query
+// takes that answer when it is the call the bridge would send, and asks the port itself otherwise.
+const earlyAnswer = {answer: 'applied', sequence: 0, data: {columns: [{key: 'owner'}], total: 1,
+    records: [{id: 'record-1', revision: 3, actions: [], values: {}, display_values: {owner: 'Alice'}}],
+    echo: {search: 'needle', sort: [], page: 1, per_page: 20}}};
+const declared = (structure) => {
+    const query = {filters: {}, search: 'needle', sort: [{key: 'owner', direction: 'desc'}], page: 1, per_page: 20};
+    return {port: 'simai.dataview-port', version: '9.8.7', url: '/admin/cms/port', connect: false, csrf: 'meta:csrf-token',
+        first: {intent: 'query.change', payload: {query},
+            body: {scope_ref: 'scope:cms', structure_id: structure, intent: 'query.change', payload: {sequence: 1, query, reason: 'host-connected'}}}};
+};
+const earlyPort = () => {
+    const taken = [];
+    return {taken, canonical: (value) => JSON.stringify(value, (key, item) => item && typeof item === 'object' && !Array.isArray(item)
+        ? Object.fromEntries(Object.keys(item).sort().map((name) => [name, item[name]])) : item),
+    take(spec) {
+        taken.push(JSON.parse(JSON.stringify(spec)));
+        return spec.payload?.query ? Promise.resolve({...earlyAnswer, sequence: spec.payload.sequence}) : null;
+    }};
+};
+
+test('the first query takes the early answer of the same call, once', async () => {
+    const early = earlyPort();
+    const h = await harness({answer: 'applied', sequence: 2, data: earlyAnswer.data}, {island: declared('workbench.demo_solutions'), early});
+    const first = await h.view.port.raise('query.change', {sequence: 1, query: h.view.query, reason: 'host-connected'}, {});
+    assert.equal(h.calls.length, 0, 'no request of its own');
+    assert.equal(first.sequence, 1, 'the asker\'s sequence');
+    assert.deepEqual(JSON.parse(JSON.stringify(first.data.records)), [{id: 'record-1', revision: 3, actions: [], owner: 'Alice'}]);
+    assert.equal(h.badge.attributes.text, '1', 'treated as a fetched answer');
+    assert.deepEqual(early.taken.map((spec) => [spec.port, spec.version, spec.url, spec.intent]),
+        [['simai.dataview-port', '9.8.7', '/admin/cms/port', 'query.change']]);
+    await h.view.port.raise('query.change', {sequence: 2, query: {...h.view.query, page: 2}, reason: 'page-change'}, {});
+    assert.equal(early.taken.length, 1, 'asked once');
+    assert.equal(h.calls.length, 1);
+});
+
+test('a first query that is not the declared call lets the early one go and asks the port', async () => {
+    const early = earlyPort();
+    const h = await harness({answer: 'applied', sequence: 1, data: earlyAnswer.data}, {island: declared('workbench.other'), early});
+    const first = await h.view.port.raise('query.change', {sequence: 1, query: h.view.query, reason: 'host-connected'}, {});
+    assert.equal(first.answer, 'applied');
+    assert.equal(h.calls.length, 1, 'asked the port itself');
+    assert.equal(early.taken.length, 1);
+    assert.equal(early.taken[0].payload.query, undefined, 'taken with a payload no early call has');
+});
+
+test('without SF.EarlyPort the first query asks the port as always', async () => {
+    const h = await harness({answer: 'applied', sequence: 1, data: earlyAnswer.data}, {island: declared('workbench.demo_solutions')});
+    await h.view.port.raise('query.change', {sequence: 1, query: h.view.query, reason: 'host-connected'}, {});
+    assert.equal(h.calls.length, 1);
 });

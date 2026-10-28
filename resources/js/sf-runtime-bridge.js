@@ -549,6 +549,46 @@
     scope.querySelectorAll('[data-larena-read-only="true"] sf-table').forEach(applyReadOnlyTable);
   }
 
+  // The list's port declared in the element (a data-sf-port island; SF.EarlyPort, Framework core runtime): Core sent
+  // the list's first call while the component code was loading. A connector's first query takes that answer when it
+  // is the call the connector would send itself: the same endpoint, port edition and body (the asker's sequence and
+  // reason aside). Any other first query lets the early call go, and the connector asks as always. Without
+  // SF.EarlyPort or an island nothing changes. The answer is the one the port gave, with the asker's sequence.
+  var earlyAsked = new WeakSet();
+  var portAnswers = ['applied', 'conflict', 'refused', 'unavailable'];
+  function earlyPortAnswer(view, version, url, intent, payload, body) {
+    var early = window.SF && window.SF.EarlyPort;
+    if (!early || typeof early.take !== 'function' || intent !== 'query.change' || earlyAsked.has(view)) return Promise.resolve(null);
+    earlyAsked.add(view);
+    var island = Array.prototype.find.call(view.children || [], function (child) {
+      return child.localName === 'script' && child.hasAttribute('data-sf-port');
+    });
+    var spec;
+    try { spec = JSON.parse(island ? island.textContent || 'null' : 'null'); } catch { spec = null; }
+    if (!spec || typeof spec.port !== 'string' || typeof spec.url !== 'string') return Promise.resolve(null);
+    var canonical = typeof early.canonical === 'function' ? early.canonical : JSON.stringify;
+    var bare = function (sent) {
+      var copy = {...(sent && typeof sent === 'object' ? sent : {})};
+      copy.payload = {...(copy.payload && typeof copy.payload === 'object' ? copy.payload : {})};
+      delete copy.payload.sequence;
+      delete copy.payload.reason;
+      return canonical(copy);
+    };
+    var same = false;
+    try {
+      same = new URL(spec.url, window.location.href).href === new URL(url, window.location.href).href
+        && spec.version === version && Boolean(spec.first && spec.first.body) && bare(spec.first.body) === bare(body);
+    } catch { same = false; }
+    // Asked with a payload no early call has, the early call is let go (taken once, matched or not).
+    var taken = early.take({port: spec.port, version: spec.version, url: spec.url, intent: intent,
+      payload: same ? payload : {sequence: payload?.sequence, larena_early_port: 'another-call'}});
+    if (!taken || typeof taken.then !== 'function') return Promise.resolve(null);
+    return taken.then(function (answer) {
+      return answer && portAnswers.includes(answer.answer) ? answer : null;
+    }, function () { return null; });
+  }
+  window.LarenaEarlyPort = Object.freeze({answer: earlyPortAnswer});
+
   function connectCmsComposite(view) {
     var form = view.closest('form[data-larena-dataview-query]');
     var records = view.closest('[data-larena-row-revisions]');
@@ -664,7 +704,7 @@
           'X-CSRF-TOKEN': form.dataset.larenaPreferencesCsrf || ''},
         body: JSON.stringify({scope_ref: scope, structure_id: structure, intent: intent, payload: sent})});
       var answer = await response.json();
-      if (!['applied', 'conflict', 'refused', 'unavailable'].includes(answer?.answer)) {
+      if (!portAnswers.includes(answer?.answer)) {
         throw new Error('port_answer_invalid');
       }
       return answer;
@@ -749,7 +789,10 @@
         if (intent === 'bulk.apply_under_filter' && typeof view.query?.search === 'string') sent.search = view.query.search;
       }
       try {
-        var answer = await post(intent, sent, options?.signal);
+        // The list's first query may already be answered by the early call Core sent for it.
+        var answer = await earlyPortAnswer(view, edition, endpoint.href, intent, sent,
+          {scope_ref: scope, structure_id: structure, intent: intent, payload: sent})
+          || await post(intent, sent, options?.signal);
         // The composite drops an obsolete reply after raise resolves; host-owned counters
         // and row revisions must wait for that same newest query. An answer without rows (the new
         // column settings after a save) goes to the data view as it is.
