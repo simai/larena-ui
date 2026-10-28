@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-194f75ac620f-larena-db37a4d1cf18",
-  "bundle_id": "ui-194f75ac620f-larena-db37a4d1cf18-registry-d477077d-exact-git-tree-v2",
+  "pair_id": "ui-1d45c724313c-larena-bbc3a3dafa10",
+  "bundle_id": "ui-1d45c724313c-larena-bbc3a3dafa10-registry-e1aa74e1-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-194f75ac620f",
+    "release": "ui-1d45c724313c",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "194f75ac620fe7af4cf053360c3e4db4dff8ba57",
+    "commit": "1d45c724313c2d47647cf4123cd257149f9e7844",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "c3032c22e275974ee499c2641762316dfa88c06ecd83a173a7758b1b6cd65874",
+    "sha256": "afda01861f8da007a92f1c4bb3f5deb02253cd5b4a4359bed2febf647fb8feb1",
     "files": 10734
   },
   "packages": {
     "larena": {
-      "release": "larena-db37a4d1cf18",
+      "release": "larena-bbc3a3dafa10",
       "repository": "simai/ui-pro",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "db37a4d1cf188c5700b1a17b1d3d10ea785001ad",
+      "commit": "bbc3a3dafa10a929c4a23fb372bb4c1dababeeb6",
       "tree": "smart",
       "mount": "larena",
-      "sha256": "3095a02786f33aa9aa77c0567a8553a1b07a4223b3fbe490c248c0d7a9427545",
-      "files": 302,
-      "requires_framework": "ui-194f75ac620f",
+      "sha256": "f6901cbbc4150455f36789825351e2e3dfc88a13a5ac734b9849eb45be865705",
+      "files": 488,
+      "requires_framework": "ui-1d45c724313c",
       "package_path": "components",
-      "package_tree": "5b3c5dae121b391e67dcdae23dc64ce6d7de2014",
+      "package_tree": "f9b00c442a01343bbf60e95f04c34942759b1ac1",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "465fbee3ddb060cba919d6961f64036aa6cce204"
+        "revision": "12c1bfa444fde3d171669e7fda204b1526cbc0c7"
       },
       "builder": {
         "repository": "simai/ui-builder",
         "revision": "71ef256903381a17f546f17f6f9feb7f400204f8"
       },
-      "manifest_sha256": "9e6558ab8df8c2df0c0352dbba0a1f12d3b12b720985565a1bcb507acf400f15",
-      "receipt_sha256": "35d08b7f210c8bfc37fee1165de543049d37f18e85b67446541b744482cc58c8",
+      "manifest_sha256": "ae164b17b279b93c13155d8f033bb5b0c1c20c06843e8eb3948cba807e0eb1c9",
+      "receipt_sha256": "33d299dd55e266590d6606ec82afa412786ca5a53f452625fa6d1c4f88aa7d4d",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-194f75ac620f",
+    "compatibility_id": "ui-1d45c724313c",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "d477077d32d16ac715898e00f0a1de460d6f8fbaaebf532a681efcdf9c321de6",
+    "file_sha256": "e1aa74e1d8d8ad82bc97bdbc23aa440ae2293b6ee2ad548362a2be0760146cb4",
     "source": {
       "tag": null,
-      "commit": "274d39770d38b51d66ca0502029257992dd54604",
+      "commit": "55fc5b29db2470aa87854807b8d4a6556bbdea05",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "d18c005c33f14ab84619dcbc5a162c777734289e7aa9e43c4d81297ecc301e6f",
+      "sha256": "eea61116902b077b468624dae50854fb486298561ff14352a1335fa578359cab",
       "files": 2,
-      "tree_oid": "d59e4d03b112c3ec07a61954da2f69b1db05cae0"
+      "tree_oid": "7b8da421343ce47460ff8d4665bb17fecf1d6ca5"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "1318543a9e68590613fc1b137e6b86289190f9d37fddc77070a447c8a67c41e4"
+      "file_sha256": "785c077ca8ce0f5d09f3c9ed119e3d0fcf66516d33beaed87faab18f3b94caf2"
     }
   },
   "boot": {
