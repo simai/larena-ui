@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-bc1fb36ec8f1-larena-ae62d3e35076",
-  "bundle_id": "ui-bc1fb36ec8f1-larena-ae62d3e35076-registry-eb273e00-exact-git-tree-v2",
+  "pair_id": "ui-0c8735b2dc5b-larena-7c06d3c66009",
+  "bundle_id": "ui-0c8735b2dc5b-larena-7c06d3c66009-registry-89e2dfba-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-bc1fb36ec8f1",
+    "release": "ui-0c8735b2dc5b",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "bc1fb36ec8f1dd7e92a0bcae26216017432df947",
+    "commit": "0c8735b2dc5ba8da99f776280f78064469639b77",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "da8fde5ecfebd529bdb9b915867df3e0060850722f746fd2faa9227334f7a3cb",
-    "files": 10920
+    "sha256": "f6ca199edaa66e8ef3db81dfae64ee6713c6e760fdbdd8ca93d63e4fa837e171",
+    "files": 10928
   },
   "packages": {
     "larena": {
-      "release": "larena-ae62d3e35076",
+      "release": "larena-7c06d3c66009",
       "repository": "simai/ui-pro",
       "tag": null,
       "release_repository": "simai/larena-ui",
-      "commit": "ae62d3e35076f0e25f2cde042c82ce929620b3db",
+      "commit": "7c06d3c6600996b17a3d221250b7389ff4d33629",
       "tree": "smart",
       "mount": "larena",
       "sha256": "8e5267b28297dfc44b89ebad039bb6732eda0b14b5dc3330af1f61309e447372",
       "files": 488,
-      "requires_framework": "ui-bc1fb36ec8f1",
+      "requires_framework": "ui-0c8735b2dc5b",
       "package_path": "components",
-      "package_tree": "c5ee0e50bf5e1a75789bb73dec291f5a8d1cf6a1",
+      "package_tree": "e26e4f44e9bac46f9292c3e53ebb34b6cafa2263",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "9c4a92359948faf431e8b63bbbcc813f8678e584"
+        "revision": "88359bc0a15afa356b4c01e84d09fa5f3e05c447"
       },
       "builder": {
         "repository": "simai/ui-builder",
         "revision": "a89508ce28acf00ca5b987059a424bfe1039f187"
       },
       "manifest_sha256": "8addb76c5a0dac8aae29acb6158561477eea3609ac3959ee3ce0bd719062e2f1",
-      "receipt_sha256": "7239e5bc33d49ad449ed471904624774337d23dce8a693a2b0fbb54356087f18",
+      "receipt_sha256": "071d73449f34580aa5768ef10611fd10718f03e23e37be23e98c3528c6920f01",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-bc1fb36ec8f1",
+    "compatibility_id": "ui-0c8735b2dc5b",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "eb273e007f53c0df27b6a65260fc9a7483016ab03b6ecc1127bfca86c6044591",
+    "file_sha256": "89e2dfba3c5858c9e00fd27ebddddb4cd1b4e352df77148226a2a24eb62f94ba",
     "source": {
       "tag": null,
-      "commit": "66271c64511a2ae7ef4eb316b65f63e887999bfc",
+      "commit": "c0c0a74683b071e38fb02031951924d4c5a0edcc",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "d2de656687a2b2bee241a0db9cf3325bed40be1b37cf07dfcab164291a717f3b",
+      "sha256": "9669c20d9b2c84e3e43e510bb5e79554022e0c843bce10eca49d3d032a3a24f4",
       "files": 2,
-      "tree_oid": "9b20202501190d37c6f57c1dec630dd1605c5f01"
+      "tree_oid": "709123ce4350bebe898d1dda0599b94de9198742"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "5c2bb99beb7a1bfffd5301e1203295da14f7be5785ccb296b2f61932777f488f"
+      "file_sha256": "6536459c5d49e45512a48f986bf136f9d60aa3d6b11e1b1a25f91b4cecba0720"
     }
   },
   "boot": {
