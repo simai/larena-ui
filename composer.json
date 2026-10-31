@@ -14,8 +14,7 @@
     "illuminate/console": "^13.0",
     "php": "^8.3",
     "larena/core": "dev-main",
-    "larena/dataview": "dev-main",
-    "larena/layout": "dev-main"
+    "larena/dataview": "dev-main"
   },
   "repositories": [
     {
@@ -58,6 +57,7 @@
     }
   },
   "require-dev": {
+    "larena/layout": "dev-main",
     "phpstan/phpstan": "^2.0"
   },
   "scripts": {
@@ -133,5 +133,8 @@
     }
   },
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "suggest": {
+    "larena/layout": "Layout's recipes and page assembly name the same collection utilities as this package; nothing here needs it to run."
+  }
 }

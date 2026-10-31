@@ -406,6 +406,8 @@
     "src/Runtime/SfElementDocumentNodeTypes.php",
     "tests/Unit/SfElementDocumentNodeTypesTest.php",
     "tests/JavaScript/composition-routing-host.test.mjs",
-    "tests/JavaScript/dataview-host-lifecycle.test.mjs"
+    "tests/JavaScript/dataview-host-lifecycle.test.mjs",
+    "src/Runtime/AdminCollectionUtilities.php",
+    "src/Runtime/AdminDataviewRenderer.php"
   ]
 }

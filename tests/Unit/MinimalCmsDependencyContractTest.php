@@ -10,6 +10,6 @@ $larena = static function (array $dependencies): array {
 };
 $actualRequire = $larena($composer['require'] ?? []);
 $actualRequireDev = $larena($composer['require-dev'] ?? []);
-if ($actualRequire !== ['larena/core','larena/dataview','larena/layout']) { throw new RuntimeException('Unexpected ui runtime dependencies: '.json_encode($actualRequire, JSON_THROW_ON_ERROR)); }
-if ($actualRequireDev !== []) { throw new RuntimeException('Unexpected ui compatibility dependencies: '.json_encode($actualRequireDev, JSON_THROW_ON_ERROR)); }
+if ($actualRequire !== ['larena/core','larena/dataview']) { throw new RuntimeException('Unexpected ui runtime dependencies: '.json_encode($actualRequire, JSON_THROW_ON_ERROR)); }
+if ($actualRequireDev !== ['larena/layout']) { throw new RuntimeException('Unexpected ui compatibility dependencies: '.json_encode($actualRequireDev, JSON_THROW_ON_ERROR)); }
 echo "MinimalCmsDependencyContractTest passed.\n";

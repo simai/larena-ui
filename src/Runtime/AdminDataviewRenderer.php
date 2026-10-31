@@ -6,7 +6,6 @@ namespace Larena\Ui\Runtime;
 
 use InvalidArgumentException;
 use Larena\Dataview\Contracts\DataviewTablePage;
-use Larena\Layout\Contracts\AdminCollectionLayoutPlan;
 use Larena\Ui\Contracts\BackendRenderResult;
 use Larena\Ui\Contracts\FrontendRenderArtifact;
 use Larena\Ui\Contracts\HydrationContract;
@@ -42,7 +41,7 @@ final class AdminDataviewRenderer
         $this->registry->renderer($manifest->rendererId);
         $frameworkDiagnostics = $this->frameworkDiagnostics($frameworkPlan, $manifest->frontendTag);
 
-        $utilityRegions = AdminCollectionLayoutPlan::frameworkUtilityRegions();
+        $utilityRegions = AdminCollectionUtilities::regions();
         $collectionUtilityClasses = $frameworkPlan === null ? '' : ' ' . implode(' ', array_merge(...array_values($utilityRegions['collection'])));
         $contentUtilityClasses = $frameworkPlan === null ? '' : ' ' . implode(' ', array_merge(...array_values($utilityRegions['content'])));
         $frameworkAttributes = $frameworkPlan === null ? ''
@@ -141,7 +140,7 @@ final class AdminDataviewRenderer
             throw new InvalidArgumentException('ui_admin_dataview_framework_plan_invalid');
         }
         $entryIds = is_array($plan['entry_ids'] ?? null) ? $plan['entry_ids'] : [];
-        foreach (array_keys(AdminCollectionLayoutPlan::frameworkUtilityClasses()) as $utilityId) {
+        foreach (array_keys(AdminCollectionUtilities::classes()) as $utilityId) {
             if (!in_array($utilityId, $entryIds, true)) {
                 throw new InvalidArgumentException('ui_admin_dataview_framework_utility_missing:' . $utilityId);
             }
@@ -158,8 +157,8 @@ final class AdminDataviewRenderer
             'kinds' => $plan['kinds'] ?? [],
             'effects_allowed' => false,
             'uses_framework_utilities_for_layout' => true,
-            'layout_utility_classes' => AdminCollectionLayoutPlan::frameworkUtilityClasses(),
-            'layout_utility_regions' => AdminCollectionLayoutPlan::frameworkUtilityRegions(),
+            'layout_utility_classes' => AdminCollectionUtilities::classes(),
+            'layout_utility_regions' => AdminCollectionUtilities::regions(),
             'upstream_gap' => $plan['adapter']['support']['upstream_gap'] ?? null,
             'fallback' => $plan['adapter']['support']['fallback'] ?? null,
         ];
