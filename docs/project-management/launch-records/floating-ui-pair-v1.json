@@ -11,7 +11,7 @@
     "docs/project-management/launch-records/floating-ui-pair-v1.json",
     "resources/css/admin-dataview.css",
     "resources/js/sf-runtime-bridge.js",
-    "tests/JavaScript/minimal-cms-port-bridge.test.mjs",
+    "tests/JavaScript/port-bridge.test.mjs",
     "composer.json",
     "src/Assets/AdminDataviewAssetManifest.php",
     "release-artifacts/ui-1f1c9d42d964-smart-6c5d313aca4d-registry-2bbb3905-exact-git-tree-v2/manifest.json",
@@ -88,7 +88,7 @@
     "docs/project-management/evidence/floating-ui-pair-v1/smoke.md",
     "docs/project-management/evidence/floating-ui-pair-v1/tests.md",
     "docs/project-management/evidence/editor-components-pair-v1/stage-d-data-view-registration-20260925.md",
-    "tests/JavaScript/minimal-cms-composite-port.test.mjs",
+    "tests/JavaScript/composite-port.test.mjs",
     "docs/project-management/evidence/floating-ui-pair-v1/icon-duplicate-definition-pair-20260927.md",
     "docs/project-management/evidence/floating-ui-pair-v1/base-define-guard-pair-20260927.md",
     "docs/project-management/evidence/floating-ui-pair-v1/search-caret-pair-20260927.md",
@@ -335,7 +335,7 @@
     "LICENSE",
     "tools/larena-scope-check.php",
     "src/Runtime/SfElementBackendRenderer.php",
-    "tests/Unit/MinimalCmsDependencyContractTest.php",
+    "tests/Unit/DependencyContractTest.php",
     "assets.yaml",
     "src/Contracts/UiResourcePackManifest.php",
     "tests/Unit/UiContractTest.php",
@@ -408,6 +408,10 @@
     "tests/JavaScript/composition-routing-host.test.mjs",
     "tests/JavaScript/dataview-host-lifecycle.test.mjs",
     "src/Runtime/AdminCollectionUtilities.php",
-    "src/Runtime/AdminDataviewRenderer.php"
+    "src/Runtime/AdminDataviewRenderer.php",
+    "module.yaml",
+    "tests/JavaScript/minimal-cms-composite-port.test.mjs",
+    "tests/JavaScript/minimal-cms-port-bridge.test.mjs",
+    "tests/Unit/MinimalCmsDependencyContractTest.php"
   ]
 }

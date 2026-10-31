@@ -100,7 +100,7 @@
         });
         var receipt = await response.json();
         if (!response.ok || receipt.status !== 'ok') throw new Error(
-          receipt.reason_code === 'minimal_cms_revision_conflict' ? 'preferences-conflict' : 'preferences-save-rejected');
+          receipt.reason_code === 'cms_revision_conflict' ? 'preferences-conflict' : 'preferences-save-rejected');
         revision += 1;
       }).catch(function (error) {
         failed = true;
@@ -120,7 +120,7 @@
   // still holds the shared revision this page was rendered with.
   function connectSharedColumns(target, form, lifecycle, columns) {
     var panel = document.querySelector('[data-larena-shared-settings]');
-    var button = panel?.querySelector('#minimal-cms-share-columns');
+    var button = panel?.querySelector('#admin-share-columns');
     if (!panel || !button) return;
     var status = form.querySelector('[data-larena-preferences-status]');
     var revision = Number.parseInt(panel.dataset.larenaSharedRevision || '0', 10);
@@ -175,7 +175,7 @@
         });
         var receipt = await response.json();
         if (!response.ok || receipt.status !== 'ok') throw new Error(
-          receipt.reason_code === 'minimal_cms_revision_conflict' ? 'shared-preferences-conflict' : 'shared-preferences-rejected');
+          receipt.reason_code === 'cms_revision_conflict' ? 'shared-preferences-conflict' : 'shared-preferences-rejected');
         revision += 1;
         if (status) { status.hidden = false; status.textContent = panel.dataset.larenaSharedSaved || ''; }
       } catch (error) {
@@ -370,7 +370,7 @@
               var operation = intent.replace('larena.record.', '');
               var mode = operation === 'restore' ? 'delete' : operation;
               url.searchParams.set('record_mode', mode);
-              url.hash = mode === 'view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
+              url.hash = mode === 'view' ? 'admin-record-view' : 'admin-record-editor';
               window.location.assign(url.href);
             }})
           })});
@@ -646,7 +646,7 @@
           heading.textContent = heading.textContent.replace(/\d[\d\s.,]*\s*$/, count);
         }
       }
-      var badge = document.getElementById('minimal-cms-record-count');
+      var badge = document.getElementById('admin-record-count');
       if (!badge) return;
       var oldCount = badge.getAttribute('text');
       var label = badge.getAttribute('aria-label');
@@ -689,7 +689,7 @@
       if (id) url.searchParams.set('record_id', id);
       else url.searchParams.delete('record_id');
       url.searchParams.set('record_mode', mode);
-      url.hash = mode === 'view' ? 'minimal-cms-record-view' : 'minimal-cms-record-editor';
+      url.hash = mode === 'view' ? 'admin-record-view' : 'admin-record-editor';
       // The record panel opens over the list in place when the admin page offers it.
       if (window.LarenaRecordPanel && window.LarenaRecordPanel.open(url.href)) return;
       window.location.assign(url.href);

@@ -41,7 +41,7 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     listeners: {}, addEventListener(type, listener) { this.listeners[type] = listener; },
     setHostPort(port) { this.port = port; }};
     const document = {readyState: 'complete', documentElement: {dataset: {}},
-        getElementById: id => id === 'minimal-cms-record-count' ? badge : null,
+        getElementById: id => id === 'admin-record-count' ? badge : null,
         // The page names the port editions it speaks (meta larena-port-editions).
         querySelector: selector => selector === 'sf-data-view' ? view
             : selector === 'meta[name="larena-port-editions"]' ? {content: '{"simai.dataview-port":"9.8.7"}'} : null,
@@ -185,9 +185,9 @@ test('a view saved with «Save for all» ticked in the table form goes to the ho
 test('a «Create» item with an address the host built opens that address', async () => {
     const h = await harness({answer: 'applied'});
     h.view.dataset.larenaCreateItems = JSON.stringify([{id: 'record', name: 'Record'},
-        {id: 'field-section', name: 'Section', href: '/admin/storage/workbench.sections?record_mode=create#minimal-cms-record-editor'}]);
+        {id: 'field-section', name: 'Section', href: '/admin/storage/workbench.sections?record_mode=create#admin-record-editor'}]);
     await h.view.port.raise('view.create_record', {item: 'field-section'}, {});
-    assert.deepEqual(h.assigned, ['http://localhost/admin/storage/workbench.sections?record_mode=create#minimal-cms-record-editor']);
+    assert.deepEqual(h.assigned, ['http://localhost/admin/storage/workbench.sections?record_mode=create#admin-record-editor']);
 });
 
 test('an action under the filter names the search and asks with its own message', async () => {
@@ -255,7 +255,7 @@ test('column settings answers reach the data view as they are, and the Storage l
     assert.equal(h.view.query.saved_view_id, undefined);
     const cms = await harness({answer: 'applied'});
     await cms.view.port.raise('view.open', {key: 'saved-view-aaaaaaaaaaaaaaaaaaaaaaaa'}, {});
-    assert.equal(cms.view.query.saved_view_id, undefined, 'the Minimal CMS list keeps its own behaviour');
+    assert.equal(cms.view.query.saved_view_id, undefined, 'the Larena CMS list keeps its own behaviour');
 });
 
 test('a linked value of a cell opens its record without asking the host port, and a foreign address is refused', async () => {

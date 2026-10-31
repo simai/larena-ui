@@ -30,7 +30,7 @@ features:
   - ui.smart_ai_catalog_projection
   - ui.smart_component_archetype_library
   - ui.source_backed_smart_event_projection
-  - ui.minimal_cms_smart_component_safety
+  - ui.cms_smart_component_safety
 runtime:
   php: "^8.3"
   laravel: "^13.0"
