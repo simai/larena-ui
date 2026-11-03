@@ -60,7 +60,7 @@ assert($paginationNode->getAttribute('actions') === '');
 $actionable = $renderer->render($page, 'list-actions', 'Records', $columns, $activation, [], true, true);
 $actionsDom = new DOMDocument();
 @$actionsDom->loadHTML($actionable->html());
-$actionTable = (new DOMXPath($actionsDom))->query('//sf-table[@id="list-actions-table"]')->item(0);
+$actionTable = (new DOMXPath($actionsDom))->query('//sf-view-table[@id="list-actions-table"]')->item(0);
 $actionPagination = (new DOMXPath($actionsDom))->query('//sf-pagination[@id="list-actions-pagination"]')->item(0);
 assert($actionTable instanceof DOMElement && $actionTable->hasAttribute('selectable'));
 assert($actionPagination instanceof DOMElement);

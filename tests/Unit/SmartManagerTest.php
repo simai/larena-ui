@@ -85,7 +85,7 @@ $viewArtifact = (new SmartManager($registry))->renderView('ui.dataview', 'defaul
     'data' => ['columns' => [], 'rows' => []],
 ], $activation);
 assert($viewArtifact->isRenderable());
-assert(str_contains($viewArtifact->html(), '<sf-table'));
+assert(str_contains($viewArtifact->html(), '<sf-view-table'));
 
 $unknownViewRejected = false;
 try {

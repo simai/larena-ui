@@ -96,7 +96,8 @@ final readonly class SourceSmartContractCatalog
             throw new InvalidArgumentException('ui_source_contract_version_mismatch:' . $adapterId);
         }
         if (($source['reuse_mode'] ?? null) !== 'whole'
-            || ($source['custom_element'] ?? null) !== $hostManifest->frontendTag
+            // A contract materialized before the Framework's tag rename (R3) names the old tag.
+            || \Larena\Ui\Frontend\SourceBackedComponentRegistry::currentTag((string) ($source['custom_element'] ?? '')) !== $hostManifest->frontendTag
             || !in_array('larena:' . $adapterId, $source['backend']['adapters'] ?? [], true)
         ) {
             throw new InvalidArgumentException('ui_source_contract_identity_mismatch:' . $adapterId);

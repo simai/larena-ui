@@ -19,7 +19,7 @@ async function harness() {
         closest: selector => selector === '[data-larena-minimal-cms]' ? host : null,
     };
     class Table extends EventTarget {
-        constructor() { super(); this.rows = []; this.applied = []; this.pendingSequence = null; this.states = []; this.dataset = {}; this.isConnected = true; this.localName = 'sf-table'; }
+        constructor() { super(); this.rows = []; this.applied = []; this.pendingSequence = null; this.states = []; this.dataset = {}; this.isConnected = true; this.localName = 'sf-view-table'; }
         closest(selector) { return selector === 'form[data-larena-dataview-query]' ? form : null; }
         setTableData() {} setRows(rows) { this.rows = rows; }
         applyQueryResult(sequence, rows) {
@@ -30,7 +30,7 @@ async function harness() {
         setAttribute() {} querySelectorAll() { return []; }
     }
     const table = new Table();
-    const descriptor = {dataset: {}, textContent: JSON.stringify({target: 'cms-table', component: 'sf-table', props: {data: {rows: []}}})};
+    const descriptor = {dataset: {}, textContent: JSON.stringify({target: 'cms-table', component: 'sf-view-table', props: {data: {rows: []}}})};
     const document = new EventTarget();
     document.readyState = 'complete'; document.documentElement = {lang: 'ru', dataset: {}};
     document.getElementById = id => id === 'cms-table' ? table : null;
@@ -51,7 +51,7 @@ async function harness() {
 
 function intent(table, sequence, ids) {
     table.pendingSequence = sequence;
-    const event = new Event('sf-table-query');
+    const event = new Event('sf-view-table-query');
     event.detail = {reason: 'context', sequence, context: {record_ids: ids}};
     table.dispatchEvent(event);
 }

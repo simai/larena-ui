@@ -419,7 +419,12 @@
     "module.yaml",
     "tests/JavaScript/minimal-cms-composite-port.test.mjs",
     "tests/JavaScript/minimal-cms-port-bridge.test.mjs",
-    "tests/Unit/MinimalCmsDependencyContractTest.php"
+    "tests/Unit/MinimalCmsDependencyContractTest.php",
+    "docs/developer/composition-regions-routing.md",
+    "resources/assets/admin-shell/read-only-route.css",
+    "resources/composition/larena-registry.mjs",
+    "resources/css/admin-ui-lab.css",
+    "src/Frontend/SourceBackedComponentRegistry.php"
   ],
   "forbidden_files": [
     "config/*",

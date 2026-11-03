@@ -12,19 +12,19 @@ assert(str_contains($button->html, 'text="Create"'));
 assert(!str_contains($button->html, '<button'));
 assert($button->isSafe());
 
-$table = Smart::render('sf-table', ['aria-label' => 'Pages', 'selectable' => false, 'settings' => false, 'actions' => false, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Test']]]]);
-assert(str_contains($table->html, '<sf-table'));
+$table = Smart::render('sf-view-table', ['aria-label' => 'Pages', 'selectable' => false, 'settings' => false, 'actions' => false, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => [['title' => 'Test']]]]);
+assert(str_contains($table->html, '<sf-view-table'));
 assert(!str_contains($table->html, 'read-only='));
 assert(str_contains($table->html, 'selectable="false"'));
 // row-actions defaults to true in the Framework table, so false has to be written out.
-$menuOnly = Smart::render('sf-table', ['aria-label' => 'Pages', 'actions' => true, 'row-actions' => false, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => []]]);
+$menuOnly = Smart::render('sf-view-table', ['aria-label' => 'Pages', 'actions' => true, 'row-actions' => false, 'data' => ['columns' => [['key' => 'title', 'label' => 'Title']], 'rows' => []]]);
 assert(str_contains($menuOnly->html, 'row-actions="false"') && str_contains($menuOnly->html, ' actions'));
 assert(str_contains($table->html, 'settings="false"'));
 assert(str_contains($table->html, 'actions="false"'));
 assert(str_contains($table->html, 'type="application/json"'));
 assert(str_contains($table->html, 'larena-smart-hydration'));
 assert(count($table->assetRequirements) === 9);
-assert(in_array('simai.framework.sf_icon_button.js', array_map(
+assert(in_array('simai.framework.sf_button_icon.js', array_map(
     static fn ($requirement): string => $requirement->assetKey, $table->assetRequirements,
 ), true));
 assert($table->isSafe());
@@ -36,7 +36,7 @@ foreach ([
     'sf-input' => ['name' => 'title', 'label' => 'Title', 'required' => true],
     'sf-checkbox' => ['name' => 'is_active', 'label' => 'Active', 'checked' => true, 'value' => '1'],
     'sf-modal' => ['id' => 'dialog', 'title' => 'Dialog', 'overlay' => true],
-    'sf-textarea' => ['name' => 'body', 'label' => 'Body', 'rows' => 8, 'required' => true],
+    'sf-input-textarea' => ['name' => 'body', 'label' => 'Body', 'rows' => 8, 'required' => true],
 ] as $tag => $props) {
     $render = Smart::render($tag, $props);
     assert(str_contains($render->html, '<' . $tag));

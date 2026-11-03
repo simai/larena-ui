@@ -56,7 +56,7 @@
     "permissions": "larena/access and domain policy",
     "preference_persistence": "larena/dataview descriptor store or larena/setting adapter",
     "rendering": "larena/ui Smart renderer",
-    "interaction": "simai/ui-smart sf-table and sf-pagination"
+    "interaction": "simai/ui-smart sf-view-table and sf-pagination"
   },
   "forbidden": [
     "direct SF tags in Admin views",

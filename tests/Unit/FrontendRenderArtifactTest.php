@@ -85,7 +85,7 @@ assert($serialized['asset_activation']['renderable_tags'] === $artifact->assetTa
 assert($serialized['diagnostics']['root_frontend_source_of_truth'] === false);
 
 $unsafeRender = new BackendRenderResult(
-    '<sf-table></sf-table>',
+    '<sf-view-table></sf-view-table>',
     RenderStrategy::Native,
     HydrationContract::none(),
     $manifest->assetRequirements,

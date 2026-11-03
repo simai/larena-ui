@@ -96,7 +96,7 @@ assert(!in_array('ui/distr/', $requiredRuntimeFiles, true));
 assert(!in_array('pro/smart/', $requiredRuntimeFiles, true));
 // The four package tags resolve inside the package's tree, every other one inside the free Smart tree.
 foreach ($lock->toArray()['components'] as $tag => $component) {
-    $larena = in_array($tag, ['sf-table', 'sf-data-view', 'sf-property-view', 'sf-admin-menu'], true);
+    $larena = in_array($tag, ['sf-view-table', 'sf-view', 'sf-view-properties', 'sf-admin-menu'], true);
     assert($component['package'] === ($larena ? 'pro' : 'framework'));
     assert(str_starts_with($component['javascript'], $larena ? 'pro/smart/' : 'ui/distr/smart/'));
 }
@@ -164,7 +164,7 @@ foreach ([
     static function (array &$data): void { $data['packages']['pro']['licence'] = ['ref' => 'Apache-2.0']; },
     static function (array &$data): void { $data['packages']['pro']['licence']['tier'] = 'Bundled Larena'; },
     static function (array &$data): void { $data['packages']['pro']['licence']['ref'] = ''; },
-    static function (array &$data): void { $data['components']['sf-table']['package'] = 'framework'; },
+    static function (array &$data): void { $data['components']['sf-view-table']['package'] = 'framework'; },
     static function (array &$data): void { $data['components']['sf-button']['package'] = 'larena'; },
     static function (array &$data): void { $data['components']['sf-button']['package'] = 'pro'; },
     static function (array &$data): void { $data['framework_registry']['source']['files'] = 0; },
@@ -551,7 +551,7 @@ try {
             'smart_base' => 'ui/distr/core/js/smart-base.js', 'ui_base' => 'ui/distr/', 'smart_base_path' => 'ui/distr/smart/'],
         'components' => [
             'sf-button' => ['source' => 'ui/distr/smart/buttons', 'javascript' => 'ui/distr/smart/buttons/js/buttons.js', 'css' => null, 'attributes' => [], 'package' => 'framework'],
-            'sf-table' => ['source' => 'larena/smart/table', 'javascript' => 'larena/smart/table/js/table.js', 'css' => null, 'attributes' => [], 'package' => 'larena'],
+            'sf-view-table' => ['source' => 'larena/smart/table', 'javascript' => 'larena/smart/table/js/table.js', 'css' => null, 'attributes' => [], 'package' => 'larena'],
             'sf-admin-menu' => ['source' => 'admin/smart/admin-menu', 'javascript' => 'admin/smart/admin-menu/js/admin-menu.js',
                 'css' => 'admin/smart/admin-menu/css/admin-menu.css', 'attributes' => [], 'package' => 'admin'],
         ],

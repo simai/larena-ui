@@ -108,7 +108,7 @@ final class AdminDataviewRenderer
             [
                 'manifest' => $manifest->componentKey,
                 'source' => $page->projection->descriptor->source->sourceKey,
-                'runtime_tag' => $smartArtifact === null ? null : 'sf-table',
+                'runtime_tag' => $smartArtifact === null ? null : 'sf-view-table',
                 'smart_manager' => $smartArtifact === null ? null : $smartArtifact->toArray()['diagnostics'],
                 'framework_contract' => $frameworkDiagnostics,
                 'row_count' => count($page->projection->rows),

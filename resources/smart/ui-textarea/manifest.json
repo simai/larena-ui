@@ -39,13 +39,14 @@
   "presets": {},
   "constraints": {},
   "render": {"strategy": "host", "renderer": "ui.sf.element"},
-  "frontend": {"runtime": "simai-framework", "tag": "sf-textarea"},
+  "frontend": {"runtime": "simai-framework", "tag": "sf-input-textarea"},
   "assets": [
     {"key": "simai.framework.core.css", "kind": "css", "critical": true},
     {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.sf_textarea.js", "kind": "javascript", "critical": true}
+    {"key": "simai.framework.sf_input_textarea.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.sf_input_textarea.js", "kind": "javascript", "critical": true}
   ],
   "atlas": {
     "visible": true,

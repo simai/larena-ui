@@ -62,8 +62,8 @@
     {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.sf_badge.js", "kind": "javascript", "critical": true},
-    {"key": "simai.framework.sf_icon_button.css", "kind": "css", "critical": true},
-    {"key": "simai.framework.sf_icon_button.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_button_icon.css", "kind": "css", "critical": true},
+    {"key": "simai.framework.sf_button_icon.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.sf_admin_menu.css", "kind": "css", "critical": true},
     {"key": "simai.framework.sf_admin_menu.js", "kind": "javascript", "critical": true}
   ],

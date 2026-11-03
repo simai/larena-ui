@@ -53,7 +53,7 @@ assert($adminReferenceReadiness['missing_custom_elements'] === [
     'admin.menu' => 'sf-admin-menu',
     'admin.menu_item' => 'sf-admin-menu-item',
     'navigation.breadcrumbs' => 'sf-breadcrumbs',
-    'data.table' => 'sf-table',
+    'data.table' => 'sf-view-table',
     'data.tree_item' => 'sf-tree-item',
 ]);
 assert($adminReferenceReadiness['boundaries']['activation_owned_by_core_assets']);
@@ -95,7 +95,7 @@ assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
     'sf-admin-menu',
     'sf-admin-menu-item',
     'sf-breadcrumbs',
-    'sf-table',
+    'sf-view-table',
     'sf-tree-item',
     'sf-checkbox',
     'sf-avatar',
@@ -103,7 +103,7 @@ assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
     'sf-progress-scale',
     'sf-tag',
     'sf-toggle',
-    'sf-icon-button',
+    'sf-button-icon',
 ]);
 foreach ($packageOwnedCarriers as $carrier) {
     assert($carrier['source_backed_status'] === 'larena_owned_fallback_carrier');

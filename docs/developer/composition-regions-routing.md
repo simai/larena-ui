@@ -9,8 +9,8 @@ extending the Framework grammar.
 
 `resources/composition/larena-registry.mjs` exports `createCompositionPorts`,
 which binds the product type `larena.registered-list` to the published
-`sf-table` element: `{manifests: BUILTIN_PORT_MANIFESTS, bindings:
-{"larena.registered-list": "sf-table"}}`. The Layout recipe adapter passes this
+`sf-view-table` element: `{manifests: BUILTIN_PORT_MANIFESTS, bindings:
+{"larena.registered-list": "sf-view-table"}}`. The Layout recipe adapter passes this
 registry to `resolveRecipe` (`compositionPorts`) and to `render`
 (`options.ports`). The table owns its ports: output `selection` and input
 `context`, both `record-ids.v1`.
@@ -18,7 +18,7 @@ registry to `resolveRecipe` (`compositionPorts`) and to `render`
 The compiled snapshot holds only the list host:
 `<div data-larena-request-list=… data-source-key=… data-column-preset=… data-title=…
 data-sf-endpoint=…>`. The endpoint attribute sits on this wrapper, which
-contains exactly one `sf-table` after the Root fills it per request.
+contains exactly one `sf-view-table` after the Root fills it per request.
 
 ## Host side of a route
 

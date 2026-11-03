@@ -160,7 +160,7 @@
   },
   "frontend": {
     "runtime": "simai-framework",
-    "tag": "sf-table"
+    "tag": "sf-view-table"
   },
   "assets": [
     {
@@ -189,22 +189,22 @@
       "critical": true
     },
     {
-      "key": "simai.framework.sf_icon_button.css",
+      "key": "simai.framework.sf_button_icon.css",
       "kind": "css",
       "critical": true
     },
     {
-      "key": "simai.framework.sf_icon_button.js",
+      "key": "simai.framework.sf_button_icon.js",
       "kind": "javascript",
       "critical": true
     },
     {
-      "key": "simai.framework.sf_table.css",
+      "key": "simai.framework.sf_view_table.css",
       "kind": "css",
       "critical": true
     },
     {
-      "key": "simai.framework.sf_table.js",
+      "key": "simai.framework.sf_view_table.js",
       "kind": "javascript",
       "critical": true
     }

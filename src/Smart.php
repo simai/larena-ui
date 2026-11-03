@@ -26,6 +26,7 @@ final class Smart
     public static function render(string $tag, array $props = [], ?SourceBackedComponentRegistry $registry = null, array $host = [], string $content = ''): BackendRenderResult
     {
         $registry ??= SourceBackedComponentRegistry::bundled();
+        $tag = SourceBackedComponentRegistry::currentTag($tag);
         $registry->assertPropsAllowed($tag, $props);
         foreach (array_keys($host) as $name) {
             if (preg_match('/^(?:slot|hidden|style|data-[a-z][a-z0-9]*(?:-[a-z0-9]+)*)$/D', $name) !== 1
@@ -40,14 +41,14 @@ final class Smart
         $paginationNextHref = null;
         $id = isset($props['id']) && is_string($props['id']) && preg_match('/^[A-Za-z][A-Za-z0-9_-]*$/', $props['id'])
             ? $props['id']
-            : ($tag === 'sf-table' ? 'larena-smart-' . substr($hash, 0, 12) : null);
+            : ($tag === 'sf-view-table' ? 'larena-smart-' . substr($hash, 0, 12) : null);
         $attributes = ['data-larena-smart-runtime' => $registry->pairId()];
         if ($id !== null) {
             $attributes = ['id' => $id] + $attributes;
         }
         $attributes = $host + $attributes;
         foreach ($props as $key => $value) {
-            if ($key === 'data' && $tag === 'sf-table') {
+            if ($key === 'data' && $tag === 'sf-view-table') {
                 $payload = $value;
                 continue;
             }
@@ -184,7 +185,7 @@ final class Smart
 
     private static function requiresExplicitFalse(string $tag, string $attribute): bool
     {
-        return ($tag === 'sf-table'
+        return ($tag === 'sf-view-table'
                 && in_array($attribute, ['selectable', 'settings', 'actions', 'row-actions'], true))
             || ($tag === 'sf-dropdown' && $attribute === 'search')
             || ($tag === 'sf-admin-menu' && $attribute === 'settings')

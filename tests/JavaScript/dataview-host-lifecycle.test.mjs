@@ -9,13 +9,13 @@ class Element extends EventTarget {
     setRows(rows) { this.rows = rows; }
     setState() {} setAttribute() {} setFilterFields() {} setTemplates() {} setTableSettings() {}
 }
-const search = (table, text) => { const e = new Event('sf-table-search-change'); e.detail = {search: text}; table.dispatchEvent(e); };
+const search = (table, text) => { const e = new Event('sf-view-table-search-change'); e.detail = {search: text}; table.dispatchEvent(e); };
 async function harness(count = 1, statePatch = {}) {
     const pending = []; const observers = [];
     const benches = Array.from({length: count}, () => {
         const table = new Element(), pagination = new Element(), status = new Element(), reset = new Element();
         const stateNode = {textContent: JSON.stringify({query_endpoint: '/query', profiles: {}, query: {page: 1}, ...statePatch})};
-        const nodes = {'sf-table': table, 'sf-pagination': pagination, '[data-larena-dataview-state]': stateNode, '[data-larena-dataview-status]': status, '[data-larena-dataview-reset]': reset};
+        const nodes = {'sf-view-table': table, 'sf-pagination': pagination, '[data-larena-dataview-state]': stateNode, '[data-larena-dataview-status]': status, '[data-larena-dataview-reset]': reset};
         const host = new Element(); host.querySelector = key => nodes[key] || null; host.querySelectorAll = () => [];
         return {host, table, pagination, status, reset, nodes};
     });
@@ -77,7 +77,7 @@ test('unmount aborts pending requests, removes listeners and suppresses late wri
 });
 test('replacing a child in a retained host disposes old binding and connects replacement', async () => {
     const h = await harness(); const b = h.benches[0], old = b.table;
-    b.table = b.nodes['sf-table'] = new Element(); h.reconcile();
+    b.table = b.nodes['sf-view-table'] = new Element(); h.reconcile();
     search(old, 'old'); search(b.table, 'replacement'); assert.equal(h.pending.length, 1); h.mount([]);
 });
 
@@ -115,7 +115,7 @@ test('a connected preferences store still receives page size changes', async () 
 });
 test('explicit save without a store reports unavailable and makes no request', async () => {
     const h = await harness(); const b = h.benches[0];
-    emit(b.table, 'sf-table-save', {kind: 'columns', columnSettings: {title: {visible: true}}});
+    emit(b.table, 'sf-view-table-save', {kind: 'columns', columnSettings: {title: {visible: true}}});
     await tick(); assert.equal(h.pending.length, 0);
     assert.equal(b.status.dataset.state, 'unavailable'); h.mount([]);
 });
@@ -157,7 +157,7 @@ test('saved reset with invalid dataset response reports error instead of success
     assert.match(b.status.textContent, /Не удалось загрузить данные/); h.mount([]);
 });
 
-const intent = (table, ids, action = 'archive', extras = {}) => emit(table, 'sf-table-apply', {action, scope: 'selection', ids, ...extras});
+const intent = (table, ids, action = 'archive', extras = {}) => emit(table, 'sf-view-table-apply', {action, scope: 'selection', ids, ...extras});
 test('typed owned intent preserves opaque IDs including zero and waits for owner result', async () => {
     const h = await harness(); const b = h.benches[0]; let seen; let resolve;
     h.actions.register(b.table, new Map([['archive', arg => {seen = arg; return new Promise(r => {resolve = r;});}]]));
@@ -179,7 +179,7 @@ test('nested and sibling component intents cannot enter another instance handler
     const h = await harness(2); let calls = 0; const b = h.benches[0];
     h.actions.register(b.table, new Map([['archive', () => {calls++;}]]));
     intent(h.benches[1].table, [0]);
-    const e = new Event('sf-table-apply'); e.detail = {action: 'archive', scope: 'entry', ids: [0]};
+    const e = new Event('sf-view-table-apply'); e.detail = {action: 'archive', scope: 'entry', ids: [0]};
     e.composedPath = () => [h.benches[1].table, b.table]; b.table.dispatchEvent(e);
     assert.equal(calls, 0); h.mount([]);
 });
@@ -235,7 +235,7 @@ test('explicit shadow host routes exact owner only, unregister aborts pending an
     let calls = 0, input, resolve;
     const release = h.actions.registerHost(b.host, b.table, new Map([['archive', value => {calls++; input=value; return new Promise(r=>{resolve=r;});}]]));
     await tick();
-    const foreign = new Event('sf-table-apply'); foreign.detail={action:'archive',scope:'entry',ids:['nested_γ_03']}; foreign.composedPath=()=>[h.benches[0].table,b.table]; b.table.dispatchEvent(foreign);
+    const foreign = new Event('sf-view-table-apply'); foreign.detail={action:'archive',scope:'entry',ids:['nested_γ_03']}; foreign.composedPath=()=>[h.benches[0].table,b.table]; b.table.dispatchEvent(foreign);
     assert.equal(calls,0); intent(b.table,['nested_γ_03']); assert.equal(calls,1);
     release(); assert.equal(input.signal.aborted,true); intent(b.table,['nested_γ_03']); assert.equal(calls,1);
     resolve({state:'completed'}); await tick();

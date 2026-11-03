@@ -10,7 +10,7 @@ Documentation of SIMAI Framework and its components (in Russian): https://ui.sim
 
 ## Admin components moved to simai/ui-admin
 
-The admin Smart components (`sf-table`, `sf-data-view`, `sf-property-view`,
+The admin Smart components (`sf-view-table`, `sf-view`, `sf-view-properties`,
 `sf-admin-menu`; the component package `larena`) used to live here in
 `components/`. Since 2026-10-22 their source is
 [`simai/ui-admin`](https://github.com/simai/ui-admin), in its `components/`

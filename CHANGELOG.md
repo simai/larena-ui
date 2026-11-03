@@ -49,6 +49,8 @@
 
 ## Unreleased
 
+- SIMAI Framework's smart tag rename R3 (pair ui-8e1a016a28a0, package pro-04b7726e91a3): the lock keys the components by their new tags (`sf-view`, `sf-view-table`, `sf-view-properties`, `sf-button-icon`, `sf-input-textarea`, `sf-input-rich`) and the free ones by their new folders (`smart/button-icon`, `smart/input-textarea`, `smart/input-rich`, and `smart/icon` for `sf-icon`; the old folders go after 2026-12-01). The menu's recent search results go through its setting `recentResults` (`setRecentResults()` goes after 2026-12-01). The composition registry still binds the registered list to `sf-table`, the element the Framework's port manifest names. The bridges, sheets, adapters and asset keys (`simai.framework.sf_view_table.js` …) use the new tags and listen to the new event names (`sf-view-table-save` …). `SourceBackedComponentRegistry::currentTag()` reads an old tag (`RENAMED`) as its new one, so a package or an older adapter that still names `sf-table` draws `sf-view-table`; the table goes with the Framework's aliases on 2027-01-01. View-settings keys (`sf-table/…`), class components and CSS variables keep their names, as the Framework keeps them.
+
 - `ui.icon_button` accepts `filled`, as the Framework's `sf-icon-button` does (a filled star for a favourite page).
 
 - Pin Framework Core `56cd91e1d7a3` and Smart `90208335806d` with registry `7d7edec0`. The `sf-data-view` selected action now reaches the host port with current revisions for one or more checked records; row actions retain their separate permission check.

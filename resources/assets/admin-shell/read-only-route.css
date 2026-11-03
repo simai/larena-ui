@@ -160,14 +160,14 @@ th {
 
 [data-smart="carrier-smoke"] sf-admin-menu,
 [data-smart="carrier-smoke"] sf-breadcrumbs,
-[data-smart="carrier-smoke"] sf-table,
+[data-smart="carrier-smoke"] sf-view-table,
 [data-smart="carrier-smoke"] sf-tree-item,
 [data-smart="carrier-smoke"] sf-pagination {
     display: block;
     min-width: 0;
 }
 
-sf-table {
+sf-view-table {
     display: block;
     max-width: 100%;
     min-width: 0;

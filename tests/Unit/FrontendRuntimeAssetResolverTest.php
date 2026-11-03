@@ -10,7 +10,7 @@ use Larena\Ui\Smart;
 
 $resolver = FrontendRuntimeAssetResolver::bundled();
 $core = $resolver->resolve(FrontendRuntimeAssetResolver::coreGraph());
-$assets = $resolver->resolve(Smart::assetGraph('sf-table'));
+$assets = $resolver->resolve(Smart::assetGraph('sf-view-table'));
 $keys = array_column($assets, 'asset_key');
 
 assert($keys === [
@@ -19,34 +19,34 @@ assert($keys === [
     'simai.framework.smart_base.js',
     'simai.framework.bridge.js',
     'simai.framework.sf_icon.js',
-    'simai.framework.sf_icon_button.css',
-    'simai.framework.sf_icon_button.js',
-    'simai.framework.sf_table.css',
-    'simai.framework.sf_table.js',
+    'simai.framework.sf_button_icon.css',
+    'simai.framework.sf_button_icon.js',
+    'simai.framework.sf_view_table.css',
+    'simai.framework.sf_view_table.js',
 ]);
 assert(array_column($core, 'relative_path') === [
     'ui/distr/core/css/core.min.css',
     'ui/distr/core/js/core.min.js',
 ]);
-assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-table')) === [
+assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-view-table')) === [
     'ui/distr/core/css/core.min.css',
-    'ui/distr/smart/icon-buttons/css/icon-buttons.min.css',
+    'ui/distr/smart/button-icon/css/button-icon.min.css',
     'pro/smart/view-table/css/view-table.min.css',
 ]);
-$dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-data-view'));
+$dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-view'));
 assert(array_column($dataViewAssets, 'asset_key') === [
     'simai.framework.core.css',
     'simai.framework.core.js',
     'simai.framework.smart_base.js',
     'simai.framework.bridge.js',
     'simai.framework.sf_icon.js',
-    'simai.framework.sf_icon_button.css',
-    'simai.framework.sf_icon_button.js',
-    'simai.framework.sf_table.css',
-    'simai.framework.sf_table.js',
+    'simai.framework.sf_button_icon.css',
+    'simai.framework.sf_button_icon.js',
+    'simai.framework.sf_view_table.css',
+    'simai.framework.sf_view_table.js',
     'simai.framework.sf_pagination.js',
-    'simai.framework.sf_data_view.css',
-    'simai.framework.sf_data_view.js',
+    'simai.framework.sf_view.css',
+    'simai.framework.sf_view.js',
 ]);
 
 $baseline = FrontendRuntimeLock::bundled()->toArray();

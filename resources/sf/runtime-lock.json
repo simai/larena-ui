@@ -74,12 +74,12 @@
     "smart_base_path": "ui/distr/smart/"
   },
   "components": {
-    "sf-data-view": {
+    "sf-view": {
       "source": "pro/smart/view",
       "javascript": "pro/smart/view/js/view.min.js",
       "css": "pro/smart/view/css/view.min.css",
       "requires": [
-        "sf-table",
+        "sf-view-table",
         "sf-pagination"
       ],
       "attributes": [
@@ -126,8 +126,8 @@
       "package": "pro"
     },
     "sf-icon": {
-      "source": "ui/distr/smart/icons",
-      "javascript": "ui/distr/smart/icons/js/icons.min.js",
+      "source": "ui/distr/smart/icon",
+      "javascript": "ui/distr/smart/icon/js/icon.min.js",
       "css": null,
       "attributes": [
         "icon",
@@ -166,12 +166,12 @@
       ],
       "package": "framework"
     },
-    "sf-table": {
+    "sf-view-table": {
       "source": "pro/smart/view-table",
       "javascript": "pro/smart/view-table/js/view-table.min.js",
       "css": "pro/smart/view-table/css/view-table.min.css",
       "requires": [
-        "sf-icon-button"
+        "sf-button-icon"
       ],
       "attributes": [
         "template",
@@ -400,10 +400,10 @@
       ],
       "package": "framework"
     },
-    "sf-textarea": {
-      "source": "ui/distr/smart/textarea",
-      "javascript": "ui/distr/smart/textarea/js/textarea.min.js",
-      "css": null,
+    "sf-input-textarea": {
+      "source": "ui/distr/smart/input-textarea",
+      "javascript": "ui/distr/smart/input-textarea/js/input-textarea.min.js",
+      "css": "ui/distr/smart/input-textarea/css/input-textarea.min.css",
       "attributes": [
         "template",
         "size",
@@ -422,7 +422,26 @@
         "mask-options",
         "aria-label",
         "id",
-        "class"
+        "class",
+        "root-class",
+        "root-style",
+        "appearance",
+        "autocomplete",
+        "inputmode",
+        "minlength",
+        "maxlength",
+        "spell-check",
+        "wrap",
+        "auto-grow",
+        "min-rows",
+        "max-rows",
+        "readonly",
+        "invalid",
+        "error-message",
+        "spellcheck",
+        "inherited-value",
+        "inherited-text",
+        "reset-label"
       ],
       "package": "framework"
     },
@@ -480,7 +499,7 @@
       "requires": [
         "sf-icon",
         "sf-badge",
-        "sf-icon-button"
+        "sf-button-icon"
       ],
       "attributes": [
         "template",
@@ -551,10 +570,10 @@
       ],
       "package": "framework"
     },
-    "sf-icon-button": {
-      "source": "ui/distr/smart/icon-buttons",
-      "javascript": "ui/distr/smart/icon-buttons/js/icon-buttons.min.js",
-      "css": "ui/distr/smart/icon-buttons/css/icon-buttons.min.css",
+    "sf-button-icon": {
+      "source": "ui/distr/smart/button-icon",
+      "javascript": "ui/distr/smart/button-icon/js/button-icon.min.js",
+      "css": "ui/distr/smart/button-icon/css/button-icon.min.css",
       "requires": [
         "sf-icon"
       ],
@@ -577,7 +596,15 @@
         "id",
         "class",
         "kind",
-        "appearance"
+        "appearance",
+        "root-style",
+        "status",
+        "spacing",
+        "badge-count",
+        "badge-dot",
+        "badge-cap",
+        "badge-label",
+        "button-attributes"
       ],
       "package": "framework"
     },
@@ -635,7 +662,7 @@
       ],
       "package": "framework"
     },
-    "sf-property-view": {
+    "sf-view-properties": {
       "source": "pro/smart/view-properties",
       "javascript": "pro/smart/view-properties/js/view-properties.min.js",
       "css": "pro/smart/view-properties/css/view-properties.min.css",
@@ -753,7 +780,7 @@
       "css": "ui/distr/component/tree-item/css/tree-item.min.css",
       "requires": [
         "sf-icon",
-        "sf-icon-button"
+        "sf-button-icon"
       ],
       "attributes": [
         "template",
@@ -807,13 +834,13 @@
       ],
       "package": "framework"
     },
-    "sf-rich-text": {
-      "source": "ui/distr/smart/rich-text",
-      "javascript": "ui/distr/smart/rich-text/js/rich-text.min.js",
-      "css": null,
+    "sf-input-rich": {
+      "source": "ui/distr/smart/input-rich",
+      "javascript": "ui/distr/smart/input-rich/js/input-rich.min.js",
+      "css": "ui/distr/smart/input-rich/css/input-rich.min.css",
       "requires": [
         "sf-button",
-        "sf-icon-button",
+        "sf-button-icon",
         "sf-input",
         "sf-popover"
       ],

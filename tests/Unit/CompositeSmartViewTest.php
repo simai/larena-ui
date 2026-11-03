@@ -38,7 +38,7 @@ assert(str_contains($artifact->html(), '<sf-button'));
 assert(str_contains($artifact->html(), 'id="dataview-create-item"'));
 assert(substr_count($artifact->html(), '<sf-dropdown') === 5);
 assert(str_contains($artifact->html(), 'name="saved_view_id"'));
-assert(str_contains($artifact->html(), '<sf-table'));
+assert(str_contains($artifact->html(), '<sf-view-table'));
 assert(str_contains($artifact->html(), '<sf-pagination'));
 assert(($artifact->diagnostics['composite_child_count'] ?? null) === 1);
 assert(count($artifact->assetGraph->requirements) > 0);

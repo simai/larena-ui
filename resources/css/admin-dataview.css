@@ -154,17 +154,17 @@
     outline-offset: 2px;
 }
 
-.larena-dataview-table__content > sf-table {
+.larena-dataview-table__content > sf-view-table {
     display: block !important;
     width: 100%;
     min-width: 100%;
 }
 
-.larena-dataview-table__content > sf-table > .sf-table {
+.larena-dataview-table__content > sf-view-table > .sf-table {
     min-width: 100%;
 }
 
-.larena-dataview-table__content > sf-table > .sf-table thead th {
+.larena-dataview-table__content > sf-view-table > .sf-table thead th {
     height: 42px;
     color: var(--sf-on-surface-muted);
     font-size: 12px;
@@ -174,7 +174,7 @@
     text-overflow: ellipsis;
 }
 
-.larena-dataview-table__content > sf-table > .sf-table tbody td {
+.larena-dataview-table__content > sf-view-table > .sf-table tbody td {
     height: 48px;
     font-size: 13px;
     white-space: nowrap;
@@ -185,12 +185,12 @@
 }
 
 /* The linked record name sits flush with the column and shortens with an ellipsis. */
-.larena-dataview-table__content > sf-table > .sf-table tbody td .sf-button--link {
+.larena-dataview-table__content > sf-view-table > .sf-table tbody td .sf-button--link {
     max-width: 100%;
     padding-inline: 0;
 }
 
-.larena-dataview-table__content > sf-table > .sf-table tbody td .sf-button--link .sf-button-text-container {
+.larena-dataview-table__content > sf-view-table > .sf-table tbody td .sf-button--link .sf-button-text-container {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -198,11 +198,11 @@
 }
 
 /* A narrow column keeps the "+N" count readable and lets the first badge shorten instead. */
-.larena-dataview-table__content > sf-table > .sf-table tbody td sf-badge + sf-badge > .sf-badge {
+.larena-dataview-table__content > sf-view-table > .sf-table tbody td sf-badge + sf-badge > .sf-badge {
     flex-shrink: 0;
 }
 
-.larena-dataview-table__content > sf-table > .sf-table tbody tr:hover {
+.larena-dataview-table__content > sf-view-table > .sf-table tbody tr:hover {
     background: var(--sf-surface-container-hover);
 }
 
@@ -216,7 +216,7 @@
 }
 
 /* As in the table design, "Show more" starts right under the last row with no empty band above it. */
-.larena-dataview-table__content > sf-table table {
+.larena-dataview-table__content > sf-view-table table {
     margin-bottom: 0;
 }
 
@@ -298,7 +298,7 @@
     .larena-dataview-toolbar:has(.larena-dataview-query-options[open]),
     .larena-dataview-toolbar:has(.larena-dataview-query-options[open]) > [data-larena-slot="options"] { grid-template-columns: minmax(0, 1fr); }
     .larena-dataview-query-options > [data-larena-slot] { grid-template-columns: 1fr; }
-    .larena-dataview-table__content > sf-table { width: 760px; min-width: 760px; }
+    .larena-dataview-table__content > sf-view-table { width: 760px; min-width: 760px; }
     .larena-dataview-table__pagination { overflow-x: auto; padding-bottom: 4px; }
     .larena-dataview-table__pagination > sf-pagination { min-width: 620px; }
     .larena-admin-record-editor__fields { grid-template-columns: 1fr; }

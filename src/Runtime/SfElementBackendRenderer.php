@@ -23,7 +23,7 @@ final class SfElementBackendRenderer implements SmartBackendRenderer
 
         // The Framework renamed two of the icon button's attributes (variant → kind, type → appearance; the old names
         // are deprecated). The manifest keeps its props; the element receives the current names.
-        if ($manifest->frontendTag === 'sf-icon-button') {
+        if ($manifest->frontendTag === 'sf-button-icon') {
             $renamed = [];
             foreach ($props as $name => $value) {
                 $renamed[['variant' => 'kind', 'type' => 'appearance'][$name] ?? $name] = $value;

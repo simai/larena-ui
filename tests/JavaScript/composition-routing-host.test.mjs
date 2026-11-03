@@ -23,7 +23,7 @@ async function harness(endpoint) {
     const pending = [];
     const table = new Element(), pagination = new Element(), status = new Element();
     const stateNode = {textContent: JSON.stringify({query_endpoint: '/query', profiles: {}, query: {page: 1, filters: {}}})};
-    const nodes = {'sf-table': table, 'sf-pagination': pagination, '[data-larena-dataview-state]': stateNode, '[data-larena-dataview-status]': status};
+    const nodes = {'sf-view-table': table, 'sf-pagination': pagination, '[data-larena-dataview-state]': stateNode, '[data-larena-dataview-status]': status};
     const scope = {getAttribute: name => name === 'data-sf-routes' ? JSON.stringify(routes) : null};
     const endpointHost = {getAttribute: name => name === 'data-sf-endpoint' ? endpoint : null,
         closest: selector => selector === 'sf-composition-scope' ? scope : null};
@@ -46,11 +46,11 @@ async function harness(endpoint) {
 }
 const intent = (table, ids, sequence) => {
     table.pendingSequence = sequence;
-    const event = new Event('sf-table-query');
+    const event = new Event('sf-view-table-query');
     event.detail = Object.freeze({reason: 'context', context: Object.freeze({record_ids: ids}), sequence});
     table.dispatchEvent(event);
 };
-const search = (table, text) => { const e = new Event('sf-table-search-change'); e.detail = {search: text}; table.dispatchEvent(e); };
+const search = (table, text) => { const e = new Event('sf-view-table-search-change'); e.detail = {search: text}; table.dispatchEvent(e); };
 const answer = ids => ({query: {page: 1, filters: {record_id: {operator: 'in', value: ids}}}, rows: ids.map(id => ({id})), pagination: {page: 1, total: ids.length, pageSize: 10}});
 const body = request => JSON.parse(request.options.body).query;
 

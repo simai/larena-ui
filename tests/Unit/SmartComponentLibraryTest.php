@@ -18,10 +18,10 @@ use Larena\Ui\Smart;
 $components = [
     'ui.button' => ['directory' => 'ui-button', 'tag' => 'sf-button'],
     'ui.input' => ['directory' => 'ui-input', 'tag' => 'sf-input'],
-    'ui.textarea' => ['directory' => 'ui-textarea', 'tag' => 'sf-textarea'],
+    'ui.textarea' => ['directory' => 'ui-textarea', 'tag' => 'sf-input-textarea'],
     'ui.checkbox' => ['directory' => 'ui-checkbox', 'tag' => 'sf-checkbox'],
     'ui.dropdown' => ['directory' => 'ui-dropdown', 'tag' => 'sf-dropdown'],
-    'ui.dataview' => ['directory' => 'ui-dataview', 'tag' => 'sf-table'],
+    'ui.dataview' => ['directory' => 'ui-dataview', 'tag' => 'sf-view-table'],
     'ui.pagination' => ['directory' => 'ui-pagination', 'tag' => 'sf-pagination'],
     'ui.badge' => ['directory' => 'ui-badge', 'tag' => 'sf-badge'],
     'ui.alert' => ['directory' => 'ui-alert', 'tag' => 'sf-alert'],
@@ -142,7 +142,7 @@ foreach ($components as $key => $definition) {
 
     $runtimeDefinition = $sourceRegistry->get($definition['tag']);
     $allowedProps = array_map('strval', $runtimeDefinition['attributes'] ?? []);
-    if ($definition['tag'] === 'sf-table') {
+    if ($definition['tag'] === 'sf-view-table') {
         $allowedProps[] = 'data';
     }
     if ($definition['tag'] === 'sf-dropdown') {

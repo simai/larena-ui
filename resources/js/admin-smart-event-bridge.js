@@ -91,16 +91,17 @@
         }
     });
 
-    // «Recent» for the empty field: the results this person last opened from the panel.
+    // «Recent» for the empty field: the results this person last opened from the panel. The menu takes them as its
+    // writable setting recentResults (setRecentResults() goes after 2026-12-01).
     const loadRecent = async (menu) => {
-        if (typeof menu?.setRecentResults !== 'function') return;
+        if (!menu || !('recentResults' in menu)) return;
         try {
             const response = await fetch('/admin/quick-search/recent', {credentials: 'same-origin', headers: {Accept: 'application/json'}});
             const payload = response.ok ? await response.json() : {groups: []};
             rememberShown(payload?.groups);
-            menu.setRecentResults(Array.isArray(payload?.groups) ? payload.groups : []);
+            menu.recentResults = Array.isArray(payload?.groups) ? payload.groups : [];
         } catch {
-            menu.setRecentResults([]);
+            menu.recentResults = [];
         }
     };
     document.addEventListener('click', (event) => {
@@ -217,7 +218,7 @@
             return instance?.refresh?.() ?? Promise.resolve(false);
         },
         registerHost(host, table, handlers) {
-            if (!host?.isConnected || ownNode(host, 'sf-table') !== table
+            if (!host?.isConnected || ownNode(host, 'sf-view-table') !== table
                 || !ownNode(host, '[data-larena-dataview-state]')
                 || !ownNode(host, 'sf-pagination') || !ownNode(host, '[data-larena-dataview-status]')) {
                 throw new TypeError('Expected connected owner host with exact table and complete state');
@@ -259,7 +260,7 @@
     const initDataviewWorkbench = (workbench) => {
         if (dataviewInstances.has(workbench)) return;
         const stateNode = ownNode(workbench, '[data-larena-dataview-state]');
-        const table = ownNode(workbench, 'sf-table');
+        const table = ownNode(workbench, 'sf-view-table');
         const pagination = ownNode(workbench, 'sf-pagination');
         const status = ownNode(workbench, '[data-larena-dataview-status]');
         if (!stateNode || !table || !pagination || !status) return;
@@ -412,7 +413,7 @@
         };
         const currentProfile = () => JSON.parse(JSON.stringify(profileForMode()));
 
-        listen(table, 'sf-table-query', (event) => {
+        listen(table, 'sf-view-table-query', (event) => {
             if (!ownedEvent(event, table) || disposed || contextIds === null) return;
             const detail = event.detail;
             const ids = detail?.context?.record_ids;
@@ -435,7 +436,7 @@
             const origin = event.composedPath?.()[0] || event.target;
             return origin === component;
         };
-        listen(table, 'sf-table-apply', async (event) => {
+        listen(table, 'sf-view-table-apply', async (event) => {
             if (!ownedEvent(event, table) || disposed) return;
             // apply {action, scope, ids, revisions} (standard 1.3.8), read as the {action_id, record_ids} the handlers take.
             const given = event.detail;
@@ -531,9 +532,9 @@
             event.preventDefault();
             toolbarSearch();
         });
-        listen(table, 'sf-table-search-change', (event) => runQuery({search: String(event.detail?.search || ''), page: 1}));
-        listen(table, 'sf-table-filter-change', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
-        listen(table, 'sf-table-template-save', (event) => {
+        listen(table, 'sf-view-table-search-change', (event) => runQuery({search: String(event.detail?.search || ''), page: 1}));
+        listen(table, 'sf-view-table-filter-change', (event) => runQuery({filters: event.detail?.values || {}, page: 1}));
+        listen(table, 'sf-view-table-template-save', (event) => {
             const profile = currentProfile();
             const incoming = Array.isArray(event.detail) ? event.detail : [event.detail];
             const byKey = new Map((profile.filters?.templates || []).map((item) => [item.key, item]));
@@ -546,7 +547,7 @@
                 runQuery({filters: selectedTemplate.data.values, page: 1});
             }
         });
-        listen(table, 'sf-table-save', (event) => {
+        listen(table, 'sf-view-table-save', (event) => {
             if (event.detail?.kind !== 'columns') return;
             const profile = currentProfile();
             profile.columns = event.detail?.columnSettings || {};
@@ -611,8 +612,8 @@
 
         listen(table, 'click', (event) => {
             const path = event.composedPath();
-            if (path.find(node => node?.matches?.('sf-table')) !== table) return;
-            const createControl = path.find((node) => node?.matches?.('sf-button[text="Создать"], sf-icon-button[icon="keyboard_arrow_down"]'));
+            if (path.find(node => node?.matches?.('sf-view-table')) !== table) return;
+            const createControl = path.find((node) => node?.matches?.('sf-button[text="Создать"], sf-button-icon[icon="keyboard_arrow_down"]'));
             if (createControl) {
                 const kind = createControl.matches('sf-button') ? 'create' : 'create-menu';
                 table.dispatchEvent(new CustomEvent('sf-data-view-create-request', {
@@ -631,15 +632,15 @@
     };
 
     const bootDataview = async () => {
-        await Promise.all([customElements.whenDefined('sf-table'), customElements.whenDefined('sf-pagination')]);
+        await Promise.all([customElements.whenDefined('sf-view-table'), customElements.whenDefined('sf-pagination')]);
         const reconcile = () => {
             explicitHosts.forEach((registration, host) => {
-                if (!host.isConnected || ownNode(host, 'sf-table') !== registration.table) registration.release();
+                if (!host.isConnected || ownNode(host, 'sf-view-table') !== registration.table) registration.release();
             });
             const workbenches = new Set([...document.querySelectorAll(workbenchSelector), ...explicitHosts.keys()]);
             dataviewInstances.forEach((instance, workbench) => {
                 if (!workbenches.has(workbench)
-                    || instance.table !== ownNode(workbench, 'sf-table')
+                    || instance.table !== ownNode(workbench, 'sf-view-table')
                     || instance.pagination !== ownNode(workbench, 'sf-pagination')
                     || instance.stateNode !== ownNode(workbench, '[data-larena-dataview-state]')) {
                     instance.dispose();

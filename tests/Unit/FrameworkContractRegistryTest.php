@@ -103,7 +103,7 @@ function entry(string $id, string $kind, array $requires = []): array
         'provenance' => ['source' => 'fixture'],
         'documentation_refs' => [],
         'example_refs' => [],
-        'runtime' => $id === 'smart.table' ? ['tags' => ['sf-table']] : [],
+        'runtime' => $id === 'smart.table' ? ['tags' => ['sf-view-table']] : [],
         'requires' => $requires,
         'curated_for' => ['admin.collection'],
     ];

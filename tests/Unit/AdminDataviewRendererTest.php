@@ -34,7 +34,7 @@ $activation = [
 $artifact = (new AdminDataviewRenderer())->render($page, ['name' => 'Name', 'status' => 'Status'], [], 'Users', '/admin/users', $activation);
 assert($artifact->isRenderable());
 assert(str_contains($artifact->html(), 'data-larena-smart-component="admin.dataview"'));
-assert(str_contains($artifact->html(), '<sf-table'));
+assert(str_contains($artifact->html(), '<sf-view-table'));
 assert(str_contains($artifact->html(), 'data-larena-read-only="true"'));
 assert(!str_contains($artifact->html(), ' read-only='));
 assert(str_contains($artifact->html(), 'selectable="false"'));
@@ -72,7 +72,7 @@ $frameworkPlan = [
     ],
     'kinds' => ['component', 'recipe', 'smart-component', 'utility'],
     'entries' => [
-        ['id' => 'smart.table', 'kind' => 'smart-component', 'runtime' => ['tags' => ['sf-table']]],
+        ['id' => 'smart.table', 'kind' => 'smart-component', 'runtime' => ['tags' => ['sf-view-table']]],
     ],
     'effects_allowed' => false,
 ];

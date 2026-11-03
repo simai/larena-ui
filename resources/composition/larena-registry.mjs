@@ -19,7 +19,7 @@ export function createRegistry(framework) {
   return framework.createRegistry([...builtin, manifest, registeredListManifest], {
     'layout.section': ({ node, slots }) => `<section data-sf-composition-id="${escape(node.id)}" data-composition-preset="${escape(node.presentation?.preset || 'surface')}">${slots.default || ''}</section>`,
     // Static publication contains the host only; authorized rows are rendered per HTTP request in PHP.
-    // Inside a layout.scope the host wraps exactly one sf-table, so it carries the endpoint name.
+    // Inside a layout.scope the host wraps exactly one sf-view-table, so it carries the endpoint name.
     'larena.registered-list': ({ node, endpoint }) => `<div data-larena-request-list="${escape(node.id)}" data-source-key="${escape(node.props.source_key)}" data-column-preset="${escape(node.props.column_preset)}" data-title="${escape(node.props.title)}"${endpoint ? ` data-sf-endpoint="${escape(endpoint)}"` : ''}></div>`,
     'larena.logical-file-image': ({ node }) => {
       const { public_id: id, extension, alt } = node.props;
@@ -29,7 +29,8 @@ export function createRegistry(framework) {
   });
 }
 
-/** The registered list is rendered by the published sf-table element, which owns its ports. */
+/** The registered list is rendered by the published sf-view-table element, which owns its ports. */
 export function createCompositionPorts(framework) {
+  // The Framework's port manifest still names the element sf-table (composition builtins, ui-8e1a016a28a0).
   return { manifests: framework.BUILTIN_PORT_MANIFESTS, bindings: { 'larena.registered-list': 'sf-table' } };
 }

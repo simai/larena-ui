@@ -15,7 +15,7 @@ assert($menu['adapter_available'] === true);
 assert($menu['source_contract']['id'] === 'smart.admin-menu');
 assert($menu['source_contract']['version'] === '1.0.0');
 $dataview = array_values(array_filter($components, static fn (array $item): bool => $item['id'] === 'ui.dataview'))[0];
-assert($dataview['frontend']['tag'] === 'sf-table');
+assert($dataview['frontend']['tag'] === 'sf-view-table');
 assert($dataview['adapter_available'] === true);
 
 $packet = $catalog->describe('ui.admin_menu', true);

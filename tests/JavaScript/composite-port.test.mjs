@@ -43,9 +43,9 @@ async function harness(data, {bulkAll = false, storageWorkbench = false, openVie
     const document = {readyState: 'complete', documentElement: {dataset: {}},
         getElementById: id => id === 'admin-record-count' ? badge : null,
         // The page names the port editions it speaks (meta larena-port-editions).
-        querySelector: selector => selector === 'sf-data-view' ? view
+        querySelector: selector => selector === 'sf-view' ? view
             : selector === 'meta[name="larena-port-editions"]' ? {content: '{"simai.dataview-port":"9.8.7"}'} : null,
-        querySelectorAll: selector => selector === 'sf-data-view' ? [view] : []};
+        querySelectorAll: selector => selector === 'sf-view' ? [view] : []};
     const assigned = [];
     const location = new URL('http://localhost/admin/cms');
     location.assign = (href) => assigned.push(String(href));
@@ -173,11 +173,11 @@ test('composite view save sends only host-owned fields with revision and full vi
 test('a view saved with «Save for all» ticked in the table form goes to the host as a view for everyone', async () => {
     const h = await harness({answer: 'applied'});
     const save = key => h.view.port.raise('view.save', {key, label: 'Ours', query: {}}, {});
-    h.view.listeners['sf-table-template-save']({detail: {key: 'filter_template_1', label: 'Ours', data: {template_save_for_all: '1'}}});
+    h.view.listeners['sf-view-table-template-save']({detail: {key: 'filter_template_1', label: 'Ours', data: {template_save_for_all: '1'}}});
     await save('filter_template_1');
     // The choice is used once: a later save of the composite's own is the person's view.
     await save('filter_template_1');
-    h.view.listeners['sf-table-template-save']({detail: {key: 'filter_template_2', label: 'Mine', data: {}}});
+    h.view.listeners['sf-view-table-template-save']({detail: {key: 'filter_template_2', label: 'Mine', data: {}}});
     await save('filter_template_2');
     assert.deepEqual(h.calls.map(call => JSON.parse(call.options.body).payload.target), ['shared', undefined, undefined]);
 });

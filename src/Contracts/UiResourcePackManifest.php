@@ -18,7 +18,7 @@ final readonly class UiResourcePackManifest
         'admin.menu' => 'sf-admin-menu',
         'admin.menu_item' => 'sf-admin-menu-item',
         'navigation.breadcrumbs' => 'sf-breadcrumbs',
-        'data.table' => 'sf-table',
+        'data.table' => 'sf-view-table',
         'data.tree_item' => 'sf-tree-item',
         'form.checkbox' => 'sf-checkbox',
         'media.avatar' => 'sf-avatar',
@@ -26,7 +26,7 @@ final readonly class UiResourcePackManifest
         'status.progress_scale' => 'sf-progress-scale',
         'status.tag' => 'sf-tag',
         'theme.toggle' => 'sf-toggle',
-        'toolbar.icon_button' => 'sf-icon-button',
+        'toolbar.icon_button' => 'sf-button-icon',
     ];
 
     /**
@@ -43,7 +43,7 @@ final readonly class UiResourcePackManifest
         'progress-scale' => 'sf-progress-scale',
         'tags' => 'sf-tag',
         'toggle' => 'sf-toggle',
-        'icon-buttons' => 'sf-icon-button',
+        'icon-buttons' => 'sf-button-icon',
     ];
 
     /**
@@ -81,7 +81,7 @@ final readonly class UiResourcePackManifest
             'browser_smoke_ready' => false,
         ],
         'data.table' => [
-            'custom_element' => 'sf-table',
+            'custom_element' => 'sf-view-table',
             'source_backed_status' => 'smart_runtime_missing_static_utility_available',
             'source_kind' => 'simai_framework_static_utility',
             'adapter_required' => true,
@@ -137,7 +137,7 @@ final readonly class UiResourcePackManifest
             'browser_smoke_ready' => true,
         ],
         'toolbar.icon_button' => [
-            'custom_element' => 'sf-icon-button',
+            'custom_element' => 'sf-button-icon',
             'source_backed_status' => 'larena_owned_fallback_carrier',
             'source_kind' => 'simai_framework_reference_adapter',
             'adapter_required' => true,
@@ -452,7 +452,7 @@ final readonly class UiResourcePackManifest
             'smoke_role' => 'read_only_breadcrumbs',
         ],
         'data.table' => [
-            'custom_element' => 'sf-table',
+            'custom_element' => 'sf-view-table',
             'resource_path' => 'resources/assets/smart/table/table.js',
             'source_backed_status' => 'larena_owned_fallback_carrier',
             'smoke_role' => 'read_only_table',
@@ -500,7 +500,7 @@ final readonly class UiResourcePackManifest
             'smoke_role' => 'read_only_toggle_marker',
         ],
         'toolbar.icon_button' => [
-            'custom_element' => 'sf-icon-button',
+            'custom_element' => 'sf-button-icon',
             'resource_path' => 'resources/simai/smart/icon-button/icon-button.js',
             'source_backed_status' => 'larena_owned_fallback_carrier',
             'smoke_role' => 'read_only_toolbar_action_marker',

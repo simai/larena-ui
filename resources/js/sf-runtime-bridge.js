@@ -47,7 +47,7 @@
             : 'Revision refreshed. Your draft remains on screen. '), retry);
           retry.addEventListener('click', function () {
             failed = false;
-            target.dispatchEvent(new CustomEvent('sf-table-save',
+            target.dispatchEvent(new CustomEvent('sf-view-table-save',
               {detail: {kind: 'columns', columnSettings: latest}}));
           }, {once: true, signal: lifecycle.signal});
         } catch (error) {
@@ -75,7 +75,7 @@
     var latest = fieldColumns(state.columns);
     connectSharedColumns(target, form, lifecycle, function () { return latest; });
     // save {kind: columns} (standard 1.3.8) carries the table's column settings.
-    target.addEventListener('sf-table-save', function (event) {
+    target.addEventListener('sf-view-table-save', function (event) {
       if (event.target !== target || lifecycle.signal.aborted || event.detail?.kind !== 'columns') return;
       var columns = fieldColumns(event.detail?.columnSettings);
       latest = columns;
@@ -244,7 +244,7 @@
         if (!nextQuery || nextQuery.scope_ref !== query.scope_ref || nextQuery.structure_id !== query.structure_id)
           throw new Error('pagination-scope');
         var node = Array.from(nextForm.querySelectorAll('script[data-larena-smart-hydration]')).find(function (item) {
-          return JSON.parse(item.textContent || '{}').component === 'sf-table';
+          return JSON.parse(item.textContent || '{}').component === 'sf-view-table';
         });
         var descriptor = JSON.parse(node?.textContent || 'null');
         if (!descriptor || !Array.isArray(descriptor.props?.data?.rows)) throw new Error('pagination-data');
@@ -301,13 +301,13 @@
         columns.forEach(function (key) { row[key] = display(record.values?.[key]); });
         row.actions = (record.actions || []).filter(function (action) { return actionTypes[action]; }).map(function (action) {
           var type = actionTypes[action];
-          return {component: {type: 'icon-button', props: {variant: 'icon', type: 'link', scheme: 'on-surface', size: '1',
+          return {component: {type: 'button-icon', props: {kind: 'icon', appearance: 'link', scheme: 'on-surface', size: '1',
             icon: type[0], value: type[1], ariaLabel: type[2]}}};
         });
         return row;
       });
     }
-    target.addEventListener('sf-table-query', async function (event) {
+    target.addEventListener('sf-view-table-query', async function (event) {
       if (event.target !== target || lifecycle.signal.aborted || event.detail?.reason !== 'context') return;
       var sequence = event.detail?.sequence;
       var ids = event.detail?.context?.record_ids;
@@ -439,7 +439,7 @@
       throw new Error('larena-smart-hydration-target-mismatch');
     }
     var lifecycle = instanceLifecycle(target);
-    if (descriptor.component === 'sf-table') {
+    if (descriptor.component === 'sf-view-table') {
       if (typeof target.setTableData !== 'function') {
         throw new Error('larena-smart-table-api-unavailable');
       }
@@ -452,9 +452,9 @@
         throw new Error('larena-smart-table-rows-api-unavailable');
       }
       target.setRows(rows, 'larena-backend-hydration');
-      // A slotted table belongs to sf-data-view. Its rows and listeners come from the
+      // A slotted table belongs to sf-view. Its rows and listeners come from the
       // host port, never from the legacy single-table query and pagination bridge.
-      if (target.closest('sf-data-view')) {
+      if (target.closest('sf-view')) {
         target.setAttribute('data-larena-hydrated', 'true');
         return;
       }
@@ -497,7 +497,7 @@
           }
         })).observe(target, {subtree: true, childList: true, attributes: true, attributeFilter: ['checked']});
         // select {ids} (standard 1.3.8): the marked rows of this page.
-        target.addEventListener('sf-table-select', function (event) {
+        target.addEventListener('sf-view-table-select', function (event) {
           if (event.target !== target) return;
           var ids = event.detail?.ids;
           if (!Array.isArray(ids) || ids.length > rows.length) return;
@@ -534,7 +534,7 @@
   }
 
   function applyReadOnlyTable(target) {
-    if (!target || target.localName !== 'sf-table' || !target.closest('[data-larena-read-only="true"]')) return;
+    if (!target || target.localName !== 'sf-view-table' || !target.closest('[data-larena-read-only="true"]')) return;
     ['selectable', 'settings', 'actions'].forEach(function (attribute) {
       if (target.getAttribute(attribute) !== 'false') target.setAttribute(attribute, 'false');
     });
@@ -544,9 +544,9 @@
 
   function syncReadOnlyTables(root) {
     var scope = root && typeof root.querySelectorAll === 'function' ? root : document;
-    if (root && root.localName === 'sf-table') applyReadOnlyTable(root);
-    if (root && typeof root.closest === 'function') applyReadOnlyTable(root.closest('sf-table'));
-    scope.querySelectorAll('[data-larena-read-only="true"] sf-table').forEach(applyReadOnlyTable);
+    if (root && root.localName === 'sf-view-table') applyReadOnlyTable(root);
+    if (root && typeof root.closest === 'function') applyReadOnlyTable(root.closest('sf-view-table'));
+    scope.querySelectorAll('[data-larena-read-only="true"] sf-view-table').forEach(applyReadOnlyTable);
   }
 
   // The list's port declared in the element (a data-sf-port island; SF.EarlyPort, Framework core runtime): Core sent
@@ -632,7 +632,7 @@
     // The table's save form has «Save for all»; the composite does not pass it on with the view, so
     // the page keeps it for the save of that view that follows.
     var saveForAll = null;
-    view.addEventListener?.('sf-table-template-save', function (event) {
+    view.addEventListener?.('sf-view-table-template-save', function (event) {
       var detail = event.detail && !Array.isArray(event.detail) ? event.detail : null;
       var flag = detail?.data?.template_save_for_all;
       saveForAll = detail ? {key: detail.key, shared: flag === true || flag === '1' || flag === 'on'} : null;
@@ -865,12 +865,12 @@
   }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['autocomplete', 'data-larena-read-only', 'selectable', 'settings', 'actions'] });
 
   async function boot() {
-    // Each part starts as soon as its own component is defined: a list asks for its data the moment sf-data-view is
+    // Each part starts as soon as its own component is defined: a list asks for its data the moment sf-view is
     // there, never after the fields or other tables (that wait alone held the rows back by 1.3-1.8 s).
     var parts = [];
-    if (document.querySelector('sf-data-view')) {
-      parts.push(customElements.whenDefined('sf-data-view').then(function () {
-        document.querySelectorAll('sf-data-view').forEach(connectCmsComposite);
+    if (document.querySelector('sf-view')) {
+      parts.push(customElements.whenDefined('sf-view').then(function () {
+        document.querySelectorAll('sf-view').forEach(connectCmsComposite);
       }));
     }
     var descriptors = document.querySelectorAll('script[type="application/json"][data-larena-smart-hydration]');
@@ -883,8 +883,8 @@
     if (document.querySelector('sf-input')) {
       parts.push(customElements.whenDefined('sf-input').then(function () { syncNativeInputAttributes(document); }));
     }
-    if (document.querySelector('[data-larena-read-only="true"] sf-table')) {
-      parts.push(customElements.whenDefined('sf-table').then(function () { syncReadOnlyTables(document); }));
+    if (document.querySelector('[data-larena-read-only="true"] sf-view-table')) {
+      parts.push(customElements.whenDefined('sf-view-table').then(function () { syncReadOnlyTables(document); }));
     }
     await Promise.all(parts);
     window.dispatchEvent(new CustomEvent('larena-smart-ready'));
@@ -900,7 +900,7 @@
       // Only lists answered by a port can ask again; a list with rows in place cannot. A records list rewrites the one
       // row it knows; any other connected list (a host port's: the fields of a storage, the users) reads its page again,
       // so a field added in the panel shows in the list at once.
-      var views = Array.prototype.slice.call(document.querySelectorAll('sf-data-view[data-larena-port-connected="true"]'))
+      var views = Array.prototype.slice.call(document.querySelectorAll('sf-view[data-larena-port-connected="true"]'))
         .filter(function (view) { return typeof view.larenaRefreshRecord === 'function' || typeof view.refresh === 'function'; });
       views.forEach(function (view) {
         if (id && typeof view.larenaRefreshRecord === 'function') void view.larenaRefreshRecord(id);
