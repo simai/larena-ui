@@ -21,16 +21,6 @@ final class SfElementBackendRenderer implements SmartBackendRenderer
             throw new InvalidArgumentException('ui_smart_slots_not_supported_by_renderer:' . $manifest->componentKey);
         }
 
-        // The Framework renamed two of the icon button's attributes (variant → kind, type → appearance; the old names
-        // are deprecated). The manifest keeps its props; the element receives the current names.
-        if ($manifest->frontendTag === 'sf-button-icon') {
-            $renamed = [];
-            foreach ($props as $name => $value) {
-                $renamed[['variant' => 'kind', 'type' => 'appearance'][$name] ?? $name] = $value;
-            }
-            $props = $renamed;
-        }
-
         return Smart::render($manifest->frontendTag, $props);
     }
 }

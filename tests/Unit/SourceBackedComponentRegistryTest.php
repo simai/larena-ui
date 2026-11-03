@@ -15,13 +15,13 @@ assert($lock->toArray()['ui']['commit'] === '8e1a016a28a09f92457c78e022934406ea3
 assert($lock->package('pro')['commit'] === '04b7726e91a3e4a155a6f3973f98604a9c3626eb');
 
 $registry = SourceBackedComponentRegistry::bundled();
-assert($registry->get('sf-button')['source'] === 'ui/distr/smart/buttons');
+assert($registry->get('sf-button')['source'] === 'ui/distr/smart/button');
 assert($registry->get('sf-view-table')['source'] === 'pro/smart/view-table');
 assert($registry->get('sf-view')['source'] === 'pro/smart/view');
-assert($registry->get('sf-badge')['source'] === 'ui/distr/smart/badges');
+assert($registry->get('sf-badge')['source'] === 'ui/distr/smart/badge');
 assert($registry->get('sf-alert')['source'] === 'ui/distr/smart/alert');
 assert($registry->get('sf-pagination')['source'] === 'ui/distr/smart/pagination');
-assert($registry->get('sf-input')['source'] === 'ui/distr/smart/inputs');
+assert($registry->get('sf-input')['source'] === 'ui/distr/smart/input');
 assert($registry->get('sf-modal')['source'] === 'ui/distr/smart/modal');
 assert($registry->get('sf-input-textarea')['source'] === 'ui/distr/smart/input-textarea');
 assert($registry->get('sf-dropdown')['source'] === 'ui/distr/smart/dropdown');
@@ -29,7 +29,7 @@ assert($registry->get('sf-checkbox')['source'] === 'ui/distr/smart/checkbox');
 $registry->assertPropsAllowed('sf-button', ['text' => 'Create', 'disabled' => false]);
 $registry->assertPropsAllowed('sf-view-table', ['aria-label' => 'Pages', 'data' => ['columns' => [], 'rows' => []]]);
 $registry->assertPropsAllowed('sf-view', ['id' => 'cms-records', 'aria-label' => 'Records']);
-$registry->assertPropsAllowed('sf-input', ['label' => 'Title', 'required' => true, 'error' => false, 'autocomplete' => 'new-password']);
+$registry->assertPropsAllowed('sf-input', ['label' => 'Title', 'required' => true, 'invalid' => false, 'autocomplete' => 'new-password']);
 $registry->assertPropsAllowed('sf-view-table', ['selectable' => false, 'settings' => false, 'actions' => false]);
 try {
     $registry->assertPropsAllowed('sf-view-table', ['read-only' => 'true']);
@@ -37,7 +37,7 @@ try {
 } catch (InvalidArgumentException $exception) {
     assert(str_contains($exception->getMessage(), 'read-only'));
 }
-$registry->assertPropsAllowed('sf-modal', ['id' => 'dialog', 'title' => 'Dialog', 'overlay' => true]);
+$registry->assertPropsAllowed('sf-modal', ['id' => 'dialog', 'heading' => 'Dialog', 'overlay' => true]);
 $registry->assertPropsAllowed('sf-dropdown', ['name' => 'locale', 'options' => [['text' => 'English', 'value' => 'en']]]);
 $registry->assertPropsAllowed('sf-checkbox', ['name' => 'is_active', 'label' => 'Active', 'checked' => true]);
 

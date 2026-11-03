@@ -40,9 +40,9 @@ $artifact = (new SmartManager($registry))->render('ui.input', [
     'label' => 'Title',
     'value' => 'Larena',
     'required' => true,
-    'type' => 'bordered',
+    'appearance' => 'bordered',
     'size' => '1',
-    'error' => false,
+    'invalid' => false,
     'hint' => '',
 ], $activation);
 assert($artifact->isRenderable());

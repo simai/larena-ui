@@ -87,7 +87,7 @@ final readonly class RegisteredListRenderer
         $id = 'preferences-'.substr(hash('sha256', $instanceId), 0, 20).'-reset';
         $text = 'Сбросить личные настройки';
         $artifact = $this->smart->render('ui.button', ['id' => $id, 'text' => $text,
-            'size' => '1', 'type' => 'outline', 'scheme' => 'primary', 'loading' => false,
+            'size' => '1', 'appearance' => 'outline', 'scheme' => 'primary', 'loading' => false,
             'disabled' => false, 'native-type' => 'button', 'aria-label' => $text], $activation);
         if (!$artifact->isRenderable()) throw new InvalidArgumentException('ui_preferences_controls_unavailable');
         return '<span data-larena-dataview-reset>'.$artifact->html().'</span>';
@@ -107,14 +107,14 @@ final readonly class RegisteredListRenderer
         foreach ($columns as $column) {
             $artifact = $this->smart->render('ui.input', ['id' => $instanceId.'-field-'.$column['key'],
                 'name' => $column['key'], 'label' => $column['label'], 'value' => '', 'required' => true,
-                'type' => 'bordered', 'size' => '1', 'disabled' => false, 'error' => false,
+                'appearance' => 'bordered', 'size' => '1', 'disabled' => false, 'invalid' => false,
                 'hint' => $column['label']], $activation);
             if (!$artifact->isRenderable()) throw new InvalidArgumentException('ui_record_controls_unavailable');
             $fields .= $artifact->html();
         }
         $button = function (string $key, string $text) use ($instanceId, $activation): string {
             $artifact = $this->smart->render('ui.button', ['id' => $instanceId.'-'.$key, 'text' => $text,
-                'size' => '1', 'type' => 'outline', 'scheme' => 'primary', 'loading' => false,
+                'size' => '1', 'appearance' => 'outline', 'scheme' => 'primary', 'loading' => false,
                 'disabled' => false, 'native-type' => 'button', 'aria-label' => $text], $activation);
             if (!$artifact->isRenderable()) throw new InvalidArgumentException('ui_record_controls_unavailable');
             return '<span data-larena-record-control="'.$key.'">'.$artifact->html().'</span>';

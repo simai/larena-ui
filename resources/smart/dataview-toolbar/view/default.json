@@ -14,7 +14,7 @@
       "preset": null,
       "modifiers": [],
       "slot": "options",
-      "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "current-query", "name": "saved_view_id", "label": "Saved view", "required": false, "placeholder": "Saved view", "search-placeholder": "Find saved view", "search": false, "disabled": false, "aria-label": "Saved view", "id": "dataview-saved-view", "options": [{"text": "Current query", "value": "current-query", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Current query"}]},
+      "props": {"size": "1", "appearance": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "current-query", "name": "saved_view_id", "label": "Saved view", "required": false, "placeholder": "Saved view", "search-placeholder": "Find saved view", "search": false, "disabled": false, "aria-label": "Saved view", "id": "dataview-saved-view", "options": [{"text": "Current query", "value": "current-query", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Current query"}]},
       "children": {}
     },
     "search": {
@@ -23,7 +23,7 @@
       "preset": null,
       "modifiers": [],
       "slot": "search",
-      "props": {"id": "dataview-search", "name": "search", "label": "Search", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
+      "props": {"id": "dataview-search", "name": "search", "label": "Search", "value": "", "required": false, "appearance": "bordered", "size": "1", "disabled": false, "invalid": false, "hint": ""},
       "children": {}
     },
     "query_options": {
@@ -41,7 +41,7 @@
       "preset": null,
       "modifiers": [],
       "slot": "actions",
-      "props": {"text": "Apply", "size": "1", "type": "default", "scheme": "primary", "loading": false, "disabled": false, "native-type": "submit", "aria-label": "Apply table query"},
+      "props": {"text": "Apply", "size": "1", "appearance": "default", "scheme": "primary", "loading": false, "disabled": false, "native-type": "submit", "aria-label": "Apply table query"},
       "children": {}
     },
     "create": {
@@ -50,7 +50,7 @@
       "preset": null,
       "modifiers": [],
       "slot": "actions",
-      "props": {"text": "Create item", "size": "1", "type": "default", "scheme": "primary", "loading": false, "disabled": true, "native-type": "button", "aria-label": "Create item", "id": "dataview-create-item"},
+      "props": {"text": "Create item", "size": "1", "appearance": "default", "scheme": "primary", "loading": false, "disabled": true, "native-type": "button", "aria-label": "Create item", "id": "dataview-create-item"},
       "children": {}
     }
   },

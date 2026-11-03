@@ -9,7 +9,7 @@
     "type": "object",
     "properties": {
       "size": {"type": "string", "enum": ["1/3", "1/2", "1", "2", "3"]},
-      "type": {"type": "string", "enum": ["filled", "outlined"]},
+      "appearance": {"type": "string", "enum": ["filled", "outlined"]},
       "mode": {"type": "string", "enum": ["tag", "select"]},
       "multiple": {"type": "boolean"},
       "portal": {"type": "boolean"},
@@ -25,7 +25,7 @@
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
       "options": {"type": "array"}
     },
-    "required": ["size", "type", "mode", "multiple", "portal", "value", "name", "label", "required", "placeholder", "search-placeholder", "search", "disabled", "aria-label", "id", "options"],
+    "required": ["size", "appearance", "mode", "multiple", "portal", "value", "name", "label", "required", "placeholder", "search-placeholder", "search", "disabled", "aria-label", "id", "options"],
     "additionalProperties": false
   },
   "slots": {},
@@ -46,6 +46,7 @@
     {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true},
     {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true},
+    {"key": "simai.framework.sf_dropdown.css", "kind": "css", "critical": true},
     {"key": "simai.framework.sf_dropdown.js", "kind": "javascript", "critical": true}
   ],
   "atlas": {
@@ -66,7 +67,7 @@
     "product_href": "/admin/ui/components/ui.dropdown",
     "example_props": {
       "size": "1",
-      "type": "outlined",
+      "appearance": "outlined",
       "mode": "select",
       "multiple": false,
       "portal": false,
@@ -88,7 +89,7 @@
     "controls": [
       {"key": "label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
       {"key": "value", "source": "prop", "widget": "select", "options": ["draft", "published"]},
-      {"key": "type", "source": "prop", "widget": "select"},
+      {"key": "appearance", "source": "prop", "widget": "select"},
       {"key": "mode", "source": "prop", "widget": "select"},
       {"key": "disabled", "source": "prop", "widget": "boolean"}
     ],
@@ -97,20 +98,20 @@
       "en": {
         "title": "Dropdown",
         "description": "Selects one option from a list.",
-        "controls": {"label": "Label", "value": "Selected value", "type": "Type", "mode": "Mode", "disabled": "Disabled"},
+        "controls": {"label": "Label", "value": "Selected value", "appearance": "Type", "mode": "Mode", "disabled": "Disabled"},
         "options": {
           "value": {"draft": "Draft", "published": "Published"},
-          "type": {"filled": "Filled", "outlined": "Outlined"},
+          "appearance": {"filled": "Filled", "outlined": "Outlined"},
           "mode": {"tag": "Tag", "select": "Select"}
         }
       },
       "ru": {
         "title": "Выпадающий список",
         "description": "Выбирает один вариант из списка.",
-        "controls": {"label": "Подпись", "value": "Выбранное значение", "type": "Тип", "mode": "Режим", "disabled": "Отключён"},
+        "controls": {"label": "Подпись", "value": "Выбранное значение", "appearance": "Тип", "mode": "Режим", "disabled": "Отключён"},
         "options": {
           "value": {"draft": "Черновик", "published": "Опубликовано"},
-          "type": {"filled": "Заполненный", "outlined": "Контурный"},
+          "appearance": {"filled": "Заполненный", "outlined": "Контурный"},
           "mode": {"tag": "Метка", "select": "Выбор"}
         }
       }

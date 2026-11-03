@@ -56,7 +56,7 @@ foreach (array_keys($manifest->propsSchema['properties']) as $prop) {
 $reference = new SmartComponentReference($manifest);
 $default = $reference->resolve();
 assert($default['controls']['variant'] === 'primary');
-assert($default['props']['type'] === 'default');
+assert($default['props']['appearance'] === 'default');
 assert($default['props']['scheme'] === 'primary');
 
 $configured = $reference->resolve([
@@ -66,7 +66,7 @@ $configured = $reference->resolve([
     'radius' => 'rounded',
     'loading' => '1',
 ], true);
-assert($configured['props']['type'] === 'tonal');
+assert($configured['props']['appearance'] === 'tonal');
 assert($configured['props']['scheme'] === 'secondary');
 assert($configured['props']['loading'] === true);
 assert($configured['props']['disabled'] === true);
@@ -93,10 +93,10 @@ assert(str_contains($artifact->html(), 'disabled'));
 $invalidCombinationRejected = false;
 try {
     (new SmartManager($registry))->render('ui.button', array_replace($default['props'], [
-        'type' => 'default', 'scheme' => 'secondary',
+        'appearance' => 'default', 'scheme' => 'secondary',
     ]), $activation);
 } catch (InvalidArgumentException $exception) {
-    $invalidCombinationRejected = $exception->getMessage() === 'ui_smart_constraint_combination_invalid:ui.button:type,scheme';
+    $invalidCombinationRejected = $exception->getMessage() === 'ui_smart_constraint_combination_invalid:ui.button:appearance,scheme';
 }
 assert($invalidCombinationRejected);
 

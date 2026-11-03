@@ -8,16 +8,16 @@
   "props": {
     "type": "object",
     "properties": {
-      "type": {"type": "string", "enum": ["clear", "info", "danger", "warning", "success"]},
-      "variant": {"type": "string", "enum": ["default", "flat", "outlined"]},
+      "status": {"type": "string", "enum": ["neutral", "info", "success", "warning", "error"]},
+      "appearance": {"type": "string", "enum": ["default", "flat", "outlined"]},
       "icon": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
-      "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "heading": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "supporting-text": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S"},
       "closable": {"type": "boolean"},
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["type", "variant", "title", "supporting-text", "closable", "aria-label", "id"],
+    "required": ["status", "appearance", "heading", "supporting-text", "closable", "aria-label", "id"],
     "additionalProperties": false
   },
   "slots": {},
@@ -58,18 +58,18 @@
     "accessibility": ["status_message", "text_not_color_only", "optional_close_control"],
     "product_href": "/admin/ui/components/ui.alert",
     "example_props": {
-      "type": "info",
-      "variant": "default",
-      "title": "Information",
+      "status": "info",
+      "appearance": "default",
+      "heading": "Information",
       "supporting-text": "The page is ready for review.",
       "closable": false,
       "aria-label": "Information",
       "id": "ui-alert-reference"
     },
     "controls": [
-      {"key": "type", "source": "prop", "widget": "select"},
-      {"key": "variant", "source": "prop", "widget": "select"},
-      {"key": "title", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
+      {"key": "status", "source": "prop", "widget": "select"},
+      {"key": "appearance", "source": "prop", "widget": "select"},
+      {"key": "heading", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
       {"key": "supporting-text", "source": "prop", "widget": "text", "min_length": 1, "max_length": 500},
       {"key": "closable", "source": "prop", "widget": "boolean"}
     ],
@@ -79,30 +79,30 @@
         "title": "Alert",
         "description": "Reports a result, warning, or error.",
         "controls": {
-          "type": "Tone",
-          "variant": "Variant",
-          "title": "Title",
+          "status": "Tone",
+          "appearance": "Variant",
+          "heading": "Title",
           "supporting-text": "Supporting text",
           "closable": "Closable"
         },
         "options": {
-          "type": {"clear": "Clear", "info": "Information", "danger": "Danger", "warning": "Warning", "success": "Success"},
-          "variant": {"default": "Default", "flat": "Flat", "outlined": "Outlined"}
+          "status": {"neutral": "Clear", "info": "Information", "error": "Danger", "warning": "Warning", "success": "Success"},
+          "appearance": {"default": "Default", "flat": "Flat", "outlined": "Outlined"}
         }
       },
       "ru": {
         "title": "Уведомление",
         "description": "Сообщает о результате, предупреждении или ошибке.",
         "controls": {
-          "type": "Тон",
-          "variant": "Вариант",
-          "title": "Заголовок",
+          "status": "Тон",
+          "appearance": "Вариант",
+          "heading": "Заголовок",
           "supporting-text": "Поясняющий текст",
           "closable": "Можно закрыть"
         },
         "options": {
-          "type": {"clear": "Нейтральный", "info": "Информация", "danger": "Опасность", "warning": "Предупреждение", "success": "Успех"},
-          "variant": {"default": "Обычный", "flat": "Плоский", "outlined": "Контурный"}
+          "status": {"neutral": "Нейтральный", "info": "Информация", "error": "Опасность", "warning": "Предупреждение", "success": "Успех"},
+          "appearance": {"default": "Обычный", "flat": "Плоский", "outlined": "Контурный"}
         }
       }
     }

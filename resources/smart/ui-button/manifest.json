@@ -10,7 +10,7 @@
     "properties": {
       "text": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
       "size": {"type": "string", "enum": ["1/3", "1/2", "1", "2", "3"]},
-      "type": {"type": "string", "enum": ["default", "tonal", "outline", "link"]},
+      "appearance": {"type": "string", "enum": ["default", "tonal", "outline", "link"]},
       "scheme": {"type": "string", "enum": ["primary", "secondary", "on-surface"]},
       "radius": {"type": "string", "enum": ["", "default", "square", "rounded"]},
       "loading": {"type": "boolean"},
@@ -19,7 +19,7 @@
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["text", "size", "type", "scheme", "loading", "disabled", "native-type", "aria-label"],
+    "required": ["text", "size", "appearance", "scheme", "loading", "disabled", "native-type", "aria-label"],
     "additionalProperties": false
   },
   "slots": {},
@@ -38,19 +38,19 @@
   },
   "views": {"default": {}, "admin": {}},
   "presets": {
-    "primary": {"props": {"type": "default", "scheme": "primary"}},
-    "on_surface": {"props": {"type": "default", "scheme": "on-surface"}},
-    "secondary": {"props": {"type": "tonal", "scheme": "secondary"}},
-    "tonal_on_surface": {"props": {"type": "tonal", "scheme": "on-surface"}},
-    "outline": {"props": {"type": "outline", "scheme": "primary"}},
-    "outline_on_surface": {"props": {"type": "outline", "scheme": "on-surface"}},
-    "link": {"props": {"type": "link", "scheme": "primary"}},
-    "link_on_surface": {"props": {"type": "link", "scheme": "on-surface"}}
+    "primary": {"props": {"appearance": "default", "scheme": "primary"}},
+    "on_surface": {"props": {"appearance": "default", "scheme": "on-surface"}},
+    "secondary": {"props": {"appearance": "tonal", "scheme": "secondary"}},
+    "tonal_on_surface": {"props": {"appearance": "tonal", "scheme": "on-surface"}},
+    "outline": {"props": {"appearance": "outline", "scheme": "primary"}},
+    "outline_on_surface": {"props": {"appearance": "outline", "scheme": "on-surface"}},
+    "link": {"props": {"appearance": "link", "scheme": "primary"}},
+    "link_on_surface": {"props": {"appearance": "link", "scheme": "on-surface"}}
   },
   "constraints": {
     "allowed_combinations": [
       {
-        "keys": ["type", "scheme"],
+        "keys": ["appearance", "scheme"],
         "values": [
           ["default", "primary"],
           ["default", "on-surface"],
@@ -95,7 +95,7 @@
     "example_props": {
       "text": "Save",
       "size": "1",
-      "type": "default",
+      "appearance": "default",
       "scheme": "primary",
       "loading": false,
       "disabled": false,

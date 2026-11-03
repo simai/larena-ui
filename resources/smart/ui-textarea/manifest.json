@@ -9,7 +9,7 @@
     "type": "object",
     "properties": {
       "size": {"type": "string", "enum": ["1/3", "1/2", "1", "2", "3"]},
-      "type": {"type": "string", "enum": ["bordered", "filled"]},
+      "appearance": {"type": "string", "enum": ["bordered", "filled"]},
       "label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "required": {"type": "boolean"},
       "rows": {"type": "integer"},
@@ -18,11 +18,11 @@
       "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"},
       "value": {"type": "string", "maxLength": 65536},
       "disabled": {"type": "boolean"},
-      "error": {"type": "boolean"},
+      "invalid": {"type": "boolean"},
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["size", "type", "label", "required", "rows", "name", "value", "disabled", "error", "aria-label", "id"],
+    "required": ["size", "appearance", "label", "required", "rows", "name", "value", "disabled", "invalid", "aria-label", "id"],
     "additionalProperties": false
   },
   "slots": {},
@@ -66,7 +66,7 @@
     "product_href": "/admin/ui/components/ui.textarea",
     "example_props": {
       "size": "1",
-      "type": "bordered",
+      "appearance": "bordered",
       "label": "Summary",
       "required": true,
       "rows": 4,
@@ -75,36 +75,36 @@
       "name": "summary",
       "value": "The page explains the current release.",
       "disabled": false,
-      "error": false,
+      "invalid": false,
       "aria-label": "Summary",
       "id": "ui-textarea-reference"
     },
     "controls": [
       {"key": "label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
       {"key": "value", "source": "prop", "widget": "text", "min_length": 0, "max_length": 1000},
-      {"key": "type", "source": "prop", "widget": "select"},
+      {"key": "appearance", "source": "prop", "widget": "select"},
       {"key": "size", "source": "prop", "widget": "select"},
       {"key": "required", "source": "prop", "widget": "boolean"},
       {"key": "disabled", "source": "prop", "widget": "boolean"},
-      {"key": "error", "source": "prop", "widget": "boolean"}
+      {"key": "invalid", "source": "prop", "widget": "boolean"}
     ],
     "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
     "i18n": {
       "en": {
         "title": "Textarea",
         "description": "Enters text across multiple lines.",
-        "controls": {"label": "Label", "value": "Value", "type": "Type", "size": "Size", "required": "Required", "disabled": "Disabled", "error": "Error"},
+        "controls": {"label": "Label", "value": "Value", "appearance": "Type", "size": "Size", "required": "Required", "disabled": "Disabled", "invalid": "Error"},
         "options": {
-          "type": {"bordered": "Bordered", "filled": "Filled"},
+          "appearance": {"bordered": "Bordered", "filled": "Filled"},
           "size": {"1/3": "Extra small", "1/2": "Small", "1": "Default", "2": "Large", "3": "Extra large"}
         }
       },
       "ru": {
         "title": "Многострочное поле",
         "description": "Вводит текст в несколько строк.",
-        "controls": {"label": "Подпись", "value": "Значение", "type": "Тип", "size": "Размер", "required": "Обязательное", "disabled": "Отключено", "error": "Ошибка"},
+        "controls": {"label": "Подпись", "value": "Значение", "appearance": "Тип", "size": "Размер", "required": "Обязательное", "disabled": "Отключено", "invalid": "Ошибка"},
         "options": {
-          "type": {"bordered": "С рамкой", "filled": "Заполненное"},
+          "appearance": {"bordered": "С рамкой", "filled": "Заполненное"},
           "size": {"1/3": "Очень маленький", "1/2": "Маленький", "1": "Обычный", "2": "Большой", "3": "Очень большой"}
         }
       }

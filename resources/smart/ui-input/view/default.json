@@ -4,7 +4,7 @@
   "component": "ui.input",
   "view": "default",
   "template": "default",
-  "props": {"id": "smart-input", "name": "value", "label": "Value", "value": "", "required": false, "type": "bordered", "size": "1", "disabled": false, "error": false, "hint": ""},
+  "props": {"id": "smart-input", "name": "value", "label": "Value", "value": "", "required": false, "appearance": "bordered", "size": "1", "disabled": false, "invalid": false, "hint": ""},
   "presets": {},
   "modifiers": {},
   "children": {},

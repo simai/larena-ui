@@ -31,11 +31,11 @@ assert($table->isSafe());
 
 foreach ([
     'sf-badge' => ['text' => 'Published', 'scheme' => 'success'],
-    'sf-alert' => ['type' => 'danger', 'icon' => 'error', 'title' => 'Error'],
+    'sf-alert' => ['status' => 'error', 'icon' => 'error', 'heading' => 'Error'],
     'sf-pagination' => ['current' => 2, 'total' => 4],
     'sf-input' => ['name' => 'title', 'label' => 'Title', 'required' => true],
     'sf-checkbox' => ['name' => 'is_active', 'label' => 'Active', 'checked' => true, 'value' => '1'],
-    'sf-modal' => ['id' => 'dialog', 'title' => 'Dialog', 'overlay' => true],
+    'sf-modal' => ['id' => 'dialog', 'heading' => 'Dialog', 'overlay' => true],
     'sf-input-textarea' => ['name' => 'body', 'label' => 'Body', 'rows' => 8, 'required' => true],
 ] as $tag => $props) {
     $render = Smart::render($tag, $props);

@@ -9,7 +9,7 @@
     "type": "object",
     "properties": {
       "modal-id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
-      "title": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
+      "heading": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "text": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "\\S"},
       "open": {"type": "boolean"},
       "overlay": {"type": "boolean"},
@@ -17,7 +17,7 @@
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 160, "pattern": "\\S"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["modal-id", "title", "text", "open", "overlay", "display", "aria-label", "id"],
+    "required": ["modal-id", "heading", "text", "open", "overlay", "display", "aria-label", "id"],
     "additionalProperties": false
   },
   "slots": {},
@@ -69,7 +69,7 @@
     "product_href": "/admin/ui/components/ui.modal",
     "example_props": {
       "modal-id": "ui-modal-reference",
-      "title": "Safe inline dialog",
+      "heading": "Safe inline dialog",
       "text": "This preview stays inline and does not load remote content.",
       "open": true,
       "overlay": true,
@@ -78,7 +78,7 @@
       "id": "ui-modal-reference"
     },
     "controls": [
-      {"key": "title", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
+      {"key": "heading", "source": "prop", "widget": "text", "min_length": 1, "max_length": 160, "mirror_props": ["aria-label"]},
       {"key": "text", "source": "prop", "widget": "text", "min_length": 1, "max_length": 500},
       {"key": "open", "source": "prop", "widget": "boolean"}
     ],
@@ -87,13 +87,13 @@
       "en": {
         "title": "Modal",
         "description": "Shows focused content in a dialog.",
-        "controls": {"title": "Title", "text": "Text", "open": "Open"},
+        "controls": {"heading": "Title", "text": "Text", "open": "Open"},
         "options": {}
       },
       "ru": {
         "title": "Диалог",
         "description": "Показывает отдельное содержимое в диалоговом окне.",
-        "controls": {"title": "Заголовок", "text": "Текст", "open": "Открыт"},
+        "controls": {"heading": "Заголовок", "text": "Текст", "open": "Открыт"},
         "options": {}
       }
     }

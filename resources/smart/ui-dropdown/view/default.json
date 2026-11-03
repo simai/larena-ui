@@ -4,7 +4,7 @@
   "component": "ui.dropdown",
   "view": "default",
   "template": "default",
-  "props": {"size": "1", "type": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "default", "name": "selection", "label": "Selection", "required": true, "placeholder": "Select", "search-placeholder": "Find", "search": false, "disabled": false, "aria-label": "Selection", "id": "smart-dropdown", "options": [{"text": "Default", "value": "default", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Default"}]},
+  "props": {"size": "1", "appearance": "outlined", "mode": "select", "multiple": false, "portal": false, "value": "default", "name": "selection", "label": "Selection", "required": true, "placeholder": "Select", "search-placeholder": "Find", "search": false, "disabled": false, "aria-label": "Selection", "id": "smart-dropdown", "options": [{"text": "Default", "value": "default", "type": "text", "size": "1", "selected": true, "disabled": false, "aria-label": "Default"}]},
   "presets": {},
   "modifiers": {},
   "children": {},

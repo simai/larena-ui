@@ -17,10 +17,10 @@
       "indeterminate": {"type": "boolean"},
       "name": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_.-]*(\\[\\])?$"},
       "value": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "error": {"type": "boolean"},
+      "invalid": {"type": "boolean"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["size", "label", "position", "checked", "disabled", "indeterminate", "name", "value", "error", "id"],
+    "required": ["size", "label", "position", "checked", "disabled", "indeterminate", "name", "value", "invalid", "id"],
     "additionalProperties": false
   },
   "slots": {},
@@ -71,7 +71,7 @@
       "indeterminate": false,
       "name": "include_navigation",
       "value": "1",
-      "error": false,
+      "invalid": false,
       "id": "ui-checkbox-reference"
     },
     "controls": [
@@ -80,7 +80,7 @@
       {"key": "checked", "source": "prop", "widget": "boolean"},
       {"key": "indeterminate", "source": "prop", "widget": "boolean"},
       {"key": "disabled", "source": "prop", "widget": "boolean"},
-      {"key": "error", "source": "prop", "widget": "boolean"},
+      {"key": "invalid", "source": "prop", "widget": "boolean"},
       {"key": "position", "source": "prop", "widget": "select"}
     ],
     "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
@@ -94,7 +94,7 @@
           "checked": "Checked",
           "indeterminate": "Mixed state",
           "disabled": "Disabled",
-          "error": "Error",
+          "invalid": "Error",
           "position": "Control position"
         },
         "options": {
@@ -111,7 +111,7 @@
           "checked": "Выбран",
           "indeterminate": "Смешанное состояние",
           "disabled": "Отключён",
-          "error": "Ошибка",
+          "invalid": "Ошибка",
           "position": "Положение флажка"
         },
         "options": {

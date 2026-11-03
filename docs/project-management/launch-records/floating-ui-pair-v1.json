@@ -417,6 +417,7 @@
     "resources/assets/admin-shell/read-only-route.css",
     "resources/composition/larena-registry.mjs",
     "resources/css/admin-ui-lab.css",
-    "src/Frontend/SourceBackedComponentRegistry.php"
+    "src/Frontend/SourceBackedComponentRegistry.php",
+    "src/Runtime/RegisteredListRenderer.php"
   ]
 }

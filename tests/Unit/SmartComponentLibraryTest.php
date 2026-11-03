@@ -249,7 +249,7 @@ $inputControlKeys = array_map(
     static fn (array $control): string => (string) $control['key'],
     $inputReference->controls(),
 );
-assert($inputControlKeys === ['label', 'value', 'size', 'type', 'required', 'disabled', 'error', 'hint']);
+assert($inputControlKeys === ['label', 'value', 'size', 'appearance', 'required', 'disabled', 'invalid', 'hint']);
 
 $dataView = $catalog->component('ui.dataview');
 assert($dataView->examples['backend']['available'] === true);

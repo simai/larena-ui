@@ -56,7 +56,7 @@ assert(str_contains($breadcrumbs->html(), '<sf-breadcrumbs'));
 assert(str_contains($breadcrumbs->html(), '&quot;label&quot;:&quot;Content&quot;'));
 
 foreach ([
-    ['ui.icon_button', ['size' => '1', 'variant' => 'icon', 'type' => 'link', 'scheme' => 'on-surface', 'icon' => 'help', 'loading' => false, 'disabled' => false, 'native-type' => 'button', 'aria-label' => 'Help']],
+    ['ui.icon_button', ['size' => '1', 'kind' => 'icon', 'appearance' => 'link', 'scheme' => 'on-surface', 'icon' => 'help', 'loading' => false, 'disabled' => false, 'native-type' => 'button', 'aria-label' => 'Help']],
     ['ui.avatar', ['size' => '1', 'text' => 'AZ', 'status' => 'none', 'aria-label' => 'Admin', 'disabled' => false, 'inactive' => false]],
     ['ui.tag', ['type' => 'primary', 'size' => '1/2', 'text' => '12', 'active' => false, 'disabled' => false, 'closable' => false, 'aria-label' => 'Records: 12']],
     ['ui.toggle', ['size' => '2', 'type' => 'icon', 'label' => 'Theme', 'icon' => 'light_mode', 'checked' => false, 'disabled' => false, 'name' => 'theme', 'value' => 'dark', 'aria-label' => 'Theme']],

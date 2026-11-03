@@ -46,7 +46,7 @@ Smart::resolveUsing(static fn (): SmartManager => $manager);
 $artifact = Smart::render('ui.button', [
     'text' => 'Facade',
     'size' => '1',
-    'type' => 'default',
+    'appearance' => 'default',
     'scheme' => 'primary',
     'loading' => false,
     'disabled' => false,
@@ -58,7 +58,7 @@ assert(str_contains($artifact->html(), 'text="Facade"'));
 
 $modalArtifact = Smart::render('ui.modal', [
     'modal-id' => 'profile-modal',
-    'title' => 'Profile',
+    'heading' => 'Profile',
     'text' => 'Profile details',
     'open' => false,
     'overlay' => true,
