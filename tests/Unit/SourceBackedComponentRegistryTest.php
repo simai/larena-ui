@@ -9,15 +9,15 @@ use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
 assert($lock->tag() === null);
-assert($lock->pairId() === 'ui-7153f7a9c092-larena-2b1b675770dc');
+assert($lock->pairId() === 'ui-8e1a016a28a0-pro-04b7726e91a3');
 assert(str_starts_with($lock->pairId(), 'ui-'));
-assert($lock->toArray()['ui']['commit'] === '7153f7a9c0929a28d67f458e9d9a9f9351f7cf8f');
-assert($lock->package('larena')['commit'] === '2b1b675770dc8a05a8d2af36f388a73130ce18f9');
+assert($lock->toArray()['ui']['commit'] === '8e1a016a28a09f92457c78e022934406ea3af4dd');
+assert($lock->package('pro')['commit'] === '04b7726e91a3e4a155a6f3973f98604a9c3626eb');
 
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'ui/distr/smart/buttons');
-assert($registry->get('sf-table')['source'] === 'larena/smart/table');
-assert($registry->get('sf-data-view')['source'] === 'larena/smart/data-view');
+assert($registry->get('sf-table')['source'] === 'pro/smart/view-table');
+assert($registry->get('sf-data-view')['source'] === 'pro/smart/view');
 assert($registry->get('sf-badge')['source'] === 'ui/distr/smart/badges');
 assert($registry->get('sf-alert')['source'] === 'ui/distr/smart/alert');
 assert($registry->get('sf-pagination')['source'] === 'ui/distr/smart/pagination');

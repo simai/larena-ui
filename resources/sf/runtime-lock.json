@@ -2,44 +2,43 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-7153f7a9c092-larena-2b1b675770dc",
-  "bundle_id": "ui-7153f7a9c092-larena-2b1b675770dc-registry-e26fb395-exact-git-tree-v2",
+  "pair_id": "ui-8e1a016a28a0-pro-04b7726e91a3",
+  "bundle_id": "ui-8e1a016a28a0-pro-04b7726e91a3-registry-56fd31c4-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-7153f7a9c092",
+    "release": "ui-8e1a016a28a0",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "7153f7a9c0929a28d67f458e9d9a9f9351f7cf8f",
+    "commit": "8e1a016a28a09f92457c78e022934406ea3af4dd",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "c8003462439f70d3c8fe0421e49be33889c288ff0ac756275e0c7a8b97decd82",
-    "files": 11462
+    "sha256": "24f466dc875dbe217e0fe1b4df85e2e31b2c2e88372feef9ed0a8d08eace4b31",
+    "files": 11498
   },
   "packages": {
-    "larena": {
-      "release": "larena-2b1b675770dc",
+    "pro": {
+      "release": "pro-04b7726e91a3",
       "repository": "simai/ui-pro",
       "tag": null,
-      "release_repository": "simai/larena-ui",
-      "commit": "2b1b675770dc8a05a8d2af36f388a73130ce18f9",
+      "commit": "04b7726e91a3e4a155a6f3973f98604a9c3626eb",
       "tree": "smart",
-      "mount": "larena",
-      "sha256": "2bc0abf9776fbc4a97c03d66a36a11a55a3e6da5406813ede18bce78a2fd29c4",
-      "files": 690,
-      "requires_framework": "ui-7153f7a9c092",
+      "mount": "pro",
+      "sha256": "405fbf183540a128c000799dc0d3e55af1a55e0ee3fdf309a5d987ee62d89630",
+      "files": 730,
+      "requires_framework": "ui-8e1a016a28a0",
       "package_path": "components",
-      "package_tree": "65f49b21922722bf769f31d4f211053a596604d7",
+      "package_tree": "0a4855af03ed733ffe0799b2371999d9fb0b48cf",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "481b50fe9a5f1d1b5ea3ecd73e46569bad31c006"
+        "revision": "5eb3ae23dad4ada5ec7aa58b039f02a1c0702e23"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "a89508ce28acf00ca5b987059a424bfe1039f187"
+        "revision": "abdb160129902b5827500044a63f0c11f974a937"
       },
-      "manifest_sha256": "ce15f7154d0792077cdcb3e9c3419f9fa107b1322a332b0077c88c9606150a38",
-      "receipt_sha256": "0daf783d8bb0de749fc1cffc6b64c171b319720b43a9e5cefe09c1ca35413932",
+      "manifest_sha256": "73bf00b074d287032c4f119da792ce8ae392fc526bb35f7dc2a2ffca7b530479",
+      "receipt_sha256": "74bb26006f6e34dc38e7a92631d8415e7922ea6612994af515bdfde2b7185235",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -48,23 +47,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-7153f7a9c092",
+    "compatibility_id": "ui-8e1a016a28a0",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "e26fb395d38603384cec7ccec7ce02c6b5f8d925adb3519d4dcb4ca243694f20",
+    "file_sha256": "56fd31c4f906b5524c6d3cd534a08cab01261e0fee4278612b9867768716a1c7",
     "source": {
       "tag": null,
-      "commit": "46ce16bc2613e2fead3b6f2675495bcc3a499b5f",
+      "commit": "5093f8e9a55f00ecaf3fd12e9c1ac2ed1d7e10e3",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "82c373416adc19c577e069b849e5079b2cee014a575eb921040b95ffe6e489cf",
+      "sha256": "be044e00dd45670f42497a505234e6ad6ff81543f5c6d185e6453d2b96b89c4f",
       "files": 2,
-      "tree_oid": "f3dde108026d35e7b6e87b288628bcd8bedb0160"
+      "tree_oid": "86ebb5f6159b316a17c79892497e856a1ae16a1a"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "11a0f708cf76c3f04bc080340824be5acea93c7882db56f8aea49f3a2d482d79"
+      "file_sha256": "adbc510f4055d64cd9ed70bb57db2b33bcbf1f15f962c941595ab823a25263cf"
     }
   },
   "boot": {
@@ -76,9 +75,9 @@
   },
   "components": {
     "sf-data-view": {
-      "source": "larena/smart/data-view",
-      "javascript": "larena/smart/data-view/js/data-view.min.js",
-      "css": "larena/smart/data-view/css/data-view.min.css",
+      "source": "pro/smart/view",
+      "javascript": "pro/smart/view/js/view.min.js",
+      "css": "pro/smart/view/css/view.min.css",
       "requires": [
         "sf-table",
         "sf-pagination"
@@ -117,9 +116,14 @@
         "accept-files",
         "collection",
         "current",
-        "expected-columns"
+        "expected-columns",
+        "template",
+        "root-class",
+        "root-style",
+        "bulk-actions",
+        "first-answer"
       ],
-      "package": "larena"
+      "package": "pro"
     },
     "sf-icon": {
       "source": "ui/distr/smart/icons",
@@ -163,9 +167,9 @@
       "package": "framework"
     },
     "sf-table": {
-      "source": "larena/smart/table",
-      "javascript": "larena/smart/table/js/table.min.js",
-      "css": "larena/smart/table/css/table.min.css",
+      "source": "pro/smart/view-table",
+      "javascript": "pro/smart/view-table/js/view-table.min.js",
+      "css": "pro/smart/view-table/css/view-table.min.css",
       "requires": [
         "sf-icon-button"
       ],
@@ -231,7 +235,7 @@
         "sort",
         "selection"
       ],
-      "package": "larena"
+      "package": "pro"
     },
     "sf-badge": {
       "source": "ui/distr/smart/badges",
@@ -470,9 +474,9 @@
       "package": "framework"
     },
     "sf-admin-menu": {
-      "source": "larena/smart/admin-menu",
-      "javascript": "larena/smart/admin-menu/js/admin-menu.min.js",
-      "css": "larena/smart/admin-menu/css/admin-menu.min.css",
+      "source": "pro/smart/admin-menu",
+      "javascript": "pro/smart/admin-menu/js/admin-menu.min.js",
+      "css": "pro/smart/admin-menu/css/admin-menu.min.css",
       "requires": [
         "sf-icon",
         "sf-badge",
@@ -519,7 +523,7 @@
         "root-style",
         "recent-results"
       ],
-      "package": "larena"
+      "package": "pro"
     },
     "sf-breadcrumbs": {
       "source": "ui/distr/smart/breadcrumbs",
@@ -631,33 +635,10 @@
       ],
       "package": "framework"
     },
-    "sf-toggle": {
-      "source": "ui/distr/smart/toggle",
-      "javascript": "ui/distr/smart/toggle/js/toggle.min.js",
-      "css": "ui/distr/component/toggle/css/toggle.min.css",
-      "requires": [
-        "sf-icon"
-      ],
-      "attributes": [
-        "template",
-        "size",
-        "type",
-        "label",
-        "icon",
-        "checked",
-        "disabled",
-        "name",
-        "value",
-        "aria-label",
-        "id",
-        "class"
-      ],
-      "package": "framework"
-    },
     "sf-property-view": {
-      "source": "larena/smart/property-view",
-      "javascript": "larena/smart/property-view/js/property-view.min.js",
-      "css": "larena/smart/property-view/css/property-view.min.css",
+      "source": "pro/smart/view-properties",
+      "javascript": "pro/smart/view-properties/js/view-properties.min.js",
+      "css": "pro/smart/view-properties/css/view-properties.min.css",
       "requires": [],
       "attributes": [
         "panel-label",
@@ -745,7 +726,7 @@
         "root-class",
         "root-style"
       ],
-      "package": "larena"
+      "package": "pro"
     },
     "sf-tree": {
       "source": "ui/distr/smart/tree",
@@ -829,7 +810,7 @@
     "sf-rich-text": {
       "source": "ui/distr/smart/rich-text",
       "javascript": "ui/distr/smart/rich-text/js/rich-text.min.js",
-      "css": "ui/distr/smart/rich-text/css/rich-text.min.css",
+      "css": null,
       "requires": [
         "sf-button",
         "sf-icon-button",

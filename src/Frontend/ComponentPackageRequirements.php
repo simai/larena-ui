@@ -57,9 +57,11 @@ final class ComponentPackageRequirements
     /**
      * Where the sets are released: the GitHub release <set>-<12> with package-<set>.tar, .sha256 and
      * package-receipt.json. The lock names it in `release_repository`; a lock without it is released from its
-     * `repository`, as every lock was before sources and releases were split.
+     * `repository`, as every lock was before sources and releases were split. The component package renamed `pro`
+     * (Framework owner decision q-4ac7d07595, 2026-11-02) is released on simai/ui-pro as pro-<12>; its copy on
+     * simai/larena-ui under the former name larena stops on 2027-01-01.
      */
-    public const RELEASE_REPOSITORIES = ['simai/larena-ui'];
+    public const RELEASE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-pro'];
     private const NAME = '/\A[a-z][a-z0-9]*\z/';
     private const RESERVED_NAMES = ['ui', 'contract', 'framework'];
     private const DECLARATION_KEYS = ['releases', 'repository', 'release_repository', 'source_repositories'];

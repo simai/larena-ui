@@ -19,9 +19,12 @@ readable here (the last commit that wrote them is
 `1cee9e276c26834031153f25ac2a8f9ba5cbb26c`). Versions published from this
 repository remain Apache-2.0.
 
-The built package archives (`package-larena.tar` with its sha256 and receipt)
-are still published as releases of this repository, where Larena's installer
-and checks fetch them: https://github.com/simai/larena-ui/releases.
+The component package is named `pro` (Framework owner decision q-4ac7d07595,
+2026-11-02). Its built archive (`package-pro.tar` with its sha256 and receipt)
+is published as release `pro-<12>` of simai/ui-pro, where Larena's installer
+and checks fetch it: https://github.com/simai/ui-pro/releases. The archives
+released here under the former name (`larena-<12>`, `package-larena.tar`) stay
+as history: https://github.com/simai/larena-ui/releases.
 
 Universal UI/frontend package for Larena smart components, backend-first rendering, hydration, design packs, UI asset graph, component registry, playground and frontend behavior contracts.
 
