@@ -2,8 +2,8 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-4cd23cd8b490-pro-ce48954dd94b",
-  "bundle_id": "ui-4cd23cd8b490-pro-ce48954dd94b-registry-26535af9-exact-git-tree-v2",
+  "pair_id": "ui-4cd23cd8b490-pro-df23a325418a",
+  "bundle_id": "ui-4cd23cd8b490-pro-df23a325418a-registry-26535af9-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -18,17 +18,17 @@
   },
   "packages": {
     "pro": {
-      "release": "pro-ce48954dd94b",
+      "release": "pro-df23a325418a",
       "repository": "simai/ui-pro",
       "tag": null,
-      "commit": "ce48954dd94b93738e0594197925d11e9bf179fd",
+      "commit": "df23a325418a99693c62634a1ea948324bbaece8",
       "tree": "smart",
       "mount": "pro",
-      "sha256": "cc7060911af475eb2ca302cd0e371044786586e4c6e23beb68a3156b0fe9bed9",
+      "sha256": "a0dd1710a290eba35e38c513a4e84c0c729cb095219e20c5f4e51020b839d465",
       "files": 724,
       "requires_framework": "ui-4cd23cd8b490",
       "package_path": "components",
-      "package_tree": "b2d72750ad96477941b74294da46cd0878fff005",
+      "package_tree": "f546411bfd1d212c542bc4c53324e839ce14ab18",
       "framework_source": {
         "repository": "simai/ui-source",
         "revision": "a8ca29c354979afb2df3bd16e210cd3b4f52195b"
@@ -37,8 +37,8 @@
         "repository": "simai/ui-builder",
         "revision": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf"
       },
-      "manifest_sha256": "0fdf0523f879fe1491995729469126777838eb12889d231a1cbcf0502aab0725",
-      "receipt_sha256": "465fd8ef6593f9358d240dc2556e4985cd228450b0af72bcba30403c888cce62",
+      "manifest_sha256": "b50af004ae010b47a4048b24eb227f855e279a7d22e587b0494dbd1fbc2bd597",
+      "receipt_sha256": "e5045b9c58877ce0928703935023bfd2394c2de42d01793ae994ffbe3f63cc2c",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
