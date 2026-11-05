@@ -67,6 +67,11 @@ final class Smart
                 $children = self::adminMenuItems($value);
                 continue;
             }
+            if ($key === 'items' && $tag === 'sf-alert-bar') {
+                // The bar's items go in its settings island (sf-alert-bar 1.0.0): a list is no attribute.
+                $children = self::settingsIsland(['items' => self::alertBarItems($value)]);
+                continue;
+            }
             if ($key === 'items' && $tag === 'sf-breadcrumbs') {
                 $attributes['items'] = self::breadcrumbsItems($value);
                 continue;
@@ -112,6 +117,54 @@ final class Smart
             new HydrationContract(HydrationStrategy::Adopt, $hash, 'stable-host', true),
             self::assetGraph($tag, $registry)->requirements,
         );
+    }
+
+    /**
+     * The alert bar's items as its contract names them: {id, level danger|warning|info, text, source?, time?,
+     * action?{label, href}, acknowledge?{label}, dismissible?}; anything else is refused, not passed on.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function alertBarItems(mixed $items): array
+    {
+        if (!is_array($items) || !array_is_list($items)) {
+            throw new \InvalidArgumentException('ui_smart_alert_bar_items_invalid');
+        }
+        $clean = [];
+        foreach ($items as $item) {
+            if (!is_array($item) || !is_string($item['id'] ?? null) || !in_array($item['level'] ?? null, ['danger', 'warning', 'info'], true)
+                || !is_string($item['text'] ?? null) || $item['text'] === '') {
+                throw new \InvalidArgumentException('ui_smart_alert_bar_item_invalid');
+            }
+            $one = ['id' => $item['id'], 'level' => $item['level'], 'text' => $item['text']];
+            foreach (['source', 'time'] as $text) {
+                if (is_string($item[$text] ?? null) && $item[$text] !== '') {
+                    $one[$text] = $item[$text];
+                }
+            }
+            $action = $item['action'] ?? null;
+            if (is_array($action) && is_string($action['label'] ?? null) && is_string($action['href'] ?? null)
+                && preg_match('#^/(?!/)#', $action['href']) === 1) {
+                $one['action'] = ['label' => $action['label'], 'href' => $action['href']];
+            }
+            if (is_array($item['acknowledge'] ?? null) && is_string($item['acknowledge']['label'] ?? null)) {
+                $one['acknowledge'] = ['label' => $item['acknowledge']['label']];
+            }
+            if (is_bool($item['dismissible'] ?? null)) {
+                $one['dismissible'] = $item['dismissible'];
+            }
+            $clean[] = $one;
+        }
+
+        return $clean;
+    }
+
+    /** A component's settings as the JSON island the Framework reads once and removes (script[data-sf-settings]). */
+    private static function settingsIsland(array $settings): string
+    {
+        return '<script type="application/json" data-sf-settings>'
+            . json_encode($settings, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+            . '</script>';
     }
 
     public static function assetGraph(string $tag, ?SourceBackedComponentRegistry $registry = null): UiAssetGraph

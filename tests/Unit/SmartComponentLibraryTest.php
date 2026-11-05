@@ -29,7 +29,7 @@ $components = [
     'ui.admin_menu' => ['directory' => 'ui-admin-menu', 'tag' => 'sf-admin-menu'],
 ];
 $expectedKeys = array_keys($components);
-$internalSmartKeys = ['ui.breadcrumbs', 'ui.icon_button', 'ui.avatar', 'ui.tag', 'ui.toggle'];
+$internalSmartKeys = ['ui.alert_bar', 'ui.breadcrumbs', 'ui.icon_button', 'ui.avatar', 'ui.tag', 'ui.toggle'];
 $compositeKeys = ['admin.collection', 'admin.record_editor', 'dataview.table', 'dataview.toolbar', 'dataview.query_options'];
 $expectedReadiness = [
     'safe_to_suggest' => true,

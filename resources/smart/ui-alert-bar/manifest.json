@@ -1,0 +1,160 @@
+{
+  "schema": "larena.ui.smart_manifest",
+  "schema_version": 1,
+  "key": "ui.alert_bar",
+  "version": "1.0.0",
+  "owner_package": "larena/ui",
+  "kind": "smart",
+  "props": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "maxItems": 50,
+        "items": {
+          "type": "object"
+        }
+      },
+      "label": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160,
+        "pattern": "\\S"
+      },
+      "size": {
+        "type": "string",
+        "enum": [
+          "1/2",
+          "1"
+        ]
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80,
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+      }
+    },
+    "required": [
+      "items",
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "slots": {},
+  "events": {
+    "sf-alert-bar-navigate": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-alert-bar-acknowledge": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-alert-bar-close": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-alert-bar-minimize": {
+      "kind": "custom",
+      "backend_handler_binding": false
+    },
+    "sf-connected": {
+      "kind": "lifecycle",
+      "backend_handler_binding": false
+    },
+    "sf-after-render": {
+      "kind": "lifecycle",
+      "backend_handler_binding": false
+    },
+    "sf-disconnected": {
+      "kind": "lifecycle",
+      "backend_handler_binding": false
+    }
+  },
+  "views": {
+    "default": {},
+    "admin": {}
+  },
+  "presets": {},
+  "constraints": {},
+  "render": {
+    "strategy": "host",
+    "renderer": "ui.sf.element"
+  },
+  "frontend": {
+    "runtime": "simai-framework",
+    "tag": "sf-alert-bar"
+  },
+  "assets": [
+    {
+      "key": "simai.framework.core.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.core.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.smart_base.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.bridge.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_badge.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_button.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_icon.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_button_icon.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_button_icon.js",
+      "kind": "javascript",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_alert_bar.css",
+      "kind": "css",
+      "critical": true
+    },
+    {
+      "key": "simai.framework.sf_alert_bar.js",
+      "kind": "javascript",
+      "critical": true
+    }
+  ],
+  "atlas": {
+    "visible": false,
+    "title": "Alert bar",
+    "description": "The conditions that need action now, one bar above the admin header.",
+    "category": "feedback",
+    "order": 91
+  },
+  "provenance": {
+    "source": "larena/ui",
+    "runtime_lock": "resources/sf/runtime-lock.json",
+    "upstream_component": "simai/ui:distr/smart/alert-bar",
+    "reference_status": "source_backed",
+    "evidence": "resources/sf/runtime-lock.json"
+  }
+}

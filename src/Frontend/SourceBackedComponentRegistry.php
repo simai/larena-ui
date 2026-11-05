@@ -72,6 +72,9 @@ final readonly class SourceBackedComponentRegistry
         if ($tag === 'sf-dropdown') {
             $allowed = [...$allowed, 'options'];
         }
+        if ($tag === 'sf-alert-bar') {
+            $allowed = [...$allowed, 'items'];
+        }
         if ($tag === 'sf-pagination') {
             $allowed = [...$allowed, 'next-href'];
         }

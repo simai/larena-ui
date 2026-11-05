@@ -37,6 +37,7 @@ final class UiSmartContribution implements SmartContributionProvider
             'ui-pagination',
             'ui-badge',
             'ui-alert',
+            'ui-alert-bar',
             'ui-modal',
             'ui-admin-menu',
             'ui-breadcrumbs',
