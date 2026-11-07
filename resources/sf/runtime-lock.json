@@ -2,43 +2,43 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-1e5ec795a1ce-pro-22376674af4e",
-  "bundle_id": "ui-1e5ec795a1ce-pro-22376674af4e-registry-994a4ed3-exact-git-tree-v2",
+  "pair_id": "ui-b58b5dec35e4-pro-9caaf616cbd5",
+  "bundle_id": "ui-b58b5dec35e4-pro-9caaf616cbd5-registry-1b349fa2-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-1e5ec795a1ce",
+    "release": "ui-b58b5dec35e4",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "1e5ec795a1ce640b58a2a3903d11b5e726f4fb82",
+    "commit": "b58b5dec35e4c542774ef82c85cfb3aa302895f0",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "79a03ee026fc9eddcefcf0ad33f3ff8f778ba5e8aa80d3096ab7ab11cb89af71",
-    "files": 11878
+    "sha256": "5fc4db8beef52a60281786e8045eea2681b96e2a8cddda8a36b5a06ea9eaabdc",
+    "files": 12032
   },
   "packages": {
     "pro": {
-      "release": "pro-22376674af4e",
+      "release": "pro-9caaf616cbd5",
       "repository": "simai/ui-pro",
       "tag": null,
-      "commit": "22376674af4e107b4501e48811eb7d1724f1687b",
+      "commit": "9caaf616cbd5e52dadc202bc822492772dfdcf6c",
       "tree": "smart",
       "mount": "pro",
       "sha256": "768bd72adcccdeb91136c700f67fec66eba7f03ffc70520a9d1d6a478c8d48c3",
       "files": 722,
-      "requires_framework": "ui-1e5ec795a1ce",
+      "requires_framework": "ui-b58b5dec35e4",
       "package_path": "components",
-      "package_tree": "c4f758fddb6d16541b8cfcb423c7e25ebda9cec2",
+      "package_tree": "91672cc42f8232e05f3bb64848f8f57c0322a0fd",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "54c89e61ef9b89ed683fe530d43bdbf215fbafdd"
+        "revision": "195fc22bad4b725cf4f5bb3778b78fb3739e5e20"
       },
       "builder": {
         "repository": "simai/ui-builder",
         "revision": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf"
       },
       "manifest_sha256": "e1545abd1f3f436e1eb6e080d09d2008c1f09e925908e6e8014415dc3692e7bf",
-      "receipt_sha256": "49e0948078038556bf3c65f8d4eda894f4b68adaa2b23d042320159948a1284f",
+      "receipt_sha256": "8fa838c4377090fabb05d66329e3e4fe27a9aa9cd312b59bd88fc41fcd9c9a50",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -47,23 +47,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-1e5ec795a1ce",
+    "compatibility_id": "ui-b58b5dec35e4",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "994a4ed31e6cd6529e44033b853bfdcb4ca9366cc0026257e09e64acf04627ce",
+    "file_sha256": "1b349fa2c0d66155275e22b92eb62d8be7a5fb16792804c1acdf8fabcda2071c",
     "source": {
       "tag": null,
-      "commit": "fe1461ca2fe5179c28ea11d18eacfb99b6c0cc67",
+      "commit": "8f998c1bb6e66c4069b4e612bc2131a863d576d4",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "d48c00535502a0baae42e678b9deb93ee693a7991b070396f595a807645bed79",
+      "sha256": "684dcd8f0080b54fddc1642a6cf1da2e48c0916ee6bb611f8b2134dd5305064a",
       "files": 2,
-      "tree_oid": "a71af2e565b22c2a5df2d4774580965f08eca5bf"
+      "tree_oid": "cb4683bfdd3c88fae9fbb8e93ee8f4a2dbfb2526"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "08b81ce4cf33c61ada9e3fd93258324759d889bc767e5b0c256ddaa9b6d48c61"
+      "file_sha256": "4cae9b633212d023ffdfa9b308acd2b486f047ca57349efe0d383604b0f22524"
     }
   },
   "boot": {
@@ -170,6 +170,9 @@
         "loading",
         "disabled",
         "native-type",
+        "form",
+        "name",
+        "value",
         "href",
         "shortcut",
         "shortcut-listen",
@@ -950,6 +953,166 @@
         "root-class",
         "root-style",
         "minimized",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-steps": {
+      "source": "ui/distr/smart/steps",
+      "javascript": "ui/distr/smart/steps/js/steps.min.js",
+      "css": null,
+      "requires": [
+        "sf-icon"
+      ],
+      "attributes": [
+        "size",
+        "items",
+        "error-step",
+        "separator-icon",
+        "completed-label",
+        "error-label",
+        "skipped-label",
+        "running-label",
+        "template",
+        "root-class",
+        "root-style",
+        "current",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-progress-bar": {
+      "source": "ui/distr/smart/progress-bar",
+      "javascript": "ui/distr/smart/progress-bar/js/progress-bar.min.js",
+      "css": "ui/distr/component/progress-bar/css/progress-bar.min.css",
+      "requires": [],
+      "attributes": [
+        "size",
+        "value",
+        "text-position",
+        "status",
+        "label",
+        "value-text",
+        "template",
+        "root-class",
+        "root-style",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-spinner": {
+      "source": "ui/distr/smart/spinner",
+      "javascript": "ui/distr/smart/spinner/js/spinner.min.js",
+      "css": "ui/distr/component/spinner/css/spinner.min.css",
+      "requires": [],
+      "attributes": [
+        "size",
+        "label",
+        "kind",
+        "dots",
+        "filled",
+        "infinite",
+        "announce",
+        "direction",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-confirm": {
+      "source": "ui/distr/smart/confirm",
+      "javascript": "ui/distr/smart/confirm/js/confirm.min.js",
+      "css": "ui/distr/smart/confirm/css/confirm.min.css",
+      "requires": [
+        "sf-button",
+        "sf-icon"
+      ],
+      "attributes": [
+        "question",
+        "state",
+        "expires-at",
+        "confirm-id",
+        "disabled",
+        "destructive",
+        "appearance",
+        "accept-text",
+        "decline-text",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-wizard-step": {
+      "source": "ui/distr/smart/wizard-step",
+      "javascript": "ui/distr/smart/wizard-step/js/wizard-step.min.js",
+      "css": null,
+      "requires": [],
+      "attributes": [
+        "name",
+        "label",
+        "heading",
+        "description",
+        "type",
+        "optional",
+        "href",
+        "action-text",
+        "message",
+        "template",
+        "root-class",
+        "root-style",
+        "state",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-wizard": {
+      "source": "ui/distr/smart/wizard",
+      "javascript": "ui/distr/smart/wizard/js/wizard.min.js",
+      "css": "ui/distr/smart/wizard/css/wizard.min.css",
+      "requires": [
+        "sf-wizard-step",
+        "sf-steps",
+        "sf-progress-bar",
+        "sf-spinner",
+        "sf-confirm",
+        "sf-alert",
+        "sf-button",
+        "sf-modal"
+      ],
+      "attributes": [
+        "place",
+        "navigation",
+        "progress",
+        "size",
+        "heading",
+        "label",
+        "level",
+        "for",
+        "later",
+        "later-href",
+        "remember",
+        "done-href",
+        "action-name",
+        "running-text",
+        "focus-title",
+        "template",
+        "root-class",
+        "root-style",
+        "current",
+        "open",
+        "value",
         "id",
         "class"
       ],
