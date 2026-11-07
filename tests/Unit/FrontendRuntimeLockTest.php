@@ -203,6 +203,12 @@ assert($rejected($third));
 $own = $receipted;
 $own['packages']['pro']['pair_receipt'] = ['pair' => 'ui-000000000000', 'sha256' => str_repeat('b', 64), 'asset' => 'pair-receipt-ui-000000000000.json'];
 assert($rejected($own));
+// The free pair may pin its own ui-source, which a pair receipt over it must name; it is a full revision.
+$withSource = $receipted;
+$withSource['ui']['source_revision'] = str_repeat('e', 40);
+assert(!$rejected($withSource));
+$withSource['ui']['source_revision'] = 'e1';
+assert($rejected($withSource));
 
 // Sources and releases are separate. A package is built from an allowed source (ComponentPackageRequirements::
 // SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin, simai/ui-pro) and released from an allowed release repository
@@ -641,6 +647,16 @@ try {
     [$otherLock, $otherPath] = $pairLock(['pair' => ['source_revision' => str_repeat('c', 40)] + $pairDocument['pair']] + $pairDocument);
     [$exit, , $stderr] = $package($otherLock, $fixture . '/out-pair-source', [...$archiveArguments, '--pair-receipt', 'admin=' . $otherPath]);
     assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:pair_source_revision'), $stderr);
+    // The free pair's own ui-source in the lock decides (Framework, msg-d4dc9d67: never accept a receipt over another
+    // revision of the new pair); without it, the set built over the pair names it, and with neither the receipt is refused.
+    $pinned = $receiptedLock;
+    $pinned['ui']['source_revision'] = str_repeat('e', 40);
+    [$exit, , $stderr] = $package($pinned, $fixture . '/out-pair-pinned', [...$archiveArguments, '--pair-receipt', 'admin=' . $receiptPath]);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:pair_source_revision'), $stderr);
+    [$pinnedLock, $pinnedPath] = $pairLock(['pair' => ['source_revision' => str_repeat('e', 40)] + $pairDocument['pair']] + $pairDocument);
+    $pinnedLock['ui']['source_revision'] = str_repeat('e', 40);
+    [$exit, , $stderr] = $package($pinnedLock, $fixture . '/out-pair-pinned-ok', [...$archiveArguments, '--pair-receipt', 'admin=' . $pinnedPath]);
+    assert($exit === 0, $stderr);
     [$exit, , $stderr] = $package($receiptedLock, $fixture . '/out-pair-sha', [...$archiveArguments, '--pair-receipt', 'admin=' . $pairLock($pairDocument + ['extra' => 1])[1]]);
     assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:sha256'), $stderr);
 

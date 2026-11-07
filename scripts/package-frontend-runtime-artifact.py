@@ -213,9 +213,13 @@ def pair_receipt(name: str, package: dict[str, object], lock: dict[str, object],
             value = value.get(key) if isinstance(value, dict) else None
         return value
     ui = lock["ui"]
-    # The pair's own ui-source: what a set built over the pinned pair names, when the lock has one.
-    pair_sources = {str(other["framework_source"]["revision"]) for other in lock["packages"].values()
-                    if other.get("requires_framework") == ui["release"] and isinstance(other.get("framework_source"), dict)}
+    # The new pair's own ui-source (Framework decision 2026-11-07, set-pair-receipts lines 168-170): the revision the lock
+    # pins for the free pair itself, else what a set built over that pair names; with neither the receipt is refused.
+    if isinstance(ui.get("source_revision"), str):
+        pair_sources = {ui["source_revision"]}
+    else:
+        pair_sources = {str(other["framework_source"]["revision"]) for other in lock["packages"].values()
+                        if other.get("requires_framework") == ui["release"] and isinstance(other.get("framework_source"), dict)}
     expected = [
         ("schema", field("schema") == "simai.framework.set-pair-receipt"),
         ("schema_version", field("schema_version") == 1),
@@ -232,7 +236,7 @@ def pair_receipt(name: str, package: dict[str, object], lock: dict[str, object],
         ("pair_commit", field("pair", "commit") == ui["commit"]),
         ("pair_source_revision", isinstance(field("pair", "source_revision"), str)
             and re.fullmatch(r"[a-f0-9]{40}", str(field("pair", "source_revision"))) is not None
-            and (not pair_sources or field("pair", "source_revision") in pair_sources)),
+            and field("pair", "source_revision") in pair_sources),
     ]
     for key, ok in expected:
         if not ok:

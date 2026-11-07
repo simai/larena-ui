@@ -360,6 +360,8 @@ final readonly class FrontendRuntimeLock
             || !array_key_exists('tag', $ui) || $ui['tag'] !== null
             || ($ui['repository'] ?? null) !== 'simai/ui'
             || !$this->validPublicationSource($ui)
+            // The free pair's ui-source, which a set's pair receipt over this pair must name (Framework decision 2026-11-07).
+            || (array_key_exists('source_revision', $ui) && (!is_string($ui['source_revision']) || preg_match('/^[a-f0-9]{40}$/', $ui['source_revision']) !== 1))
         ) {
             throw new RuntimeException('ui_frontend_runtime_source_invalid:ui');
         }
