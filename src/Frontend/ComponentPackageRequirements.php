@@ -35,6 +35,7 @@ namespace Larena\Ui\Frontend;
  *                                                                  (component_package_release_repository_invalid)
  *   release            <package>-<12 of package_source.revision>   (component_package_release_invalid)
  *   requires_framework framework.release                           (component_package_framework_mismatch)
+ *     or pair_receipt.pair, a pair receipt of the same release       (component_package_pair_receipt_invalid)
  *   sha256             output.archive_sha256                       (component_package_receipt_missing:<set>:sha256)
  *   manifest_sha256    output.manifest_sha256                      (component_package_receipt_missing:<set>:manifest_sha256)
  *   receipt_sha256     the hash of package-receipt.json itself     (component_package_receipt_missing:<set>:receipt_sha256)
@@ -67,6 +68,9 @@ final class ComponentPackageRequirements
     private const DECLARATION_KEYS = ['releases', 'repository', 'release_repository', 'source_repositories'];
     private const REPOSITORY = '#\A[a-z0-9][a-z0-9._-]*/[a-z0-9][a-z0-9._-]*\z#';
     private const HASH_FIELDS = ['sha256', 'manifest_sha256', 'receipt_sha256'];
+
+    /** The keys of a lock entry's pair receipt (Framework decision 2026-11-07, set pair receipts). */
+    public const PAIR_RECEIPT_KEYS = ['pair', 'sha256', 'asset'];
 
     /**
      * @param array<string, array<string, array{releases:string|list<string>,release_repository:?string,source_repositories:?list<string>}>> $declarations
@@ -204,8 +208,9 @@ final class ComponentPackageRequirements
                 || $release !== $name . '-' . substr($commit, 0, 12)) {
                 $errors[] = 'component_package_release_invalid:' . $name;
             }
-            if ($framework !== null && ($package['requires_framework'] ?? null) !== $framework) {
-                $errors[] = 'component_package_framework_mismatch:' . $name;
+            $pair = $framework === null ? null : self::pairError($package, $framework);
+            if ($pair !== null) {
+                $errors[] = 'component_package_' . $pair . ':' . $name;
             }
             if (!in_array($package['repository'] ?? null, self::SOURCE_REPOSITORIES, true)) {
                 $errors[] = 'component_package_source_repository_invalid:' . $name;
@@ -352,4 +357,35 @@ final class ComponentPackageRequirements
 
         return $declarations;
     }
+
+    /**
+     * Whether a pinned set is accepted over the pinned free release (Framework decision 2026-11-07, set pair receipts):
+     * either it was built over that release (`requires_framework`, as its package receipt says, never rewritten), or
+     * the lock names a pair receipt of the same release for that pair: `pair_receipt {pair, sha256, asset}`, the
+     * asset `pair-receipt-<pair>.json` of the set's GitHub release, checked byte for byte when the runtime is packaged.
+     * Null when accepted; else `framework_mismatch` or `pair_receipt_invalid`.
+     *
+     * @param array<array-key, mixed> $package the set's lock entry
+     */
+    public static function pairError(array $package, string $framework): ?string
+    {
+        $receipt = $package['pair_receipt'] ?? null;
+        if (array_key_exists('pair_receipt', $package)) {
+            $pair = is_array($receipt) ? ($receipt['pair'] ?? null) : null;
+            if (!is_array($receipt) || array_keys($receipt) !== self::PAIR_RECEIPT_KEYS
+                || !is_string($pair) || preg_match('/\Aui-[a-f0-9]{12}\z/', $pair) !== 1
+                || $pair === ($package['requires_framework'] ?? null)
+                || !is_string($receipt['sha256']) || preg_match('/\A[a-f0-9]{64}\z/', $receipt['sha256']) !== 1
+                || $receipt['asset'] !== 'pair-receipt-' . $pair . '.json') {
+                return 'pair_receipt_invalid';
+            }
+        }
+        if (($package['requires_framework'] ?? null) === $framework
+            || (is_array($receipt) && ($receipt['pair'] ?? null) === $framework)) {
+            return null;
+        }
+
+        return 'framework_mismatch';
+    }
+
 }

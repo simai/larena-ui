@@ -107,6 +107,27 @@ $drifted['packages']['pro']['requires_framework'] = 'ui-000000000000';
 assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($drifted)['errors']
     === ['component_package_framework_mismatch:pro']);
 
+// pair receipt (Framework decision 2026-11-07): a set built over another pair passes with a pair receipt of the
+// same release for the pinned pair, and only so.
+$receipted = $drifted;
+$receipted['packages']['pro']['pair_receipt'] = ['pair' => $lock['ui']['release'], 'sha256' => str_repeat('a', 64), 'asset' => 'pair-receipt-' . $lock['ui']['release'] . '.json'];
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($receipted)['errors'] === []);
+assert(ComponentPackageRequirements::pairError($receipted['packages']['pro'], $lock['ui']['release']) === null);
+$thirdPair = $receipted;
+$thirdPair['packages']['pro']['pair_receipt'] = ['pair' => 'ui-111111111111', 'sha256' => str_repeat('a', 64), 'asset' => 'pair-receipt-ui-111111111111.json'];
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($thirdPair)['errors'] === ['component_package_framework_mismatch:pro']);
+$ownPair = $receipted;
+$ownPair['packages']['pro']['pair_receipt'] = ['pair' => 'ui-000000000000', 'sha256' => str_repeat('a', 64), 'asset' => 'pair-receipt-ui-000000000000.json'];
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($ownPair)['errors'] === ['component_package_pair_receipt_invalid:pro']);
+foreach ([['sha256' => 'abc'], ['asset' => 'receipt.json'], ['extra' => 1]] as $broken) {
+    $bad = $receipted;
+    $bad['packages']['pro']['pair_receipt'] = $broken + $receipted['packages']['pro']['pair_receipt'];
+    assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($bad)['errors'] === ['component_package_pair_receipt_invalid:pro']);
+}
+$bad = $receipted;
+$bad['packages']['pro']['pair_receipt']['extra'] = 1;
+assert(ComponentPackageRequirements::pairError($bad['packages']['pro'], $lock['ui']['release']) === 'pair_receipt_invalid');
+
 // receipt: every pinned set carries its archive, manifest and receipt hashes.
 $unreceipted = $lock;
 unset($unreceipted['packages']['pro']['receipt_sha256']);

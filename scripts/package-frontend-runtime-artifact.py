@@ -18,6 +18,7 @@ import gzip
 import hashlib
 import io
 import json
+import re
 import os
 from pathlib import Path
 import shutil
@@ -171,6 +172,87 @@ def package_receipt(source: dict[str, object], archive_path: Path, output: Path)
     }
 
 
+PAIR_RECEIPT_KEYS = ["pair", "sha256", "asset"]
+HEX64 = re.compile(r"\A[a-f0-9]{64}\Z")
+
+
+def pair_error(package: dict[str, object], framework: str) -> str | None:
+    """The same acceptance as ComponentPackageRequirements::pairError (Framework decision 2026-11-07): the set was built
+    over the pinned free release, or the lock names a pair receipt of the same release for it."""
+    receipt = package.get("pair_receipt")
+    if "pair_receipt" in package:
+        pair = receipt.get("pair") if isinstance(receipt, dict) else None
+        if (not isinstance(receipt, dict) or list(receipt) != PAIR_RECEIPT_KEYS
+                or not isinstance(pair, str) or not re.fullmatch(r"ui-[a-f0-9]{12}", pair)
+                or pair == package.get("requires_framework")
+                or not isinstance(receipt["sha256"], str) or not HEX64.match(receipt["sha256"])
+                or receipt["asset"] != f"pair-receipt-{pair}.json"):
+            return "pair_receipt_invalid"
+    if package.get("requires_framework") == framework or (isinstance(receipt, dict) and receipt.get("pair") == framework):
+        return None
+    return "framework_mismatch"
+
+
+def pair_receipt(name: str, package: dict[str, object], lock: dict[str, object], path: Path | None, output: Path) -> dict[str, object] | None:
+    """A set's pair receipt, checked against the lock byte for byte and kept in the artifact beside the set's archive."""
+    entry = package.get("pair_receipt")
+    if not isinstance(entry, dict):
+        return None
+    if path is None or not path.is_file() or path.is_symlink():
+        raise RuntimeError(f"component_package_pair_receipt_missing:{name}")
+    raw = path.read_bytes()
+    if sha256(raw) != entry["sha256"]:
+        raise RuntimeError(f"component_package_pair_receipt_mismatch:{name}:sha256")
+    try:
+        receipt = json.loads(raw)
+    except ValueError:
+        raise RuntimeError(f"component_package_pair_receipt_mismatch:{name}:json")
+    def field(*keys: str) -> object:
+        value: object = receipt
+        for key in keys:
+            value = value.get(key) if isinstance(value, dict) else None
+        return value
+    ui = lock["ui"]
+    # The pair's own ui-source: what a set built over the pinned pair names, when the lock has one.
+    pair_sources = {str(other["framework_source"]["revision"]) for other in lock["packages"].values()
+                    if other.get("requires_framework") == ui["release"] and isinstance(other.get("framework_source"), dict)}
+    expected = [
+        ("schema", field("schema") == "simai.framework.set-pair-receipt"),
+        ("schema_version", field("schema_version") == 1),
+        ("status", field("status") == "passed"),
+        ("equivalence", field("checks", "equivalence", "status") == "same-bytes"),
+        ("release", field("release") == package["release"]),
+        ("set", field("set") == name),
+        ("archive_sha256", field("package", "archive_sha256") == package["sha256"]),
+        ("manifest_sha256", field("package", "manifest_sha256") == package["manifest_sha256"]),
+        ("receipt_sha256", field("package", "receipt_sha256") == package["receipt_sha256"]),
+        ("source_revision", field("package", "source_revision") == package["commit"]),
+        ("built_over", field("built_over", "pair") == package["requires_framework"]),
+        ("pair", field("pair", "id") == ui["release"] and entry["pair"] == ui["release"]),
+        ("pair_commit", field("pair", "commit") == ui["commit"]),
+        ("pair_source_revision", isinstance(field("pair", "source_revision"), str)
+            and re.fullmatch(r"[a-f0-9]{40}", str(field("pair", "source_revision"))) is not None
+            and (not pair_sources or field("pair", "source_revision") in pair_sources)),
+    ]
+    for key, ok in expected:
+        if not ok:
+            raise RuntimeError(f"component_package_pair_receipt_mismatch:{name}:{key}")
+    target = output / str(entry["asset"]).replace("pair-receipt-", f"pair-receipt-{name}-", 1)
+    target.write_bytes(raw)
+    return {"pair": entry["pair"], "path": f"sources/{target.name}", "sha256": entry["sha256"]}
+
+
+def pair_receipt_paths(arguments: argparse.Namespace) -> dict[str, Path]:
+    """--pair-receipt NAME=PATH: the pair receipt file of a set the lock pins with one."""
+    paths: dict[str, Path] = {}
+    for value in arguments.pair_receipt or []:
+        name, separator, path = value.partition("=")
+        if not separator or not name or not path or name in paths:
+            raise RuntimeError(f"runtime_pair_receipt_option_invalid:{value}")
+        paths[name] = Path(path)
+    return paths
+
+
 def package_archives(arguments: argparse.Namespace, names: list[str]) -> dict[str, Path]:
     """--package-archive NAME=PATH for every package; --larena-package-archive PATH names the one pinned package."""
     archives: dict[str, Path] = {}
@@ -194,6 +276,7 @@ def main() -> None:
     parser.add_argument("--ui-repository", required=True, type=Path)
     parser.add_argument("--package-archive", action="append", metavar="NAME=PATH")
     parser.add_argument("--larena-package-archive", type=Path, help="the archive of the one pinned package")
+    parser.add_argument("--pair-receipt", action="append", metavar="NAME=PATH", help="a set's pair receipt (pair_receipt in the lock)")
     parser.add_argument("--output-root", required=True, type=Path)
     arguments = parser.parse_args()
 
@@ -207,7 +290,10 @@ def main() -> None:
     if bundle_id != expected_bundle:
         raise RuntimeError("runtime_bundle_identity_mismatch")
     for name, package in lock["packages"].items():
-        if package["requires_framework"] != lock["ui"]["release"]:
+        pair = pair_error(package, lock["ui"]["release"])
+        if pair == "pair_receipt_invalid":
+            raise RuntimeError(f"component_package_pair_receipt_invalid:{name}")
+        if pair is not None:
             raise RuntimeError(f"runtime_package_framework_mismatch:{name}")
         if package["mount"] != name:
             raise RuntimeError(f"runtime_package_mount_invalid:{name}")
@@ -221,9 +307,20 @@ def main() -> None:
     try:
         sources = stage / "sources"
         sources.mkdir()
+        receipt_paths = pair_receipt_paths(arguments)
+        unknown = sorted(set(receipt_paths) - {name for name, package in lock["packages"].items() if "pair_receipt" in package})
+        if unknown:
+            raise RuntimeError("runtime_pair_receipt_unexpected:" + ",".join(unknown))
+        packaged = []
+        for name, package in lock["packages"].items():
+            entry = package_receipt(package, archives[name], sources)
+            checked = pair_receipt(name, package, lock, receipt_paths.get(name), sources)
+            if checked is not None:
+                entry["pair_receipt"] = checked
+            packaged.append(entry)
         receipts = [
             source_receipt(lock["ui"], arguments.ui_repository, "ui.tar.gz", sources),
-            *(package_receipt(package, archives[name], sources) for name, package in lock["packages"].items()),
+            *packaged,
             source_receipt(lock["framework_registry"]["source"], arguments.ui_repository, "contract.tar.gz", sources),
         ]
         manifest = {

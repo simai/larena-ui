@@ -470,9 +470,11 @@ final readonly class FrontendRuntimeLock
         if (($package['release'] ?? null) !== self::packageRelease($name, (string) $package['commit'])) {
             throw new RuntimeException('ui_frontend_runtime_pair_identity_mismatch');
         }
-        // A package is built over exactly one free release; the two are always pinned together.
-        if (($package['requires_framework'] ?? null) !== $frameworkId) {
-            throw new RuntimeException('ui_frontend_runtime_package_framework_mismatch:' . $name);
+        // A package is built over exactly one free release, or carries a pair receipt of that release for the pinned
+        // one (Framework decision 2026-11-07): the bytes are the same, only the pair it was checked over differs.
+        $pair = ComponentPackageRequirements::pairError($package, $frameworkId);
+        if ($pair !== null) {
+            throw new RuntimeException('ui_frontend_runtime_package_' . $pair . ':' . $name);
         }
     }
 

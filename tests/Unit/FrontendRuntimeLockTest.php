@@ -191,6 +191,19 @@ foreach ([
     assert($rejected($data));
 }
 
+// A set built over another pair is pinned with a pair receipt of the same release for the pinned one (Framework
+// decision 2026-11-07); a receipt for a third pair, or for the pair it was built over, is refused.
+$receipted = $lock->toArray();
+$receipted['packages']['pro']['requires_framework'] = 'ui-000000000000';
+$receipted['packages']['pro']['pair_receipt'] = ['pair' => $lock->frameworkId(), 'sha256' => str_repeat('b', 64), 'asset' => 'pair-receipt-' . $lock->frameworkId() . '.json'];
+assert(!$rejected($receipted));
+$third = $receipted;
+$third['packages']['pro']['pair_receipt'] = ['pair' => 'ui-111111111111', 'sha256' => str_repeat('b', 64), 'asset' => 'pair-receipt-ui-111111111111.json'];
+assert($rejected($third));
+$own = $receipted;
+$own['packages']['pro']['pair_receipt'] = ['pair' => 'ui-000000000000', 'sha256' => str_repeat('b', 64), 'asset' => 'pair-receipt-ui-000000000000.json'];
+assert($rejected($own));
+
 // Sources and releases are separate. A package is built from an allowed source (ComponentPackageRequirements::
 // SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin, simai/ui-pro) and released from an allowed release repository
 // (simai/larena-ui). A lock without release_repository is released from its repository, as before the split.
@@ -588,6 +601,48 @@ try {
         [$exit, , $stderr] = $package($drifted, $fixture . '/out-drift-' . $name, $archiveArguments);
         assert($exit !== 0 && str_contains($stderr, 'runtime_archive_sha256_mismatch:' . $name), $stderr);
     }
+
+    // A set built over another pair is packaged with its pair receipt (Framework decision 2026-11-07), checked byte
+    // for byte against the lock and kept in the artifact; without it, or with one of another release or other bytes,
+    // the packaging fails closed.
+    $admin = $fixtureLock['packages']['admin'];
+    $pairDocument = [
+        'schema' => 'simai.framework.set-pair-receipt', 'schema_version' => 1, 'set' => 'admin', 'release' => $admin['release'],
+        'package' => ['source_revision' => $admin['commit'], 'archive_sha256' => $admin['sha256'], 'manifest_sha256' => $admin['manifest_sha256'], 'receipt_sha256' => $admin['receipt_sha256']],
+        'built_over' => ['pair' => 'ui-000000000000'],
+        'pair' => ['id' => $fixtureLock['ui']['release'], 'commit' => $fixtureLock['ui']['commit'], 'source_revision' => $fixtureLock['packages']['larena']['framework_source']['revision']],
+        'checks' => ['equivalence' => ['status' => 'same-bytes']], 'status' => 'passed',
+    ];
+    $pairLock = static function (array $document) use ($fixtureLock, $fixture): array {
+        $bytes = json_encode($document, JSON_THROW_ON_ERROR);
+        $path = $fixture . '/pair-receipt-' . bin2hex(random_bytes(4)) . '.json';
+        file_put_contents($path, $bytes);
+        $lockData = $fixtureLock;
+        $lockData['packages']['admin']['requires_framework'] = 'ui-000000000000';
+        $lockData['packages']['admin']['pair_receipt'] = ['pair' => $fixtureLock['ui']['release'], 'sha256' => hash('sha256', $bytes), 'asset' => 'pair-receipt-' . $fixtureLock['ui']['release'] . '.json'];
+
+        return [$lockData, $path];
+    };
+    [$receiptedLock, $receiptPath] = $pairLock($pairDocument);
+    [$exit, , $stderr] = $package($receiptedLock, $fixture . '/out-pair', [...$archiveArguments, '--pair-receipt', 'admin=' . $receiptPath]);
+    assert($exit === 0, $stderr);
+    $pairManifest = json_decode((string) file_get_contents($fixture . '/out-pair/' . $fixtureRuntime->bundleId() . '/manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+    $kept = $pairManifest['sources'][2]['pair_receipt'] ?? null;
+    assert(is_array($kept) && is_file($fixture . '/out-pair/' . $fixtureRuntime->bundleId() . '/' . $kept['path'])
+        && $kept['sha256'] === $receiptedLock['packages']['admin']['pair_receipt']['sha256'] && !isset($pairManifest['sources'][1]['pair_receipt']));
+    [$exit, , $stderr] = $package($receiptedLock, $fixture . '/out-pair-missing', $archiveArguments);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_missing:admin'), $stderr);
+    foreach (['release' => ['release' => 'admin-000000000000'], 'archive_sha256' => ['package' => ['archive_sha256' => str_repeat('d', 64)] + $pairDocument['package']]] as $field => $change) {
+        [$otherLock, $otherPath] = $pairLock($change + $pairDocument);
+        [$exit, , $stderr] = $package($otherLock, $fixture . '/out-pair-' . $field, [...$archiveArguments, '--pair-receipt', 'admin=' . $otherPath]);
+        assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:' . $field), $stderr);
+    }
+    // The pair's ui-source must be the one the set built over that pair names.
+    [$otherLock, $otherPath] = $pairLock(['pair' => ['source_revision' => str_repeat('c', 40)] + $pairDocument['pair']] + $pairDocument);
+    [$exit, , $stderr] = $package($otherLock, $fixture . '/out-pair-source', [...$archiveArguments, '--pair-receipt', 'admin=' . $otherPath]);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:pair_source_revision'), $stderr);
+    [$exit, , $stderr] = $package($receiptedLock, $fixture . '/out-pair-sha', [...$archiveArguments, '--pair-receipt', 'admin=' . $pairLock($pairDocument + ['extra' => 1])[1]]);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:sha256'), $stderr);
 
     // The publisher installs both packages into their mounts of the bundle.
     $public = $fixture . '/public';
