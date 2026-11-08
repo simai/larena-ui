@@ -2,43 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-b58b5dec35e4-pro-9caaf616cbd5",
-  "bundle_id": "ui-b58b5dec35e4-pro-9caaf616cbd5-registry-1b349fa2-exact-git-tree-v2",
+  "pair_id": "ui-0c23f6a0af12-pro-abe29151620b",
+  "bundle_id": "ui-0c23f6a0af12-pro-abe29151620b-registry-33a16a9d-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-b58b5dec35e4",
+    "release": "ui-0c23f6a0af12",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "b58b5dec35e4c542774ef82c85cfb3aa302895f0",
+    "commit": "0c23f6a0af12ddc32846ff868aab4d9849dabd75",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "5fc4db8beef52a60281786e8045eea2681b96e2a8cddda8a36b5a06ea9eaabdc",
-    "files": 12032
+    "sha256": "768351e804735daa9c2ee0d5c9dd5644e1c1f67a306d8af29f5114a2e1ed91f3",
+    "files": 12492,
+    "source_revision": "da48ba8fde776bbbb6b01b3010d32d8475a9686e"
   },
   "packages": {
     "pro": {
-      "release": "pro-9caaf616cbd5",
+      "release": "pro-abe29151620b",
       "repository": "simai/ui-pro",
       "tag": null,
-      "commit": "9caaf616cbd5e52dadc202bc822492772dfdcf6c",
+      "commit": "abe29151620b0ef7004473ffcd4ee8049cbbccf1",
       "tree": "smart",
       "mount": "pro",
-      "sha256": "768bd72adcccdeb91136c700f67fec66eba7f03ffc70520a9d1d6a478c8d48c3",
+      "sha256": "5a9f4c8bdfd1e1323115bdfccdf6115d078393d2b93a510c12deedaf8153203d",
       "files": 722,
-      "requires_framework": "ui-b58b5dec35e4",
+      "requires_framework": "ui-0c23f6a0af12",
       "package_path": "components",
-      "package_tree": "91672cc42f8232e05f3bb64848f8f57c0322a0fd",
+      "package_tree": "9a78582f04dd3908da985cdd9c7647496cca79aa",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "195fc22bad4b725cf4f5bb3778b78fb3739e5e20"
+        "revision": "da48ba8fde776bbbb6b01b3010d32d8475a9686e"
       },
       "builder": {
         "repository": "simai/ui-builder",
         "revision": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf"
       },
-      "manifest_sha256": "e1545abd1f3f436e1eb6e080d09d2008c1f09e925908e6e8014415dc3692e7bf",
-      "receipt_sha256": "8fa838c4377090fabb05d66329e3e4fe27a9aa9cd312b59bd88fc41fcd9c9a50",
+      "manifest_sha256": "2782b0508612354b0cc647195b8a783c91d564781f690f73bb985f89a4cb76f8",
+      "receipt_sha256": "10abeea64c910c23de834f2fd2a6236c2f8af3fb612749595538323029260eeb",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -47,23 +48,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-b58b5dec35e4",
+    "compatibility_id": "ui-0c23f6a0af12",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "1b349fa2c0d66155275e22b92eb62d8be7a5fb16792804c1acdf8fabcda2071c",
+    "file_sha256": "33a16a9d97e7b04391330b4a80e575f39a22a887bb2293f0c7630b6d42385333",
     "source": {
       "tag": null,
-      "commit": "8f998c1bb6e66c4069b4e612bc2131a863d576d4",
+      "commit": "62e9986416f7f473b9c2ddfdcb30b957277411a2",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "684dcd8f0080b54fddc1642a6cf1da2e48c0916ee6bb611f8b2134dd5305064a",
+      "sha256": "8e2a8ad63c772035e0ead82ea63cc4f60de63536f717a1ebdda661452e09058e",
       "files": 2,
-      "tree_oid": "cb4683bfdd3c88fae9fbb8e93ee8f4a2dbfb2526"
+      "tree_oid": "59fbbd20f35ab9b55811d69ae6b5f13d2acc98f6"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "4cae9b633212d023ffdfa9b308acd2b486f047ca57349efe0d383604b0f22524"
+      "file_sha256": "171dd28c8bdc16a33d73a10d5c12ff4d2fc5547ddb42f0b25f2ebb6f5864f411"
     }
   },
   "boot": {
@@ -174,10 +175,13 @@
         "name",
         "value",
         "href",
+        "target",
+        "rel",
         "shortcut",
         "shortcut-listen",
         "expanded",
         "pressed",
+        "text-pressed",
         "template",
         "root-class",
         "aria-label",
@@ -269,6 +273,7 @@
         "status",
         "activity",
         "compact",
+        "tight",
         "text",
         "icon",
         "icon-start",
@@ -376,6 +381,9 @@
         "minlength",
         "maxlength",
         "pattern",
+        "min",
+        "max",
+        "step",
         "hint",
         "default-value",
         "name",
@@ -393,9 +401,6 @@
         "mask-options",
         "template",
         "value",
-        "min",
-        "max",
-        "step",
         "aria-label",
         "id",
         "class"
@@ -651,6 +656,7 @@
         "badge-label",
         "button-attributes",
         "pressed",
+        "label-pressed",
         "template",
         "root-class",
         "aria-label",
@@ -889,6 +895,7 @@
         "placement",
         "label",
         "width",
+        "offset",
         "dismissible",
         "surface-role",
         "unsaved",
@@ -994,6 +1001,8 @@
         "value",
         "text-position",
         "status",
+        "warning-at",
+        "error-at",
         "label",
         "value-text",
         "template",
