@@ -82,6 +82,7 @@
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartAiCatalogProjectionTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartComponentLibraryTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/AlertBarSmartTest.php",
+      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/ChartSmartTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SfActionLinkTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeAssetResolverTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/RegisteredListRendererTest.php",

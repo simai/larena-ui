@@ -242,6 +242,7 @@ assert(ComponentPackageRequirements::undeclaredBootPackages($lock, $runtime->boo
 // The cases below read the lock's pro alone (Chart is pinned next to it in the bundled lock).
 $proLock = $lock;
 unset($proLock['packages']['chart']);
+$proLock['components'] = array_filter($proLock['components'], static fn (array $component): bool => $component['package'] !== 'chart');
 assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, '{chat:{base:"/b/chat/smart/"}}') === ['pro']);
 assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, 'packages: {pro: {base: "/b/pro/smart/"}}') === []);
 assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, '{xpro:{base:"/b/"}}') === ['pro']);

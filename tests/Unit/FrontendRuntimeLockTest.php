@@ -101,11 +101,13 @@ foreach ($lock->toArray()['components'] as $component) {
 }
 assert(!in_array('ui/distr/', $requiredRuntimeFiles, true));
 assert(!in_array('pro/smart/', $requiredRuntimeFiles, true));
-// The four package tags resolve inside the package's tree, every other one inside the free Smart tree.
+// The four pro tags resolve inside pro's tree, the SIMAI Chart tags (sf-chart-*) inside chart's, every other one
+// inside the free Smart tree.
 foreach ($lock->toArray()['components'] as $tag => $component) {
-    $larena = in_array($tag, ['sf-view-table', 'sf-view', 'sf-view-properties', 'sf-admin-menu'], true);
-    assert($component['package'] === ($larena ? 'pro' : 'framework'));
-    assert(str_starts_with($component['javascript'], $larena ? 'pro/smart/' : 'ui/distr/smart/'));
+    $package = in_array($tag, ['sf-view-table', 'sf-view', 'sf-view-properties', 'sf-admin-menu'], true) ? 'pro'
+        : (str_starts_with($tag, 'sf-chart-') ? 'chart' : 'framework');
+    assert($component['package'] === $package, $tag);
+    assert(str_starts_with($component['javascript'], $package === 'framework' ? 'ui/distr/smart/' : $package . '/smart/'), $tag);
 }
 
 $sources = $lock->publicationSources('/tmp/ui', ['pro' => '/tmp/package-pro.tar', 'chart' => '/tmp/package-chart.tar']);
@@ -346,6 +348,10 @@ $asLarena = static function (array $current): array {
     $package = [...$current['packages']['pro'], 'release' => 'larena-' . substr($current['packages']['pro']['commit'], 0, 12), 'mount' => 'larena'];
     $current['packages'] = ['larena' => $package];
     foreach ($current['components'] as $tag => $component) {
+        // Only the one package: another set's tags (SIMAI Chart) have no package to sit in.
+        if (!in_array($component['package'], ['pro', 'framework'], true)) {
+            unset($current['components'][$tag]);
+        }
         if ($component['package'] === 'pro') {
             $current['components'][$tag] = [...$component, 'package' => 'larena',
                 'source' => 'larena/' . substr($component['source'], 4), 'javascript' => 'larena/' . substr($component['javascript'], 4),
@@ -416,6 +422,7 @@ $twoPackages = static function (array $current, string $commit): array {
 // Built on the lock's pro alone, so the case keeps naming exactly two packages.
 $proOnly = $lock->toArray();
 unset($proOnly['packages']['chart']);
+$proOnly['components'] = array_filter($proOnly['components'], static fn (array $component): bool => $component['package'] !== 'chart');
 $two = FrontendRuntimeLock::fromArray($twoPackages($proOnly, $second));
 assert($two->pairId() === 'ui-0c23f6a0af12-pro-abe29151620b-admin-0123456789ab');
 assert($two->bundleId() === 'ui-0c23f6a0af12-pro-abe29151620b-admin-0123456789ab-registry-33a16a9d-exact-git-tree-v2');

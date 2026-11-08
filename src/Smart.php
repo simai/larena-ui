@@ -47,7 +47,15 @@ final class Smart
             $attributes = ['id' => $id] + $attributes;
         }
         $attributes = $host + $attributes;
+        // The list and object settings a component takes from its settings island (a SIMAI Chart's items, names,
+        // colors ...), as the lock names them: name => list|object.
+        $islandKinds = $registry->get($tag)['island'] ?? [];
+        $island = [];
         foreach ($props as $key => $value) {
+            if (is_array($islandKinds) && isset($islandKinds[$key])) {
+                $island[$key] = self::islandValue($tag, (string) $key, $islandKinds[$key], $value);
+                continue;
+            }
             if ($key === 'data' && $tag === 'sf-view-table') {
                 $payload = $value;
                 continue;
@@ -97,6 +105,10 @@ final class Smart
             }
             $children = '<a class="larena-pagination-next" data-larena-pagination-next href="'
                 . self::escape($paginationNextHref) . '">' . self::escape($label) . '</a>';
+        }
+
+        if ($island !== []) {
+            $children = self::settingsIsland($island) . $children;
         }
 
         $html = '<' . $tag . self::attributes($attributes) . '>' . $children . $content . '</' . $tag . '>';
@@ -159,7 +171,27 @@ final class Smart
         return $clean;
     }
 
-    /** A component's settings as the JSON island the Framework reads once and removes (script[data-sf-settings]). */
+    /**
+     * One island setting as its kind needs it: a list stays a list, an object becomes a JSON object even when empty
+     * (an empty PHP array would print as []). Anything else is refused.
+     */
+    private static function islandValue(string $tag, string $key, mixed $kind, mixed $value): mixed
+    {
+        if ($kind === 'list' && is_array($value) && array_is_list($value)) {
+            return $value;
+        }
+        if ($kind === 'object' && is_array($value) && ($value === [] || !array_is_list($value))) {
+            return $value === [] ? new \stdClass() : $value;
+        }
+
+        throw new \InvalidArgumentException('ui_smart_island_setting_invalid:' . $tag . ':' . $key);
+    }
+
+    /**
+     * A component's settings as the JSON island the Framework reads once and removes (script[data-sf-settings]).
+     *
+     * @param array<string, mixed> $settings
+     */
     private static function settingsIsland(array $settings): string
     {
         return '<script type="application/json" data-sf-settings>'

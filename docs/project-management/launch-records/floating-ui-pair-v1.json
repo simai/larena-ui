@@ -361,6 +361,7 @@
     "resources/smart/ui-input/manifest.json",
     "src/Registry/UiSmartContribution.php",
     "tests/Unit/AlertBarSmartTest.php",
+    "tests/Unit/ChartSmartTest.php",
     "resources/smart/ui-alert-bar/manifest.json",
     "resources/smart/ui-modal/manifest.json",
     "resources/smart/ui-tag/manifest.json",

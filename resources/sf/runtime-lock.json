@@ -1153,6 +1153,800 @@
         "class"
       ],
       "package": "framework"
+    },
+    "sf-empty-state": {
+      "source": "ui/distr/smart/empty-state",
+      "javascript": "ui/distr/smart/empty-state/js/empty-state.min.js",
+      "css": "ui/distr/smart/empty-state/css/empty-state.min.css",
+      "requires": [
+        "sf-button",
+        "sf-icon"
+      ],
+      "attributes": [
+        "kind",
+        "size",
+        "icon",
+        "heading",
+        "text",
+        "heading-level",
+        "layout",
+        "live",
+        "actions",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-chart-bar": {
+      "source": "chart/smart/chart-bar",
+      "javascript": "chart/smart/chart-bar/js/chart-bar.min.js",
+      "css": "chart/smart/chart-bar/css/chart-bar.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "x",
+        "y",
+        "series",
+        "bin",
+        "x-scale",
+        "y-max",
+        "stack",
+        "lines",
+        "line-axis",
+        "line-format",
+        "orientation",
+        "sort",
+        "value-labels",
+        "legend",
+        "tooltip",
+        "grid",
+        "x-label",
+        "y-label",
+        "x-format",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "colors",
+        "hidden-series",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object",
+        "hidden-series": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-box": {
+      "source": "chart/smart/chart-box",
+      "javascript": "chart/smart/chart-box/js/chart-box.min.js",
+      "css": "chart/smart/chart-box/css/chart-box.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "x",
+        "y",
+        "series",
+        "stats",
+        "whiskers",
+        "mean",
+        "y-min",
+        "y-max",
+        "y-zero",
+        "legend",
+        "tooltip",
+        "grid",
+        "x-label",
+        "y-label",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "colors",
+        "hidden-series",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object",
+        "hidden-series": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-candlestick": {
+      "source": "chart/smart/chart-candlestick",
+      "javascript": "chart/smart/chart-candlestick/js/chart-candlestick.min.js",
+      "css": "chart/smart/chart-candlestick/css/chart-candlestick.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "x",
+        "open",
+        "high",
+        "low",
+        "close",
+        "shape",
+        "y-min",
+        "y-max",
+        "y-zero",
+        "legend",
+        "tooltip",
+        "grid",
+        "x-label",
+        "y-label",
+        "x-format",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "colors": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-funnel": {
+      "source": "chart/smart/chart-funnel",
+      "javascript": "chart/smart/chart-funnel/js/chart-funnel.min.js",
+      "css": "chart/smart/chart-funnel/css/chart-funnel.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "stage",
+        "value",
+        "conversion",
+        "align",
+        "color",
+        "tooltip",
+        "stage-label",
+        "value-label",
+        "value-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-gauge": {
+      "source": "chart/smart/chart-gauge",
+      "javascript": "chart/smart/chart-gauge/js/chart-gauge.min.js",
+      "css": "chart/smart/chart-gauge/css/chart-gauge.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "value",
+        "min",
+        "max",
+        "target",
+        "target-label",
+        "shape",
+        "color",
+        "value-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "bands",
+        "id",
+        "class"
+      ],
+      "island": {
+        "bands": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-heatmap": {
+      "source": "chart/smart/chart-heatmap",
+      "javascript": "chart/smart/chart-heatmap/js/chart-heatmap.min.js",
+      "css": "chart/smart/chart-heatmap/css/chart-heatmap.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "x",
+        "y",
+        "value",
+        "scale",
+        "scheme",
+        "better",
+        "middle",
+        "min",
+        "max",
+        "steps",
+        "value-labels",
+        "legend",
+        "tooltip",
+        "x-label",
+        "y-label",
+        "value-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-line": {
+      "source": "chart/smart/chart-line",
+      "javascript": "chart/smart/chart-line/js/chart-line.min.js",
+      "css": "chart/smart/chart-line/css/chart-line.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "x",
+        "y",
+        "series",
+        "x-scale",
+        "y-min",
+        "y-max",
+        "y-zero",
+        "curve",
+        "area",
+        "stack",
+        "gaps",
+        "markers",
+        "legend",
+        "tooltip",
+        "grid",
+        "x-label",
+        "y-label",
+        "x-format",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "decimate",
+        "items",
+        "names",
+        "colors",
+        "hidden-series",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object",
+        "hidden-series": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-map": {
+      "source": "chart/smart/chart-map",
+      "javascript": "chart/smart/chart-map/js/chart-map.min.js",
+      "css": "chart/smart/chart-map/css/chart-map.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "region",
+        "value",
+        "shape-key",
+        "shape-name",
+        "projection",
+        "scale",
+        "scheme",
+        "better",
+        "steps",
+        "middle",
+        "min",
+        "max",
+        "labels",
+        "legend",
+        "tooltip",
+        "value-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "shapes",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "shapes": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-metric": {
+      "source": "chart/smart/chart-metric",
+      "javascript": "chart/smart/chart-metric/js/chart-metric.min.js",
+      "css": "chart/smart/chart-metric/css/chart-metric.min.css",
+      "requires": [
+        "sf-progress-bar"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "value",
+        "format",
+        "previous",
+        "delta",
+        "delta-format",
+        "period-text",
+        "better",
+        "max",
+        "limit-text",
+        "status",
+        "hint",
+        "href",
+        "openable",
+        "size",
+        "data-state",
+        "id",
+        "class"
+      ],
+      "island": {},
+      "package": "chart"
+    },
+    "sf-chart-parts": {
+      "source": "chart/smart/chart-parts",
+      "javascript": "chart/smart/chart-parts/js/chart-parts.min.js",
+      "css": "chart/smart/chart-parts/css/chart-parts.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "category",
+        "value",
+        "max",
+        "free-label",
+        "max-parts",
+        "total",
+        "legend",
+        "tooltip",
+        "category-label",
+        "value-label",
+        "value-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-pie": {
+      "source": "chart/smart/chart-pie",
+      "javascript": "chart/smart/chart-pie/js/chart-pie.min.js",
+      "css": "chart/smart/chart-pie/css/chart-pie.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "category",
+        "value",
+        "hole",
+        "total",
+        "share-labels",
+        "max-parts",
+        "legend",
+        "tooltip",
+        "category-label",
+        "value-label",
+        "value-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "colors",
+        "hidden-parts",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object",
+        "hidden-parts": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-radar": {
+      "source": "chart/smart/chart-radar",
+      "javascript": "chart/smart/chart-radar/js/chart-radar.min.js",
+      "css": "chart/smart/chart-radar/css/chart-radar.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "x",
+        "y",
+        "series",
+        "min",
+        "max",
+        "grid",
+        "fill",
+        "legend",
+        "tooltip",
+        "x-label",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "colors",
+        "hidden-series",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object",
+        "hidden-series": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-sankey": {
+      "source": "chart/smart/chart-sankey",
+      "javascript": "chart/smart/chart-sankey/js/chart-sankey.min.js",
+      "css": "chart/smart/chart-sankey/css/chart-sankey.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "source",
+        "target",
+        "value",
+        "labels",
+        "tooltip",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "colors": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-scatter": {
+      "source": "chart/smart/chart-scatter",
+      "javascript": "chart/smart/chart-scatter/js/chart-scatter.min.js",
+      "css": "chart/smart/chart-scatter/css/chart-scatter.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "palette",
+        "x",
+        "y",
+        "bubble",
+        "series",
+        "point",
+        "x-min",
+        "x-max",
+        "y-min",
+        "y-max",
+        "x-zero",
+        "y-zero",
+        "trend",
+        "legend",
+        "tooltip",
+        "grid",
+        "x-label",
+        "y-label",
+        "bubble-label",
+        "x-format",
+        "y-format",
+        "bubble-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "names",
+        "colors",
+        "hidden-series",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "names": "object",
+        "colors": "object",
+        "hidden-series": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-sparkline": {
+      "source": "chart/smart/chart-sparkline",
+      "javascript": "chart/smart/chart-sparkline/js/chart-sparkline.min.js",
+      "css": "chart/smart/chart-sparkline/css/chart-sparkline.min.css",
+      "requires": [],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "x",
+        "y",
+        "shape",
+        "curve",
+        "mark",
+        "color",
+        "y-zero",
+        "y-format",
+        "size",
+        "summary",
+        "data-state",
+        "items",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list"
+      },
+      "package": "chart"
+    },
+    "sf-chart-sunburst": {
+      "source": "chart/smart/chart-sunburst",
+      "javascript": "chart/smart/chart-sunburst/js/chart-sunburst.min.js",
+      "css": "chart/smart/chart-sunburst/css/chart-sunburst.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "node",
+        "parent",
+        "path",
+        "value",
+        "name",
+        "labels",
+        "tooltip",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "colors": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-timeline": {
+      "source": "chart/smart/chart-timeline",
+      "javascript": "chart/smart/chart-timeline/js/chart-timeline.min.js",
+      "css": "chart/smart/chart-timeline/css/chart-timeline.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "row",
+        "start",
+        "end",
+        "status",
+        "legend",
+        "tooltip",
+        "row-label",
+        "x-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "colors": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-treemap": {
+      "source": "chart/smart/chart-treemap",
+      "javascript": "chart/smart/chart-treemap/js/chart-treemap.min.js",
+      "css": "chart/smart/chart-treemap/css/chart-treemap.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "x",
+        "y",
+        "group",
+        "labels",
+        "legend",
+        "tooltip",
+        "x-label",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "colors": "object"
+      },
+      "package": "chart"
+    },
+    "sf-chart-waterfall": {
+      "source": "chart/smart/chart-waterfall",
+      "javascript": "chart/smart/chart-waterfall/js/chart-waterfall.min.js",
+      "css": "chart/smart/chart-waterfall/css/chart-waterfall.min.css",
+      "requires": [
+        "sf-empty-state"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "label",
+        "x",
+        "y",
+        "total",
+        "end",
+        "value-labels",
+        "legend",
+        "tooltip",
+        "grid",
+        "x-label",
+        "y-label",
+        "y-format",
+        "size",
+        "table",
+        "summary",
+        "data-state",
+        "items",
+        "colors",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list",
+        "colors": "object"
+      },
+      "package": "chart"
     }
   }
 }
