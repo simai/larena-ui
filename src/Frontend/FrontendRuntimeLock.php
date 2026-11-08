@@ -44,6 +44,12 @@ final readonly class FrontendRuntimeLock
     private const LICENCE_EXPRESSION_DEPTH = 8;
     /** Mounts and component owners a package may not be named after. */
     private const RESERVED_NAMES = ['ui', 'contract', 'framework'];
+    /**
+     * Where a package's components sit in its source repository (package_source.path of its receipt): package/ in a
+     * component set repository listed here, components/ in every other (simai/larena-ui, simai/ui-admin, simai/ui-pro).
+     */
+    private const PACKAGE_PATHS = ['simai/ui-chart' => 'package'];
+    private const DEFAULT_PACKAGE_PATH = 'components';
 
     /** @param array<string, mixed> $data */
     private function __construct(private array $data) {}
@@ -431,9 +437,9 @@ final readonly class FrontendRuntimeLock
     }
 
     /**
-     * A component package: the Smart tree the Framework builder made from components/ of an allowed source repository,
-     * built over exactly the pinned free release, released from an allowed release repository, mounted under its own
-     * name.
+     * A component package: the Smart tree the Framework builder made from components/ (a component set: package/)
+     * of an allowed source repository, built over exactly the pinned free release, released from an allowed release
+     * repository, mounted under its own name.
      */
     private function assertPackage(mixed $name, mixed $package, string $frameworkId): void
     {
@@ -451,7 +457,7 @@ final readonly class FrontendRuntimeLock
             throw new RuntimeException('ui_frontend_runtime_package_release_repository_invalid:' . $name);
         }
         if (($package['tree'] ?? null) !== 'smart' || ($package['mount'] ?? null) !== $name
-            || ($package['package_path'] ?? null) !== 'components'
+            || ($package['package_path'] ?? null) !== (self::PACKAGE_PATHS[(string) $package['repository']] ?? self::DEFAULT_PACKAGE_PATH)
             || !preg_match('/^[a-f0-9]{40}$/', (string) ($package['package_tree'] ?? ''))
             || !preg_match('/^[a-f0-9]{40}$/', (string) ($package['framework_source']['revision'] ?? ''))
             || ($package['framework_source']['repository'] ?? null) !== 'simai/ui-source'

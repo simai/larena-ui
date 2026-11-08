@@ -127,6 +127,11 @@ def git_blob_sha1(payload: bytes) -> str:
     return hashlib.sha1(b"blob %d\0" % len(payload) + payload).hexdigest()
 
 
+# A component set (simai.framework.component-set) carries its passport at the archive root, beside its Smart tree; it
+# is published at <mount>/set.json and counted and fingerprinted with the tree. Nothing else may sit outside the tree.
+SET_PASSPORT = "set.json"
+
+
 def package_receipt(source: dict[str, object], archive_path: Path, output: Path) -> dict[str, object]:
     """A component package archive, read as the published tree would be: its files, modes and Git blob ids."""
     raw_archive = archive_path.read_bytes()
@@ -147,7 +152,8 @@ def package_receipt(source: dict[str, object], archive_path: Path, output: Path)
             mode = "100755" if member.mode & 0o111 else "100644"
             entries[name] = (mode, git_blob_sha1(payload))
     tree = str(source["tree"])
-    if not entries or any(not path.startswith(f"{tree}/") for path in entries):
+    if not any(path.startswith(f"{tree}/") for path in entries) or any(
+            not path.startswith(f"{tree}/") and path != SET_PASSPORT for path in entries):
         raise RuntimeError(f"runtime_package_tree_invalid:{source['mount']}")
     if len(entries) != int(source["files"]):
         raise RuntimeError(f"runtime_file_count_mismatch:{source['mount']}")

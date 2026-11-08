@@ -51,18 +51,20 @@ final class ComponentPackageRequirements
      * The repositories a component set may be built from: package_source.repository of its receipt, `repository` in
      * the lock. The Larena admin set moved its source from components/ of simai/larena-ui to simai/ui-admin and then,
      * with the advanced Smart components a second kit needs, to simai/ui-pro (owner decisions 2026-10-22); the
-     * earlier sources stay here so the locks they pin keep validating. A later set (the chat kit) adds its
-     * repository here. FrontendRuntimeLock and the Root release scripts read this one list.
+     * earlier sources stay here so the locks they pin keep validating. The SIMAI Chart set is built from
+     * package/ of simai/ui-chart. A later set (the chat kit) adds its repository here. FrontendRuntimeLock and the
+     * Root release scripts read this one list.
      */
-    public const SOURCE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro'];
+    public const SOURCE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro', 'simai/ui-chart'];
     /**
      * Where the sets are released: the GitHub release <set>-<12> with package-<set>.tar, .sha256 and
      * package-receipt.json. The lock names it in `release_repository`; a lock without it is released from its
      * `repository`, as every lock was before sources and releases were split. The component package renamed `pro`
      * (Framework owner decision q-4ac7d07595, 2026-11-02) is released on simai/ui-pro as pro-<12>; its copy on
-     * simai/larena-ui under the former name larena stops on 2027-01-01.
+     * simai/larena-ui under the former name larena stops on 2027-01-01. The Chart set is released on simai/ui-chart
+     * as chart-<12>.
      */
-    public const RELEASE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-pro'];
+    public const RELEASE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-pro', 'simai/ui-chart'];
     private const NAME = '/\A[a-z][a-z0-9]*\z/';
     private const RESERVED_NAMES = ['ui', 'contract', 'framework'];
     private const DECLARATION_KEYS = ['releases', 'repository', 'release_repository', 'source_repositories'];

@@ -211,8 +211,9 @@ $withSource['ui']['source_revision'] = 'e1';
 assert($rejected($withSource));
 
 // Sources and releases are separate. A package is built from an allowed source (ComponentPackageRequirements::
-// SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin, simai/ui-pro) and released from an allowed release repository
-// (simai/larena-ui). A lock without release_repository is released from its repository, as before the split.
+// SOURCE_REPOSITORIES: simai/larena-ui, simai/ui-admin, simai/ui-pro from components/, simai/ui-chart from package/)
+// and released from an allowed release repository (simai/larena-ui). A lock without release_repository is released
+// from its repository, as before the split.
 $pinned = $lock->toArray();
 $pinnedName = array_key_first($pinned['packages']);
 assert(is_string($pinnedName));
@@ -224,6 +225,7 @@ foreach (\Larena\Ui\Frontend\ComponentPackageRequirements::SOURCE_REPOSITORIES a
     $sourced = $pinned;
     $sourced['packages'][$pinnedName]['repository'] = $sourceRepository;
     $sourced['packages'][$pinnedName]['release_repository'] = 'simai/larena-ui';
+    $sourced['packages'][$pinnedName]['package_path'] = $sourceRepository === 'simai/ui-chart' ? 'package' : 'components';
     $sourcedLock = FrontendRuntimeLock::fromArray($sourced);
     assert($sourcedLock->package($pinnedName)['repository'] === $sourceRepository);
     assert($sourcedLock->packageReleaseRepository($pinnedName) === 'simai/larena-ui');
@@ -442,6 +444,58 @@ foreach ([
     assert($rejected($data));
 }
 
+// A component set next to pro: SIMAI Chart, built from package/ of simai/ui-chart and released there (no
+// release_repository), mounted under chart.
+$withChart = static function (array $current): array {
+    $current['packages']['chart'] = [
+        ...$current['packages']['pro'],
+        'release' => 'chart-b9d62c6d81a0',
+        'repository' => 'simai/ui-chart',
+        'commit' => 'b9d62c6d81a0028ae16487583f2732cb38ff0852',
+        'mount' => 'chart',
+        'sha256' => '56cf6859eeed33a0d6cf4852fa81b5b23fe1124a6eb4d3147a2631979f407531',
+        'files' => 1083,
+        'package_path' => 'package',
+        'package_tree' => 'b1dff31dcb58d3799f2e30cb394a71de6d89a031',
+    ];
+    unset($current['packages']['chart']['release_repository']);
+    $current['pair_id'] = FrontendRuntimeLock::composePairId($current['ui']['commit'], array_map(
+        static fn (array $package): string => $package['commit'],
+        $current['packages'],
+    ));
+    $current['bundle_id'] = FrontendRuntimeLock::composeBundleId($current['pair_id'], $current['framework_registry']['file_sha256'], $current['publication_profile']);
+
+    return $current;
+};
+$chartLock = FrontendRuntimeLock::fromArray($withChart($lock->toArray()));
+assert($chartLock->pairId() === $lock->pairId() . '-chart-b9d62c6d81a0');
+assert($chartLock->packageIds() === [...$lock->packageIds(), 'chart' => 'chart-b9d62c6d81a0']);
+assert($chartLock->packageReleaseRepository('chart') === 'simai/ui-chart');
+assert($chartLock->packageBases() === ['pro' => 'pro/smart/', 'chart' => 'chart/smart/']);
+assert(array_column($chartLock->publicationExpectation()['sources'], 'mount') === ['ui', 'pro', 'chart', 'contract']);
+foreach ([
+    // Another source or release repository than the set's own is refused; so is a source path of neither kind.
+    ['repository', 'simai/ui-chat', 'ui_frontend_runtime_source_invalid:chart'],
+    ['repository', 'simai/ui-charts', 'ui_frontend_runtime_source_invalid:chart'],
+    ['release_repository', 'simai/ui-admin', 'ui_frontend_runtime_package_release_repository_invalid:chart'],
+    ['release_repository', 'simai/ui-chat', 'ui_frontend_runtime_package_release_repository_invalid:chart'],
+    ['package_path', 'src', 'ui_frontend_runtime_source_layout_invalid'],
+    ['package_path', 'package/', 'ui_frontend_runtime_source_layout_invalid'],
+    ['tree', 'package', 'ui_frontend_runtime_source_layout_invalid'],
+] as [$field, $value, $error]) {
+    $data = $chartLock->toArray();
+    $data['packages']['chart'][$field] = $value;
+    assert($refusal($data) === $error, $field . '=' . $value);
+}
+// pro keeps its rules: it is built from components/; the set's package/ path belongs to simai/ui-chart only, and
+// simai/ui-chart gives no components/ path.
+$proAsSet = $chartLock->toArray();
+$proAsSet['packages']['pro']['package_path'] = 'package';
+assert($refusal($proAsSet) === 'ui_frontend_runtime_source_layout_invalid');
+$chartAsPro = $chartLock->toArray();
+$chartAsPro['packages']['chart']['package_path'] = 'components';
+assert($refusal($chartAsPro) === 'ui_frontend_runtime_source_layout_invalid');
+
 // Asset sync over a two-package fixture: the packager copies every package into its own mount, the publisher
 // installs both, and a hash mismatch of either package fails closed.
 $fixture = sys_get_temp_dir() . '/larena-ui-two-package-lock-' . bin2hex(random_bytes(6));
@@ -659,6 +713,56 @@ try {
     assert($exit === 0, $stderr);
     [$exit, , $stderr] = $package($receiptedLock, $fixture . '/out-pair-sha', [...$archiveArguments, '--pair-receipt', 'admin=' . $pairLock($pairDocument + ['extra' => 1])[1]]);
     assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:sha256'), $stderr);
+
+    // A component set carries its passport set.json at the archive root beside its smart/ tree: it is counted and
+    // fingerprinted with the tree and published at <mount>/set.json. Any other file outside the tree is refused.
+    $setFiles = ['set.json' => "{\"schema\":\"simai.framework.component-set\",\"id\":\"chart\"}\n",
+        'smart/rule.js' => "export default [];\n", 'smart/chart-line/js/chart-line.js' => "window.sfChartLine=1;\n"];
+    $setArchive = $fixture . '/package-chart.tar';
+    $setLock = $fixtureLock;
+    $setLock['packages']['chart'] = [
+        ...$packageEntry('chart', str_repeat('8', 40), $packageTar($setArchive, $setFiles), 3, 'PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial'),
+        'repository' => 'simai/ui-chart',
+        'package_path' => 'package',
+    ];
+    $setLock['pair_id'] = FrontendRuntimeLock::composePairId($uiCommit, ['larena' => str_repeat('6', 40), 'admin' => str_repeat('7', 40), 'chart' => str_repeat('8', 40)]);
+    $setLock['bundle_id'] = FrontendRuntimeLock::composeBundleId($setLock['pair_id'], $registrySha, 'exact-git-tree-v2');
+    $setRuntime = FrontendRuntimeLock::fromArray($setLock);
+    $setArguments = [...$archiveArguments, '--package-archive', 'chart=' . $setArchive];
+    [$exit, , $stderr] = $package($setLock, $fixture . '/out-set', $setArguments);
+    assert($exit === 0, $stderr);
+    $setArtifact = $fixture . '/out-set/' . $setRuntime->bundleId();
+    $setManifest = json_decode((string) file_get_contents($setArtifact . '/manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+    assert(array_column($setManifest['sources'], 'mount') === ['ui', 'larena', 'admin', 'chart', 'contract']);
+    assert($setManifest['sources'][3]['files'] === 3 && $setManifest['sources'][3]['file_count'] === 3);
+    $setPublic = $fixture . '/public-set';
+    mkdir($setPublic, 0700, true);
+    (new VerifiedAssetBundlePublisher())->publishArtifactDirectory(
+        $setRuntime->publicationExpectation(),
+        $setArtifact,
+        $setPublic,
+        $fixture . '/state-set/sf-active.json',
+    );
+    assert(file_get_contents($setPublic . '/' . $setRuntime->bundleId() . '/chart/set.json') === $setFiles['set.json']);
+    assert(file_get_contents($setPublic . '/' . $setRuntime->bundleId() . '/chart/smart/rule.js') === $setFiles['smart/rule.js']);
+    foreach ([
+        'README.md' => ['README.md' => "chart\n"],
+        'nested-passport' => ['package/set.json' => "{}\n"],
+        'passport-only' => ['set.json' => $setFiles['set.json']],
+    ] as $case => $change) {
+        $members = $case === 'passport-only' ? $change : [...$setFiles, ...$change];
+        $strayArchive = $fixture . '/package-chart-' . $case . '.tar';
+        $strayLock = $setLock;
+        $strayLock['packages']['chart']['sha256'] = $packageTar($strayArchive, $members);
+        $strayLock['packages']['chart']['files'] = count($members);
+        [$exit, , $stderr] = $package($strayLock, $fixture . '/out-set-' . $case, [...$archiveArguments, '--package-archive', 'chart=' . $strayArchive]);
+        assert($exit !== 0 && str_contains($stderr, 'runtime_package_tree_invalid:chart'), $case . ': ' . $stderr);
+    }
+    // set.json is counted: a lock that leaves it out of `files` is refused.
+    $uncounted = $setLock;
+    $uncounted['packages']['chart']['files'] = 2;
+    [$exit, , $stderr] = $package($uncounted, $fixture . '/out-set-uncounted', $setArguments);
+    assert($exit !== 0 && str_contains($stderr, 'runtime_file_count_mismatch:chart'), $stderr);
 
     // The publisher installs both packages into their mounts of the bundle.
     $public = $fixture . '/public';

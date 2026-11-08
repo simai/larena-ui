@@ -77,6 +77,21 @@ $onLarenaUi = componentConsumer('larena/admin', ['pro' => ['releases' => '*', 'r
 $adminSourcedCheck = ComponentPackageRequirements::fromComposerManifests([$onLarenaUi])->check($adminSourced);
 assert($adminSourcedCheck['status'] === 'passed' && $adminSourcedCheck['errors'] === []);
 assert(ComponentPackageRequirements::releaseRepository($adminSourced['packages']['pro']) === 'simai/larena-ui');
+// The SIMAI Chart set, built from and released on simai/ui-chart next to pro, passes for a package that declares it;
+// pinned from any other repository it fails.
+$withChart = $lock;
+$withChart['packages']['chart'] = [...$lock['packages']['pro'], 'release' => 'chart-b9d62c6d81a0',
+    'commit' => 'b9d62c6d81a0028ae16487583f2732cb38ff0852', 'repository' => 'simai/ui-chart', 'package_path' => 'package'];
+unset($withChart['packages']['chart']['release_repository']);
+$charts = componentConsumer('larena/dashboard', ['chart' => ['releases' => '*', 'release_repository' => 'simai/ui-chart',
+    'source_repositories' => ['simai/ui-chart']]]);
+$chartCheck = ComponentPackageRequirements::fromComposerManifests([$admin, $charts])->check($withChart);
+assert($chartCheck['errors'] === [] && $chartCheck['pinned'] === ['pro' => $pinnedRelease, 'chart' => 'chart-b9d62c6d81a0']);
+$chartElsewhere = $withChart;
+$chartElsewhere['packages']['chart']['repository'] = 'simai/ui-chat';
+assert(ComponentPackageRequirements::fromComposerManifests([])->check($chartElsewhere)['errors']
+    === ['component_package_source_repository_invalid:chart', 'component_package_release_repository_invalid:chart']);
+
 // Without release_repository a set is released from its own repository (locks written before the split).
 $unsplit = $lock['packages']['pro'];
 unset($unsplit['release_repository']);
