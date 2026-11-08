@@ -30,8 +30,9 @@ $admin = componentConsumer('larena/admin', ['pro' => [
 $ok = ComponentPackageRequirements::fromComposerManifests([$admin, ['name' => 'larena/core', 'extra' => []]])->check($lock);
 assert($ok['schema'] === 'larena.ui.component_package_check' && $ok['status'] === 'passed' && $ok['errors'] === []);
 assert($ok['framework_release'] === $pinnedFramework);
-assert($ok['pinned'] === ['pro' => $pinnedRelease]);
-assert($ok['declared'] === ['pro' => ['larena/admin']] && $ok['unrequested'] === []);
+// Chart is pinned next to pro without a declaring package yet: it is reported, not refused.
+assert($ok['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release']]);
+assert($ok['declared'] === ['pro' => ['larena/admin']] && $ok['unrequested'] === ['chart']);
 
 // An exact release list accepts the pinned release.
 $exact = componentConsumer('larena/admin', ['pro' => ['releases' => ['pro-000000000000', $pinnedRelease]]]);
@@ -162,8 +163,8 @@ $twoSets['packages']['chat'] = [
     'mount' => 'chat',
 ];
 $extra = ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets);
-assert($extra['status'] === 'passed' && $extra['unrequested'] === ['chat']);
-assert($extra['pinned'] === ['pro' => $pinnedRelease, 'chat' => 'chat-cccccccccccc']);
+assert($extra['status'] === 'passed' && $extra['unrequested'] === ['chart', 'chat']);
+assert($extra['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release'], 'chat' => 'chat-cccccccccccc']);
 $twoSets['packages']['chat']['requires_framework'] = 'ui-000000000000';
 assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets)['errors'] === ['component_package_framework_mismatch:chat']);
 $twoSets['packages']['chat']['requires_framework'] = $lock['ui']['release'];
@@ -238,17 +239,20 @@ assert($exitCode === 0, implode("\n", $output));
 // second set appears in it without a code change, in lock order.
 $runtime = FrontendRuntimeLock::bundled();
 assert(ComponentPackageRequirements::undeclaredBootPackages($lock, $runtime->bootPackagesScript('/b/')) === []);
-assert(ComponentPackageRequirements::undeclaredBootPackages($lock, '{chat:{base:"/b/chat/smart/"}}') === ['pro']);
-assert(ComponentPackageRequirements::undeclaredBootPackages($lock, 'packages: {pro: {base: "/b/pro/smart/"}}') === []);
-assert(ComponentPackageRequirements::undeclaredBootPackages($lock, '{xpro:{base:"/b/"}}') === ['pro']);
+// The cases below read the lock's pro alone (Chart is pinned next to it in the bundled lock).
+$proLock = $lock;
+unset($proLock['packages']['chart']);
+assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, '{chat:{base:"/b/chat/smart/"}}') === ['pro']);
+assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, 'packages: {pro: {base: "/b/pro/smart/"}}') === []);
+assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, '{xpro:{base:"/b/"}}') === ['pro']);
 $twoSetLock = FrontendRuntimeLock::fromArray([
-    ...$lock,
-    'packages' => [...$lock['packages'], 'chat' => [...$twoSets['packages']['chat'], 'release' => 'chat-cccccccccccc', 'tree' => 'smart']],
-    'pair_id' => FrontendRuntimeLock::composePairId($lock['ui']['commit'], ['pro' => $lock['packages']['pro']['commit'], 'chat' => $commit]),
+    ...$proLock,
+    'packages' => [...$proLock['packages'], 'chat' => [...$twoSets['packages']['chat'], 'release' => 'chat-cccccccccccc', 'tree' => 'smart']],
+    'pair_id' => FrontendRuntimeLock::composePairId($proLock['ui']['commit'], ['pro' => $proLock['packages']['pro']['commit'], 'chat' => $commit]),
     'bundle_id' => FrontendRuntimeLock::composeBundleId(
-        FrontendRuntimeLock::composePairId($lock['ui']['commit'], ['pro' => $lock['packages']['pro']['commit'], 'chat' => $commit]),
-        $lock['framework_registry']['file_sha256'],
-        $lock['publication_profile'],
+        FrontendRuntimeLock::composePairId($proLock['ui']['commit'], ['pro' => $proLock['packages']['pro']['commit'], 'chat' => $commit]),
+        $proLock['framework_registry']['file_sha256'],
+        $proLock['publication_profile'],
     ),
 ]);
 $twoSetBoot = $twoSetLock->bootPackagesScript('/b/');

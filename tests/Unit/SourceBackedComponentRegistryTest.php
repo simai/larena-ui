@@ -9,7 +9,7 @@ use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
 assert($lock->tag() === null);
-assert($lock->pairId() === 'ui-0c23f6a0af12-pro-abe29151620b');
+assert($lock->pairId() === 'ui-0c23f6a0af12-pro-abe29151620b-chart-b9d62c6d81a0');
 assert(str_starts_with($lock->pairId(), 'ui-'));
 assert($lock->toArray()['ui']['commit'] === '0c23f6a0af12ddc32846ff868aab4d9849dabd75');
 assert($lock->package('pro')['commit'] === 'abe29151620b0ef7004473ffcd4ee8049cbbccf1');

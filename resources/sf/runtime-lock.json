@@ -2,8 +2,8 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-0c23f6a0af12-pro-abe29151620b",
-  "bundle_id": "ui-0c23f6a0af12-pro-abe29151620b-registry-33a16a9d-exact-git-tree-v2",
+  "pair_id": "ui-0c23f6a0af12-pro-abe29151620b-chart-b9d62c6d81a0",
+  "bundle_id": "ui-0c23f6a0af12-pro-abe29151620b-chart-b9d62c6d81a0-registry-33a16a9d-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -40,6 +40,33 @@
       },
       "manifest_sha256": "2782b0508612354b0cc647195b8a783c91d564781f690f73bb985f89a4cb76f8",
       "receipt_sha256": "10abeea64c910c23de834f2fd2a6236c2f8af3fb612749595538323029260eeb",
+      "licence": {
+        "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
+        "tier": "bundled-larena"
+      }
+    },
+    "chart": {
+      "release": "chart-b9d62c6d81a0",
+      "repository": "simai/ui-chart",
+      "tag": null,
+      "commit": "b9d62c6d81a0028ae16487583f2732cb38ff0852",
+      "tree": "smart",
+      "mount": "chart",
+      "sha256": "56cf6859eeed33a0d6cf4852fa81b5b23fe1124a6eb4d3147a2631979f407531",
+      "files": 1083,
+      "requires_framework": "ui-0c23f6a0af12",
+      "package_path": "package",
+      "package_tree": "b1dff31dcb58d3799f2e30cb394a71de6d89a031",
+      "framework_source": {
+        "repository": "simai/ui-source",
+        "revision": "da48ba8fde776bbbb6b01b3010d32d8475a9686e"
+      },
+      "builder": {
+        "repository": "simai/ui-builder",
+        "revision": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf"
+      },
+      "manifest_sha256": "a6424fad2649d33a9e35e273a19bf17f01b6710c173c3b62c13f6a12eb72b3b3",
+      "receipt_sha256": "22b5d8d75ef43f0f1d124844918901de6c57124ef5fca34082aae1e9ac865e9b",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
