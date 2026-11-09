@@ -25,7 +25,7 @@
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
       "options": {"type": "array"}
     },
-    "required": ["size", "appearance", "mode", "multiple", "portal", "value", "name", "label", "required", "search-placeholder", "search", "disabled", "aria-label", "id", "options"],
+    "required": ["appearance", "mode", "multiple", "portal", "value", "name", "label", "required", "search-placeholder", "search", "disabled", "aria-label", "id", "options"],
     "additionalProperties": false
   },
   "slots": {},

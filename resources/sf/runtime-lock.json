@@ -2,96 +2,108 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-0c23f6a0af12-pro-abe29151620b-chart-b9d62c6d81a0",
-  "bundle_id": "ui-0c23f6a0af12-pro-abe29151620b-chart-b9d62c6d81a0-registry-33a16a9d-exact-git-tree-v2",
+  "pair_id": "ui-b4a77681f0a7-pro-b671241d4d34-chart-58ba480db497",
+  "bundle_id": "ui-b4a77681f0a7-pro-b671241d4d34-chart-58ba480db497-registry-2a708b62-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-0c23f6a0af12",
+    "release": "ui-b4a77681f0a7",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "0c23f6a0af12ddc32846ff868aab4d9849dabd75",
+    "commit": "b4a77681f0a7f1c540566e5abac2a4f9d3082a3d",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "768351e804735daa9c2ee0d5c9dd5644e1c1f67a306d8af29f5114a2e1ed91f3",
-    "files": 12492,
-    "source_revision": "da48ba8fde776bbbb6b01b3010d32d8475a9686e"
+    "sha256": "29f2e0fba8215c530cf9f0f44cf9f8b51f1eb98e51e997982fd3561ea77d904a",
+    "files": 12538,
+    "source_revision": "a29cc9989bebace9a98c235b074ce23998ad39c6"
   },
   "packages": {
     "pro": {
-      "release": "pro-abe29151620b",
+      "release": "pro-b671241d4d34",
       "repository": "simai/ui-pro",
       "tag": null,
-      "commit": "abe29151620b0ef7004473ffcd4ee8049cbbccf1",
+      "commit": "b671241d4d341b2fbfd3b1f6e37703e0b330aabb",
       "tree": "smart",
       "mount": "pro",
-      "sha256": "5a9f4c8bdfd1e1323115bdfccdf6115d078393d2b93a510c12deedaf8153203d",
+      "sha256": "fc4a964f5785f5bfb6ba4263028cff54676369c26c9940f0c739e64ae3e1638e",
       "files": 722,
-      "requires_framework": "ui-0c23f6a0af12",
+      "requires_framework": "ui-cb287da78ab1",
       "package_path": "components",
-      "package_tree": "9a78582f04dd3908da985cdd9c7647496cca79aa",
+      "package_tree": "28b4b8c82f597ea0883b75cb2a7cc8e13d89d515",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "da48ba8fde776bbbb6b01b3010d32d8475a9686e"
+        "revision": "44a5efda6649def849c960c11ac56b2db90693b8"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf"
+        "revision": "993e4be571687c7f02c78fc3c779382d861f56b6"
       },
-      "manifest_sha256": "2782b0508612354b0cc647195b8a783c91d564781f690f73bb985f89a4cb76f8",
-      "receipt_sha256": "10abeea64c910c23de834f2fd2a6236c2f8af3fb612749595538323029260eeb",
+      "manifest_sha256": "8ccfaad416f0162707483a44d63e2f0039e8a45e58f2f8a65eb9b5d5d7becb54",
+      "receipt_sha256": "292a882a7027316cb3e141ca50ac5ba5e935cc3734582ac07d803ec1efecd3a8",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
+      },
+      "pair_range": {
+        "asset": "pair-range.json",
+        "checked_over": "ui-b4a77681f0a7",
+        "interface_sha256": "2ed7a43d8fa6f57ba1e26c76f572553d909d5911c3983c68938cdea13f0f0fd6",
+        "sha256": "abf2e77ed5331e72f62ef59649566e642c8e81a4bed86853905e29365ea90908"
       }
     },
     "chart": {
-      "release": "chart-b9d62c6d81a0",
+      "release": "chart-58ba480db497",
       "repository": "simai/ui-chart",
       "tag": null,
-      "commit": "b9d62c6d81a0028ae16487583f2732cb38ff0852",
+      "commit": "58ba480db4973161aeb10fd2858ce991fb69a64e",
       "tree": "smart",
       "mount": "chart",
-      "sha256": "56cf6859eeed33a0d6cf4852fa81b5b23fe1124a6eb4d3147a2631979f407531",
-      "files": 1083,
-      "requires_framework": "ui-0c23f6a0af12",
+      "sha256": "f1037ca04a5a3c0519b0854d88396063f589de81da8c31ec671d486605b9434e",
+      "files": 1087,
+      "requires_framework": "ui-cb287da78ab1",
       "package_path": "package",
-      "package_tree": "b1dff31dcb58d3799f2e30cb394a71de6d89a031",
+      "package_tree": "2c5710d3451880cafd6fc24c4dc87c8f61fa8d6d",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "da48ba8fde776bbbb6b01b3010d32d8475a9686e"
+        "revision": "44a5efda6649def849c960c11ac56b2db90693b8"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf"
+        "revision": "993e4be571687c7f02c78fc3c779382d861f56b6"
       },
-      "manifest_sha256": "a6424fad2649d33a9e35e273a19bf17f01b6710c173c3b62c13f6a12eb72b3b3",
-      "receipt_sha256": "22b5d8d75ef43f0f1d124844918901de6c57124ef5fca34082aae1e9ac865e9b",
+      "manifest_sha256": "cf507d1266f0eb89ff592f4c02c19b7bfdabbf142eb3ec4aa0fb71390668e6d8",
+      "receipt_sha256": "d34a144e5d5002f9cb28c7db619072ad9bf4fef1d20162ca91817eaee502f797",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
+      },
+      "pair_range": {
+        "asset": "pair-range.json",
+        "checked_over": "ui-b4a77681f0a7",
+        "interface_sha256": "a308a7ff2cd57d9e4267d50dfee4ba17916dfe6d787c290c8fc5eea2f0e840e4",
+        "sha256": "7bde125c3730b4389bb9a136bc302eba38ea6cb79852aa6c8780d538e4fdea2f"
       }
     }
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-0c23f6a0af12",
+    "compatibility_id": "ui-b4a77681f0a7",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "33a16a9d97e7b04391330b4a80e575f39a22a887bb2293f0c7630b6d42385333",
+    "file_sha256": "2a708b6203373d64be7f8607a6845e9cda180a1bd44ecb0e7b8f6d4c21789bc3",
     "source": {
       "tag": null,
-      "commit": "62e9986416f7f473b9c2ddfdcb30b957277411a2",
+      "commit": "c62eae925213318fca769c5cf0149f60b53df76c",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "8e2a8ad63c772035e0ead82ea63cc4f60de63536f717a1ebdda661452e09058e",
+      "sha256": "00344d6a6b387bc476559a5d0e07d59b67710cf22ef361bc52965d35544de5aa",
       "files": 2,
-      "tree_oid": "59fbbd20f35ab9b55811d69ae6b5f13d2acc98f6"
+      "tree_oid": "38afacf25d12b125e88199a4794a7982fda93888"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "171dd28c8bdc16a33d73a10d5c12ff4d2fc5547ddb42f0b25f2ebb6f5864f411"
+      "file_sha256": "22198dbe9a5fbb9b1f5e4c4970580d12ba653f1e1aca7d69b5d7964fb84a88dc"
     }
   },
   "boot": {
@@ -183,6 +195,7 @@
       "css": null,
       "attributes": [
         "size",
+        "height",
         "appearance",
         "scheme",
         "status",
@@ -209,6 +222,8 @@
         "expanded",
         "pressed",
         "text-pressed",
+        "cycle",
+        "theme-cycle",
         "template",
         "root-class",
         "aria-label",
@@ -398,6 +413,7 @@
       "css": "ui/distr/smart/input/css/input.min.css",
       "attributes": [
         "size",
+        "radius",
         "appearance",
         "label",
         "required",
@@ -684,6 +700,9 @@
         "button-attributes",
         "pressed",
         "label-pressed",
+        "cycle",
+        "theme-cycle",
+        "value",
         "template",
         "root-class",
         "aria-label",
@@ -705,6 +724,7 @@
         "image-alt",
         "no-wrap",
         "text",
+        "hue",
         "tone",
         "status",
         "heading",
@@ -1077,8 +1097,10 @@
         "expires-at",
         "confirm-id",
         "disabled",
+        "status",
         "destructive",
         "appearance",
+        "size",
         "accept-text",
         "decline-text",
         "template",
@@ -1180,11 +1202,21 @@
       ],
       "package": "framework"
     },
+    "sf-chart-core": {
+      "source": "chart/smart/chart-core",
+      "javascript": "chart/smart/chart-core/js/chart-core.min.js",
+      "css": null,
+      "requires": [],
+      "attributes": [],
+      "island": {},
+      "package": "chart"
+    },
     "sf-chart-bar": {
       "source": "chart/smart/chart-bar",
       "javascript": "chart/smart/chart-bar/js/chart-bar.min.js",
       "css": "chart/smart/chart-bar/css/chart-bar.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1237,6 +1269,7 @@
       "javascript": "chart/smart/chart-box/js/chart-box.min.js",
       "css": "chart/smart/chart-box/css/chart-box.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1284,6 +1317,7 @@
       "javascript": "chart/smart/chart-candlestick/js/chart-candlestick.min.js",
       "css": "chart/smart/chart-candlestick/css/chart-candlestick.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1327,6 +1361,7 @@
       "javascript": "chart/smart/chart-funnel/js/chart-funnel.min.js",
       "css": "chart/smart/chart-funnel/css/chart-funnel.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1363,6 +1398,7 @@
       "javascript": "chart/smart/chart-gauge/js/chart-gauge.min.js",
       "css": "chart/smart/chart-gauge/css/chart-gauge.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1396,6 +1432,7 @@
       "javascript": "chart/smart/chart-heatmap/js/chart-heatmap.min.js",
       "css": "chart/smart/chart-heatmap/css/chart-heatmap.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1439,6 +1476,7 @@
       "javascript": "chart/smart/chart-line/js/chart-line.min.js",
       "css": "chart/smart/chart-line/css/chart-line.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1491,6 +1529,7 @@
       "javascript": "chart/smart/chart-map/js/chart-map.min.js",
       "css": "chart/smart/chart-map/css/chart-map.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1534,6 +1573,7 @@
       "javascript": "chart/smart/chart-metric/js/chart-metric.min.js",
       "css": "chart/smart/chart-metric/css/chart-metric.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-progress-bar"
       ],
       "attributes": [
@@ -1567,6 +1607,7 @@
       "javascript": "chart/smart/chart-parts/js/chart-parts.min.js",
       "css": "chart/smart/chart-parts/css/chart-parts.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1608,6 +1649,7 @@
       "javascript": "chart/smart/chart-pie/js/chart-pie.min.js",
       "css": "chart/smart/chart-pie/css/chart-pie.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1651,6 +1693,7 @@
       "javascript": "chart/smart/chart-radar/js/chart-radar.min.js",
       "css": "chart/smart/chart-radar/css/chart-radar.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1694,6 +1737,7 @@
       "javascript": "chart/smart/chart-sankey/js/chart-sankey.min.js",
       "css": "chart/smart/chart-sankey/css/chart-sankey.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1727,6 +1771,7 @@
       "javascript": "chart/smart/chart-scatter/js/chart-scatter.min.js",
       "css": "chart/smart/chart-scatter/css/chart-scatter.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1779,7 +1824,9 @@
       "source": "chart/smart/chart-sparkline",
       "javascript": "chart/smart/chart-sparkline/js/chart-sparkline.min.js",
       "css": "chart/smart/chart-sparkline/css/chart-sparkline.min.css",
-      "requires": [],
+      "requires": [
+        "sf-chart-core"
+      ],
       "attributes": [
         "template",
         "root-class",
@@ -1810,6 +1857,7 @@
       "javascript": "chart/smart/chart-sunburst/js/chart-sunburst.min.js",
       "css": "chart/smart/chart-sunburst/css/chart-sunburst.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1845,6 +1893,7 @@
       "javascript": "chart/smart/chart-timeline/js/chart-timeline.min.js",
       "css": "chart/smart/chart-timeline/css/chart-timeline.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1880,6 +1929,7 @@
       "javascript": "chart/smart/chart-treemap/js/chart-treemap.min.js",
       "css": "chart/smart/chart-treemap/css/chart-treemap.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [
@@ -1915,6 +1965,7 @@
       "javascript": "chart/smart/chart-waterfall/js/chart-waterfall.min.js",
       "css": "chart/smart/chart-waterfall/css/chart-waterfall.min.css",
       "requires": [
+        "sf-chart-core",
         "sf-empty-state"
       ],
       "attributes": [

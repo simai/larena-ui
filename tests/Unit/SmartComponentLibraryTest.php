@@ -280,4 +280,16 @@ assert(!str_contains($firstJson, 'generated_at'));
 assert(!str_contains($firstJson, '"callback":'));
 assert(!str_contains($firstJson, '"callbacks":'));
 
+// Without an explicit size a control follows the region's density: no size attribute at all.
+$unsizedButton = $manager->render('ui.button', ['text' => 'Apply', 'appearance' => 'outline', 'scheme' => 'primary',
+    'loading' => false, 'disabled' => false, 'native-type' => 'button', 'aria-label' => 'Apply'], $activation);
+assert($unsizedButton->isRenderable());
+assert(preg_match('/<sf-button\b[^>]*>/', $unsizedButton->html(), $unsizedButtonTag) === 1);
+assert(preg_match('/\ssize(=|\s|>)/', $unsizedButtonTag[0]) === 0);
+$unsizedCheckbox = $manager->render('ui.checkbox', ['label' => 'Active', 'position' => 'end', 'checked' => false,
+    'disabled' => false, 'indeterminate' => false, 'name' => 'active', 'value' => '1', 'invalid' => false, 'id' => 'active'], $activation);
+assert($unsizedCheckbox->isRenderable());
+assert(preg_match('/<sf-checkbox\b[^>]*>/', $unsizedCheckbox->html(), $unsizedCheckboxTag) === 1);
+assert(preg_match('/\ssize(=|\s|>)/', $unsizedCheckboxTag[0]) === 0);
+
 echo "SmartComponentLibraryTest passed.\n";

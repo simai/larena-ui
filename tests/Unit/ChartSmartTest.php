@@ -17,6 +17,12 @@ $passport = ['sf-chart-bar', 'sf-chart-box', 'sf-chart-candlestick', 'sf-chart-f
     'sf-chart-line', 'sf-chart-map', 'sf-chart-metric', 'sf-chart-parts', 'sf-chart-pie', 'sf-chart-radar', 'sf-chart-sankey',
     'sf-chart-scatter', 'sf-chart-sparkline', 'sf-chart-sunburst', 'sf-chart-timeline', 'sf-chart-treemap', 'sf-chart-waterfall'];
 $chartTags = array_keys(array_filter($lock->toArray()['components'], static fn (array $c): bool => ($c['package'] ?? null) === 'chart'));
+// The set's shared core (Chart D18) is locked beside the tags: no element, loaded before every chart that uses it.
+assert(in_array('sf-chart-core', $chartTags, true));
+$core = $lock->component('sf-chart-core');
+assert($core['javascript'] === 'chart/smart/chart-core/js/chart-core.min.js' && $core['css'] === null && $core['attributes'] === []);
+assert(in_array('sf-chart-core', $lock->component('sf-chart-line')['requires'], true));
+$chartTags = array_values(array_diff($chartTags, ['sf-chart-core']));
 sort($chartTags);
 assert($chartTags === $passport, 'every tag of the SIMAI Chart set is locked, from the chart package');
 foreach ($chartTags as $tag) {

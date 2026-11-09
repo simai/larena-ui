@@ -6,7 +6,7 @@
     "active": {"type": "boolean"}, "disabled": {"type": "boolean"}, "closable": {"type": "boolean"},
     "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"}, "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
     "class": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9 _-]*$"}
-  }, "required": ["type", "size", "text", "active", "disabled", "closable", "aria-label"], "additionalProperties": false},
+  }, "required": ["type", "text", "active", "disabled", "closable", "aria-label"], "additionalProperties": false},
   "slots": {}, "events": {"click": {"kind": "dom", "backend_handler_binding": false}}, "views": {"default": {}}, "presets": {}, "constraints": {},
   "render": {"strategy": "host", "renderer": "ui.sf.element"}, "frontend": {"runtime": "simai-framework", "tag": "sf-tag"},
   "assets": [{"key": "simai.framework.core.css", "kind": "css", "critical": true}, {"key": "simai.framework.core.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.smart_base.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.bridge.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_avatar.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_avatar.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_icon.js", "kind": "javascript", "critical": true}, {"key": "simai.framework.sf_tag.css", "kind": "css", "critical": true}, {"key": "simai.framework.sf_tag.js", "kind": "javascript", "critical": true}],

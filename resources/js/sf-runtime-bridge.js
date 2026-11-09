@@ -301,7 +301,7 @@
         columns.forEach(function (key) { row[key] = display(record.values?.[key]); });
         row.actions = (record.actions || []).filter(function (action) { return actionTypes[action]; }).map(function (action) {
           var type = actionTypes[action];
-          return {component: {type: 'button-icon', props: {kind: 'icon', appearance: 'link', scheme: 'on-surface', size: '1',
+          return {component: {type: 'button-icon', props: {kind: 'icon', appearance: 'link', scheme: 'on-surface',
             icon: type[0], value: type[1], ariaLabel: type[2]}}};
         });
         return row;

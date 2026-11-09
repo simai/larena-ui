@@ -12,7 +12,8 @@ $lock = json_decode((string) file_get_contents($lockFile), true, 512, JSON_THROW
 assert(is_array($lock));
 // The pinned pair moves with every repin; the test reads it from the lock instead of naming it.
 $pinnedRelease = $lock['packages']['pro']['release'];
-$pinnedFramework = $lock['packages']['pro']['requires_framework'];
+// The pinned free pair; a set may be built over an earlier one and accepted over this one through its pair range.
+$pinnedFramework = $lock['ui']['release'];
 
 /** @param array<string, mixed> $sets */
 function componentConsumer(string $name, array $sets): array
@@ -119,6 +120,7 @@ assert(ComponentPackageRequirements::fromComposerManifests([])->check($unrelease
 
 // framework mismatch: a pinned set built over another Framework release.
 $drifted = $lock;
+unset($drifted['packages']['pro']['pair_range']);
 $drifted['packages']['pro']['requires_framework'] = 'ui-000000000000';
 assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($drifted)['errors']
     === ['component_package_framework_mismatch:pro']);
@@ -185,6 +187,8 @@ $twoSets['packages']['chat'] = [
     'commit' => $commit,
     'mount' => 'chat',
 ];
+unset($twoSets['packages']['chat']['pair_range']);
+$twoSets['packages']['chat']['requires_framework'] = $lock['ui']['release'];
 $extra = ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets);
 assert($extra['status'] === 'passed' && $extra['unrequested'] === ['chart', 'chat']);
 assert($extra['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release'], 'chat' => 'chat-cccccccccccc']);
