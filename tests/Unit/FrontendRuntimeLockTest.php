@@ -732,6 +732,191 @@ try {
     [$exit, , $stderr] = $package($receiptedLock, $fixture . '/out-pair-sha', [...$archiveArguments, '--pair-receipt', 'admin=' . $pairLock($pairDocument + ['extra' => 1])[1]]);
     assert($exit !== 0 && str_contains($stderr, 'component_package_pair_receipt_mismatch:admin:sha256'), $stderr);
 
+    // A set built over another pair is packaged with its pair range (SIMAI Framework decision 2026-11-09): the file is
+    // checked byte for byte and field by field against the lock, then every requirement over the pinned pair by
+    // simai/ui-builder scripts/set-pair-range.py (SIMAI_UI_BUILDER_ROOT), and kept in the artifact. The pairs are new
+    // commits of the fixture ui whose distr carries what the checker reads; the fixtures follow ui-builder
+    // tests/reproducibility/set-pair-range.test.js.
+    $uiBuilder = trim((string) getenv('SIMAI_UI_BUILDER_ROOT'));
+    $rangeRuntime = ['schema' => 'simai.framework.shared-runtime', 'version' => 1, 'abi' => 1,
+        'modules' => ['lit' => ['exports' => ['html', 'nothing', 'css']], 'smart-base' => ['exports' => ['default']]]];
+    $rangeJsApi = ['schema' => 'simai.framework.public-js-api', 'schema_version' => 1, 'globals' => [
+        ['name' => 'SF.format', 'status' => 'public', 'members' => ['number', 'date']],
+        ['name' => 'SF.runtimeModule', 'status' => 'public'],
+        ['name' => 'SF.RuleLoader', 'status' => 'public'],
+        ['name' => 'SF.runtimeLoading', 'status' => 'internal'],
+    ]];
+    $rangeRules = [['name' => 'cl-buttons', 'type' => 'smart', 'tags' => ['sf-button']], ['name' => 'cl-empty-state', 'type' => 'smart', 'tags' => ['sf-empty-state']]];
+    $rangeForwards = ['cl-former-empty' => ['to' => 'cl-empty-state', 'since' => '2026-11-01', 'remove_after' => '2999-12-31', 'journal' => 'rename-empty-state']];
+    $rangePair = static function (array $change = []) use ($git, $repository, $files, $rangeRuntime, $rangeJsApi, $rangeRules, $rangeForwards): array {
+        $json = static fn (mixed $value): string => json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n";
+        $state = [
+            'distr/rule/rule.json' => $json($change['rules'] ?? $rangeRules),
+            'distr/core/passports/core.runtime.json' => $json(['schema' => 'simai.framework.unit-passport', 'id' => 'core.runtime', 'version' => $change['version'] ?? '1.30.0']),
+            'distr/core/css/core.css' => $change['css'] ?? ":root{--sf-space-1:4px;--sf-a2:#123}\n",
+            'distr/core/contracts/shared-runtime.v1.json' => $json($change['runtime'] ?? $rangeRuntime),
+            'distr/core/contracts/public-js-api.json' => $json($change['js_api'] ?? $rangeJsApi),
+            'distr/core/contracts/smart-rule-forwards.v1.json' => $json(['version' => 1, 'forwards' => $change['forwards'] ?? $rangeForwards]),
+        ] + ($change['smart'] ?? []);
+        $git('rm', '-q', '-r', '--cached', '--ignore-unmatch', 'distr');
+        $removeDistr = static function (string $path) use (&$removeDistr): void {
+            foreach (is_dir($path) ? (scandir($path) ?: []) : [] as $entry) {
+                if ($entry !== '.' && $entry !== '..') {
+                    is_dir($path . '/' . $entry) ? $removeDistr($path . '/' . $entry) : unlink($path . '/' . $entry);
+                }
+            }
+            is_dir($path) && rmdir($path);
+        };
+        $removeDistr($repository . '/distr');
+        foreach (array_filter($files, static fn (string $path): bool => str_starts_with($path, 'distr/'), ARRAY_FILTER_USE_KEY) + $state as $path => $contents) {
+            @mkdir(dirname($repository . '/' . $path), 0700, true);
+            file_put_contents($repository . '/' . $path, $contents);
+        }
+        $git('add', '-A');
+        $git('commit', '-q', '-m', 'pair');
+        $commit = trim($git('rev-parse', 'HEAD'));
+
+        return [
+            'release' => 'ui-' . substr($commit, 0, 12), 'repository' => 'simai/ui', 'tag' => null, 'commit' => $commit, 'tree' => 'distr', 'mount' => 'ui',
+            'sha256' => hash('sha256', $git('archive', '--format=tar', $commit, 'distr')),
+            'files' => count(array_filter(explode("\n", trim($git('ls-tree', '-r', '--name-only', $commit, 'distr'))))),
+        ];
+    };
+    $rangeRequires = [
+        'core_runtime' => '>=1.25.0',
+        'runtime' => ['abi' => 1, 'modules' => ['lit' => ['html'], 'smart-base' => ['default']]],
+        'relations' => [['name' => 'cl-empty-state', 'resolves_to' => 'cl-empty-state'],
+            ['name' => 'cl-former-empty', 'resolves_to' => 'cl-empty-state', 'remove_after' => '2999-12-31']],
+        'elements' => ['sf-admin-menu'],
+        'free_elements' => ['sf-button', 'sf-empty-state'],
+        'core_folder' => 'admin-core',
+        'variables' => ['--sf-a2', '--sf-space-1'],
+        'js_api' => ['RuleLoader', 'format.number', 'runtimeModule'],
+    ];
+    $canonical = static function (mixed $value) use (&$canonical): mixed {
+        if (!is_array($value) || array_is_list($value)) {
+            return is_array($value) ? array_map($canonical, $value) : $value;
+        }
+        ksort($value);
+
+        return array_map($canonical, $value);
+    };
+    $interfaceSha = static fn (array $requires): string => hash('sha256', json_encode($canonical($requires), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+    $rangeDocument = [
+        'schema' => 'simai.framework.set-pair-range', 'schema_version' => 1, 'set' => 'admin', 'release' => $admin['release'],
+        'version' => '1.0.0', 'repository' => $admin['repository'],
+        'package' => ['source_revision' => $admin['commit'], 'build_revision' => str_repeat('8', 40), 'receipt_sha256' => $admin['receipt_sha256'],
+            'manifest_sha256' => $admin['manifest_sha256'], 'archive_sha256' => $admin['sha256'], 'files_count' => 2],
+        'built_over' => ['pair' => 'ui-000000000000', 'commit' => str_repeat('9', 40), 'source_revision' => str_repeat('2', 40)],
+        'requires' => $rangeRequires,
+        'interface_sha256' => $interfaceSha($rangeRequires),
+        'expires' => '2999-12-31',
+        'not_covered' => ['behaviour behind an unchanged interface'],
+        'tooling' => ['repository' => 'simai/ui-builder', 'revision' => str_repeat('a', 40), 'clean' => true, 'as_of' => '2026-11-09', 'notes' => []],
+        'created_on' => '2026-11-09',
+        'claims' => ['production_ready' => false],
+    ];
+    // The lock of a pair with the admin set pinned over it by its range; the range file written beside it.
+    $rangeLock = static function (array $ui, array $document, array $entry = []) use ($fixtureLock, $fixture, $interfaceSha): array {
+        $bytes = json_encode($document, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n";
+        $path = $fixture . '/pair-range-' . bin2hex(random_bytes(4)) . '.json';
+        file_put_contents($path, $bytes);
+        $lockData = $fixtureLock;
+        $lockData['ui'] = $ui;
+        $lockData['packages']['larena']['requires_framework'] = $ui['release'];
+        $lockData['framework_registry']['compatibility_id'] = $ui['release'];
+        $lockData['packages']['admin']['requires_framework'] = 'ui-000000000000';
+        $lockData['packages']['admin']['pair_range'] = $entry + ['sha256' => hash('sha256', $bytes), 'asset' => 'pair-range.json',
+            'interface_sha256' => $interfaceSha($document['requires']), 'checked_over' => $ui['release']];
+        $lockData['pair_id'] = FrontendRuntimeLock::composePairId($ui['commit'], ['larena' => str_repeat('6', 40), 'admin' => str_repeat('7', 40)]);
+        $lockData['bundle_id'] = FrontendRuntimeLock::composeBundleId($lockData['pair_id'], $lockData['framework_registry']['file_sha256'], 'exact-git-tree-v2');
+
+        return [$lockData, $path];
+    };
+    $withBuilder = $uiBuilder === '' ? [] : ['--ui-builder', $uiBuilder];
+    $within = $rangePair();
+    [$rangedLock, $rangePath] = $rangeLock($within, $rangeDocument);
+    assert(!$rejected($rangedLock));
+    // Without the range the pair is another one; with no file, or an unknown set's file, the packaging fails closed.
+    $unranged = $rangedLock;
+    unset($unranged['packages']['admin']['pair_range']);
+    assert($rejected($unranged));
+    [$exit, , $stderr] = $package($unranged, $fixture . '/out-range-none', $archiveArguments);
+    assert($exit !== 0 && str_contains($stderr, 'runtime_package_framework_mismatch:admin'), $stderr);
+    [$exit, , $stderr] = $package($rangedLock, $fixture . '/out-range-missing', [...$archiveArguments, ...$withBuilder]);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_range_missing:admin'), $stderr);
+    [$exit, , $stderr] = $package($rangedLock, $fixture . '/out-range-unexpected', [...$archiveArguments, '--pair-range', 'larena=' . $rangePath]);
+    assert($exit !== 0 && str_contains($stderr, 'runtime_pair_range_unexpected:larena'), $stderr);
+    // A range checked over another pair, an entry with a pair receipt too, or a malformed entry is refused.
+    $elsewhere = $rangedLock;
+    $elsewhere['packages']['admin']['pair_range']['checked_over'] = 'ui-111111111111';
+    assert($rejected($elsewhere));
+    [$exit, , $stderr] = $package($elsewhere, $fixture . '/out-range-elsewhere', [...$archiveArguments, '--pair-range', 'admin=' . $rangePath]);
+    assert($exit !== 0 && str_contains($stderr, 'runtime_package_framework_mismatch:admin'), $stderr);
+    $both = $rangedLock;
+    $both['packages']['admin']['pair_receipt'] = ['pair' => $within['release'], 'sha256' => str_repeat('b', 64), 'asset' => 'pair-receipt-' . $within['release'] . '.json'];
+    assert($rejected($both));
+    [$exit, , $stderr] = $package($both, $fixture . '/out-range-both', [...$archiveArguments, '--pair-range', 'admin=' . $rangePath]);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_range_invalid:admin'), $stderr);
+    foreach ([['asset' => 'range.json'], ['sha256' => 'abc'], ['checked_over' => 'ui-1']] as $broken) {
+        $malformed = $rangedLock;
+        $malformed['packages']['admin']['pair_range'] = $broken + $malformed['packages']['admin']['pair_range'];
+        assert($rejected($malformed));
+        [$exit, , $stderr] = $package($malformed, $fixture . '/out-range-malformed-' . bin2hex(random_bytes(3)), $archiveArguments);
+        assert($exit !== 0 && str_contains($stderr, 'component_package_pair_range_invalid:admin'), $stderr);
+    }
+    // A range of another release, of other bytes, with an edited `requires`, or not of the same set's package.
+    foreach ([
+        'release' => [['release' => 'admin-000000000000'] + $rangeDocument, []],
+        'archive_sha256' => [['package' => ['archive_sha256' => str_repeat('d', 64)] + $rangeDocument['package']] + $rangeDocument, []],
+        'built_over' => [['built_over' => ['pair' => 'ui-222222222222'] + $rangeDocument['built_over']] + $rangeDocument, []],
+        'keys' => [$rangeDocument + ['pairs' => []], []],
+        'schema' => [['schema' => 'simai.framework.set-pair-receipt'] + $rangeDocument, []],
+        'interface_sha256' => [['requires' => ['variables' => []] + $rangeRequires] + $rangeDocument, ['interface_sha256' => $rangeDocument['interface_sha256']]],
+    ] as $field => [$document, $entry]) {
+        [$otherLock, $otherPath] = $rangeLock($within, $document, $entry);
+        [$exit, , $stderr] = $package($otherLock, $fixture . '/out-range-' . $field, [...$archiveArguments, '--pair-range', 'admin=' . $otherPath, ...$withBuilder]);
+        assert($exit !== 0 && str_contains($stderr, 'component_package_pair_range_mismatch:admin:' . $field), $field . ': ' . $stderr);
+    }
+    [$exit, , $stderr] = $package($rangedLock, $fixture . '/out-range-sha', [...$archiveArguments, '--pair-range', 'admin=' . $rangeLock($within, $rangeDocument + ['extra' => 1])[1]]);
+    assert($exit !== 0 && str_contains($stderr, 'component_package_pair_range_mismatch:admin:sha256'), $stderr);
+    // The pair itself is checked by ui-builder; without it the packaging refuses and says where to point.
+    $noBuilderLock = $fixture . '/lock-range-nobuilder.json';
+    file_put_contents($noBuilderLock, json_encode($rangedLock, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    [$exit, , $stderr] = $run(['env', '-u', 'SIMAI_UI_BUILDER_ROOT', 'python3', $packager, '--lock', $noBuilderLock, '--ui-repository', $repository,
+        ...$archiveArguments, '--pair-range', 'admin=' . $rangePath, '--output-root', $fixture . '/out-range-nobuilder']);
+    assert($exit !== 0 && str_contains($stderr, 'runtime_pair_range_checker_missing:admin'), $stderr);
+    if ($uiBuilder === '') {
+        fwrite(STDERR, "FrontendRuntimeLockTest: SIMAI_UI_BUILDER_ROOT is not set; the pair-range checks over a pair are skipped\n");
+    } else {
+        [$exit, , $stderr] = $package($rangedLock, $fixture . '/out-range', [...$archiveArguments, '--pair-range', 'admin=' . $rangePath, ...$withBuilder]);
+        assert($exit === 0, $stderr);
+        $rangeBundle = $fixture . '/out-range/' . $rangedLock['bundle_id'];
+        $rangeManifest = json_decode((string) file_get_contents($rangeBundle . '/manifest.json'), true, 512, JSON_THROW_ON_ERROR);
+        $keptRange = $rangeManifest['sources'][2]['pair_range'] ?? null;
+        assert(is_array($keptRange) && $keptRange['checked_over'] === $within['release'] && is_file($rangeBundle . '/' . $keptRange['path'])
+            && hash_file('sha256', $rangeBundle . '/' . $keptRange['path']) === $rangedLock['packages']['admin']['pair_range']['sha256']
+            && !isset($rangeManifest['sources'][1]['pair_range']));
+        // Each break of the interface puts the pair outside the range, named by its requirement.
+        $outside = [
+            'core_runtime' => ['version' => '1.24.9'],
+            'runtime' => ['runtime' => ['abi' => 2] + $rangeRuntime],
+            'runtime ' => ['runtime' => ['modules' => ['lit' => ['exports' => ['nothing']], 'smart-base' => ['exports' => ['default']]]] + $rangeRuntime],
+            'relations' => ['rules' => [$rangeRules[0]]],
+            'relations ' => ['forwards' => ['cl-former-empty' => ['remove_after' => '2000-01-01'] + $rangeForwards['cl-former-empty']]],
+            'elements' => ['rules' => [...$rangeRules, ['name' => 'cl-other', 'type' => 'smart', 'tags' => ['sf-admin-menu']]]],
+            'free_elements' => ['rules' => [['tags' => []] + $rangeRules[0], $rangeRules[1]]],
+            'core_folder' => ['smart' => ['distr/smart/admin-core/js/admin-core.js' => "core\n"]],
+            'variables' => ['css' => ":root{--sf-space-1:4px}\n"],
+            'js_api' => ['js_api' => ['globals' => array_map(static fn (array $item): array => $item['name'] === 'SF.RuleLoader' ? ['status' => 'internal'] + $item : $item, $rangeJsApi['globals'])] + $rangeJsApi],
+        ];
+        foreach ($outside as $requirement => $change) {
+            [$brokenLock, $brokenPath] = $rangeLock($rangePair($change), $rangeDocument);
+            [$exit, , $stderr] = $package($brokenLock, $fixture . '/out-range-outside-' . bin2hex(random_bytes(3)), [...$archiveArguments, '--pair-range', 'admin=' . $brokenPath, ...$withBuilder]);
+            assert($exit !== 0 && str_contains($stderr, 'component_package_pair_range_outside:admin:' . trim($requirement) . ':'), $requirement . ': ' . $stderr);
+        }
+    }
+
     // A component set carries its passport set.json at the archive root beside its smart/ tree: it is counted and
     // fingerprinted with the tree and published at <mount>/set.json. Any other file outside the tree is refused.
     $setFiles = ['set.json' => "{\"schema\":\"simai.framework.component-set\",\"id\":\"chart\"}\n",

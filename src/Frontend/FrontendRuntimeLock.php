@@ -479,7 +479,9 @@ final readonly class FrontendRuntimeLock
             throw new RuntimeException('ui_frontend_runtime_pair_identity_mismatch');
         }
         // A package is built over exactly one free release, or carries a pair receipt of that release for the pinned
-        // one (Framework decision 2026-11-07): the bytes are the same, only the pair it was checked over differs.
+        // one (Framework decision 2026-11-07): the bytes are the same, only the pair it was checked over differs; or a
+        // pair range of that release checked over the pinned one (SIMAI Framework decision 2026-11-09): the pair still
+        // offers all the interface the released bytes take from it.
         $pair = ComponentPackageRequirements::pairError($package, $frameworkId);
         if ($pair !== null) {
             throw new RuntimeException('ui_frontend_runtime_package_' . $pair . ':' . $name);

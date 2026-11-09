@@ -36,6 +36,7 @@ namespace Larena\Ui\Frontend;
  *   release            <package>-<12 of package_source.revision>   (component_package_release_invalid)
  *   requires_framework framework.release                           (component_package_framework_mismatch)
  *     or pair_receipt.pair, a pair receipt of the same release       (component_package_pair_receipt_invalid)
+ *     or pair_range.checked_over, the pair range of the same release (component_package_pair_range_invalid)
  *   sha256             output.archive_sha256                       (component_package_receipt_missing:<set>:sha256)
  *   manifest_sha256    output.manifest_sha256                      (component_package_receipt_missing:<set>:manifest_sha256)
  *   receipt_sha256     the hash of package-receipt.json itself     (component_package_receipt_missing:<set>:receipt_sha256)
@@ -73,6 +74,14 @@ final class ComponentPackageRequirements
 
     /** The keys of a lock entry's pair receipt (Framework decision 2026-11-07, set pair receipts). */
     public const PAIR_RECEIPT_KEYS = ['pair', 'sha256', 'asset'];
+
+    /**
+     * The keys of a lock entry's pair range (SIMAI Framework decision 2026-11-09, simai.component-set 1.2.0): the asset
+     * pair-range.json of the set's GitHub release (simai.framework.set-pair-range v1), its interface digest and the
+     * pinned pair it was checked over.
+     */
+    public const PAIR_RANGE_KEYS = ['asset', 'checked_over', 'interface_sha256', 'sha256'];
+    public const PAIR_RANGE_ASSET = 'pair-range.json';
 
     /**
      * @param array<string, array<string, array{releases:string|list<string>,release_repository:?string,source_repositories:?list<string>}>> $declarations
@@ -361,11 +370,14 @@ final class ComponentPackageRequirements
     }
 
     /**
-     * Whether a pinned set is accepted over the pinned free release (Framework decision 2026-11-07, set pair receipts):
-     * either it was built over that release (`requires_framework`, as its package receipt says, never rewritten), or
-     * the lock names a pair receipt of the same release for that pair: `pair_receipt {pair, sha256, asset}`, the
-     * asset `pair-receipt-<pair>.json` of the set's GitHub release, checked byte for byte when the runtime is packaged.
-     * Null when accepted; else `framework_mismatch` or `pair_receipt_invalid`.
+     * Whether a pinned set is accepted over the pinned free release: either it was built over that release
+     * (`requires_framework`, as its package receipt says, never rewritten), or the lock names a pair receipt of the
+     * same release for that pair (Framework decision 2026-11-07): `pair_receipt {pair, sha256, asset}`, the asset
+     * `pair-receipt-<pair>.json` of the set's GitHub release, or a pair range of the same release checked over that pair
+     * (SIMAI Framework decision 2026-11-09): `pair_range {sha256, asset, interface_sha256, checked_over}`, the asset
+     * `pair-range.json`. Both files are checked byte for byte, and the range against the pair, when the runtime is
+     * packaged. An entry carries one of the two, not both. Null when accepted; else `framework_mismatch`,
+     * `pair_receipt_invalid` or `pair_range_invalid`.
      *
      * @param array<array-key, mixed> $package the set's lock entry
      */
@@ -382,12 +394,32 @@ final class ComponentPackageRequirements
                 return 'pair_receipt_invalid';
             }
         }
+        $range = $package['pair_range'] ?? null;
+        if (array_key_exists('pair_range', $package) && !self::validPairRange($range, array_key_exists('pair_receipt', $package))) {
+            return 'pair_range_invalid';
+        }
         if (($package['requires_framework'] ?? null) === $framework
-            || (is_array($receipt) && ($receipt['pair'] ?? null) === $framework)) {
+            || (is_array($receipt) && ($receipt['pair'] ?? null) === $framework)
+            || (is_array($range) && ($range['checked_over'] ?? null) === $framework)) {
             return null;
         }
 
         return 'framework_mismatch';
     }
 
+    /** A lock entry's pair range: exactly PAIR_RANGE_KEYS, the asset pair-range.json, two digests and a pair. */
+    private static function validPairRange(mixed $range, bool $withReceipt): bool
+    {
+        if ($withReceipt || !is_array($range)) {
+            return false;
+        }
+        $keys = array_keys($range);
+        sort($keys);
+
+        return $keys === self::PAIR_RANGE_KEYS
+            && $range['asset'] === self::PAIR_RANGE_ASSET
+            && is_string($range['sha256']) && preg_match('/\A[a-f0-9]{64}\z/', $range['sha256']) === 1
+            && is_string($range['interface_sha256']) && preg_match('/\A[a-f0-9]{64}\z/', $range['interface_sha256']) === 1
+            && is_string($range['checked_over']) && preg_match('/\Aui-[a-f0-9]{12}\z/', $range['checked_over']) === 1;
+    }
 }

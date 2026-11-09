@@ -144,6 +144,29 @@ $bad = $receipted;
 $bad['packages']['pro']['pair_receipt']['extra'] = 1;
 assert(ComponentPackageRequirements::pairError($bad['packages']['pro'], $lock['ui']['release']) === 'pair_receipt_invalid');
 
+// pair range (SIMAI Framework decision 2026-11-09): a set built over another pair passes with a pair range of the same
+// release checked over the pinned pair, and only so; an entry carries a pair receipt or a pair range, not both.
+$ranged = $drifted;
+$ranged['packages']['pro']['pair_range'] = ['sha256' => str_repeat('a', 64), 'asset' => 'pair-range.json', 'interface_sha256' => str_repeat('c', 64), 'checked_over' => $lock['ui']['release']];
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($ranged)['errors'] === []);
+assert(ComponentPackageRequirements::pairError($ranged['packages']['pro'], $lock['ui']['release']) === null);
+$otherPair = $ranged;
+$otherPair['packages']['pro']['pair_range']['checked_over'] = 'ui-111111111111';
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($otherPair)['errors'] === ['component_package_framework_mismatch:pro']);
+$both = $ranged;
+$both['packages']['pro']['pair_receipt'] = $receipted['packages']['pro']['pair_receipt'];
+assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($both)['errors'] === ['component_package_pair_range_invalid:pro']);
+foreach ([['sha256' => 'abc'], ['interface_sha256' => null], ['asset' => 'pair-range-ui-111111111111.json'], ['checked_over' => 'ui-1'], ['extra' => 1]] as $broken) {
+    $bad = $ranged;
+    $bad['packages']['pro']['pair_range'] = $broken + $ranged['packages']['pro']['pair_range'];
+    assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($bad)['errors'] === ['component_package_pair_range_invalid:pro']);
+}
+$bad = $ranged;
+unset($bad['packages']['pro']['pair_range']['checked_over']);
+assert(ComponentPackageRequirements::pairError($bad['packages']['pro'], $lock['ui']['release']) === 'pair_range_invalid');
+$bad['packages']['pro']['pair_range'] = 'pair-range.json';
+assert(ComponentPackageRequirements::pairError($bad['packages']['pro'], $lock['ui']['release']) === 'pair_range_invalid');
+
 // receipt: every pinned set carries its archive, manifest and receipt hashes.
 $unreceipted = $lock;
 unset($unreceipted['packages']['pro']['receipt_sha256']);

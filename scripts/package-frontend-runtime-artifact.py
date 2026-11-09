@@ -182,9 +182,25 @@ PAIR_RECEIPT_KEYS = ["pair", "sha256", "asset"]
 HEX64 = re.compile(r"\A[a-f0-9]{64}\Z")
 
 
+PAIR_RANGE_KEYS = ["asset", "checked_over", "interface_sha256", "sha256"]
+PAIR_RANGE_ASSET = "pair-range.json"
+PAIR = re.compile(r"\Aui-[a-f0-9]{12}\Z")
+
+
+def valid_pair_range(range_entry: object, with_receipt: bool) -> bool:
+    """A lock entry's pair range (SIMAI Framework decision 2026-11-09): exactly its four keys, the asset pair-range.json,
+    two digests and the pinned pair it was checked over; never beside a pair receipt."""
+    return (not with_receipt and isinstance(range_entry, dict) and sorted(range_entry) == PAIR_RANGE_KEYS
+            and range_entry["asset"] == PAIR_RANGE_ASSET
+            and isinstance(range_entry["sha256"], str) and HEX64.match(range_entry["sha256"]) is not None
+            and isinstance(range_entry["interface_sha256"], str) and HEX64.match(range_entry["interface_sha256"]) is not None
+            and isinstance(range_entry["checked_over"], str) and PAIR.match(range_entry["checked_over"]) is not None)
+
+
 def pair_error(package: dict[str, object], framework: str) -> str | None:
-    """The same acceptance as ComponentPackageRequirements::pairError (Framework decision 2026-11-07): the set was built
-    over the pinned free release, or the lock names a pair receipt of the same release for it."""
+    """The same acceptance as ComponentPackageRequirements::pairError: the set was built over the pinned free release,
+    or the lock names a pair receipt of the same release for it (Framework decision 2026-11-07), or a pair range of the
+    same release checked over it (SIMAI Framework decision 2026-11-09)."""
     receipt = package.get("pair_receipt")
     if "pair_receipt" in package:
         pair = receipt.get("pair") if isinstance(receipt, dict) else None
@@ -194,7 +210,12 @@ def pair_error(package: dict[str, object], framework: str) -> str | None:
                 or not isinstance(receipt["sha256"], str) or not HEX64.match(receipt["sha256"])
                 or receipt["asset"] != f"pair-receipt-{pair}.json"):
             return "pair_receipt_invalid"
-    if package.get("requires_framework") == framework or (isinstance(receipt, dict) and receipt.get("pair") == framework):
+    range_entry = package.get("pair_range")
+    if "pair_range" in package and not valid_pair_range(range_entry, "pair_receipt" in package):
+        return "pair_range_invalid"
+    if (package.get("requires_framework") == framework
+            or (isinstance(receipt, dict) and receipt.get("pair") == framework)
+            or (isinstance(range_entry, dict) and range_entry.get("checked_over") == framework)):
         return None
     return "framework_mismatch"
 
@@ -252,6 +273,141 @@ def pair_receipt(name: str, package: dict[str, object], lock: dict[str, object],
     return {"pair": entry["pair"], "path": f"sources/{target.name}", "sha256": entry["sha256"]}
 
 
+# The keys of simai.framework.set-pair-range v1 and of its `requires` (ui-builder scripts/set-pair-range.py).
+RANGE_KEYS = {"schema", "schema_version", "set", "release", "version", "repository", "package", "built_over",
+              "requires", "interface_sha256", "expires", "not_covered", "tooling", "created_on", "claims"}
+RANGE_REQUIRES_KEYS = {"core_runtime", "runtime", "relations", "elements", "free_elements", "core_folder", "variables", "js_api"}
+# The first ui-builder revision whose set-pair-range.py checks a range over a pair (simai/ui-builder 993e4be).
+UI_BUILDER_RANGE_REVISION = "993e4be"
+RANGE_REQUIREMENT = re.compile(r"\A(core_runtime|runtime|relations|elements|free_elements|core_folder|variables|js_api):")
+
+
+def canonical_json(value: object) -> bytes:
+    """Keys sorted recursively, separators , and :, UTF-8 with / and non-ASCII unescaped: PHP
+    JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE after a recursive ksort."""
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+
+
+def ui_builder_checker(root: Path | None, name: str) -> Path:
+    """set-pair-range.py of a simai/ui-builder checkout at 993e4be or later: --ui-builder, else SIMAI_UI_BUILDER_ROOT."""
+    if root is None:
+        raise RuntimeError(f"runtime_pair_range_checker_missing:{name}:pass --ui-builder or set SIMAI_UI_BUILDER_ROOT to a simai/ui-builder checkout")
+    script = root / "scripts" / "set-pair-range.py"
+    if not script.is_file() or script.is_symlink():
+        raise RuntimeError(f"runtime_pair_range_checker_missing:{name}:{root} has no scripts/set-pair-range.py")
+    if (root / ".git").exists():
+        known = subprocess.run(["git", "-C", str(root), "merge-base", "--is-ancestor", UI_BUILDER_RANGE_REVISION, "HEAD"],
+                               capture_output=True)
+        if known.returncode != 0:
+            raise RuntimeError(f"runtime_pair_range_checker_too_old:{name}:ui-builder must be at {UI_BUILDER_RANGE_REVISION} or later")
+    return script
+
+
+def check_range_over_pair(name: str, package: dict[str, object], lock: dict[str, object], range_path: Path,
+                          document: dict[str, object], ui_repository: Path, ui_builder: Path | None) -> None:
+    """Every requirement of the range over the pinned pair, by ui-builder's set-pair-range.py check (exit 0 within,
+    1 outside, 2 invalid). The pair is the one the lock pins: ui.release at ui.commit of --ui-repository, shown to
+    the checker as that pair's release lock in a scratch view of the same Git objects."""
+    script = ui_builder_checker(ui_builder, name)
+    ui = lock["ui"]
+    git_dir = git_bytes(ui_repository, "rev-parse", "--absolute-git-dir").decode().strip()
+    exact_commit(ui_repository, str(ui["commit"]))
+    with tempfile.TemporaryDirectory(prefix="pair-range-") as scratch:
+        view = Path(scratch) / "ui"
+        (view / "contracts" / "releases").mkdir(parents=True)
+        pair_lock = {"schema_version": 2, "compatibility_id": ui["release"], "runtime_sources": {"core": {"revision": ui["commit"]}}}
+        if isinstance(ui.get("source_revision"), str):
+            pair_lock["build_inputs"] = {"source": {"commit": ui["source_revision"]}}
+        (view / "contracts" / "releases" / f"{ui['release']}.lock.json").write_text(json.dumps(pair_lock) + "\n")
+        # The set's release lock as this lock pins it; the version is the range's own (the runtime lock does not pin it).
+        release_lock = {
+            "schema": "simai.framework.package-release-lock", "schema_version": 1, "id": package["release"], "package": name,
+            "version": document.get("version"),
+            "source": {"repository": package["repository"], "revision": package["commit"]},
+            "receipt": {"sha256": package["receipt_sha256"]},
+            "output": {"manifest_sha256": package["manifest_sha256"], "archive_sha256": package["sha256"]},
+            "requires": {"framework": package["requires_framework"]},
+        }
+        release_lock_path = Path(scratch) / f"{package['release']}.lock.json"
+        release_lock_path.write_text(json.dumps(release_lock) + "\n")
+        environment = {**os.environ, "GIT_DIR": git_dir}
+        environment.pop("GIT_WORK_TREE", None)
+        checked = subprocess.run(
+            ["python3", "-I", str(script), "check", "--range", str(range_path.resolve()), "--ui", str(view),
+             "--pair", str(ui["release"]), "--lock", str(release_lock_path)],
+            capture_output=True, text=True, env=environment, cwd=scratch, timeout=600)
+    if checked.returncode == 0:
+        return
+    if checked.returncode == 1:
+        try:
+            problems = json.loads(checked.stdout)["pairs"][0]["problems"]
+        except (ValueError, KeyError, IndexError, TypeError):
+            problems = []
+        requirement = next((match.group(1) for problem in problems if (match := RANGE_REQUIREMENT.match(str(problem)))), "unknown")
+        raise RuntimeError(f"component_package_pair_range_outside:{name}:{requirement}:" + " | ".join(map(str, problems))[:2000])
+    raise RuntimeError(f"component_package_pair_range_mismatch:{name}:check:" + (checked.stderr.strip() or checked.stdout.strip())[:2000])
+
+
+def pair_range(name: str, package: dict[str, object], lock: dict[str, object], path: Path | None, output: Path,
+               ui_repository: Path, ui_builder: Path | None) -> dict[str, object] | None:
+    """A set's pair range (SIMAI Framework decision 2026-11-09): checked against the lock byte for byte and field by
+    field, then over the pinned pair by ui-builder, and kept in the artifact beside the set's archive."""
+    entry = package.get("pair_range")
+    if not isinstance(entry, dict):
+        return None
+    if path is None or not path.is_file() or path.is_symlink():
+        raise RuntimeError(f"component_package_pair_range_missing:{name}")
+    raw = path.read_bytes()
+    if sha256(raw) != entry["sha256"]:
+        raise RuntimeError(f"component_package_pair_range_mismatch:{name}:sha256")
+    try:
+        document = json.loads(raw)
+    except ValueError:
+        raise RuntimeError(f"component_package_pair_range_mismatch:{name}:json")
+    if not isinstance(document, dict):
+        raise RuntimeError(f"component_package_pair_range_mismatch:{name}:json")
+    def field(*keys: str) -> object:
+        value: object = document
+        for key in keys:
+            value = value.get(key) if isinstance(value, dict) else None
+        return value
+    requires = document.get("requires")
+    expected = [
+        ("schema", field("schema") == "simai.framework.set-pair-range"),
+        ("schema_version", field("schema_version") == 1),
+        ("keys", set(document) == RANGE_KEYS and isinstance(requires, dict) and set(requires) == RANGE_REQUIRES_KEYS),
+        ("set", field("set") == name),
+        ("release", field("release") == package["release"]),
+        ("archive_sha256", field("package", "archive_sha256") == package["sha256"]),
+        ("manifest_sha256", field("package", "manifest_sha256") == package["manifest_sha256"]),
+        ("receipt_sha256", field("package", "receipt_sha256") == package["receipt_sha256"]),
+        ("source_revision", field("package", "source_revision") == package["commit"]),
+        ("built_over", field("built_over", "pair") == package["requires_framework"]),
+        ("interface_sha256", field("interface_sha256") == entry["interface_sha256"]
+            and sha256(canonical_json(requires)) == entry["interface_sha256"]),
+        ("checked_over", entry["checked_over"] == lock["ui"]["release"]),
+    ]
+    for key, ok in expected:
+        if not ok:
+            raise RuntimeError(f"component_package_pair_range_mismatch:{name}:{key}")
+    check_range_over_pair(name, package, lock, path, document, ui_repository, ui_builder)
+    target = output / f"pair-range-{name}.json"
+    target.write_bytes(raw)
+    return {"checked_over": entry["checked_over"], "path": f"sources/{target.name}", "sha256": entry["sha256"],
+            "interface_sha256": entry["interface_sha256"]}
+
+
+def pair_range_paths(arguments: argparse.Namespace) -> dict[str, Path]:
+    """--pair-range NAME=PATH: the pair range file of a set the lock pins with one."""
+    paths: dict[str, Path] = {}
+    for value in arguments.pair_range or []:
+        name, separator, path = value.partition("=")
+        if not separator or not name or not path or name in paths:
+            raise RuntimeError(f"runtime_pair_range_option_invalid:{value}")
+        paths[name] = Path(path)
+    return paths
+
+
 def pair_receipt_paths(arguments: argparse.Namespace) -> dict[str, Path]:
     """--pair-receipt NAME=PATH: the pair receipt file of a set the lock pins with one."""
     paths: dict[str, Path] = {}
@@ -287,6 +443,9 @@ def main() -> None:
     parser.add_argument("--package-archive", action="append", metavar="NAME=PATH")
     parser.add_argument("--larena-package-archive", type=Path, help="the archive of the one pinned package")
     parser.add_argument("--pair-receipt", action="append", metavar="NAME=PATH", help="a set's pair receipt (pair_receipt in the lock)")
+    parser.add_argument("--pair-range", action="append", metavar="NAME=PATH", help="a set's pair range (pair_range in the lock)")
+    parser.add_argument("--ui-builder", type=Path, default=Path(os.environ["SIMAI_UI_BUILDER_ROOT"]) if os.environ.get("SIMAI_UI_BUILDER_ROOT") else None,
+                        help="a simai/ui-builder checkout at 993e4be or later, which checks a pair range over the pair (default: SIMAI_UI_BUILDER_ROOT)")
     parser.add_argument("--output-root", required=True, type=Path)
     arguments = parser.parse_args()
 
@@ -301,8 +460,8 @@ def main() -> None:
         raise RuntimeError("runtime_bundle_identity_mismatch")
     for name, package in lock["packages"].items():
         pair = pair_error(package, lock["ui"]["release"])
-        if pair == "pair_receipt_invalid":
-            raise RuntimeError(f"component_package_pair_receipt_invalid:{name}")
+        if pair in ("pair_receipt_invalid", "pair_range_invalid"):
+            raise RuntimeError(f"component_package_{pair}:{name}")
         if pair is not None:
             raise RuntimeError(f"runtime_package_framework_mismatch:{name}")
         if package["mount"] != name:
@@ -321,12 +480,19 @@ def main() -> None:
         unknown = sorted(set(receipt_paths) - {name for name, package in lock["packages"].items() if "pair_receipt" in package})
         if unknown:
             raise RuntimeError("runtime_pair_receipt_unexpected:" + ",".join(unknown))
+        range_paths = pair_range_paths(arguments)
+        unknown = sorted(set(range_paths) - {name for name, package in lock["packages"].items() if "pair_range" in package})
+        if unknown:
+            raise RuntimeError("runtime_pair_range_unexpected:" + ",".join(unknown))
         packaged = []
         for name, package in lock["packages"].items():
             entry = package_receipt(package, archives[name], sources)
             checked = pair_receipt(name, package, lock, receipt_paths.get(name), sources)
             if checked is not None:
                 entry["pair_receipt"] = checked
+            ranged = pair_range(name, package, lock, range_paths.get(name), sources, arguments.ui_repository, arguments.ui_builder)
+            if ranged is not None:
+                entry["pair_range"] = ranged
             packaged.append(entry)
         receipts = [
             source_receipt(lock["ui"], arguments.ui_repository, "ui.tar.gz", sources),
