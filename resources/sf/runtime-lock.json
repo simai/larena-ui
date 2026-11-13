@@ -2,53 +2,53 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-b4a77681f0a7-pro-b671241d4d34-chart-58ba480db497",
-  "bundle_id": "ui-b4a77681f0a7-pro-b671241d4d34-chart-58ba480db497-registry-2a708b62-exact-git-tree-v2",
+  "pair_id": "ui-7fb26d395af2-pro-db490626ba74-chart-58ba480db497",
+  "bundle_id": "ui-7fb26d395af2-pro-db490626ba74-chart-58ba480db497-registry-fda6a30b-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-b4a77681f0a7",
+    "release": "ui-7fb26d395af2",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "b4a77681f0a7f1c540566e5abac2a4f9d3082a3d",
+    "commit": "7fb26d395af28dfcaac2a5df9de254b3067dc4ae",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "29f2e0fba8215c530cf9f0f44cf9f8b51f1eb98e51e997982fd3561ea77d904a",
-    "files": 12538,
-    "source_revision": "a29cc9989bebace9a98c235b074ce23998ad39c6"
+    "sha256": "882d8d448c3a3570a50e46170116c7dc60d12fb997cf3189323c2a5a89031864",
+    "files": 12903,
+    "source_revision": "8c13bf45aecaae2c31188b729ef4765fc91bffae"
   },
   "packages": {
     "pro": {
-      "release": "pro-b671241d4d34",
+      "release": "pro-db490626ba74",
       "repository": "simai/ui-pro",
       "tag": null,
-      "commit": "b671241d4d341b2fbfd3b1f6e37703e0b330aabb",
+      "commit": "db490626ba74caeed832352c7bc005410ca825e2",
       "tree": "smart",
       "mount": "pro",
-      "sha256": "fc4a964f5785f5bfb6ba4263028cff54676369c26c9940f0c739e64ae3e1638e",
+      "sha256": "9cffcfbf010d3087ca750375b19c4adbed9d4e6efe7d02a1e895a5de7ebfc0f2",
       "files": 722,
-      "requires_framework": "ui-cb287da78ab1",
+      "requires_framework": "ui-7fb26d395af2",
       "package_path": "components",
-      "package_tree": "28b4b8c82f597ea0883b75cb2a7cc8e13d89d515",
+      "package_tree": "008fbd001e97e69a108d695c42d15d6fdbd18c01",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "44a5efda6649def849c960c11ac56b2db90693b8"
+        "revision": "8c13bf45aecaae2c31188b729ef4765fc91bffae"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "993e4be571687c7f02c78fc3c779382d861f56b6"
+        "revision": "16e9a81c1f2838f7cfeebbbd19654016743c9672"
       },
-      "manifest_sha256": "8ccfaad416f0162707483a44d63e2f0039e8a45e58f2f8a65eb9b5d5d7becb54",
-      "receipt_sha256": "292a882a7027316cb3e141ca50ac5ba5e935cc3734582ac07d803ec1efecd3a8",
+      "manifest_sha256": "80fac4cfcf347c4f13d561bb8cc3ddbd6f48e5cd5279024faf37e4cc5299befb",
+      "receipt_sha256": "53b74183c534df4eb576f6c541f08d26ae109e1ca397810fedbc9d84964c0de1",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
       },
       "pair_range": {
         "asset": "pair-range.json",
-        "checked_over": "ui-b4a77681f0a7",
-        "interface_sha256": "2ed7a43d8fa6f57ba1e26c76f572553d909d5911c3983c68938cdea13f0f0fd6",
-        "sha256": "abf2e77ed5331e72f62ef59649566e642c8e81a4bed86853905e29365ea90908"
+        "checked_over": "ui-7fb26d395af2",
+        "interface_sha256": "aaaa01349fb2cc296625d71d75e33dd9e567eff5bf06d73d7db4d5ec45e31049",
+        "sha256": "d7f03d9baabb85250cfaa0aee8d7f964454a5b59996b237415c2327384ea45db"
       }
     },
     "chart": {
@@ -79,7 +79,7 @@
       },
       "pair_range": {
         "asset": "pair-range.json",
-        "checked_over": "ui-b4a77681f0a7",
+        "checked_over": "ui-7fb26d395af2",
         "interface_sha256": "a308a7ff2cd57d9e4267d50dfee4ba17916dfe6d787c290c8fc5eea2f0e840e4",
         "sha256": "7bde125c3730b4389bb9a136bc302eba38ea6cb79852aa6c8780d538e4fdea2f"
       }
@@ -87,23 +87,23 @@
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-b4a77681f0a7",
+    "compatibility_id": "ui-7fb26d395af2",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "2a708b6203373d64be7f8607a6845e9cda180a1bd44ecb0e7b8f6d4c21789bc3",
+    "file_sha256": "fda6a30b69b7efd9a783ec30d5e666525497999de805280f2b9c8b4bcb982325",
     "source": {
       "tag": null,
-      "commit": "c62eae925213318fca769c5cf0149f60b53df76c",
+      "commit": "4c012852f8d85530442ec813e4319905c3af1afe",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "00344d6a6b387bc476559a5d0e07d59b67710cf22ef361bc52965d35544de5aa",
+      "sha256": "8fb8165f4be3105059ea752060e1fb2506701ea4c1a4fe5a1e3454bea9f8e24c",
       "files": 2,
-      "tree_oid": "38afacf25d12b125e88199a4794a7982fda93888"
+      "tree_oid": "a37c626ad0ce032dba909397ae2f3ca96387589b"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "22198dbe9a5fbb9b1f5e4c4970580d12ba653f1e1aca7d69b5d7964fb84a88dc"
+      "file_sha256": "15cc2aa46736366e77a547493a5d63fbdafe673bfc07219f5be9500ea7a4219b"
     }
   },
   "boot": {
@@ -161,7 +161,13 @@
         "root-class",
         "root-style",
         "bulk-actions",
-        "first-answer"
+        "first-answer",
+        "layout",
+        "layout-switch",
+        "list-below",
+        "quick-actions",
+        "row-open",
+        "list-roles"
       ],
       "package": "pro"
     },
@@ -208,6 +214,7 @@
         "icon-position",
         "spacing",
         "radius",
+        "full-width",
         "loading",
         "disabled",
         "native-type",
@@ -299,7 +306,10 @@
         "templates",
         "toolbar-actions",
         "sort",
-        "selection"
+        "selection",
+        "layout-switch",
+        "quick-actions",
+        "row-open"
       ],
       "package": "pro"
     },
@@ -432,6 +442,7 @@
         "name",
         "icon-start",
         "text-end",
+        "shortcut",
         "hint-icon",
         "disabled",
         "readonly",
@@ -467,8 +478,10 @@
         "show-footer",
         "close-on-esc",
         "close-on-overlay",
+        "initial-focus",
         "preserve-scroll-gap",
         "position",
+        "size",
         "mode",
         "display",
         "src",
@@ -549,6 +562,8 @@
         "appearance",
         "columns",
         "disabled",
+        "error-message",
+        "invalid",
         "label",
         "layout",
         "mode",
@@ -682,6 +697,7 @@
       "attributes": [
         "kind",
         "size",
+        "height",
         "appearance",
         "scheme",
         "status",
@@ -1050,6 +1066,8 @@
         "status",
         "warning-at",
         "error-at",
+        "indeterminate",
+        "paused",
         "label",
         "value-text",
         "template",
@@ -1100,6 +1118,8 @@
         "status",
         "destructive",
         "appearance",
+        "consequence",
+        "require",
         "size",
         "accept-text",
         "decline-text",
