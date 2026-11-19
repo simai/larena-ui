@@ -221,22 +221,20 @@ assert(($registry->manifest('ui.textarea')->propsSchema['properties']['size']['e
 assert(!isset($registry->manifest('ui.pagination')->propsSchema['properties']['main']));
 assert(!isset($registry->manifest('ui.pagination')->propsSchema['properties']['middle']));
 
-$dropdownEvent = $registry->manifest('ui.dropdown')->eventSchema['sf-dropdown:change'] ?? null;
+$dropdownEvent = $registry->manifest('ui.dropdown')->eventSchema['change'] ?? null;
 assert(is_array($dropdownEvent));
-assert(($dropdownEvent['kind'] ?? null) === 'custom');
+assert(($dropdownEvent['kind'] ?? null) === 'dom');
 $modalEvents = [
-    'modal:ready',
-    'modal:update',
-    'modal:before-open',
-    'modal:after-open',
-    'modal:before-close',
-    'modal:after-close',
-    'modal:before-hide',
-    'modal:after-hide',
-    'modal:before-show',
-    'modal:after-show',
-    'modal:before-content-upload',
-    'modal:after-content-upload',
+    'sf-modal-open',
+    'sf-modal-opened',
+    'sf-modal-close',
+    'sf-modal-closed',
+    'sf-modal-minimize',
+    'sf-modal-minimized',
+    'sf-modal-expand',
+    'sf-modal-expanded',
+    'sf-modal-content-upload',
+    'sf-modal-content-uploaded',
 ];
 foreach ($modalEvents as $eventName) {
     $event = $registry->manifest('ui.modal')->eventSchema[$eventName] ?? null;

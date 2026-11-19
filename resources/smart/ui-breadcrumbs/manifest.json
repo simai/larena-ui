@@ -15,7 +15,7 @@
     "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
     "class": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z][A-Za-z0-9 _-]*$"}
   }, "required": ["items", "separator-icon", "home-icon", "aria-label", "expand-on-ellipsis", "max-items"], "additionalProperties": false},
-  "slots": {}, "events": {"sf-breadcrumb-click": {"kind": "dom", "backend_handler_binding": false}}, "views": {"default": {}}, "presets": {}, "constraints": {},
+  "slots": {}, "events": {"sf-breadcrumbs-press": {"kind": "dom", "backend_handler_binding": false}}, "views": {"default": {}}, "presets": {}, "constraints": {},
   "render": {"strategy": "host", "renderer": "ui.sf.element"}, "frontend": {"runtime": "simai-framework", "tag": "sf-breadcrumbs"},
   "assets": [
     {"key": "simai.framework.core.css", "kind": "css", "critical": true}, {"key": "simai.framework.core.js", "kind": "javascript", "critical": true},

@@ -31,7 +31,6 @@
   "slots": {},
   "events": {
     "change": {"kind": "dom", "backend_handler_binding": false},
-    "sf-dropdown:change": {"kind": "custom", "backend_handler_binding": false},
     "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
     "sf-after-render": {"kind": "lifecycle", "backend_handler_binding": false},
     "sf-disconnected": {"kind": "lifecycle", "backend_handler_binding": false}

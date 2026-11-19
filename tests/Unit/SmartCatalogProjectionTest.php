@@ -101,17 +101,17 @@ assert(!array_key_exists('callback', $sorted[0]->provenance));
 assert(!array_key_exists('evidence', $sorted[0]->provenance));
 
 $realEventNames = [
-    'sf-dropdown:change',
-    'modal:ready',
-    'modal:update',
-    'modal:before-open',
-    'modal:after-open',
-    'modal:before-close',
-    'modal:after-close',
-    'modal:before-hide',
-    'modal:after-hide',
-    'modal:before-show',
-    'modal:after-show',
+    'change',
+    'sf-modal-open',
+    'sf-modal-opened',
+    'sf-modal-close',
+    'sf-modal-closed',
+    'sf-modal-minimize',
+    'sf-modal-minimized',
+    'sf-modal-expand',
+    'sf-modal-expanded',
+    'sf-pagination-change',
+    'sf-pagination-apply',
 ];
 $eventData = $registry->manifest('ui.button')->toArray();
 $eventData['key'] = 'ui.real_events';

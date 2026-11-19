@@ -26,7 +26,7 @@ contains exactly one `sf-view-table` after the Root fills it per request.
 `sf-composition-scope` routes. A list that is the `to` endpoint of a route:
 
 - starts empty and does not query the server until a selection arrives;
-- on `sf-table-query-intent` with `reason: "context"` sends one query with the
+- on `sf-view-table-query` with `reason: "context"` sends one query with the
   server filter `record_id in [...]` and answers `applyQueryResult(sequence, rows)`;
 - keeps the delivered selection as a filter for later search, sort and paging;
 - answers an empty selection locally with no request, and refuses more than 100

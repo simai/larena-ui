@@ -422,6 +422,7 @@
     "resources/composition/larena-registry.mjs",
     "resources/css/admin-ui-lab.css",
     "src/Frontend/SourceBackedComponentRegistry.php",
-    "src/Runtime/RegisteredListRenderer.php"
+    "src/Runtime/RegisteredListRenderer.php",
+    "docs/developer/registered-table-action-bridge.md"
   ]
 }

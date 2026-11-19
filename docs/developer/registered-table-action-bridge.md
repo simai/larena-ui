@@ -2,7 +2,7 @@
 
 Status: implemented and partially accepted in the 2026-09-17 acceptance copies. No live adoption or business-operation acceptance.
 
-Framework owns `sf-table-action-intent` with closed `{action_id, record_ids}`. Larena uses `LarenaDataviewActions.register(table, new Map([...]))` from trusted product JavaScript. Register exact DOM table instances and allowlisted handler closures after the component is defined. Never place handlers, arbitrary URLs, actor IDs, permissions or executable strings in Recipe/Document JSON. The returned function unregisters and aborts outstanding actions. Removal or replacement of a workbench child disposes listeners and registration; reconnecting requires fresh owner registration.
+Framework owns `sf-view-table-apply` with closed `{action_id, record_ids}`. Larena uses `LarenaDataviewActions.register(table, new Map([...]))` from trusted product JavaScript. Register exact DOM table instances and allowlisted handler closures after the component is defined. Never place handlers, arbitrary URLs, actor IDs, permissions or executable strings in Recipe/Document JSON. The returned function unregisters and aborts outstanding actions. Removal or replacement of a workbench child disposes listeners and registration; reconnecting requires fresh owner registration.
 
 Handlers receive a frozen envelope `{action_id, record_ids, signal, table}`. Record IDs are preserved as opaque strings or safe integers, including zero. Registered owner code must repeat backend ACL and revision checks through the established owner operation; browser registration and hidden controls grant no permission. Observe `signal`, and do not claim cancellation undoes an already committed server operation.
 
@@ -10,7 +10,7 @@ Dispatch enters `pending`. Handler rejection reports a generic error without exp
 
 Only one action runs per mounted instance. Unregistering aborts the active operation immediately; late completions cannot overwrite a replacement operation. Nested and sibling table events are rejected by their composed origin.
 
-Pagination uses its owned `sf-action-apply` event, registered `detail.action`, and the table's own `getSelectedRecordIds()`/`requestActionIntent()` port. It ignores supplied record IDs and endpoints. `actionForAll: true` fails closed: the current Framework port only selects current-result rows, so all-result operations require a separately accepted owner capability.
+Pagination uses its owned `sf-pagination-apply` event (the Framework's name since 2026-12-01; `scope === 'filter'` replaces the former `actionForAll` flag), registered `detail.action`, and the table's own `getSelectedRecordIds()`/`requestActionIntent()` port. It ignores supplied record IDs and endpoints. An all-results apply (`scope === 'filter'`) fails closed: the current Framework port only selects current-result rows, so all-result operations require a separately accepted owner capability.
 
 Create requests have no existing record ID and remain outside this table action port. Their dispatch is pending, never evidence of business success.
 

@@ -149,27 +149,27 @@
   },
   "slots": {},
   "events": {
-    "sf-page-change": {
+    "sf-pagination-change": {
       "kind": "custom",
       "backend_handler_binding": false
     },
-    "sf-show-more": {
+    "sf-pagination-load-more": {
       "kind": "custom",
       "backend_handler_binding": false
     },
-    "sf-page-size-change": {
+    "sf-pagination-size-change": {
       "kind": "custom",
       "backend_handler_binding": false
     },
-    "sf-action-change": {
+    "sf-pagination-action-change": {
       "kind": "custom",
       "backend_handler_binding": false
     },
-    "sf-action-apply": {
+    "sf-pagination-apply": {
       "kind": "custom",
       "backend_handler_binding": false
     },
-    "sf-action-for-all-change": {
+    "sf-pagination-action-for-all-change": {
       "kind": "custom",
       "backend_handler_binding": false
     },
