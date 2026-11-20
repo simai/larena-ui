@@ -13,8 +13,5 @@ Larena's licence.
 
 Distributed and supported under licence by ООО «Симай».
 
-resources/assets/source-backed-sf/ holds copies of SIMAI Framework sources
-(Copyright 2008-2026 Rim Zabarov, Apache License, Version 2.0).
-
 Third-party dependencies installed by Composer are not part of this
 repository and keep their own licences.

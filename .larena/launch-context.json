@@ -430,7 +430,21 @@
     "resources/css/admin-ui-lab.css",
     "src/Frontend/SourceBackedComponentRegistry.php",
     "src/Runtime/RegisteredListRenderer.php",
-    "docs/developer/registered-table-action-bridge.md"
+    "docs/developer/registered-table-action-bridge.md",
+    "resources/assets/source-backed-sf/buttons/component/css/buttons.css",
+    "resources/assets/source-backed-sf/buttons/component/js/buttons.js",
+    "resources/assets/source-backed-sf/buttons/component/json/button.utility.json",
+    "resources/assets/source-backed-sf/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf/catalog/buttons/component/css/buttons.css",
+    "resources/assets/source-backed-sf/catalog/buttons/component/js/buttons.js",
+    "resources/assets/source-backed-sf/catalog/buttons/component/json/button.utility.json",
+    "resources/assets/source-backed-sf/catalog/buttons/smart/js/buttons.js",
+    "resources/assets/source-backed-sf/catalog/pagination/component/css/pagination.css",
+    "resources/assets/source-backed-sf/catalog/pagination/component/js/pagination.js",
+    "resources/assets/source-backed-sf/catalog/pagination/smart/js/pagination.js",
+    "resources/assets/source-backed-sf/catalog/tags/component/css/tags.css",
+    "resources/assets/source-backed-sf/catalog/tags/component/js/tags.js",
+    "resources/assets/source-backed-sf/catalog/tags/smart/js/tags.js"
   ],
   "forbidden_files": [
     "config/*",

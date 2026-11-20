@@ -73,7 +73,6 @@
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrameworkContractRegistryTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/FrontendRuntimeLockTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/ComponentPackageRequirementsTest.php",
-      "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SourceBackedAssetProvenanceLockTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartManagerTest.php",
       "@php -d zend.assertions=1 -d assert.exception=1 tests/Unit/SmartFacadeTest.php",

@@ -60,13 +60,4 @@ foreach (['selected-label="Отмечено:"', 'pages-label="Страницы:"
     assert(str_contains($ru, $attribute));
 }
 
-$runtime = file_get_contents(dirname(__DIR__, 2) . '/resources/assets/source-backed-sf/catalog/pagination/smart/js/pagination.js');
-assert(is_string($runtime));
-foreach (['selectedLabel', 'showTotalText', 'pagesLabel', 'lastPageText'] as $property) {
-    assert(str_contains($runtime, $property));
-}
-foreach (['Отмечено', 'Страницы', 'Последняя'] as $hardCodedLabel) {
-    assert(!str_contains($runtime, $hardCodedLabel));
-}
-
 echo "PaginationLocalizationContractTest passed.\n";
