@@ -21,29 +21,14 @@ $activation = [
 ];
 $manager = SmartManager::withDefaults();
 
+// The menu reads the navigation port only: no printed items, no settings of the former items menu.
 $menu = $manager->render('ui.admin_menu', [
-    'brand' => 'Larena', 'logo-href' => '/admin', 'aria-label' => 'Admin navigation',
-    'searchable' => true, 'collapsible' => true, 'settings' => false, 'compact' => false,
-    'persistence-mode' => 'external', 'settings-mode' => 'user',
-    'settings-revision' => 0, 'system-settings-revision' => 0,
-    'settings-state-endpoint' => '/admin/navigation/state',
-    'settings-endpoint' => '/admin/navigation/preferences/me',
-    'settings-reset-endpoint' => '/admin/navigation/preferences/me',
-    'system-settings-endpoint' => '/admin/navigation/defaults',
-    'system-settings-reset-endpoint' => '/admin/navigation/defaults',
-    'allow-system-settings' => false,
-    'search-placeholder' => 'Search sections', 'toggle-label' => 'Menu',
-    'items' => [
-        ['item-id' => 'larena.cms.content', 'label' => 'Content', 'href' => '/admin/cms', 'left-icon' => 'database', 'active' => true, 'order' => 10],
-        ['item-id' => 'larena.admin.settings', 'label' => 'Settings', 'href' => '/admin/settings', 'left-icon' => 'settings', 'active' => false, 'order' => 20],
-    ],
-    'id' => 'admin-menu',
+    'aria-label' => 'Admin navigation', 'expected-columns' => 2, 'id' => 'admin-menu',
 ], $activation);
 assert($menu->isRenderable());
 assert(str_contains($menu->html(), '<sf-admin-menu'));
-assert(str_contains($menu->html(), 'settings="false"'));
-assert(str_contains($menu->html(), '<sf-admin-menu-item'));
-assert(str_contains($menu->html(), 'href="/admin/cms"'));
+assert(str_contains($menu->html(), 'expected-columns="2"'));
+assert(!str_contains($menu->html(), '<sf-admin-menu-item'));
 assert(!str_contains($menu->html(), '<script'));
 
 $breadcrumbs = $manager->render('ui.breadcrumbs', [
@@ -59,22 +44,20 @@ foreach ([
     ['ui.icon_button', ['size' => '1', 'kind' => 'icon', 'appearance' => 'link', 'scheme' => 'on-surface', 'icon' => 'help', 'loading' => false, 'disabled' => false, 'native-type' => 'button', 'aria-label' => 'Help']],
     ['ui.avatar', ['size' => '1', 'text' => 'AZ', 'status' => 'none', 'aria-label' => 'Admin', 'disabled' => false, 'inactive' => false]],
     ['ui.tag', ['type' => 'primary', 'size' => '1/2', 'text' => '12', 'active' => false, 'disabled' => false, 'closable' => false, 'aria-label' => 'Records: 12']],
-    ['ui.toggle', ['size' => '2', 'type' => 'icon', 'label' => 'Theme', 'icon' => 'light_mode', 'checked' => false, 'disabled' => false, 'name' => 'theme', 'value' => 'dark', 'aria-label' => 'Theme']],
 ] as [$key, $props]) {
     assert($manager->render($key, $props, $activation)->isRenderable());
 }
 
-$unsafeRejected = false;
+// The former items menu's settings are refused.
+$itemsRejected = false;
 try {
     $manager->render('ui.admin_menu', [
-        'brand' => 'Larena', 'logo-href' => '/admin', 'aria-label' => 'Admin navigation',
-        'searchable' => true, 'collapsible' => true, 'settings' => false, 'compact' => false,
-        'search-placeholder' => 'Search', 'toggle-label' => 'Menu',
-        'items' => [['item-id' => 'larena.test.unsafe', 'label' => 'Unsafe', 'href' => 'javascript:alert(1)']],
+        'aria-label' => 'Admin navigation',
+        'items' => [['item-id' => 'larena.test.item', 'label' => 'Item', 'href' => '/admin']],
     ], $activation);
-} catch (InvalidArgumentException $exception) {
-    $unsafeRejected = $exception->getMessage() === 'ui_smart_admin_menu_item_href_invalid';
+} catch (InvalidArgumentException) {
+    $itemsRejected = true;
 }
-assert($unsafeRejected);
+assert($itemsRejected);
 
 echo "AdminChromeSmartComponentTest passed.\n";

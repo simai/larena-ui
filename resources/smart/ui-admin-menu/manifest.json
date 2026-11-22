@@ -8,46 +8,19 @@
   "props": {
     "type": "object",
     "properties": {
-      "brand": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
-      "logo": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "\\S"},
-      "logo-href": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
       "aria-label": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "searchable": {"type": "boolean"},
-      "collapsible": {"type": "boolean"},
-      "settings": {"type": "boolean"},
-      "settings-title": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "compact": {"type": "boolean"},
-      "persistence-mode": {"type": "string", "enum": ["local", "external"]},
-      "settings-mode": {"type": "string", "enum": ["user", "system"]},
-      "settings-revision": {"type": "integer", "minimum": 0},
-      "system-settings-revision": {"type": "integer", "minimum": 0},
-      "allow-system-settings": {"type": "boolean"},
-      "settings-state-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
-      "settings-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
-      "settings-reset-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
-      "system-settings-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
-      "system-settings-reset-endpoint": {"type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^/"},
-      "search-placeholder": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "\\S"},
-      "search-mode": {"type": "string", "enum": ["row", "panel"]},
-      "search-label": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
       "search-shortcut": {"type": "string", "maxLength": 40},
-      "search-hint": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
-      "search-keys-hint": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S"},
-      "toggle-label": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "\\S"},
-      "items": {"type": "array"},
+      "current": {"type": "string", "maxLength": 160},
+      "expected-columns": {"type": "integer", "minimum": 1, "maximum": 2},
+      "open": {"type": "boolean"},
       "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}
     },
-    "required": ["brand", "logo-href", "aria-label", "searchable", "collapsible", "settings", "compact", "search-placeholder", "toggle-label", "items"],
+    "required": ["aria-label"],
     "additionalProperties": false
   },
   "slots": {},
   "events": {
     "sf-connected": {"kind": "lifecycle", "backend_handler_binding": false},
-    "sf-admin-menu-settings-save": {"kind": "semantic", "backend_handler_binding": true},
-    "sf-admin-menu-settings-reset": {"kind": "semantic", "backend_handler_binding": true},
-    "sf-admin-menu-settings-cancel": {"kind": "semantic", "backend_handler_binding": false},
-    "sf-admin-menu-settings-mode-change": {"kind": "semantic", "backend_handler_binding": true},
-    "sf-admin-menu-settings-refresh": {"kind": "semantic", "backend_handler_binding": true},
     "sf-admin-menu-compact-change": {"kind": "semantic", "backend_handler_binding": false}
   },
   "views": {"default": {}},
@@ -70,7 +43,7 @@
   "atlas": {
     "visible": true,
     "title": "Admin menu",
-    "description": "Complete source-backed admin navigation with search, nesting, compact mode and external settings events.",
+    "description": "Admin navigation over the host's navigation port (simai.admin-navigation-port): the rail of sections, the section column, search and the person's menu.",
     "category": "navigation",
     "order": 110,
     "status": "developer_testable",
@@ -80,54 +53,26 @@
       "safe_to_bind_data": false,
       "safe_to_execute_effect": false
     },
-    "states": ["expanded", "compact", "searching", "nested", "saving", "success", "error", "conflict"],
+    "states": ["skeleton", "one_column", "two_columns", "searching", "editing", "conflict"],
     "accessibility": ["navigation_landmark", "accessible_name", "keyboard_navigation", "visible_focus"],
     "product_href": "/admin/cms",
-    "example_props": {
-      "brand": "Larena",
-      "logo-href": "/admin",
-      "aria-label": "Admin navigation",
-      "searchable": true,
-      "collapsible": true,
-      "settings": true,
-      "compact": false,
-      "persistence-mode": "external",
-      "settings-mode": "user",
-      "settings-revision": 0,
-      "system-settings-revision": 0,
-      "allow-system-settings": false,
-      "search-placeholder": "Search sections",
-      "toggle-label": "Menu",
-      "items": [
-        {"item-id": "demo.dashboard", "label": "Dashboard", "left-icon": "home", "href": "/admin", "active": true},
-        {"item-id": "demo.content", "label": "Content", "left-icon": "description", "badge": "12", "children": [
-          {"item-id": "demo.content.pages", "label": "Pages", "href": "/admin/cms"},
-          {"item-id": "demo.content.media", "label": "Media", "badge": "new"}
-        ]}
-      ]
-    },
+    "example_props": {"aria-label": "Admin navigation", "expected-columns": 2},
     "controls": [
-      {"key": "brand", "source": "prop", "widget": "text", "min_length": 1, "max_length": 80},
-      {"key": "searchable", "source": "prop", "widget": "boolean"},
-      {"key": "collapsible", "source": "prop", "widget": "boolean"},
-      {"key": "settings", "source": "prop", "widget": "boolean"},
-      {"key": "compact", "source": "prop", "widget": "boolean"},
-      {"key": "persistence-mode", "source": "prop", "widget": "select"},
-      {"key": "settings-mode", "source": "prop", "widget": "select"}
+      {"key": "aria-label", "source": "prop", "widget": "text", "min_length": 1, "max_length": 120}
     ],
     "code_preview": {"adapter": "smart_manager_php_v1", "omit_defaults": false},
     "i18n": {
       "en": {
         "title": "Admin menu",
-        "description": "Complete source-backed admin navigation with search, nesting, compact mode and external settings events.",
-        "controls": {"brand": "Brand", "searchable": "Search", "collapsible": "Compact mode", "settings": "Settings", "compact": "Compact", "persistence-mode": "Persistence", "settings-mode": "Settings level"},
-        "options": {"persistence-mode": {"local": "Local demo", "external": "Backend-owned"}, "settings-mode": {"user": "Personal", "system": "For everyone"}}
+        "description": "Admin navigation over the host's navigation port (simai.admin-navigation-port): the rail of sections, the section column, search and the person's menu.",
+        "controls": {"aria-label": "Accessible name"},
+        "options": {}
       },
       "ru": {
         "title": "Меню администратора",
-        "description": "Полное меню администратора с поиском, вложенностью, компактным режимом и внешним сохранением настроек.",
-        "controls": {"brand": "Бренд", "searchable": "Поиск", "collapsible": "Сворачивание", "settings": "Настройки", "compact": "Компактный режим", "persistence-mode": "Хранение", "settings-mode": "Уровень настроек"},
-        "options": {"persistence-mode": {"local": "Локальное демо", "external": "Хранит backend"}, "settings-mode": {"user": "Личные", "system": "Для всех"}}
+        "description": "Меню администратора над навигационным портом хоста (simai.admin-navigation-port): рейка разделов, колонка раздела, поиск и меню человека.",
+        "controls": {"aria-label": "Доступное имя"},
+        "options": {}
       }
     }
   },

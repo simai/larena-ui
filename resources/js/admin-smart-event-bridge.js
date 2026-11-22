@@ -1,15 +1,10 @@
 (() => {
     'use strict';
 
-    const selector = 'sf-admin-menu[persistence-mode="external"]';
+    // The menu reads the navigation port only (simai.admin-navigation-port, answered by larena/admin); its saves and
+    // resets are port intents, so no settings events come here.
+    const selector = 'sf-admin-menu';
     const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-    const endpoint = (menu, target, reset = false) => {
-        if (target === 'system') {
-            return menu.getAttribute(reset ? 'system-settings-reset-endpoint' : 'system-settings-endpoint') || '';
-        }
-        return menu.getAttribute(reset ? 'settings-reset-endpoint' : 'settings-endpoint') || '';
-    };
 
     const request = async (url, options = {}) => {
         if (!url.startsWith('/')) {
@@ -47,148 +42,18 @@
         if (!menu) return;
         applyCompactLayout(menu, event.detail?.compact === true);
     });
-
-    // The menu's search panel (search-mode="panel") finds its own sections; the admin data groups
-    // (CMS records, storages, users, files) come from /admin/quick-search. A newer query cancels
-    // the older request, and the menu itself drops an answer that is no longer the live one.
-    let searchRequest = null;
-    // Where each shown result came from, so opening one can be remembered for «Recent».
-    let shownResults = new Map();
-    const rememberShown = (groups) => {
-        for (const group of Array.isArray(groups) ? groups : []) {
-            for (const item of Array.isArray(group?.items) ? group.items : []) {
-                if (item && typeof item.href === 'string') {
-                    shownResults.set(item.href, {text: item.text, subtext: item.subtext, icon: item.icon,
-                        source: typeof item.source === 'string' ? item.source : group.key});
-                }
-            }
-        }
-    };
-    document.addEventListener('sf-admin-menu-query', async (event) => {
-        if (event.detail?.kind !== 'menu') return;
-        const menu = event.target?.closest?.('sf-admin-menu');
-        const query = String(event.detail?.query ?? '').trim();
-        const requestId = event.detail?.['request-id'];
-        if (!menu || typeof menu.setSearchResults !== 'function') return;
-        searchRequest?.abort();
-        if (query.length < 2) {
-            menu.setSearchResults(requestId, []);
-            return;
-        }
-        const controller = new AbortController();
-        searchRequest = controller;
-        try {
-            const response = await fetch('/admin/quick-search?q=' + encodeURIComponent(query), {
-                credentials: 'same-origin', signal: controller.signal, headers: {Accept: 'application/json'},
-            });
-            const payload = response.ok ? await response.json() : {groups: []};
-            rememberShown(payload?.groups);
-            const groups = (Array.isArray(payload?.groups) ? payload.groups : [])
-                .filter((group) => group && group.key !== 'menu.sections' && Array.isArray(group.items) && group.items.length);
-            menu.setSearchResults(requestId, groups);
-        } catch (error) {
-            if (error?.name !== 'AbortError') menu.setSearchResults(requestId, []);
-        }
+    // The admin set's menu (1.15.0) says the same as one column or two: the section column shown or hidden.
+    document.addEventListener('sf-admin-menu-column-change', (event) => {
+        const menu = menuFromEvent(event);
+        if (!menu || typeof event.detail?.open !== 'boolean') return;
+        applyCompactLayout(menu, event.detail.open === false);
     });
 
-    // «Recent» for the empty field: the results this person last opened from the panel. The menu takes them as its
-    // writable setting recentResults (setRecentResults() goes after 2026-12-01).
-    const loadRecent = async (menu) => {
-        if (!menu || !('recentResults' in menu)) return;
-        try {
-            const response = await fetch('/admin/quick-search/recent', {credentials: 'same-origin', headers: {Accept: 'application/json'}});
-            const payload = response.ok ? await response.json() : {groups: []};
-            rememberShown(payload?.groups);
-            menu.recentResults = Array.isArray(payload?.groups) ? payload.groups : [];
-        } catch {
-            menu.recentResults = [];
-        }
-    };
-    document.addEventListener('click', (event) => {
-        const link = event.composedPath().find((node) => node instanceof HTMLAnchorElement && node.getAttribute('href'));
-        const panel = link?.closest?.('.sf-admin-menu-panel-search');
-        if (!link || !panel) return;
-        const href = link.getAttribute('href');
-        const item = shownResults.get(href);
-        if (!item || !item.source) return;
-        fetch('/admin/quick-search/recent', {method: 'POST', credentials: 'same-origin', keepalive: true,
-            headers: {Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken()},
-            body: JSON.stringify({text: item.text, subtext: item.subtext || null, href, icon: item.icon || null, source: item.source})})
-            .catch(() => {});
-    }, true);
-
     customElements.whenDefined('sf-admin-menu').then(() => {
-        document.querySelectorAll('sf-admin-menu[search-mode="panel"]').forEach((menu) => { void loadRecent(menu); });
         document.querySelectorAll(selector).forEach((menu) => {
             applyCompactLayout(menu, menu.getProp?.('compact') === true || menu.hasAttribute('compact'));
         });
     });
-
-    const refresh = async (menu, target) => {
-        const url = menu.getAttribute('settings-state-endpoint') || '';
-        const state = await request(url, {method: 'GET', headers: {Accept: 'application/json'}});
-        menu.applyExternalSettingsState?.(state, target);
-        return state;
-    };
-
-    document.addEventListener('sf-admin-menu-settings-save', async (event) => {
-        const menu = menuFromEvent(event);
-        if (!menu) return;
-        const target = event.detail?.target === 'system' ? 'system' : 'user';
-        try {
-            const result = await request(endpoint(menu, target), {
-                method: 'PUT',
-                body: JSON.stringify({
-                    base_revision: event.detail?.base_revision,
-                    profile: event.detail?.profile,
-                }),
-            });
-            menu.applySettingsResult?.(result);
-        } catch (error) {
-            menu.applySettingsError?.({
-                ...(error.payload || {}),
-                error: error.message,
-                status: error.status || 500,
-            });
-        }
-    });
-
-    document.addEventListener('sf-admin-menu-reset', async (event) => {
-        if (event.detail?.kind !== 'settings') return;
-        const menu = menuFromEvent(event);
-        if (!menu) return;
-        const target = event.detail?.target === 'system' ? 'system' : 'user';
-        try {
-            const result = await request(endpoint(menu, target, true), {
-                method: 'DELETE',
-                body: JSON.stringify({base_revision: event.detail?.['base-revision'] ?? event.detail?.base_revision}),
-            });
-            menu.applySettingsResult?.(result);
-        } catch (error) {
-            menu.applySettingsError?.({
-                ...(error.payload || {}),
-                error: error.message,
-                status: error.status || 500,
-            });
-        }
-    });
-
-    for (const eventName of ['sf-admin-menu-settings-mode-change', 'sf-admin-menu-settings-refresh']) {
-        document.addEventListener(eventName, async (event) => {
-            const menu = menuFromEvent(event);
-            if (!menu) return;
-            const target = event.detail?.target === 'system' ? 'system' : 'user';
-            try {
-                await refresh(menu, target);
-            } catch (error) {
-                menu.applySettingsError?.({
-                    ...(error.payload || {}),
-                    error: error.message,
-                    status: error.status || 500,
-                });
-            }
-        });
-    }
 
     const workbenchSelector = '[data-larena-dataview-workbench]';
     const ownNode = (host, selector) => {

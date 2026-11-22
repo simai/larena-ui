@@ -71,10 +71,6 @@ final class Smart
                 $paginationNextHref = $value;
                 continue;
             }
-            if ($key === 'items' && $tag === 'sf-admin-menu') {
-                $children = self::adminMenuItems($value);
-                continue;
-            }
             if ($key === 'items' && $tag === 'sf-alert-bar') {
                 // The bar's items go in its settings island (sf-alert-bar 1.0.0): a list is no attribute.
                 $children = self::settingsIsland(['items' => self::alertBarItems($value)]);
@@ -273,7 +269,6 @@ final class Smart
         return ($tag === 'sf-view-table'
                 && in_array($attribute, ['selectable', 'settings', 'actions', 'row-actions'], true))
             || ($tag === 'sf-dropdown' && $attribute === 'search')
-            || ($tag === 'sf-admin-menu' && $attribute === 'settings')
             || ($tag === 'sf-tag' && $attribute === 'closable');
     }
 
@@ -308,88 +303,6 @@ final class Smart
                 $attributes[$key] = (string) $value;
             }
             $html .= '<sf-list-item' . self::attributes($attributes) . '></sf-list-item>';
-        }
-
-        return $html;
-    }
-
-    private static function adminMenuItems(mixed $items, int $depth = 0): string
-    {
-        if (!is_array($items) || !array_is_list($items) || count($items) > 40 || $depth > 2) {
-            throw new \InvalidArgumentException('ui_smart_admin_menu_items_invalid');
-        }
-
-        $html = '';
-        $allowed = ['item-id', 'label', 'href', 'left-icon', 'right-icon', 'badge', 'active', 'current', 'disabled', 'hidden', 'order', 'slot', 'type', 'children'];
-        foreach ($items as $item) {
-            if (!is_array($item) || array_is_list($item)) {
-                throw new \InvalidArgumentException('ui_smart_admin_menu_item_invalid');
-            }
-            foreach (array_keys($item) as $key) {
-                if (!in_array($key, $allowed, true)) {
-                    throw new \InvalidArgumentException('ui_smart_admin_menu_item_prop_unknown:' . (string) $key);
-                }
-            }
-            $type = $item['type'] ?? 'item';
-            if (!is_string($type) || !in_array($type, ['item', 'divider'], true)) {
-                throw new \InvalidArgumentException('ui_smart_admin_menu_item_type_invalid');
-            }
-            $attributes = [];
-            if ($type === 'divider') {
-                $attributes['type'] = 'divider';
-            } else {
-                $label = $item['label'] ?? null;
-                if (!is_string($label) || trim($label) === '' || mb_strlen($label) > 100) {
-                    throw new \InvalidArgumentException('ui_smart_admin_menu_item_label_invalid');
-                }
-                $attributes['label'] = $label;
-                $itemId = $item['item-id'] ?? null;
-                if (!is_string($itemId) || preg_match('/^[a-z][a-z0-9_.-]{2,159}$/', $itemId) !== 1) {
-                    throw new \InvalidArgumentException('ui_smart_admin_menu_item_id_invalid');
-                }
-                $attributes['item-id'] = $itemId;
-                foreach (['left-icon', 'right-icon', 'badge'] as $key) {
-                    $value = $item[$key] ?? null;
-                    if ($value !== null) {
-                        if (!is_string($value) || trim($value) === '' || strlen($value) > 80
-                            || preg_match('/^[A-Za-z0-9 _.-]+$/', $value) !== 1) {
-                            throw new \InvalidArgumentException('ui_smart_admin_menu_item_value_invalid:' . $key);
-                        }
-                        $attributes[$key] = $value;
-                    }
-                }
-                $href = $item['href'] ?? null;
-                if ($href !== null) {
-                    if (!is_string($href) || preg_match('#^/[A-Za-z0-9_./?=&%:+-]{0,2047}$#', $href) !== 1) {
-                        throw new \InvalidArgumentException('ui_smart_admin_menu_item_href_invalid');
-                    }
-                    $attributes['href'] = $href;
-                }
-                foreach (['active', 'current', 'disabled', 'hidden'] as $key) {
-                    if (array_key_exists($key, $item)) {
-                        if (!is_bool($item[$key])) {
-                            throw new \InvalidArgumentException('ui_smart_admin_menu_item_boolean_invalid:' . $key);
-                        }
-                        if ($item[$key]) {
-                            $attributes[$key] = '';
-                        }
-                    }
-                }
-                if (isset($item['order'])) {
-                    if (!is_int($item['order']) || $item['order'] < 0 || $item['order'] > 10000) {
-                        throw new \InvalidArgumentException('ui_smart_admin_menu_item_order_invalid');
-                    }
-                    $attributes['order'] = (string) $item['order'];
-                }
-                if (isset($item['slot'])) {
-                    if (!is_string($item['slot']) || !in_array($item['slot'], ['main', 'bottom'], true)) {
-                        throw new \InvalidArgumentException('ui_smart_admin_menu_item_slot_invalid');
-                    }
-                    $attributes['slot'] = $item['slot'];
-                }
-            }
-            $children = isset($item['children']) ? self::adminMenuItems($item['children'], $depth + 1) : '';
-            $html .= '<sf-admin-menu-item' . self::attributes($attributes) . '>' . $children . '</sf-admin-menu-item>';
         }
 
         return $html;
