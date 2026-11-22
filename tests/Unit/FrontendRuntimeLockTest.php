@@ -9,9 +9,9 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
 // The free Framework release and the Larena components package built over it, pinned together.
-assert($lock->pairId() === 'ui-b654460cad2a-pro-d7c4cf661de0-chart-58ba480db497');
-assert($lock->frameworkId() === 'ui-b654460cad2a');
-assert($lock->packageIds() === ['pro' => 'pro-d7c4cf661de0', 'chart' => 'chart-58ba480db497']);
+assert($lock->pairId() === 'ui-9ceecc24c988-pro-f6c43828e5f2-chart-58ba480db497');
+assert($lock->frameworkId() === 'ui-9ceecc24c988');
+assert($lock->packageIds() === ['pro' => 'pro-f6c43828e5f2', 'chart' => 'chart-58ba480db497']);
 // Pro is built over the pinned Framework, so it needs no pair range; Chart is built over ui-cb287da78ab1 and carries a
 // pair range checked over the pinned pair (SIMAI Framework decision 2026-11-09).
 assert($lock->package('pro')['requires_framework'] === $lock->frameworkId() && !isset($lock->package('pro')['pair_range']));
@@ -21,7 +21,7 @@ assert($lock->package('chart')['pair_range']['checked_over'] === $lock->framewor
 assert($lock->package('pro')['repository'] === 'simai/ui-pro' && $lock->package('pro')['package_path'] === 'components');
 assert($lock->packageReleaseRepository('pro') === 'simai/ui-pro');
 assert($lock->packageLicence('pro') === ['ref' => 'PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial', 'tier' => 'bundled-larena']);
-assert($lock->bundleId() === 'ui-b654460cad2a-pro-d7c4cf661de0-chart-58ba480db497-registry-009ee318-exact-git-tree-v2');
+assert($lock->bundleId() === 'ui-9ceecc24c988-pro-f6c43828e5f2-chart-58ba480db497-registry-068fb394-exact-git-tree-v2');
 assert($lock->uiBase() === 'ui/distr/' && $lock->smartBase() === 'ui/distr/smart/');
 assert($lock->packageBases() === ['pro' => 'pro/smart/', 'chart' => 'chart/smart/']);
 assert($lock->bootPackagesScript('/b/') === '{pro:{base:"\/b\/pro\/smart\/"},chart:{base:"\/b\/chart\/smart\/"}}');
@@ -29,7 +29,7 @@ assert($lock->publicationProfile() === 'exact-git-tree-v2');
 $registry = $lock->frameworkRegistry();
 assert(($registry['schema_id'] ?? null) === 'simai.framework.contract-registry');
 assert(($registry['compatibility_id'] ?? null) === $lock->frameworkId());
-assert(($registry['file_sha256'] ?? null) === '009ee318e364f3c682751e54fd7abda07c2c0f6b254389da7a3a1166eddceaee');
+assert(($registry['file_sha256'] ?? null) === '068fb3943da2a0efee8ec4d53be7a5f7be54f9480447bb5ad792289b6eec4c55');
 
 // The lock file is written in the current shape: packages, no top-level larena slot, no boot.larena_base.
 $file = json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/resources/sf/runtime-lock.json'), true, 512, JSON_THROW_ON_ERROR);
@@ -39,10 +39,10 @@ assert($file === $lock->toArray());
 
 // The single-package bundle id is byte-identical to the one every bundle had before packages were a list.
 assert(FrontendRuntimeLock::composeBundleId(
-    FrontendRuntimeLock::composePairId('b654460cad2ac1ffe146261f6c301be334d8e24d', ['pro' => 'd7c4cf661de08eee88ada0f292f805bdbd15aab3']),
-    '009ee318e364f3c682751e54fd7abda07c2c0f6b254389da7a3a1166eddceaee',
+    FrontendRuntimeLock::composePairId('9ceecc24c988209abc7d09e22522eeb7b73f485e', ['pro' => 'f6c43828e5f22e65bc377806473007f01a0a51b8']),
+    '068fb3943da2a0efee8ec4d53be7a5f7be54f9480447bb5ad792289b6eec4c55',
     'exact-git-tree-v2',
-) === 'ui-b654460cad2a-pro-d7c4cf661de0-registry-009ee318-exact-git-tree-v2');
+) === 'ui-9ceecc24c988-pro-f6c43828e5f2-registry-068fb394-exact-git-tree-v2');
 
 $expectation = $lock->publicationExpectation();
 assert($expectation['schema'] === 'larena.ui.frontend_runtime_artifact');
@@ -51,17 +51,17 @@ assert($expectation['bundle_id'] === $lock->bundleId());
 assert($expectation['publication_profile'] === $lock->publicationProfile());
 assert($expectation['sources'] === [
     [
-        'commit' => 'b654460cad2ac1ffe146261f6c301be334d8e24d',
+        'commit' => '9ceecc24c988209abc7d09e22522eeb7b73f485e',
         'tree' => 'distr',
         'mount' => 'ui',
-        'archive_sha256' => 'a5df220d50816fc59bba21be1dac9af76f0ac93a41a155cac04ab0fac4084fc7',
-        'files' => 17725,
+        'archive_sha256' => 'd84ec2d818e569dc77b83d8f4d5a089a53136b94567ccab81abdfc911722230f',
+        'files' => 18111,
     ],
     [
-        'commit' => 'd7c4cf661de08eee88ada0f292f805bdbd15aab3',
+        'commit' => 'f6c43828e5f22e65bc377806473007f01a0a51b8',
         'tree' => 'smart',
         'mount' => 'pro',
-        'archive_sha256' => 'a38f24d54d0d3b8c1677ff55ba4a1a676dcfc4c6d79ff6e7d36e6871537ef585',
+        'archive_sha256' => 'c95a49a5a7d8aaeb1d6196f85c0a6cebe6bf607840b13069c8bf04037cc6b49b',
         'files' => 722,
     ],
     [
@@ -72,10 +72,10 @@ assert($expectation['sources'] === [
         'files' => 1087,
     ],
     [
-        'commit' => 'd2a771f662d609dee30557168b571e9d4ee8dab8',
+        'commit' => 'a5dd8d224895d24812f278734e86daf337bad93a',
         'tree' => 'contracts/generated',
         'mount' => 'contract',
-        'archive_sha256' => '4c7cc5edb927d8db3223e18f0398fc8d21477241bec740f8adcd910c61ad6c5a',
+        'archive_sha256' => 'cf3789b54a08caf5289bcc8cd4b238f3b31186d85327e44b5f4aef3f1af9bf2e',
         'files' => 2,
     ],
 ]);
@@ -121,10 +121,10 @@ assert($sources[1]['repository'] === '/tmp/package-pro.tar');
 assert($sources[2]['repository'] === '/tmp/package-chart.tar' && $sources[2]['mount'] === 'chart');
 assert($sources[3] === [
     'repository' => '/tmp/ui',
-    'commit' => 'd2a771f662d609dee30557168b571e9d4ee8dab8',
+    'commit' => 'a5dd8d224895d24812f278734e86daf337bad93a',
     'tree' => 'contracts/generated',
     'mount' => 'contract',
-    'sha256' => '4c7cc5edb927d8db3223e18f0398fc8d21477241bec740f8adcd910c61ad6c5a',
+    'sha256' => 'cf3789b54a08caf5289bcc8cd4b238f3b31186d85327e44b5f4aef3f1af9bf2e',
 ]);
 
 $rejected = static function (array $data): bool {
@@ -436,9 +436,9 @@ $proOnly = $lock->toArray();
 unset($proOnly['packages']['chart']);
 $proOnly['components'] = array_filter($proOnly['components'], static fn (array $component): bool => $component['package'] !== 'chart');
 $two = FrontendRuntimeLock::fromArray($twoPackages($proOnly, $second));
-assert($two->pairId() === 'ui-b654460cad2a-pro-d7c4cf661de0-admin-0123456789ab');
-assert($two->bundleId() === 'ui-b654460cad2a-pro-d7c4cf661de0-admin-0123456789ab-registry-009ee318-exact-git-tree-v2');
-assert($two->packageIds() === ['pro' => 'pro-d7c4cf661de0', 'admin' => 'admin-0123456789ab']);
+assert($two->pairId() === 'ui-9ceecc24c988-pro-f6c43828e5f2-admin-0123456789ab');
+assert($two->bundleId() === 'ui-9ceecc24c988-pro-f6c43828e5f2-admin-0123456789ab-registry-068fb394-exact-git-tree-v2');
+assert($two->packageIds() === ['pro' => 'pro-f6c43828e5f2', 'admin' => 'admin-0123456789ab']);
 assert($two->packageBases() === ['pro' => 'pro/smart/', 'admin' => 'admin/smart/']);
 assert($two->packageLicence('admin') === ['ref' => 'LicenseRef-SIMAI-Pro', 'tier' => 'bundled-larena']);
 // The boot config declares every pinned package, in lock order.
@@ -499,7 +499,7 @@ $withChart = static function (array $current): array {
 // Adding the set to the lock's pro alone gives the pinned pair: Larena pins Chart 1.0.3 next to pro.
 $chartLock = FrontendRuntimeLock::fromArray($withChart($proOnly));
 assert($chartLock->pairId() === $lock->pairId() && $chartLock->bundleId() === $lock->bundleId());
-assert($chartLock->packageIds() === ['pro' => 'pro-d7c4cf661de0', 'chart' => 'chart-58ba480db497']);
+assert($chartLock->packageIds() === ['pro' => 'pro-f6c43828e5f2', 'chart' => 'chart-58ba480db497']);
 assert($chartLock->packageReleaseRepository('chart') === 'simai/ui-chart');
 assert($chartLock->packageBases() === ['pro' => 'pro/smart/', 'chart' => 'chart/smart/']);
 assert(array_column($chartLock->publicationExpectation()['sources'], 'mount') === ['ui', 'pro', 'chart', 'contract']);
