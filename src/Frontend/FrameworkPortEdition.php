@@ -52,7 +52,9 @@ final class FrameworkPortEdition
     {
         $bundle = dirname(self::root());
         $lists = [];
-        foreach (glob($bundle.'/{ui/distr,pro,chart}/smart/*/component.json', GLOB_BRACE) ?: [] as $file) {
+        // The free release's components and every pinned package's (pro, chart, admin: the Admin set's sf-admin-menu
+        // implements simai.admin-navigation-port).
+        foreach ([...(glob($bundle.'/ui/distr/smart/*/component.json') ?: []), ...(glob($bundle.'/*/smart/*/component.json') ?: [])] as $file) {
             $component = json_decode((string) file_get_contents($file), true);
             $contract = $component['port']['contract'] ?? null;
             $supports = $component['x-port']['supports'] ?? null;

@@ -55,12 +55,13 @@ $switched['ui']['commit'] = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 $switched['ui']['release'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['pro']['requires_framework'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['chart']['requires_framework'] = 'ui-aaaaaaaaaaaa';
-$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-f6c43828e5f2-chart-58ba480db497';
-$switched['bundle_id'] = $switched['pair_id'] . '-registry-068fb394-exact-git-tree-v2';
+$switched['packages']['admin']['requires_framework'] = 'ui-aaaaaaaaaaaa';
+$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8';
+$switched['bundle_id'] = $switched['pair_id'] . '-registry-5c2e46b5-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = 'ui-aaaaaaaaaaaa';
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-9ceecc24c988-pro-f6c43828e5f2-chart-58ba480db497');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-b4f79e1c58b7-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];

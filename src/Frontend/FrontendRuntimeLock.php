@@ -45,10 +45,12 @@ final readonly class FrontendRuntimeLock
     /** Mounts and component owners a package may not be named after. */
     private const RESERVED_NAMES = ['ui', 'contract', 'framework'];
     /**
-     * Where a package's components sit in its source repository (package_source.path of its receipt): package/ in a
-     * component set repository listed here, components/ in every other (simai/larena-ui, simai/ui-admin, simai/ui-pro).
+     * Where a package's components sit in its source repository (package_source.path of its receipt): the paths a
+     * repository listed here allows, components/ in every other (simai/larena-ui, simai/ui-pro). The Chart set is built
+     * from package/ of simai/ui-chart; simai/ui-admin held the former admin kit in components/ and holds the Admin set
+     * in package/ (2026-11-23).
      */
-    private const PACKAGE_PATHS = ['simai/ui-chart' => 'package'];
+    private const PACKAGE_PATHS = ['simai/ui-chart' => ['package'], 'simai/ui-admin' => ['components', 'package']];
     private const DEFAULT_PACKAGE_PATH = 'components';
 
     /** @param array<string, mixed> $data */
@@ -457,7 +459,7 @@ final readonly class FrontendRuntimeLock
             throw new RuntimeException('ui_frontend_runtime_package_release_repository_invalid:' . $name);
         }
         if (($package['tree'] ?? null) !== 'smart' || ($package['mount'] ?? null) !== $name
-            || ($package['package_path'] ?? null) !== (self::PACKAGE_PATHS[(string) $package['repository']] ?? self::DEFAULT_PACKAGE_PATH)
+            || !in_array($package['package_path'] ?? null, self::PACKAGE_PATHS[(string) $package['repository']] ?? [self::DEFAULT_PACKAGE_PATH], true)
             || !preg_match('/^[a-f0-9]{40}$/', (string) ($package['package_tree'] ?? ''))
             || !preg_match('/^[a-f0-9]{40}$/', (string) ($package['framework_source']['revision'] ?? ''))
             || ($package['framework_source']['repository'] ?? null) !== 'simai/ui-source'

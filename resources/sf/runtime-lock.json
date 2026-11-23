@@ -2,44 +2,44 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-9ceecc24c988-pro-f6c43828e5f2-chart-58ba480db497",
-  "bundle_id": "ui-9ceecc24c988-pro-f6c43828e5f2-chart-58ba480db497-registry-068fb394-exact-git-tree-v2",
+  "pair_id": "ui-b4f79e1c58b7-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8",
+  "bundle_id": "ui-b4f79e1c58b7-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8-registry-5c2e46b5-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
-    "release": "ui-9ceecc24c988",
+    "release": "ui-b4f79e1c58b7",
     "repository": "simai/ui",
     "tag": null,
-    "commit": "9ceecc24c988209abc7d09e22522eeb7b73f485e",
+    "commit": "b4f79e1c58b70e4a7f6512ed19084b4bc34e6098",
     "tree": "distr",
     "mount": "ui",
-    "sha256": "d84ec2d818e569dc77b83d8f4d5a089a53136b94567ccab81abdfc911722230f",
-    "files": 18111,
-    "source_revision": "e7ea89e07a3a6494cd2e6d4b4dd2dfa3a4d560cf"
+    "sha256": "f35c502d270a83f18961ac6142df785a2e1cd1bd078bdc8d7d9df4288436b44b",
+    "files": 18310,
+    "source_revision": "e59dbad1c10848ec4f2663f52c04aa14b7be39f6"
   },
   "packages": {
     "pro": {
-      "release": "pro-f6c43828e5f2",
+      "release": "pro-53cd26ab57cd",
       "repository": "simai/ui-pro",
       "tag": null,
-      "commit": "f6c43828e5f22e65bc377806473007f01a0a51b8",
+      "commit": "53cd26ab57cd5f27ad03546c1d05ae741c527a48",
       "tree": "smart",
       "mount": "pro",
-      "sha256": "c95a49a5a7d8aaeb1d6196f85c0a6cebe6bf607840b13069c8bf04037cc6b49b",
-      "files": 722,
-      "requires_framework": "ui-9ceecc24c988",
+      "sha256": "19d9dde9cb3845648fb748eedaeb099a0b73895523cb0900166c4bae00011bdc",
+      "files": 680,
+      "requires_framework": "ui-b4f79e1c58b7",
       "package_path": "components",
-      "package_tree": "abc94532107a67f8f5c5afbd9acc6cbb32576351",
+      "package_tree": "45090b67a87d9ee65fa506b34c7ff3ae07bbda2a",
       "framework_source": {
         "repository": "simai/ui-source",
-        "revision": "e7ea89e07a3a6494cd2e6d4b4dd2dfa3a4d560cf"
+        "revision": "e59dbad1c10848ec4f2663f52c04aa14b7be39f6"
       },
       "builder": {
         "repository": "simai/ui-builder",
-        "revision": "0ec5196b35aea0251abed7af4c60f498e1a3e411"
+        "revision": "ee30c8215ff5b6491447e98c3d7ab674447a67bb"
       },
-      "manifest_sha256": "9f51a9987c99b445b41da8c0e3167cabba2be51ed01321e08b818b2dcb33d1ba",
-      "receipt_sha256": "655b6cec7147cbc8d5aa58e67e6cda282e399b399217d7550cae77da67dba575",
+      "manifest_sha256": "3fc958d978cf2a100ec034e8be89b808588e4f0765dd531a0e3b3a97f4082679",
+      "receipt_sha256": "e69366dcc82fa53d007e6b38a8a10ab756c57795e8c0e88b2d66421e3f0fd7c2",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -73,31 +73,58 @@
       },
       "pair_range": {
         "asset": "pair-range.json",
-        "checked_over": "ui-9ceecc24c988",
+        "checked_over": "ui-b4f79e1c58b7",
         "interface_sha256": "a308a7ff2cd57d9e4267d50dfee4ba17916dfe6d787c290c8fc5eea2f0e840e4",
         "sha256": "7bde125c3730b4389bb9a136bc302eba38ea6cb79852aa6c8780d538e4fdea2f"
+      }
+    },
+    "admin": {
+      "release": "admin-25245d70cde8",
+      "repository": "simai/ui-admin",
+      "tag": null,
+      "commit": "25245d70cde8360fcdf795b47359220e0def72a5",
+      "tree": "smart",
+      "mount": "admin",
+      "sha256": "6c2b67630b2dd3d7045f1d8df26173ec4dedd30cb166a68f51dccb0be2480883",
+      "files": 161,
+      "requires_framework": "ui-b4f79e1c58b7",
+      "package_path": "package",
+      "package_tree": "b5553991d5332683fe002cd0f0da895ea37288b8",
+      "framework_source": {
+        "repository": "simai/ui-source",
+        "revision": "e59dbad1c10848ec4f2663f52c04aa14b7be39f6"
+      },
+      "builder": {
+        "repository": "simai/ui-builder",
+        "revision": "ee30c8215ff5b6491447e98c3d7ab674447a67bb"
+      },
+      "manifest_sha256": "69efa29b090b51e5b4c402e7cfc485bb903fc87b833e482f4f338997b5a93623",
+      "receipt_sha256": "2396f98f346dc4752749405da52ca4135981947609c995115c41671ccd12b06a",
+      "licence": {
+        "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
+        "tier": "bundled-larena"
       }
     }
   },
   "framework_registry": {
     "schema_id": "simai.framework.contract-registry",
-    "compatibility_id": "ui-9ceecc24c988",
+    "compatibility_id": "ui-b4f79e1c58b7",
     "profile": "plain-assets-v1",
     "relative_path": "contract/contracts/generated/framework-contract-registry.json",
-    "file_sha256": "068fb3943da2a0efee8ec4d53be7a5f7be54f9480447bb5ad792289b6eec4c55",
+    "file_sha256": "5c2e46b5e1c9a9ad4139eb38599f90606de5a0db37b56e880d9cf3dceb8f1659",
     "source": {
       "tag": null,
-      "commit": "a5dd8d224895d24812f278734e86daf337bad93a",
+      "commit": "b13d856d0f24778347abc5d701410c75b09e8692",
       "tree": "contracts/generated",
       "mount": "contract",
-      "sha256": "cf3789b54a08caf5289bcc8cd4b238f3b31186d85327e44b5f4aef3f1af9bf2e",
+      "sha256": "ab683c708dab577f1df979a620c57ab2d2a5198790107d63c8da372047c79ac0",
       "files": 2,
-      "tree_oid": "cc8e6ea53b982f25c792a52c61eb139e04a6c8da"
+      "tree_oid": "8f294eddacd9574aef78dc31196590d3b443c8a0"
     },
     "documentation_source": {
       "schema": "docara.documentation_source.v1",
       "relative_path": "contract/contracts/generated/documentation-source.json",
-      "file_sha256": "4c44b6f29fbf75879829939270a563ddc506f91b953ed83328f1dad7941e0993"
+      "file_sha256": "fc9344f517b72dae2a9356f6889a7bc37cdedaf57d1ec1ac0af6318eb6f8ac1b"
     }
   },
   "boot": {
@@ -323,6 +350,7 @@
         "appearance",
         "scheme",
         "status",
+        "hue",
         "activity",
         "icon-only",
         "tight",
@@ -630,59 +658,6 @@
         "class"
       ],
       "package": "framework"
-    },
-    "sf-admin-menu": {
-      "source": "pro/smart/admin-menu",
-      "javascript": "pro/smart/admin-menu/js/admin-menu.min.js",
-      "css": "pro/smart/admin-menu/css/admin-menu.min.css",
-      "requires": [
-        "sf-icon",
-        "sf-badge",
-        "sf-button-icon"
-      ],
-      "attributes": [
-        "template",
-        "brand",
-        "logo",
-        "logo-href",
-        "aria-label",
-        "searchable",
-        "collapsible",
-        "settings",
-        "settings-title",
-        "compact",
-        "persistence-mode",
-        "settings-mode",
-        "settings-revision",
-        "system-settings-revision",
-        "allow-system-settings",
-        "settings-state-endpoint",
-        "settings-endpoint",
-        "settings-reset-endpoint",
-        "system-settings-endpoint",
-        "system-settings-reset-endpoint",
-        "search-placeholder",
-        "search-mode",
-        "search-label",
-        "search-shortcut",
-        "search-hint",
-        "search-keys-hint",
-        "count",
-        "toggle-label",
-        "panel-class",
-        "root-class",
-        "id",
-        "class",
-        "search-title",
-        "source",
-        "current",
-        "expected-columns",
-        "open",
-        "root-style",
-        "recent-results",
-        "first-answer"
-      ],
-      "package": "pro"
     },
     "sf-breadcrumbs": {
       "source": "ui/distr/smart/breadcrumbs",
@@ -2081,6 +2056,564 @@
         "colors": "object"
       },
       "package": "chart"
+    },
+    "sf-drawer": {
+      "source": "ui/distr/smart/drawer",
+      "javascript": "ui/distr/smart/drawer/js/drawer.min.js",
+      "css": "ui/distr/smart/drawer/css/drawer.min.css",
+      "requires": [
+        "sf-button-close",
+        "sf-button-icon"
+      ],
+      "attributes": [
+        "placement",
+        "snap",
+        "overlay",
+        "modal",
+        "docked",
+        "size",
+        "close-on-esc",
+        "close-on-overlay",
+        "preserve-scroll-gap",
+        "show-close",
+        "controlled",
+        "close-placement",
+        "heading",
+        "label",
+        "close-label",
+        "width",
+        "aside-width",
+        "stack-offset",
+        "dock-breakpoint",
+        "block-start",
+        "gutter",
+        "z-index",
+        "overlay-class",
+        "panel-class",
+        "panel-style",
+        "header-class",
+        "body-class",
+        "close-class",
+        "unsaved",
+        "dismissible",
+        "template",
+        "root-class",
+        "root-style",
+        "open",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-button-close": {
+      "source": "ui/distr/smart/button-close",
+      "javascript": "ui/distr/smart/button-close/js/button-close.min.js",
+      "css": "ui/distr/smart/button-close/css/button-close.min.css",
+      "requires": [],
+      "attributes": [
+        "size",
+        "height",
+        "appearance",
+        "radius",
+        "scheme",
+        "backdrop",
+        "disabled",
+        "template",
+        "root-class",
+        "root-style",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-menu-context": {
+      "source": "ui/distr/smart/menu-context",
+      "javascript": "ui/distr/smart/menu-context/js/menu-context.min.js",
+      "css": null,
+      "requires": [
+        "sf-button",
+        "sf-button-icon",
+        "sf-icon",
+        "sf-progress-bar",
+        "sf-tabs"
+      ],
+      "attributes": [
+        "position",
+        "tooltip",
+        "text",
+        "items",
+        "content-class",
+        "entries",
+        "popup",
+        "search",
+        "submenu",
+        "size",
+        "width",
+        "tabs",
+        "active-tab",
+        "closable",
+        "for",
+        "template",
+        "root-class",
+        "root-style",
+        "aria-label",
+        "role",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-tabs": {
+      "source": "ui/distr/smart/tabs",
+      "javascript": "ui/distr/smart/tabs/js/tabs.min.js",
+      "css": null,
+      "requires": [
+        "sf-button",
+        "sf-button-icon",
+        "sf-checkbox",
+        "sf-icon",
+        "sf-menu-context",
+        "sf-sortable"
+      ],
+      "attributes": [
+        "type",
+        "size",
+        "variant",
+        "scheme",
+        "top-position",
+        "active-index",
+        "items",
+        "top-class",
+        "panel-class",
+        "overflow",
+        "fit",
+        "fold",
+        "configurable",
+        "lazy",
+        "hash",
+        "sticky",
+        "settings",
+        "template",
+        "root-class",
+        "root-style",
+        "selected",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-sortable": {
+      "source": "ui/distr/smart/sortable",
+      "javascript": "ui/distr/smart/sortable/js/sortable.min.js",
+      "css": "ui/distr/smart/sortable/css/sortable.min.css",
+      "requires": [
+        "sf-menu-context"
+      ],
+      "attributes": [
+        "group",
+        "accepts",
+        "mode",
+        "orientation",
+        "label",
+        "preview",
+        "inserter-items",
+        "template",
+        "root-class",
+        "root-style",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-profile-picker": {
+      "source": "ui/distr/smart/profile-picker",
+      "javascript": "ui/distr/smart/profile-picker/js/profile-picker.min.js",
+      "css": "ui/distr/smart/profile-picker/css/profile-picker.min.css",
+      "requires": [
+        "sf-button",
+        "sf-button-icon",
+        "sf-drawer",
+        "sf-icon",
+        "sf-menu-context",
+        "sf-segmented"
+      ],
+      "attributes": [
+        "label",
+        "size",
+        "resettable",
+        "message",
+        "disabled",
+        "profiles",
+        "rights",
+        "template",
+        "root-class",
+        "root-style",
+        "current",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-segmented": {
+      "source": "ui/distr/smart/segmented",
+      "javascript": "ui/distr/smart/segmented/js/segmented.min.js",
+      "css": null,
+      "requires": [
+        "sf-badge",
+        "sf-button",
+        "sf-dropdown",
+        "sf-icon"
+      ],
+      "attributes": [
+        "items",
+        "name",
+        "theme-switch",
+        "size",
+        "height",
+        "spacing",
+        "tightness",
+        "scheme",
+        "appearance",
+        "plate",
+        "backdrop",
+        "full-width",
+        "radius",
+        "orientation",
+        "disabled",
+        "invalid",
+        "error-message",
+        "template",
+        "root-class",
+        "root-style",
+        "value",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-search": {
+      "source": "ui/distr/smart/search",
+      "javascript": "ui/distr/smart/search/js/search.min.js",
+      "css": "ui/distr/smart/search/css/search.min.css",
+      "requires": [
+        "sf-avatar",
+        "sf-badge",
+        "sf-button-icon",
+        "sf-empty-state",
+        "sf-icon",
+        "sf-spinner",
+        "sf-tag",
+        "sf-tag-group",
+        "sf-time"
+      ],
+      "attributes": [
+        "index",
+        "provider",
+        "for",
+        "shortcut",
+        "label",
+        "placeholder",
+        "scopes",
+        "recent",
+        "recent-key",
+        "popular",
+        "actions",
+        "path",
+        "keys",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-tag-group": {
+      "source": "ui/distr/smart/tag-group",
+      "javascript": "ui/distr/smart/tag-group/js/tag-group.min.js",
+      "css": "ui/distr/smart/tag-group/css/tag-group.min.css",
+      "requires": [
+        "sf-popover",
+        "sf-tag"
+      ],
+      "attributes": [
+        "layout",
+        "selection",
+        "template",
+        "root-class",
+        "root-style",
+        "selected",
+        "aria-label",
+        "selected-ids",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-time": {
+      "source": "ui/distr/smart/time",
+      "javascript": "ui/distr/smart/time/js/time.min.js",
+      "css": "ui/distr/smart/time/css/time.min.css",
+      "requires": [],
+      "attributes": [
+        "datetime",
+        "format",
+        "now",
+        "threshold",
+        "time-zone",
+        "tooltip",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-tooltip": {
+      "source": "ui/distr/smart/tooltip",
+      "javascript": "ui/distr/smart/tooltip/js/tooltip.min.js",
+      "css": null,
+      "requires": [],
+      "attributes": [
+        "appearance",
+        "size",
+        "arrow",
+        "text",
+        "supporting-text",
+        "shortcut",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-admin-menu": {
+      "source": "admin/smart/admin-menu",
+      "javascript": "admin/smart/admin-menu/js/admin-menu.min.js",
+      "css": "admin/smart/admin-menu/css/admin-menu.min.css",
+      "requires": [
+        "sf-badge",
+        "sf-button",
+        "sf-button-icon",
+        "sf-drawer",
+        "sf-dropdown",
+        "sf-empty-state",
+        "sf-icon",
+        "sf-input",
+        "sf-menu-context",
+        "sf-profile-picker",
+        "sf-search",
+        "sf-segmented",
+        "sf-sortable",
+        "sf-tooltip"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "search-shortcut",
+        "current",
+        "expected-columns",
+        "open",
+        "aria-label",
+        "first-answer",
+        "id",
+        "class"
+      ],
+      "island": {
+        "first-answer": "object"
+      },
+      "package": "admin"
+    },
+    "sf-admin-shell": {
+      "source": "admin/smart/admin-shell",
+      "javascript": "admin/smart/admin-shell/js/admin-shell.min.js",
+      "css": "admin/smart/admin-shell/css/admin-shell.min.css",
+      "requires": [
+        "sf-button-icon"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "width",
+        "menu-reserve",
+        "product",
+        "skip-label",
+        "menu-open",
+        "id",
+        "class"
+      ],
+      "island": {},
+      "package": "admin"
+    },
+    "sf-admin-notifications": {
+      "source": "admin/smart/admin-notifications",
+      "javascript": "admin/smart/admin-notifications/js/admin-notifications.min.js",
+      "css": "admin/smart/admin-notifications/css/admin-notifications.min.css",
+      "requires": [
+        "sf-alert",
+        "sf-button",
+        "sf-icon"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "look",
+        "group-by",
+        "fold",
+        "unread-only",
+        "history-href",
+        "settings-href",
+        "heading-level",
+        "aria-label",
+        "items",
+        "id",
+        "class"
+      ],
+      "island": {
+        "items": "list"
+      },
+      "package": "admin"
+    },
+    "sf-progress-run": {
+      "source": "ui/distr/smart/progress-run",
+      "javascript": "ui/distr/smart/progress-run/js/progress-run.min.js",
+      "css": "ui/distr/smart/progress-run/css/progress-run.min.css",
+      "requires": [
+        "sf-badge",
+        "sf-button",
+        "sf-button-copy",
+        "sf-button-icon",
+        "sf-icon",
+        "sf-progress-bar",
+        "sf-progress-ring"
+      ],
+      "attributes": [
+        "look",
+        "label",
+        "heading-level",
+        "caption",
+        "value",
+        "total",
+        "unit",
+        "remaining",
+        "started-at",
+        "finished-at",
+        "steps",
+        "run-state",
+        "result-text",
+        "counters",
+        "errors",
+        "errors-total",
+        "output",
+        "output-label",
+        "file-name",
+        "cancelable",
+        "pausable",
+        "retryable",
+        "hideable",
+        "minimizable",
+        "size",
+        "template",
+        "root-class",
+        "root-style",
+        "output-open",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-button-copy": {
+      "source": "ui/distr/smart/button-copy",
+      "javascript": "ui/distr/smart/button-copy/js/button-copy.min.js",
+      "css": "ui/distr/smart/button-copy/css/button-copy.min.css",
+      "requires": [
+        "sf-button",
+        "sf-button-icon",
+        "sf-icon"
+      ],
+      "attributes": [
+        "value",
+        "target",
+        "text",
+        "label",
+        "size",
+        "appearance",
+        "icon",
+        "success-icon",
+        "success-text",
+        "error-text",
+        "duration",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-progress-ring": {
+      "source": "ui/distr/smart/progress-ring",
+      "javascript": "ui/distr/smart/progress-ring/js/progress-ring.min.js",
+      "css": null,
+      "requires": [
+        "sf-avatar"
+      ],
+      "attributes": [
+        "size",
+        "value",
+        "status",
+        "warning-at",
+        "error-at",
+        "indeterminate",
+        "meter",
+        "show-text",
+        "label",
+        "value-text",
+        "template",
+        "root-class",
+        "root-style",
+        "aria-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-admin-activity": {
+      "source": "admin/smart/admin-activity",
+      "javascript": "admin/smart/admin-activity/js/admin-activity.min.js",
+      "css": "admin/smart/admin-activity/css/admin-activity.min.css",
+      "requires": [
+        "sf-badge",
+        "sf-popover",
+        "sf-progress-run"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "history-href",
+        "size",
+        "placement",
+        "notify",
+        "aria-label",
+        "runs",
+        "id",
+        "class"
+      ],
+      "island": {
+        "runs": "list"
+      },
+      "package": "admin"
     }
   }
 }
