@@ -19,6 +19,12 @@ readable here (the last commit that wrote them is
 `1cee9e276c26834031153f25ac2a8f9ba5cbb26c`). Versions published from this
 repository remain Apache-2.0.
 
+The admin menu `sf-admin-menu` comes only from the Admin set (package `admin`,
+released on simai/ui-admin, `admin/smart/admin-menu` in
+`resources/sf/runtime-lock.json`). The small fallback that once defined the same
+tag for the demo stands (`resources/simai/smart/admin-menu/admin-menu.js`) was
+removed on 2026-11-23, so no route can serve a second definition beside the set.
+
 The component package is named `pro` (Framework owner decision q-4ac7d07595,
 2026-11-02). Its built archive (`package-pro.tar` with its sha256 and receipt)
 is published as release `pro-<12>` of simai/ui-pro, where Larena's installer

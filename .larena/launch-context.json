@@ -346,6 +346,8 @@
     "assets.yaml",
     "src/Contracts/UiResourcePackManifest.php",
     "tests/Unit/UiContractTest.php",
+    "resources/simai/smart/admin-menu/admin-menu.js",
+    "docs/project-management/evidence/frontend-composition/admin-smart-carrier-fallback-resources/file-map.json",
     "src/Developer/SourceSmartContractCatalog.php",
     "src/Runtime/RegisteredDocumentRenderer.php",
     "tests/Unit/FrameworkDocumentSchemaValidatorTest.php",

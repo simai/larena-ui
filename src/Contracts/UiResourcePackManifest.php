@@ -10,12 +10,13 @@ final readonly class UiResourcePackManifest
 {
     /**
      * Custom elements required by the current admin frontend artifact before a
-     * real browser smoke can be claimed as Larena-backed.
+     * real browser smoke can be claimed as Larena-backed. sf-admin-menu is not
+     * listed: it comes only from the Admin set (admin/smart/admin-menu in the
+     * runtime lock), and larena/ui keeps no fallback of its own.
      *
      * @var array<string, string>
      */
     public const ADMIN_FRONTEND_REQUIRED_CUSTOM_ELEMENTS = [
-        'admin.menu' => 'sf-admin-menu',
         'admin.menu_item' => 'sf-admin-menu-item',
         'navigation.breadcrumbs' => 'sf-breadcrumbs',
         'data.table' => 'sf-view-table',
@@ -59,13 +60,6 @@ final readonly class UiResourcePackManifest
      * }>
      */
     public const ADMIN_FRONTEND_CARRIER_SOURCE_STATUS = [
-        'admin.menu' => [
-            'custom_element' => 'sf-admin-menu',
-            'source_backed_status' => 'artifact_only_source_blocker',
-            'source_kind' => 'ui_admin_artifact_only',
-            'adapter_required' => true,
-            'browser_smoke_ready' => false,
-        ],
         'admin.menu_item' => [
             'custom_element' => 'sf-admin-menu-item',
             'source_backed_status' => 'artifact_only_source_blocker',
@@ -162,10 +156,6 @@ final readonly class UiResourcePackManifest
      * @var array<string, array{asset_key: string, kind: UiAssetKind}>
      */
     public const ADMIN_FRONTEND_CARRIER_ASSET_REQUIREMENTS = [
-        'admin.menu' => [
-            'asset_key' => 'admin.menu.smart',
-            'kind' => UiAssetKind::Module,
-        ],
         'admin.menu_item' => [
             'asset_key' => 'admin.menu_item.smart',
             'kind' => UiAssetKind::Module,
@@ -273,12 +263,6 @@ final readonly class UiResourcePackManifest
      * }>
      */
     public const ADMIN_FRONTEND_PACKAGE_OWNED_CARRIERS = [
-        'admin.menu' => [
-            'custom_element' => 'sf-admin-menu',
-            'resource_path' => 'resources/simai/smart/admin-menu/admin-menu.js',
-            'source_backed_status' => 'larena_owned_fallback_carrier',
-            'smoke_role' => 'read_only_navigation_container',
-        ],
         'admin.menu_item' => [
             'custom_element' => 'sf-admin-menu-item',
             'resource_path' => 'resources/simai/smart/admin-menu-item/admin-menu-item.js',

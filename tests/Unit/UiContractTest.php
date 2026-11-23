@@ -50,7 +50,6 @@ $adminReferenceReadiness = $resourcePack->adminFrontendSmokeReadiness(
 );
 assert($adminReferenceReadiness['status'] === 'blocked_missing_required_smart_components');
 assert($adminReferenceReadiness['missing_custom_elements'] === [
-    'admin.menu' => 'sf-admin-menu',
     'admin.menu_item' => 'sf-admin-menu-item',
     'navigation.breadcrumbs' => 'sf-breadcrumbs',
     'data.table' => 'sf-view-table',
@@ -60,7 +59,10 @@ assert($adminReferenceReadiness['boundaries']['activation_owned_by_core_assets']
 assert($adminReferenceReadiness['boundaries']['no_frontend_runtime_copy']);
 assert($adminReferenceReadiness['carrier_source_status']['navigation.breadcrumbs']['source_backed_status'] === 'component_backed_adapter_candidate');
 assert($adminReferenceReadiness['carrier_source_status']['data.table']['source_backed_status'] === 'smart_runtime_missing_static_utility_available');
-assert($adminReferenceReadiness['carrier_source_status']['admin.menu']['source_backed_status'] === 'artifact_only_source_blocker');
+assert($adminReferenceReadiness['carrier_source_status']['admin.menu_item']['source_backed_status'] === 'artifact_only_source_blocker');
+// sf-admin-menu comes only from the Admin set; larena/ui keeps no fallback carrier, status or asset for it.
+assert(!isset($adminReferenceReadiness['carrier_source_status']['admin.menu']));
+assert(!in_array('sf-admin-menu', $adminReferenceReadiness['required_custom_elements'], true));
 assert($adminReferenceReadiness['carrier_source_status']['form.checkbox']['source_backed_status'] === 'larena_owned_fallback_carrier');
 assert($adminReferenceReadiness['carrier_source_status']['toolbar.icon_button']['browser_smoke_ready']);
 
@@ -70,7 +72,7 @@ assert(UiResourcePackManifest::adminFrontendCarrierSourceBlockers() === []);
 
 $adminCarrierAssetGraph = UiResourcePackManifest::adminFrontendCarrierAssetGraph();
 assert($adminCarrierAssetGraph->isValid());
-assert(count($adminCarrierAssetGraph->criticalRequirements()) === 12);
+assert(count($adminCarrierAssetGraph->criticalRequirements()) === 11);
 foreach ($adminCarrierAssetGraph->criticalRequirements() as $requirement) {
     assert($requirement->finalPathOwnedByCoreAssets);
     assert($requirement->kind === UiAssetKind::Module);
@@ -78,7 +80,6 @@ foreach ($adminCarrierAssetGraph->criticalRequirements() as $requirement) {
 
 $packageOwnedCarriers = UiResourcePackManifest::adminFrontendPackageOwnedCarriers();
 assert(array_keys($packageOwnedCarriers) === [
-    'admin.menu',
     'admin.menu_item',
     'navigation.breadcrumbs',
     'data.table',
@@ -92,7 +93,6 @@ assert(array_keys($packageOwnedCarriers) === [
     'toolbar.icon_button',
 ]);
 assert(UiResourcePackManifest::adminFrontendPackageOwnedCustomElements() === [
-    'sf-admin-menu',
     'sf-admin-menu-item',
     'sf-breadcrumbs',
     'sf-view-table',
@@ -111,8 +111,8 @@ foreach ($packageOwnedCarriers as $carrier) {
 }
 
 $publicationAssets = UiResourcePackManifest::adminFrontendPackageOwnedCarrierPublicationAssets();
-assert(count($publicationAssets) === 12);
-assert($publicationAssets[0]['asset_key'] === 'admin.menu.smart');
+assert(count($publicationAssets) === 11);
+assert($publicationAssets[0]['asset_key'] === 'admin.menu_item.smart');
 assert($publicationAssets[0]['kind'] === 'module');
 foreach ($publicationAssets as $asset) {
     assert($asset['source_backed_status'] === 'larena_owned_fallback_carrier');
@@ -120,19 +120,22 @@ foreach ($publicationAssets as $asset) {
 }
 
 $routePublicationAssets = UiResourcePackManifest::adminFrontendReadOnlyRoutePublicationAssets();
-assert(count($routePublicationAssets) === 14);
+assert(count($routePublicationAssets) === 13);
 // Root's old preview screens link the package's own preview stylesheet; the graph keeps no root aliases.
 assert(array_filter($routePublicationAssets, static fn (array $asset): bool => str_starts_with($asset['asset_key'], 'root.')) === []);
-assert($routePublicationAssets[12]['asset_key'] === 'admin.shell.read_only_route.css');
+assert($routePublicationAssets[11]['asset_key'] === 'admin.shell.read_only_route.css');
+assert($routePublicationAssets[11]['kind'] === 'css');
+assert(is_file(__DIR__ . '/../../' . $routePublicationAssets[11]['resource_path']));
+assert($routePublicationAssets[12]['asset_key'] === 'admin.foundation.preview.css');
 assert($routePublicationAssets[12]['kind'] === 'css');
 assert(is_file(__DIR__ . '/../../' . $routePublicationAssets[12]['resource_path']));
-assert($routePublicationAssets[13]['asset_key'] === 'admin.foundation.preview.css');
-assert($routePublicationAssets[13]['kind'] === 'css');
-assert(is_file(__DIR__ . '/../../' . $routePublicationAssets[13]['resource_path']));
+// No route serves a larena/ui copy of sf-admin-menu beside the Admin set.
+assert(array_filter($routePublicationAssets, static fn (array $asset): bool => $asset['custom_element'] === 'sf-admin-menu' || str_contains($asset['resource_path'], '/admin-menu/')) === []);
+assert(!is_file(__DIR__ . '/../../resources/simai/smart/admin-menu/admin-menu.js'));
 
 $routeAssetGraph = UiResourcePackManifest::adminFrontendReadOnlyRouteAssetGraph();
 assert($routeAssetGraph->isValid());
-assert(count($routeAssetGraph->criticalRequirements()) === 14);
+assert(count($routeAssetGraph->criticalRequirements()) === 13);
 
 $assetDescriptorPath = __DIR__ . '/../../assets.yaml';
 $assetDescriptor = json_decode((string) file_get_contents($assetDescriptorPath), true, 512, JSON_THROW_ON_ERROR);
