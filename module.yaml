@@ -36,3 +36,16 @@ assets:
   path: assets.yaml
 evidence:
   path: docs/project-management/evidence/larena-minimal-cms-v1-b11
+delivery:
+  publisher: simai
+  distribution: open
+  license: Apache-2.0
+  requires:
+    larena: dev-main
+    packages:
+      larena/dataview: dev-main
+  capabilities:
+    - larena.capability.ui.base
+  requires_capabilities: []
+  data_on_removal: none
+  migrations_reversible: true

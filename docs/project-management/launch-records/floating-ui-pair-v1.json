@@ -439,6 +439,7 @@
     "resources/assets/source-backed-sf/catalog/pagination/smart/js/pagination.js",
     "resources/assets/source-backed-sf/catalog/tags/component/css/tags.css",
     "resources/assets/source-backed-sf/catalog/tags/component/js/tags.js",
-    "resources/assets/source-backed-sf/catalog/tags/smart/js/tags.js"
+    "resources/assets/source-backed-sf/catalog/tags/smart/js/tags.js",
+    "scripts/check-delivery-manifest.php"
   ]
 }
