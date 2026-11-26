@@ -33,6 +33,16 @@ assert($resolver->preloadedCssPaths(Smart::assetGraph('sf-view-table')) === [
     'ui/distr/smart/button-icon/css/button-icon.min.css',
     'pro/smart/view-table/css/view-table.min.css',
 ]);
+// sf-editor comes from the Editor set's own tree (editor/smart/editor), after the free components it uses.
+$editorAssets = $resolver->resolve(Smart::assetGraph('sf-editor'));
+assert(array_slice($editorAssets, -2) === [
+    ['asset_key' => 'simai.framework.sf_editor.css', 'kind' => 'css', 'relative_path' => 'editor/smart/editor/css/editor.min.css', 'critical' => true],
+    ['asset_key' => 'simai.framework.sf_editor.js', 'kind' => 'javascript', 'relative_path' => 'editor/smart/editor/js/editor.min.js', 'critical' => true],
+]);
+foreach (array_slice($editorAssets, 4) as $asset) {
+    assert(str_starts_with($asset['relative_path'], 'ui/distr/') || str_starts_with($asset['relative_path'], 'editor/smart/'), $asset['asset_key']);
+}
+assert(in_array('ui/distr/smart/editor-inline/js/editor-inline.min.js', array_column($editorAssets, 'relative_path'), true));
 $dataViewAssets = $resolver->resolve(Smart::assetGraph('sf-view'));
 assert(array_column($dataViewAssets, 'asset_key') === [
     'simai.framework.core.css',
@@ -56,12 +66,13 @@ $switched['ui']['release'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['pro']['requires_framework'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['chart']['requires_framework'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['admin']['requires_framework'] = 'ui-aaaaaaaaaaaa';
-$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8';
-$switched['bundle_id'] = $switched['pair_id'] . '-registry-5c2e46b5-exact-git-tree-v2';
+$switched['packages']['editor']['requires_framework'] = 'ui-aaaaaaaaaaaa';
+$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183';
+$switched['bundle_id'] = $switched['pair_id'] . '-registry-b6d0855b-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = 'ui-aaaaaaaaaaaa';
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-b4f79e1c58b7-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];

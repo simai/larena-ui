@@ -48,9 +48,9 @@ final readonly class FrontendRuntimeLock
      * Where a package's components sit in its source repository (package_source.path of its receipt): the paths a
      * repository listed here allows, components/ in every other (simai/larena-ui, simai/ui-pro). The Chart set is built
      * from package/ of simai/ui-chart; simai/ui-admin held the former admin kit in components/ and holds the Admin set
-     * in package/ (2026-11-23).
+     * in package/ (2026-11-23); the Editor set is built from package/ of simai/ui-editor (2026-11-26).
      */
-    private const PACKAGE_PATHS = ['simai/ui-chart' => ['package'], 'simai/ui-admin' => ['components', 'package']];
+    private const PACKAGE_PATHS = ['simai/ui-chart' => ['package'], 'simai/ui-admin' => ['components', 'package'], 'simai/ui-editor' => ['package']];
     private const DEFAULT_PACKAGE_PATH = 'components';
 
     /** @param array<string, mixed> $data */

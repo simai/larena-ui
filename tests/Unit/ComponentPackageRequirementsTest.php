@@ -31,9 +31,9 @@ $admin = componentConsumer('larena/admin', ['pro' => [
 $ok = ComponentPackageRequirements::fromComposerManifests([$admin, ['name' => 'larena/core', 'extra' => []]])->check($lock);
 assert($ok['schema'] === 'larena.ui.component_package_check' && $ok['status'] === 'passed' && $ok['errors'] === []);
 assert($ok['framework_release'] === $pinnedFramework);
-// Chart and the Admin set are pinned next to pro; a set no package here declares is reported, not refused.
-assert($ok['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release'], 'admin' => $lock['packages']['admin']['release']]);
-assert($ok['declared'] === ['pro' => ['larena/admin']] && $ok['unrequested'] === ['chart', 'admin']);
+// Chart, the Admin set and the Editor set are pinned next to pro; a set no package here declares is reported, not refused.
+assert($ok['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release'], 'admin' => $lock['packages']['admin']['release'], 'editor' => $lock['packages']['editor']['release']]);
+assert($ok['declared'] === ['pro' => ['larena/admin']] && $ok['unrequested'] === ['chart', 'admin', 'editor']);
 
 // An exact release list accepts the pinned release.
 $exact = componentConsumer('larena/admin', ['pro' => ['releases' => ['pro-000000000000', $pinnedRelease]]]);
@@ -88,7 +88,7 @@ unset($withChart['packages']['chart']['release_repository']);
 $charts = componentConsumer('larena/dashboard', ['chart' => ['releases' => '*', 'release_repository' => 'simai/ui-chart',
     'source_repositories' => ['simai/ui-chart']]]);
 $chartCheck = ComponentPackageRequirements::fromComposerManifests([$admin, $charts])->check($withChart);
-assert($chartCheck['errors'] === [] && $chartCheck['pinned'] === ['pro' => $pinnedRelease, 'chart' => 'chart-b9d62c6d81a0', 'admin' => $lock['packages']['admin']['release']]);
+assert($chartCheck['errors'] === [] && $chartCheck['pinned'] === ['pro' => $pinnedRelease, 'chart' => 'chart-b9d62c6d81a0', 'admin' => $lock['packages']['admin']['release'], 'editor' => $lock['packages']['editor']['release']]);
 $chartElsewhere = $withChart;
 $chartElsewhere['packages']['chart']['repository'] = 'simai/ui-chat';
 assert(ComponentPackageRequirements::fromComposerManifests([])->check($chartElsewhere)['errors']
@@ -191,8 +191,8 @@ $twoSets['packages']['chat'] = [
 unset($twoSets['packages']['chat']['pair_range']);
 $twoSets['packages']['chat']['requires_framework'] = $lock['ui']['release'];
 $extra = ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets);
-assert($extra['status'] === 'passed' && $extra['unrequested'] === ['chart', 'admin', 'chat']);
-assert($extra['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release'], 'admin' => $lock['packages']['admin']['release'], 'chat' => 'chat-cccccccccccc']);
+assert($extra['status'] === 'passed' && $extra['unrequested'] === ['chart', 'admin', 'editor', 'chat']);
+assert($extra['pinned'] === ['pro' => $pinnedRelease, 'chart' => $lock['packages']['chart']['release'], 'admin' => $lock['packages']['admin']['release'], 'editor' => $lock['packages']['editor']['release'], 'chat' => 'chat-cccccccccccc']);
 $twoSets['packages']['chat']['requires_framework'] = 'ui-000000000000';
 assert(ComponentPackageRequirements::fromComposerManifests([$admin])->check($twoSets)['errors'] === ['component_package_framework_mismatch:chat']);
 $twoSets['packages']['chat']['requires_framework'] = $lock['ui']['release'];
@@ -267,10 +267,10 @@ assert($exitCode === 0, implode("\n", $output));
 // second set appears in it without a code change, in lock order.
 $runtime = FrontendRuntimeLock::bundled();
 assert(ComponentPackageRequirements::undeclaredBootPackages($lock, $runtime->bootPackagesScript('/b/')) === []);
-// The cases below read the lock's pro alone (Chart and the Admin set are pinned next to it in the bundled lock).
+// The cases below read the lock's pro alone (Chart, the Admin set and the Editor set are pinned next to it in the bundled lock).
 $proLock = $lock;
-unset($proLock['packages']['chart'], $proLock['packages']['admin']);
-$proLock['components'] = array_filter($proLock['components'], static fn (array $component): bool => !in_array($component['package'], ['chart', 'admin'], true));
+unset($proLock['packages']['chart'], $proLock['packages']['admin'], $proLock['packages']['editor']);
+$proLock['components'] = array_filter($proLock['components'], static fn (array $component): bool => !in_array($component['package'], ['chart', 'admin', 'editor'], true));
 assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, '{chat:{base:"/b/chat/smart/"}}') === ['pro']);
 assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, 'packages: {pro: {base: "/b/pro/smart/"}}') === []);
 assert(ComponentPackageRequirements::undeclaredBootPackages($proLock, '{xpro:{base:"/b/"}}') === ['pro']);

@@ -53,10 +53,10 @@ final class ComponentPackageRequirements
      * the lock. The Larena admin set moved its source from components/ of simai/larena-ui to simai/ui-admin and then,
      * with the advanced Smart components a second kit needs, to simai/ui-pro (owner decisions 2026-10-22); the
      * earlier sources stay here so the locks they pin keep validating. The SIMAI Chart set is built from
-     * package/ of simai/ui-chart. A later set (the chat kit) adds its repository here. FrontendRuntimeLock and the
-     * Root release scripts read this one list.
+     * package/ of simai/ui-chart, the Editor set (sf-editor) from package/ of simai/ui-editor. A later set (the chat
+     * kit) adds its repository here. FrontendRuntimeLock and the Root release scripts read this one list.
      */
-    public const SOURCE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro', 'simai/ui-chart'];
+    public const SOURCE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-admin', 'simai/ui-pro', 'simai/ui-chart', 'simai/ui-editor'];
     /**
      * Where the sets are released: the GitHub release <set>-<12> with package-<set>.tar, .sha256 and
      * package-receipt.json. The lock names it in `release_repository`; a lock without it is released from its
@@ -64,9 +64,10 @@ final class ComponentPackageRequirements
      * (Framework owner decision q-4ac7d07595, 2026-11-02) is released on simai/ui-pro as pro-<12>; its copy on
      * simai/larena-ui under the former name larena stops on 2027-01-01. The Chart set is released on simai/ui-chart
      * as chart-<12>, the Admin set (sf-admin-menu, sf-admin-shell, sf-admin-notifications, sf-admin-activity; it left
-     * Pro with pro-53cd26ab57cd, 2026-11-23) on simai/ui-admin as admin-<12>.
+     * Pro with pro-53cd26ab57cd, 2026-11-23) on simai/ui-admin as admin-<12>, the Editor set (sf-editor; it left Pro
+     * with pro-cfaab360bb39, 2026-11-26) on simai/ui-editor as editor-<12>.
      */
-    public const RELEASE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-pro', 'simai/ui-chart', 'simai/ui-admin'];
+    public const RELEASE_REPOSITORIES = ['simai/larena-ui', 'simai/ui-pro', 'simai/ui-chart', 'simai/ui-admin', 'simai/ui-editor'];
     private const NAME = '/\A[a-z][a-z0-9]*\z/';
     private const RESERVED_NAMES = ['ui', 'contract', 'framework'];
     private const DECLARATION_KEYS = ['releases', 'repository', 'release_repository', 'source_repositories'];

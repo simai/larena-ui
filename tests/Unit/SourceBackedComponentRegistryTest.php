@@ -9,10 +9,10 @@ use Larena\Ui\Frontend\SourceBackedComponentRegistry;
 
 $lock = FrontendRuntimeLock::bundled();
 assert($lock->tag() === null);
-assert($lock->pairId() === 'ui-b4f79e1c58b7-pro-53cd26ab57cd-chart-58ba480db497-admin-25245d70cde8');
+assert($lock->pairId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183');
 assert(str_starts_with($lock->pairId(), 'ui-'));
-assert($lock->toArray()['ui']['commit'] === 'b4f79e1c58b70e4a7f6512ed19084b4bc34e6098');
-assert($lock->package('pro')['commit'] === '53cd26ab57cd5f27ad03546c1d05ae741c527a48');
+assert($lock->toArray()['ui']['commit'] === '73df5d1b4d4c82d674dfa2c7fb4e41f49a6b47eb');
+assert($lock->package('pro')['commit'] === 'cfaab360bb397013e3eadec139b60b9d9b9f14e4');
 
 $registry = SourceBackedComponentRegistry::bundled();
 assert($registry->get('sf-button')['source'] === 'ui/distr/smart/button');
@@ -26,6 +26,9 @@ assert($registry->get('sf-modal')['source'] === 'ui/distr/smart/modal');
 assert($registry->get('sf-input-textarea')['source'] === 'ui/distr/smart/input-textarea');
 assert($registry->get('sf-dropdown')['source'] === 'ui/distr/smart/dropdown');
 assert($registry->get('sf-checkbox')['source'] === 'ui/distr/smart/checkbox');
+// The storage page editor hosts sf-editor only when the lock lists it: the Editor set (editor-57f16aec0183) carries it.
+assert($registry->get('sf-editor')['source'] === 'editor/smart/editor' && $registry->get('sf-editor')['package'] === 'editor');
+$registry->assertPropsAllowed('sf-editor', ['heading' => 'Page', 'caption' => 'Body', 'label' => 'Editor', 'preferences-key' => 'storage-document']);
 $registry->assertPropsAllowed('sf-button', ['text' => 'Create', 'disabled' => false]);
 $registry->assertPropsAllowed('sf-view-table', ['aria-label' => 'Pages', 'data' => ['columns' => [], 'rows' => []]]);
 $registry->assertPropsAllowed('sf-view', ['id' => 'cms-records', 'aria-label' => 'Records']);
