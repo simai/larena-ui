@@ -9,9 +9,9 @@ use Larena\Ui\Frontend\FrontendRuntimeLock;
 
 $lock = FrontendRuntimeLock::bundled();
 // The free Framework release and the Larena components package built over it, pinned together.
-assert($lock->pairId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183');
+assert($lock->pairId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-3b5dc0c1b939');
 assert($lock->frameworkId() === 'ui-73df5d1b4d4c');
-assert($lock->packageIds() === ['pro' => 'pro-cfaab360bb39', 'chart' => 'chart-58ba480db497', 'admin' => 'admin-25245d70cde8', 'editor' => 'editor-57f16aec0183']);
+assert($lock->packageIds() === ['pro' => 'pro-cfaab360bb39', 'chart' => 'chart-58ba480db497', 'admin' => 'admin-25245d70cde8', 'editor' => 'editor-3b5dc0c1b939']);
 // Pro is built over the pinned Framework, so it needs no pair range; Chart is built over ui-cb287da78ab1 and carries a
 // pair range checked over the pinned pair (SIMAI Framework decision 2026-11-09).
 assert($lock->package('pro')['requires_framework'] === $lock->frameworkId() && !isset($lock->package('pro')['pair_range']));
@@ -37,7 +37,7 @@ assert($lock->component('sf-editor')['package'] === 'editor' && $lock->component
     && $lock->component('sf-editor')['css'] === 'editor/smart/editor/css/editor.min.css');
 assert($lock->packageLicence('editor') === ['ref' => 'PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial', 'tier' => 'bundled-larena']);
 assert($lock->packageLicence('pro') === ['ref' => 'PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial', 'tier' => 'bundled-larena']);
-assert($lock->bundleId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183-registry-b6d0855b-exact-git-tree-v2');
+assert($lock->bundleId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-3b5dc0c1b939-registry-b6d0855b-exact-git-tree-v2');
 assert($lock->uiBase() === 'ui/distr/' && $lock->smartBase() === 'ui/distr/smart/');
 assert($lock->packageBases() === ['pro' => 'pro/smart/', 'chart' => 'chart/smart/', 'admin' => 'admin/smart/', 'editor' => 'editor/smart/']);
 assert($lock->bootPackagesScript('/b/') === '{pro:{base:"\/b\/pro\/smart\/"},chart:{base:"\/b\/chart\/smart\/"},admin:{base:"\/b\/admin\/smart\/"},editor:{base:"\/b\/editor\/smart\/"}}');
@@ -95,10 +95,10 @@ assert($expectation['sources'] === [
         'files' => 161,
     ],
     [
-        'commit' => '57f16aec0183562700b70328dea21104400f02aa',
+        'commit' => '3b5dc0c1b939de6fc78eb74f1fbcb53180f53259',
         'tree' => 'smart',
         'mount' => 'editor',
-        'archive_sha256' => '5a35cef807fbffe07f1ad2de0f1e828e485533db7ed541e28934b152a1f6a027',
+        'archive_sha256' => 'ba47a00f5ac49592ac7f0d2f796eeae15ca62a1f019760264cd762bf5e513807',
         'files' => 37,
     ],
     [

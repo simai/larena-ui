@@ -2,8 +2,8 @@
   "schema": "larena.ui.frontend_runtime_lock",
   "schema_version": 6,
   "runtime": "simai-framework",
-  "pair_id": "ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183",
-  "bundle_id": "ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-57f16aec0183-registry-b6d0855b-exact-git-tree-v2",
+  "pair_id": "ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-3b5dc0c1b939",
+  "bundle_id": "ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-3b5dc0c1b939-registry-b6d0855b-exact-git-tree-v2",
   "publication_profile": "exact-git-tree-v2",
   "tag": null,
   "ui": {
@@ -112,17 +112,17 @@
       }
     },
     "editor": {
-      "release": "editor-57f16aec0183",
+      "release": "editor-3b5dc0c1b939",
       "repository": "simai/ui-editor",
       "tag": null,
-      "commit": "57f16aec0183562700b70328dea21104400f02aa",
+      "commit": "3b5dc0c1b939de6fc78eb74f1fbcb53180f53259",
       "tree": "smart",
       "mount": "editor",
-      "sha256": "5a35cef807fbffe07f1ad2de0f1e828e485533db7ed541e28934b152a1f6a027",
+      "sha256": "ba47a00f5ac49592ac7f0d2f796eeae15ca62a1f019760264cd762bf5e513807",
       "files": 37,
       "requires_framework": "ui-73df5d1b4d4c",
       "package_path": "package",
-      "package_tree": "f36ad6317e7ae7c61fa224d4b494c90bd83583c4",
+      "package_tree": "b2b8d034d007f5a5c4088edacd4bfc3c7cc19a57",
       "framework_source": {
         "repository": "simai/ui-source",
         "revision": "5e30b946fd0e620a4d00ab771af143dc286be1b8"
@@ -131,8 +131,8 @@
         "repository": "simai/ui-builder",
         "revision": "58fc73027f3b40a9f6fcc82f67e89542e4f1fb05"
       },
-      "manifest_sha256": "b1d5825dbde6f4247cf74d40e960341ccb774abdd00a5042826394ec166eb5fd",
-      "receipt_sha256": "6cce159bf116056d601d69be5a408b6a546cf49b747bcb7f0b8103eba1f47584",
+      "manifest_sha256": "0b7e6be2152c3ac6cc80cb7e4f029eb5a866806fbd172e7f461ca44bf89a6fcf",
+      "receipt_sha256": "8d83002bf5a7a77abd9fff8649ad901ba602e16602c6ec51a3c1eaa6ac450b7c",
       "licence": {
         "ref": "PolyForm-Small-Business-1.0.0 OR PolyForm-Noncommercial-1.0.0 OR LicenseRef-SIMAI-Commercial",
         "tier": "bundled-larena"
@@ -1734,6 +1734,102 @@
       ],
       "package": "framework"
     },
+    "sf-editor-inline": {
+      "source": "ui/distr/smart/editor-inline",
+      "javascript": "ui/distr/smart/editor-inline/js/editor-inline.min.js",
+      "css": "ui/distr/smart/editor-inline/css/editor-inline.min.css",
+      "requires": [
+        "sf-button",
+        "sf-input",
+        "sf-menu-context"
+      ],
+      "attributes": [
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-skeleton": {
+      "source": "ui/distr/smart/skeleton",
+      "javascript": "ui/distr/smart/skeleton/js/skeleton.min.js",
+      "css": null,
+      "requires": [],
+      "attributes": [
+        "size",
+        "width",
+        "height",
+        "count",
+        "animation",
+        "kind",
+        "type",
+        "items",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-switch": {
+      "source": "ui/distr/smart/switch",
+      "javascript": "ui/distr/smart/switch/js/switch.min.js",
+      "css": "ui/distr/smart/switch/css/switch.min.css",
+      "requires": [
+        "sf-help-mark"
+      ],
+      "attributes": [
+        "size",
+        "short",
+        "label",
+        "description",
+        "help",
+        "position",
+        "icon",
+        "icon-on",
+        "disabled",
+        "name",
+        "value",
+        "invalid",
+        "error-message",
+        "template",
+        "root-class",
+        "root-style",
+        "checked",
+        "aria-label",
+        "inherited-value",
+        "inherited-text",
+        "reset-label",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
+    "sf-help-mark": {
+      "source": "ui/distr/smart/help-mark",
+      "javascript": "ui/distr/smart/help-mark/js/help-mark.min.js",
+      "css": "ui/distr/smart/help-mark/css/help-mark.min.css",
+      "requires": [
+        "sf-button-icon",
+        "sf-icon"
+      ],
+      "attributes": [
+        "text",
+        "heading",
+        "label",
+        "size",
+        "placement",
+        "template",
+        "root-class",
+        "root-style",
+        "id",
+        "class"
+      ],
+      "package": "framework"
+    },
     "sf-chart-core": {
       "source": "chart/smart/chart-core",
       "javascript": "chart/smart/chart-core/js/chart-core.min.js",
@@ -2648,102 +2744,6 @@
       },
       "package": "admin"
     },
-    "sf-editor-inline": {
-      "source": "ui/distr/smart/editor-inline",
-      "javascript": "ui/distr/smart/editor-inline/js/editor-inline.min.js",
-      "css": "ui/distr/smart/editor-inline/css/editor-inline.min.css",
-      "requires": [
-        "sf-button",
-        "sf-input",
-        "sf-menu-context"
-      ],
-      "attributes": [
-        "template",
-        "root-class",
-        "root-style",
-        "id",
-        "class"
-      ],
-      "package": "framework"
-    },
-    "sf-skeleton": {
-      "source": "ui/distr/smart/skeleton",
-      "javascript": "ui/distr/smart/skeleton/js/skeleton.min.js",
-      "css": null,
-      "requires": [],
-      "attributes": [
-        "size",
-        "width",
-        "height",
-        "count",
-        "animation",
-        "kind",
-        "type",
-        "items",
-        "template",
-        "root-class",
-        "root-style",
-        "id",
-        "class"
-      ],
-      "package": "framework"
-    },
-    "sf-switch": {
-      "source": "ui/distr/smart/switch",
-      "javascript": "ui/distr/smart/switch/js/switch.min.js",
-      "css": "ui/distr/smart/switch/css/switch.min.css",
-      "requires": [
-        "sf-help-mark"
-      ],
-      "attributes": [
-        "size",
-        "short",
-        "label",
-        "description",
-        "help",
-        "position",
-        "icon",
-        "icon-on",
-        "disabled",
-        "name",
-        "value",
-        "invalid",
-        "error-message",
-        "template",
-        "root-class",
-        "root-style",
-        "checked",
-        "aria-label",
-        "inherited-value",
-        "inherited-text",
-        "reset-label",
-        "id",
-        "class"
-      ],
-      "package": "framework"
-    },
-    "sf-help-mark": {
-      "source": "ui/distr/smart/help-mark",
-      "javascript": "ui/distr/smart/help-mark/js/help-mark.min.js",
-      "css": "ui/distr/smart/help-mark/css/help-mark.min.css",
-      "requires": [
-        "sf-button-icon",
-        "sf-icon"
-      ],
-      "attributes": [
-        "text",
-        "heading",
-        "label",
-        "size",
-        "placement",
-        "template",
-        "root-class",
-        "root-style",
-        "id",
-        "class"
-      ],
-      "package": "framework"
-    },
     "sf-editor": {
       "source": "editor/smart/editor",
       "javascript": "editor/smart/editor/js/editor.min.js",
@@ -2769,6 +2769,7 @@
         "root-class",
         "root-style",
         "screen",
+        "readonly",
         "preferences-key",
         "heading",
         "caption",
@@ -2781,6 +2782,7 @@
         "words",
         "rights",
         "theme",
+        "media",
         "page-settings",
         "id",
         "class"
@@ -2794,6 +2796,7 @@
         "words": "object",
         "rights": "object",
         "theme": "object",
+        "media": "object",
         "page-settings": "object"
       },
       "package": "editor"
