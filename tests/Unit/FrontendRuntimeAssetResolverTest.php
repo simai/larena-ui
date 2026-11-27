@@ -67,12 +67,12 @@ $switched['packages']['pro']['requires_framework'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['chart']['requires_framework'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['admin']['requires_framework'] = 'ui-aaaaaaaaaaaa';
 $switched['packages']['editor']['requires_framework'] = 'ui-aaaaaaaaaaaa';
-$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-3b5dc0c1b939';
-$switched['bundle_id'] = $switched['pair_id'] . '-registry-b6d0855b-exact-git-tree-v2';
+$switched['pair_id'] = 'ui-aaaaaaaaaaaa-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-52109ce5017f';
+$switched['bundle_id'] = $switched['pair_id'] . '-registry-a1b46744-exact-git-tree-v2';
 $switched['framework_registry']['compatibility_id'] = 'ui-aaaaaaaaaaaa';
 $switchedLock = FrontendRuntimeLock::fromArray($switched);
 assert($switchedLock->pairId() !== FrontendRuntimeLock::fromArray($baseline)->pairId());
-assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-73df5d1b4d4c-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-3b5dc0c1b939');
+assert(FrontendRuntimeLock::fromArray($baseline)->pairId() === 'ui-4f5678e8c0ed-pro-cfaab360bb39-chart-58ba480db497-admin-25245d70cde8-editor-52109ce5017f');
 
 $mismatched = $switched;
 $mismatched['pair_id'] = (string) $baseline['pair_id'];
